@@ -518,9 +518,15 @@
                 travelMode: google.maps.TravelMode.DRIVING,
                 unitSystem: google.maps.UnitSystem.METRIC
             }, function(response, status) {
-                if (status !== google.maps.DistanceMatrixStatus.OK) return;
+                if (status !== 'OK') {
+                    console.error('DistanceMatrixService status:', status);
+                    return;
+                }
                 const el = response.rows[0].elements[0];
-                if (el.status !== 'OK') return;
+                if (el.status !== 'OK') {
+                    console.error('DistanceMatrix element status:', el.status);
+                    return;
+                }
                 // Récupération
                 const distText = el.distance.text;
                 const durText  = el.duration.text;
