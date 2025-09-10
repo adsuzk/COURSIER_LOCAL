@@ -473,23 +473,46 @@ $messages = [];
 }
 
 /* === RESPONSIVE === */
-@media (max-width: 1200px) {
+@media (max-width: 1400px) {
     .chat-interface {
-        grid-template-columns: 300px 1fr 250px;
+        flex-direction: column;
+        height: auto;
         gap: 15px;
+    }
+    
+    .chat-sidebar {
+        width: 100%;
+        min-width: auto;
+        max-height: 250px;
+        order: 1;
+    }
+    
+    .chat-main {
+        width: 100%;
+        min-height: 500px;
+        order: 2;
+    }
+    
+    .chat-details {
+        width: 100%;
+        min-width: auto;
+        order: 3;
+        max-height: 200px;
     }
 }
 
 @media (max-width: 968px) {
     .chat-interface {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto 1fr;
-        height: auto;
-        min-height: 500px;
+        padding: 15px;
+        gap: 10px;
     }
     
     .chat-sidebar {
         max-height: 200px;
+    }
+    
+    .chat-main {
+        min-height: 400px;
     }
     
     .chat-details {
@@ -520,8 +543,12 @@ $messages = [];
     
     .chat-interface {
         padding: 15px;
-        height: 60vh;
-        min-height: 400px;
+        height: 70vh;
+        min-height: 500px;
+    }
+    
+    .chat-main {
+        min-height: 350px;
     }
 }
 </style>
