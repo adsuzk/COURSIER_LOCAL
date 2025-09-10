@@ -525,6 +525,9 @@
                 <i class="fas fa-route"></i>
                 <span class="distance-value">${calculation.distance.text}</span>
             `;
+            // Champs estimés basiques
+            const estDistanceInput = document.getElementById('estDistance');
+            if (estDistanceInput) estDistanceInput.value = calculation.distance.text;
         }
 
         if (timeInfo) {
@@ -532,6 +535,8 @@
                 <i class="fas fa-clock"></i>
                 <span class="time-value">${calculation.duration.text}</span>
             `;
+            const estDurationInput = document.getElementById('estDuration');
+            if (estDurationInput) estDurationInput.value = calculation.duration.text;
         }
 
         // Détail du calcul
@@ -556,6 +561,8 @@
                 <span class="total-amount">${calculation.totalPrice} FCFA</span>
             `;
             totalPriceElement.style.borderColor = calculation.config.color;
+            const estPriceInput = document.getElementById('estPrice');
+            if (estPriceInput) estPriceInput.value = `${calculation.totalPrice} FCFA`;
         }
 
         // Animation d'apparition
