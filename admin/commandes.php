@@ -73,15 +73,20 @@ function getCommandesWithCouriers() {
 // Récupérer les coursiers actifs
 function getActiveCouriers() {
     $pdo = getDBConnection();
-    $stmt = $pdo->prepare("
-        SELECT id_coursier, nom, prenoms, telephone, statut_connexion, 
-               latitude, longitude, derniere_position
-        FROM agents_suzosky 
-        WHERE statut = 'actif' 
-        ORDER BY statut_connexion DESC, derniere_position DESC
+    try {
+        $stmt = $pdo->prepare("\
+        SELECT id_coursier, nom, prenoms, telephone, statut_connexion, \
+               latitude, longitude, derniere_position\
+        FROM agents_suzosky \
+        WHERE statut = 'actif' \
+        ORDER BY statut_connexion DESC, derniere_position DESC\
     ");
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        // Pas de table agents_suzosky en local, retourner liste vide
+        return [];
+    }
 }
 
 $commandes = getCommandesWithCouriers();
