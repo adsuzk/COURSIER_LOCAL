@@ -48,7 +48,7 @@ try {
     // Sections JavaScript (divisées par fonctionnalité)
     include __DIR__ . '/sections index/js_google_maps.php';
     include __DIR__ . '/sections index/js_autocomplete.php';
-    include __DIR__ . '/sections index/js_route_calculation.php';
+    // include __DIR__ . '/sections index/js_route_calculation.php'; // Désactivé, calcul dédié via js_price_calculation
     include __DIR__ . '/sections index/js_geolocation.php';
     include __DIR__ . '/sections index/js_authentication.php';
     include __DIR__ . '/sections index/js_form_handling.php';
