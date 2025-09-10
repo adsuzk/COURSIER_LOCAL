@@ -838,16 +838,6 @@ style.textContent = `
         to { transform: rotate(360deg); }
     }
     
-    @keyframes typing {
-        0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
-        30% { transform: translateY(-10px); opacity: 1; }
-    }
-    
-    @keyframes slideIn {
-        from { opacity: 0; transform: translateX(-20px); }
-        to { opacity: 1; transform: translateX(0); }
-    }
-    
     .conversation-item.active {
         background: rgba(212, 168, 83, 0.15) !important;
         border-left: 4px solid var(--primary-gold) !important;
@@ -866,18 +856,6 @@ style.textContent = `
     
     .action-btn:hover {
         transform: translateY(-2px) scale(1.05) !important;
-    }
-    
-    .filter-btn:hover {
-        background: rgba(212, 168, 83, 0.3) !important;
-        color: white !important;
-        transform: translateY(-1px);
-    }
-    
-    .message-input-container button:hover {
-        background: rgba(212, 168, 83, 0.2) !important;
-        border-color: var(--primary-gold) !important;
-        transform: translateY(-1px);
     }
     
     /* Amélioration du scroll */
@@ -915,43 +893,6 @@ style.textContent = `
     
     #messagesContainer::-webkit-scrollbar-thumb:hover {
         background: #E8C468;
-    }
-    
-    /* Responsive amélioré */
-    @media (max-width: 1200px) {
-        .chat-interface {
-            grid-template-columns: 280px 1fr 200px !important;
-        }
-        
-        .hero-content h1 {
-            font-size: 1.7rem !important;
-        }
-    }
-    
-    @media (max-width: 968px) {
-        .chat-interface {
-            grid-template-columns: 1fr !important;
-            grid-template-rows: auto 1fr !important;
-        }
-        
-        .chat-sidebar {
-            max-height: 300px !important;
-        }
-        
-        .chat-details {
-            position: fixed !important;
-            top: 50% !important;
-            left: 50% !important;
-            transform: translate(-50%, -50%) !important;
-            width: 90% !important;
-            max-width: 400px !important;
-            z-index: 1000 !important;
-            display: none !important;
-        }
-        
-        .chat-details.show {
-            display: flex !important;
-        }
     }
 `;
 document.head.appendChild(style);
