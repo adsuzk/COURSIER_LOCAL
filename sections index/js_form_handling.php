@@ -646,97 +646,73 @@
         });
     }
 
-    // Initialisation au chargement de la page
+    // Initialisation au chargement : Price Calculation via Google Distance Matrix
     document.addEventListener('DOMContentLoaded', function() {
-        // Estimation simple fallback pour afficher distance, durée et prix immédiatement
-        function updateFallbackEstimate() {
-            const dep = document.getElementById('departure')?.value.trim();
-            const dest = document.getElementById('destination')?.value.trim();
-            const section = document.getElementById('price-calculation-section');
-            if (!dep || !dest) {
-                if (section) section.style.display = 'none';
+        if (!window.google || !google.maps || !google.maps.DistanceMatrixService) {
+            console.error('Google Maps DistanceMatrix non disponible');
+            return;
+        }
+        const service = new google.maps.DistanceMatrixService();
+        const dep = document.getElementById('departure');
+        const dest = document.getElementById('destination');
+        const prios = document.querySelectorAll('input[name="priority"]');
+        const section = document.getElementById('price-calculation-section');
+        
+        // Tarifaires
+        const PRICING = {
+            normale: { base: 300, perKm: 300, color: '#4CAF50', name: 'Normal' },
+            urgente: { base: 1000, perKm: 500, color: '#FF9800', name: 'Urgent' },
+            express: { base: 1500, perKm: 700, color: '#F44336', name: 'Express' }
+        };
+        
+        function calculate() {
+            const o = dep.value.trim();
+            const d = dest.value.trim();
+            if (!o || !d) {
+                section.style.display = 'none';
                 return;
             }
-            // Calcul de distance simulée (basé sur longueur de texte)
-            const km = Math.max(1, Math.round((dep.length + dest.length) / 10));
-            const mins = km * 2;
-            // Tarification selon priorité
-            const pr = document.querySelector('input[name="priority"]:checked')?.value || 'normale';
-            let base, perKm;
-            if (pr === 'urgente') { base = 1000; perKm = 500; }
-            else if (pr === 'express') { base = 1500; perKm = 700; }
-            else { base = 300; perKm = 300; }
-            const distanceCost = km * perKm;
-            const total = base + distanceCost;
-            // Affichage
-            if (section) section.style.display = 'block';
-            const di = document.getElementById('distance-info');
-            const ti = document.getElementById('time-info');
-            const pb = document.getElementById('price-breakdown');
-            const tp = document.getElementById('total-price');
-            if (di) di.innerHTML = `📏 ${km} km`;
-            if (ti) ti.innerHTML = `⏱️ ${mins} min`;
-            if (pb) pb.innerHTML = `
-                <div class="price-line">
-                    <span class="description">Base (${pr})</span>
-                    <span class="amount">${base} FCFA</span>
-                </div>
-                <div class="price-line">
-                    <span class="description">${km} km × ${perKm} FCFA/km</span>
-                    <span class="amount">${distanceCost} FCFA</span>
-                </div>
-                <div class="price-separator"></div>`;
-            if (tp) {
-                tp.innerHTML = `<span class="total-label">Total estimé</span> <span class="total-amount">${total} FCFA</span>`;
-                // Couleur selon priorité
-                tp.style.borderColor = pr === 'urgente' ? '#FF9800' : pr === 'express' ? '#F44336' : '#4CAF50';
-            }
+            service.getDistanceMatrix({
+                origins: [o],
+                destinations: [d],
+                travelMode: google.maps.TravelMode.DRIVING,
+                unitSystem: google.maps.UnitSystem.METRIC
+            }, function(response, status) {
+                if (status !== google.maps.DistanceMatrixStatus.OK) return;
+                const el = response.rows[0].elements[0];
+                if (el.status !== 'OK') return;
+                // Récupération
+                const distText = el.distance.text;
+                const durText  = el.duration.text;
+                const kmVal    = el.distance.value / 1000;
+                // Priorité choisie
+                let pr = 'normale';
+                prios.forEach(r => { if (r.checked) pr = r.value; });
+                const cfg = PRICING[pr];
+                const cost = cfg.base + Math.ceil(kmVal * cfg.perKm);
+                // Mise à jour UI
+                document.getElementById('distance-info').innerHTML   = `📏 ${distText}`;
+                document.getElementById('time-info').innerHTML       = `⏱️ ${durText}`;
+                document.getElementById('price-breakdown').innerHTML = `
+                    <div class="price-line">
+                        <span class="description">Base (${cfg.name})</span>
+                        <span class="amount">${cfg.base} FCFA</span>
+                    </div>
+                    <div class="price-line">
+                        <span class="description">${kmVal.toFixed(1)} km × ${cfg.perKm} FCFA/km</span>
+                        <span class="amount">${Math.ceil(kmVal * cfg.perKm)} FCFA</span>
+                    </div>
+                    <div class="price-separator"></div>`;
+                const tp = document.getElementById('total-price');
+                tp.innerHTML = `💰 ${cost} FCFA`;
+                tp.style.borderColor = cfg.color;
+                section.style.display = 'block';
+            });
         }
-        // Attacher événements
-        ['input','blur'].forEach(evt => {
-            document.getElementById('departure')?.addEventListener(evt, updateFallbackEstimate);
-            document.getElementById('destination')?.addEventListener(evt, updateFallbackEstimate);
-        });
-        document.querySelectorAll('input[name="priority"]').forEach(r => r.addEventListener('change', updateFallbackEstimate));
-        // Configurer les écouteurs pour le calcul automatique
-        setupPriceCalculationListeners();
-        // Initialiser le service de calcul de prix (tentative immédiate)
-        initializePriceCalculation();
-        // SIMPLE ESTIMATION IMMEDIATE pour formulaire de commande
-        function simpleEstimate() {
-            const dep = document.getElementById('departure')?.value.trim();
-            const dest = document.getElementById('destination')?.value.trim();
-            const pr = document.querySelector('input[name="priority"]:checked')?.value || 'normale';
-            if (dep && dest) {
-                // Fallback rapide sans API
-                const est = computeFallback(dep, dest, pr);
-                document.getElementById('estDistance').value = est.distanceText;
-                document.getElementById('estDuration').value = est.durationText;
-                document.getElementById('estPrice').value = est.totalPrice + ' FCFA';
-            }
-        }
-        // Fonction de calcul de fallback statique
-        function computeFallback(dep, dest, priority) {
-            const km = Math.max(1, Math.min(50, (dep.length + dest.length) / 10));
-            const minutes = Math.ceil(km * 2);
-            let base, rate;
-            switch(priority) {
-                case 'urgente': base = 1000; rate = 500; break;
-                case 'express': base = 1500; rate = 700; break;
-                default: base = 300; rate = 300;
-            }
-            const price = Math.max(base, Math.ceil(km * rate));
-            return {
-                distanceText: km.toFixed(1) + ' km',
-                durationText: minutes + ' min',
-                totalPrice: price
-            };
-        }
-        // Attacher aux champs du formulaire
-        ['input','blur'].forEach(evt => {
-            document.getElementById('departure')?.addEventListener(evt, simpleEstimate);
-            document.getElementById('destination')?.addEventListener(evt, simpleEstimate);
-        });
-        document.querySelectorAll('input[name="priority"]').forEach(r => r.addEventListener('change', simpleEstimate));
+        
+        // Événements
+        dep.addEventListener('blur', calculate);
+        dest.addEventListener('blur', calculate);
+        prios.forEach(r => r.addEventListener('change', calculate));
     });
     </script>
