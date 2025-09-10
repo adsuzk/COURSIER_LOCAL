@@ -1,7 +1,7 @@
 <?php
 // sections/js_google_maps.php - Fonctions Google Maps et géolocalisation
-// Variables globales pour markers
-let markerA = null, markerB = null;
+// Variables globales pour markers (attachées à window)
+var markerA = null, markerB = null;
 ?>
     <!-- Gestion d'erreur Google Maps -->
     <script>
