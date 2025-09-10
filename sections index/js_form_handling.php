@@ -100,177 +100,88 @@
         const orderData = {
             user_id: currentUser.id,
             departure: document.getElementById('departure').value,
-            destination: document.getElementById('destination').value,
-            phone: document.getElementById('senderPhone').value,
-            priority: document.querySelector('input[name="priority"]:checked').value,
-            payment_method: document.querySelector('input[name="payment"]:checked').value,
-            departure_coords: markerA ? {
-                lat: markerA.getPosition().lat(),
-                lng: markerA.getPosition().lng()
-            } : null,
-            destination_coords: markerB ? {
-                lat: markerB.getPosition().lat(),
-                lng: markerB.getPosition().lng()
-            } : null,
-            distance: document.getElementById('distance-info').textContent,
-            price: document.getElementById('price-info').textContent,
-            timestamp: new Date().toISOString()
-        };
-        
-        console.log('Données de commande avant assignation:', orderData);
-        // Appel à l'API pour assigner un coursier
-        fetch('api/assign_courier.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ pickup: orderData.departure_coords })
-        })
-        .then(r => r.json())
-        .then(res => {
-            if (res.success) {
-                orderData.courier = res.courier;
-                console.log('Coursier assigné:', res.courier);
-                // Lancer le paiement/modal final
-                showPaymentModal(orderData);
-            } else {
-                alert(res.error || 'Aucun coursier disponible');
-            }
-        })
-        .catch(() => alert('Erreur réseau lors de l’assignation du coursier'));
-    }
-    
-    // Mise à jour des onglets selon l'état de connexion
-    function updateOrderTabs() {
-        const guestTab = document.querySelector('[data-tab="guest"]');
-        const userTab = document.querySelector('[data-tab="user"]');
-        
-        if (isLoggedIn) {
-            if (guestTab) guestTab.style.display = 'none';
-            if (userTab) userTab.style.display = 'block';
-        } else {
-            if (guestTab) guestTab.style.display = 'block';
-            if (userTab) userTab.style.display = 'none';
-        }
-    }
-    
-    // Auto-complétion et suggestions
-    function setupFormEnhancements() {
-        // Formatage automatique du téléphone
-        setupPhoneFormatting();
-        
-        // Validation des emails
-        setupEmailValidation();
-        
-        // Sauvegarde automatique (draft)
-        setupAutosave();
-    }
-    
-    // Sauvegarde automatique du formulaire
-    function setupAutosave() {
-        const formInputs = document.querySelectorAll('#orderForm input, #orderForm select');
-        
-        formInputs.forEach(input => {
-            input.addEventListener('input', () => {
-                saveFormDraft();
-            });
-        });
-    }
-    
-    function saveFormDraft() {
-        if (!isLoggedIn) return;
-        
-        const formData = {
-            departure: document.getElementById('departure').value,
-            destination: document.getElementById('destination').value,
-            priority: document.querySelector('input[name="priority"]:checked')?.value,
-            payment_method: document.querySelector('input[name="payment"]:checked')?.value,
-            timestamp: Date.now()
-        };
-        
-        localStorage.setItem('orderDraft_' + currentUser.id, JSON.stringify(formData));
-    }
-    
-    function loadFormDraft() {
-        if (!isLoggedIn) return;
-        
-        const draft = localStorage.getItem('orderDraft_' + currentUser.id);
-        if (draft) {
-            const formData = JSON.parse(draft);
-            
-            // Charger seulement si le draft est récent (moins de 24h)
-            if (Date.now() - formData.timestamp < 24 * 60 * 60 * 1000) {
-                document.getElementById('departure').value = formData.departure || '';
-                document.getElementById('destination').value = formData.destination || '';
-                
-                if (formData.priority) {
-                    const priorityRadio = document.querySelector(`input[name="priority"][value="${formData.priority}"]`);
-                    if (priorityRadio) priorityRadio.checked = true;
+            <?php
+            // sections/js_form_handling.php - Validation et formatage du formulaire de commande
+            ?>
+            <script>
+            (() => {
+                // Validation e-mail
+                function isValidEmail(email) {
+                    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
                 }
-                
-                if (formData.payment_method) {
-                    const paymentRadio = document.querySelector(`input[name="payment"][value="${formData.payment_method}"]`);
-                    if (paymentRadio) paymentRadio.checked = true;
+                // Validation téléphone CI
+                function isValidIvorianPhone(phone) {
+                    const clean = phone.replace(/\s/g, '');
+                    return /^((\+225|225|0)\d{8,9})$/.test(clean);
                 }
-            }
-        }
-    }
-    
-    // Fonction utilitaire de debounce
-    function debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    }
-
-    // CALCUL AUTOMATIQUE DES PRIX
-    let priceCalculationService;
-    let lastCalculationRequest = null;
-
-    // Configuration des tarifs
-    const PRICING_CONFIG = {
-        normale: {
-            name: 'Normal',
-            baseFare: 300, // FCFA
-            perKmRate: 300, // FCFA par km
-            color: '#4CAF50'
-        },
-        urgente: {
-            name: 'Urgent',
-            baseFare: 1000, // FCFA
-            perKmRate: 500, // FCFA par km
-            color: '#FF9800'
-        },
-        express: {
-            name: 'Express',
-            baseFare: 1500, // FCFA
-            perKmRate: 700, // FCFA par km
-            color: '#F44336'
-        }
-    };
-
-    // Initialisation du service de calcul des prix
-    function initializePriceCalculation() {
-        if (typeof google !== 'undefined' && google.maps && google.maps.DistanceMatrixService) {
-            priceCalculationService = new google.maps.DistanceMatrixService();
-            console.log('Service de calcul des prix initialisé');
-            
-            // Écouter les changements d'adresses
-            setupPriceCalculationListeners();
-        } else {
-            console.warn('Google Maps API non disponible pour le calcul des prix');
-            setTimeout(initializePriceCalculation, 1000);
-        }
-    }
-
-    // Configuration des écouteurs pour le calcul automatique
-    function setupPriceCalculationListeners() {
-        const departureInput = document.getElementById('departure');
-        const destinationInput = document.getElementById('destination');
+                // Formatage téléphone CI
+                function formatIvorianPhone(phone) {
+                    let d = phone.replace(/\D/g, '');
+                    if (d.startsWith('225')) d = d.slice(3);
+                    if (!d.startsWith('0') && d.length === 8) d = '0'+d;
+                    return d.replace(/(\d{2})(?=\d)/g, '$1 ');
+                }
+                // Affiche une erreur sous le champ
+                function showFieldError(el, msg) {
+                    const prev = el.parentNode.querySelector('.field-error');
+                    if (prev) prev.remove();
+                    const e = document.createElement('div');
+                    e.className = 'field-error';
+                    e.textContent = msg;
+                    e.style.color = '#ff4757';
+                    el.parentNode.appendChild(e);
+                }
+                function hideFieldError(el) {
+                    const prev = el.parentNode.querySelector('.field-error');
+                    if (prev) prev.remove();
+                }
+                function setupPhoneFormatting() {
+                    document.querySelectorAll('input[type=tel]').forEach(i => {
+                        i.addEventListener('input', () => { i.value = formatIvorianPhone(i.value); });
+                        i.addEventListener('blur', () => {
+                            if (i.value && !isValidIvorianPhone(i.value)) {
+                                i.style.borderColor='#ff4757'; showFieldError(i,'Téléphone invalide');
+                            } else { i.style.borderColor=''; hideFieldError(i); }
+                        });
+                    });
+                }
+                function setupEmailValidation() {
+                    document.querySelectorAll('input[type=email]').forEach(i => {
+                        i.addEventListener('blur', () => {
+                            if (i.value && !isValidEmail(i.value)) {
+                                i.style.borderColor='#ff4757'; showFieldError(i,'Email invalide');
+                            } else { i.style.borderColor=''; hideFieldError(i); }
+                        });
+                    });
+                }
+                function validateOrderForm() {
+                    const dep = document.getElementById('departure');
+                    const dst = document.getElementById('destination');
+                    const phone = document.getElementById('senderPhone');
+                    const pr = document.querySelector('input[name=priority]:checked');
+                    let ok = true, errs = [];
+                    if (!dep.value.trim()) { ok=false; errs.push('Départ requis'); dep.style.borderColor='#ff4757'; }
+                    else dep.style.borderColor='';
+                    if (!dst.value.trim()) { ok=false; errs.push('Destination requise'); dst.style.borderColor='#ff4757'; }
+                    else dst.style.borderColor='';
+                    if (!phone.value.trim() || !isValidIvorianPhone(phone.value)) {
+                        ok=false; errs.push('Téléphone invalide'); phone.style.borderColor='#ff4757';
+                    } else phone.style.borderColor='';
+                    if (!pr) { ok=false; errs.push('Priorité requise'); }
+                    if (!ok) alert(errs.join('\n'));
+                    return ok;
+                }
+                function processOrder(e) {
+                    e.preventDefault();
+                    if (validateOrderForm()) document.getElementById('orderForm').submit();
+                }
+                document.addEventListener('DOMContentLoaded', () => {
+                    setupPhoneFormatting(); setupEmailValidation();
+                    const btn = document.querySelector('.submit-btn');
+                    if (btn) btn.addEventListener('click', processOrder);
+                });
+            })();
+            </script>
         const priorityInputs = document.querySelectorAll('input[name="priority"]');
 
         if (departureInput && destinationInput) {
