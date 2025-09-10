@@ -444,7 +444,9 @@
             const debouncedCalculation = debounce(calculatePriceAutomatically, 1500);
             
             // Recalculer automatiquement lors de la saisie ou perte de focus
+            // Recalcul automatique lors de la saisie ou perte de focus
             departureInput.addEventListener('input', debouncedCalculation);
+            departureInput.addEventListener('blur', debouncedCalculation);
             destinationInput.addEventListener('input', debouncedCalculation);
             destinationInput.addEventListener('blur', debouncedCalculation);
             
