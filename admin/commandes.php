@@ -462,6 +462,24 @@ $coursiers = getActiveCouriers();
                             <p><strong>Départ:</strong> <?= htmlspecialchars($commande['adresse_depart'] ?? 'N/A') ?></p>
                             <p><strong>Arrivée:</strong> <?= htmlspecialchars($commande['adresse_arrivee'] ?? 'N/A') ?></p>
                             <p><strong>Priorité:</strong> <?= htmlspecialchars($commande['priorite'] ?? 'normale') ?></p>
+                            <!-- Estimation détaillée admin -->
+                            <div class="admin-price-estimation" data-departure="<?= htmlspecialchars($commande['adresse_depart'] ?? '') ?>" 
+                                 data-destination="<?= htmlspecialchars($commande['adresse_arrivee'] ?? '') ?>" 
+                                 data-priority="<?= htmlspecialchars($commande['priorite'] ?? 'normale') ?>">
+                                <button onclick="loadPriceEstimation(this)" class="btn-estimate" style="
+                                    background: var(--primary-gold); 
+                                    color: #1A1A2E; 
+                                    border: none; 
+                                    padding: 6px 12px; 
+                                    border-radius: 6px; 
+                                    font-size: 0.8rem; 
+                                    cursor: pointer;
+                                    margin-top: 8px;
+                                ">
+                                    📊 Voir estimation détaillée
+                                </button>
+                                <div class="estimation-result"></div>
+                            </div>
                         </div>
                         <div class="detail-section">
                             <h4><i class="fas fa-user"></i> Client</h4>
