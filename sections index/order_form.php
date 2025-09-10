@@ -125,6 +125,124 @@
         }
 
         /* ESTIMATION DE PRIX - CONFORME CHARTE SUZOSKY */
+        .price-calculation-section {
+            background: rgba(212, 168, 83, 0.1);
+            border: 2px solid rgba(212, 168, 83, 0.3);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(212, 168, 83, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .price-calculation-section:hover {
+            background: rgba(212, 168, 83, 0.15);
+            border-color: rgba(212, 168, 83, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(212, 168, 83, 0.3);
+        }
+
+        .price-header h3 {
+            color: #D4A853;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-align: center;
+            background: linear-gradient(135deg, #D4A853 0%, #F4E4B8 50%, #D4A853 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .price-details {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .distance-info, .time-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .distance-info .label, .time-info .label {
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .distance-info .value, .time-info .value {
+            color: #fff;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .price-breakdown {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid rgba(212, 168, 83, 0.3);
+        }
+
+        .price-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .price-line .description {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+        }
+
+        .price-line .amount {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .price-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding: 12px 0;
+            border-top: 2px solid #D4A853;
+        }
+
+        .price-total .total-label {
+            color: #D4A853;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .price-total .total-amount {
+            color: #D4A853;
+            font-weight: 900;
+            font-size: 1.4rem;
+            text-shadow: 0 2px 8px rgba(212, 168, 83, 0.4);
+        }
+
+        /* Responsive pour prix */
+        @media (max-width: 768px) {
+            .price-calculation-section {
+                padding: 20px;
+                margin: 15px 0;
+            }
+            
+            .price-header h3 {
+                font-size: 1.1rem;
+            }
+            
+            .price-total .total-amount {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* ESTIMATION DE PRIX - CONFORME CHARTE SUZOSKY */
         .price-estimate {
             background: rgba(212, 168, 83, 0.1);
             border: 2px solid rgba(212, 168, 83, 0.3);
