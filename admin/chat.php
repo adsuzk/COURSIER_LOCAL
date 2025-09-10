@@ -520,11 +520,17 @@ $messages = [];
             </div>
         </div>
         <div class="conversations" id="conversationsList">
-            <!-- Conversations exemples -->
-            <div class="conversation-item active" data-conversation-id="1" onclick="openConversation(1)">
-                <div class="conversation-avatar">JD</div>
+            <!-- Conversations avec indicateurs de statut améliorés -->
+            <div class="conversation-item active" data-conversation-id="1" data-status="vip" data-unread="2" onclick="openConversation(1)">
+                <div class="conversation-avatar" style="position: relative;">
+                    JD
+                    <div style="position: absolute; top: -2px; right: -2px; width: 12px; height: 12px; background: var(--success-color); border: 2px solid var(--primary-dark); border-radius: 50%; box-shadow: 0 0 8px var(--success-color);"></div>
+                </div>
                 <div class="conversation-info">
-                    <div class="conversation-name">Jean Dupont</div>
+                    <div class="conversation-name" style="display: flex; align-items: center; gap: 5px;">
+                        Jean Dupont
+                        <span style="background: linear-gradient(45deg, #FFD700, #FFA500); color: var(--primary-dark); font-size: 0.6rem; padding: 2px 6px; border-radius: 8px; font-weight: 700;">VIP</span>
+                    </div>
                     <div class="conversation-preview">Merci pour la livraison rapide...</div>
                 </div>
                 <div class="conversation-meta">
@@ -532,14 +538,34 @@ $messages = [];
                     <div class="unread-count">2</div>
                 </div>
             </div>
-            <div class="conversation-item" data-conversation-id="2" onclick="openConversation(2)">
-                <div class="conversation-avatar">MB</div>
+            <div class="conversation-item" data-conversation-id="2" data-status="standard" data-unread="0" onclick="openConversation(2)">
+                <div class="conversation-avatar" style="position: relative;">
+                    MB
+                    <div style="position: absolute; top: -2px; right: -2px; width: 12px; height: 12px; background: var(--warning-color); border: 2px solid var(--primary-dark); border-radius: 50%;"></div>
+                </div>
                 <div class="conversation-info">
                     <div class="conversation-name">Marie Bernard</div>
                     <div class="conversation-preview">Pouvez-vous changer l'adresse...</div>
                 </div>
                 <div class="conversation-meta">
                     <div class="conversation-time">13:45</div>
+                </div>
+            </div>
+            <div class="conversation-item" data-conversation-id="3" data-status="business" data-unread="1" onclick="openConversation(3)">
+                <div class="conversation-avatar" style="background: linear-gradient(135deg, #6366F1, #8B5CF6);">
+                    SA
+                    <div style="position: absolute; top: -2px; right: -2px; width: 12px; height: 12px; background: var(--success-color); border: 2px solid var(--primary-dark); border-radius: 50%; box-shadow: 0 0 8px var(--success-color);"></div>
+                </div>
+                <div class="conversation-info">
+                    <div class="conversation-name" style="display: flex; align-items: center; gap: 5px;">
+                        Suzosky Academy
+                        <span style="background: linear-gradient(45deg, #6366F1, #8B5CF6); color: white; font-size: 0.6rem; padding: 2px 6px; border-radius: 8px; font-weight: 700;">PRO</span>
+                    </div>
+                    <div class="conversation-preview">Contrat de partenariat...</div>
+                </div>
+                <div class="conversation-meta">
+                    <div class="conversation-time">12:15</div>
+                    <div class="unread-count">1</div>
                 </div>
             </div>
         </div>
