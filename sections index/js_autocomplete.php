@@ -94,10 +94,14 @@
                 updateAddressFromCoordinates(newPosition, 'departure');
             });
             
-            // Calculer l'itinéraire si les deux adresses sont remplies
+            // Calculer l'itinéraire et le prix si les deux adresses sont remplies
             const destination = destinationInput.value;
             if (destination && destination.trim() !== '' && markerB) {
                 calculateRoute(place.geometry.location, markerB.getPosition());
+            }
+            // Déclencher le calcul automatique du prix
+            if (departureInput.value.trim() && destinationInput.value.trim()) {
+                calculatePriceAutomatically();
             }
         });
 
@@ -154,10 +158,14 @@
                 updateAddressFromCoordinates(newPosition, 'destination');
             });
             
-            // Calculer l'itinéraire si les deux adresses sont remplies
+            // Calculer l'itinéraire et le prix si les deux adresses sont remplies
             const departure = departureInput.value;
             if (departure && departure.trim() !== '' && markerA) {
                 calculateRoute(markerA.getPosition(), place.geometry.location);
+            }
+            // Déclencher le calcul automatique du prix
+            if (departureInput.value.trim() && destinationInput.value.trim()) {
+                calculatePriceAutomatically();
             }
         });
 
