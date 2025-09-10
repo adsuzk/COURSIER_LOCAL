@@ -7,26 +7,33 @@
     align-items: center;
     gap: 15px;
     margin: 20px 0;
-}
-.payment-methods-section label {
-    display: inline-block;
-    cursor: pointer;
-}
-.payment-methods-section input[type="radio"] {
-    display: none;
-}
-.payment-methods-section input[type="radio"] + img {
-    width: 32px;
-    opacity: 0.6;
-    border: 2px solid transparent;
-    border-radius: 50%;
-    padding: 4px;
-    transition: opacity 0.3s, border-color 0.3s;
-}
-.payment-methods-section input[type="radio"]:checked + img {
-    opacity: 1;
-    border-color: #D4A853;
-}
+<?php
+// Simplified payment methods section
+?>
+<style>
+/* Simplified Suzosky payment icons selector */
+    .payment-methods-section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+        margin: 20px 0;
+    }
+    .payment-methods-section input[type="radio"] {
+        display: none;
+    }
+    .payment-methods-section label {
+        cursor: pointer;
+    }
+    .payment-methods-section label img {
+        width: 24px;
+        opacity: 0.6;
+        transition: opacity 0.3s, transform 0.3s;
+    }
+    .payment-methods-section input[type="radio"]:checked + img {
+        opacity: 1;
+        transform: scale(1.2);
+    }
 </style>
 
 <div class="payment-methods-section">
@@ -55,109 +62,6 @@
         <img src="assets/img/payment/card.svg" alt="Carte bancaire">
     </label>
 </div>
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.payment-methods-section.show {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.payment-header {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.payment-header h3 {
-    color: #D4A853;
-    font-size: 1.3rem;
-    font-weight: 700;
-    font-family: 'Montserrat', sans-serif;
-    margin-bottom: 8px;
-    background: linear-gradient(135deg, #D4A853 0%, #F4E4B8 50%, #D4A853 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.payment-subtitle {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.9rem;
-    font-weight: 500;
-}
-
-.payment-options-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 15px;
-    margin-top: 20px;
-}
-
-.payment-option {
-    position: relative;
-    overflow: hidden;
-    border-radius: 12px;
-    transition: all 0.3s ease;
-}
-
-.payment-option input[type="radio"] {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.payment-option label {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 18px 20px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    color: #fff;
-    font-weight: 500;
-    position: relative;
-    overflow: hidden;
-}
-
-.payment-option label::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(212, 168, 83, 0.1), transparent);
-    transition: left 0.5s ease;
-}
-
-.payment-option:hover label::before {
-    left: 100%;
-}
-
-.payment-option input[type="radio"]:checked + label {
-    background: rgba(212, 168, 83, 0.15);
-    border-color: #D4A853;
-    box-shadow: 0 8px 25px rgba(212, 168, 83, 0.3);
-    transform: translateY(-2px);
-}
-
-.payment-option input[type="radio"]:checked + label::after {
-    content: '✓';
-    position: absolute;
-    top: 8px;
-    right: 12px;
-    color: #D4A853;
-    font-weight: 900;
-    font-size: 1.2rem;
-}
-
-.payment-option label:hover {
     background: rgba(255, 255, 255, 0.1);
     border-color: rgba(255, 255, 255, 0.3);
     transform: translateY(-2px);
