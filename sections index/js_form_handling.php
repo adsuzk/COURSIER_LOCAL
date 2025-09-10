@@ -80,206 +80,41 @@
             })
             .catch(() => alert('Erreur réseau lors de la vérification du numéro'));
             return;
-        }
-        // Utilisateur connecté : soumettre la commande
-        submitOrder();
-    }
-
-    // Soumission du formulaire de commande
-    function submitOrder() {
-        if (!validateOrderForm()) {
-            return;
-        }
-        
-        // Vérifier l'authentification
-        if (!window.currentClient) {
-            openConnexionModal();
-            return;
-        }
-        
-        const orderData = {
-            user_id: currentUser.id,
-            departure: document.getElementById('departure').value,
-            <?php
-            // sections/js_form_handling.php - Validation et formatage du formulaire de commande
-            ?>
-            <script>
-            (() => {
-                // Validation e-mail
-                function isValidEmail(email) {
-                    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-                }
-                // Validation téléphone CI
-                function isValidIvorianPhone(phone) {
-                    const clean = phone.replace(/\s/g, '');
-                    return /^((\+225|225|0)\d{8,9})$/.test(clean);
-                }
-                // Formatage téléphone CI
-                function formatIvorianPhone(phone) {
-                    let d = phone.replace(/\D/g, '');
-                    if (d.startsWith('225')) d = d.slice(3);
-                    if (!d.startsWith('0') && d.length === 8) d = '0'+d;
-                    return d.replace(/(\d{2})(?=\d)/g, '$1 ');
-                }
-                // Affiche une erreur sous le champ
-                function showFieldError(el, msg) {
-                    const prev = el.parentNode.querySelector('.field-error');
-                    if (prev) prev.remove();
-                    const e = document.createElement('div');
-                    e.className = 'field-error';
-                    e.textContent = msg;
-                    e.style.color = '#ff4757';
-                    el.parentNode.appendChild(e);
-                }
-                function hideFieldError(el) {
-                    const prev = el.parentNode.querySelector('.field-error');
-                    if (prev) prev.remove();
-                }
-                function setupPhoneFormatting() {
-                    document.querySelectorAll('input[type=tel]').forEach(i => {
-                        i.addEventListener('input', () => { i.value = formatIvorianPhone(i.value); });
-                        i.addEventListener('blur', () => {
-                            if (i.value && !isValidIvorianPhone(i.value)) {
-                                i.style.borderColor='#ff4757'; showFieldError(i,'Téléphone invalide');
-                            } else { i.style.borderColor=''; hideFieldError(i); }
-                        });
-                    });
-                }
-                function setupEmailValidation() {
-                    document.querySelectorAll('input[type=email]').forEach(i => {
-                        i.addEventListener('blur', () => {
-                            if (i.value && !isValidEmail(i.value)) {
-                                i.style.borderColor='#ff4757'; showFieldError(i,'Email invalide');
-                            } else { i.style.borderColor=''; hideFieldError(i); }
-                        });
-                    });
-                }
-                function validateOrderForm() {
-                    const dep = document.getElementById('departure');
-                    const dst = document.getElementById('destination');
-                    const phone = document.getElementById('senderPhone');
-                    const pr = document.querySelector('input[name=priority]:checked');
-                    let ok = true, errs = [];
-                    if (!dep.value.trim()) { ok=false; errs.push('Départ requis'); dep.style.borderColor='#ff4757'; }
-                    else dep.style.borderColor='';
-                    if (!dst.value.trim()) { ok=false; errs.push('Destination requise'); dst.style.borderColor='#ff4757'; }
-                    else dst.style.borderColor='';
-                    if (!phone.value.trim() || !isValidIvorianPhone(phone.value)) {
-                        ok=false; errs.push('Téléphone invalide'); phone.style.borderColor='#ff4757';
-                    } else phone.style.borderColor='';
-                    if (!pr) { ok=false; errs.push('Priorité requise'); }
-                    if (!ok) alert(errs.join('\n'));
-                    return ok;
-                }
-                function processOrder(e) {
-                    e.preventDefault();
-                    if (validateOrderForm()) document.getElementById('orderForm').submit();
-                }
-                document.addEventListener('DOMContentLoaded', () => {
-                    setupPhoneFormatting(); setupEmailValidation();
-                    const btn = document.querySelector('.submit-btn');
-                    if (btn) btn.addEventListener('click', processOrder);
-                });
-            })();
-            </script>
-        const priorityInputs = document.querySelectorAll('input[name="priority"]');
-
-        if (departureInput && destinationInput) {
-            console.log('setupPriceCalculationListeners: initialisation des écouteurs');
-            // Calcul automatique avec debounce sur les adresses
-            const debouncedCalculation = debounce(calculatePriceAutomatically, 1500);
-            
-            // Recalculer automatiquement lors de la saisie ou perte de focus
-            // Recalcul automatique lors de la saisie ou perte de focus
-            departureInput.addEventListener('input', debouncedCalculation);
-            departureInput.addEventListener('blur', debouncedCalculation);
-            destinationInput.addEventListener('input', debouncedCalculation);
-            destinationInput.addEventListener('blur', debouncedCalculation);
-            
-            // Calcul immédiat sur changement de priorité
-            priorityInputs.forEach(input => {
-                input.addEventListener('change', event => {
-                    calculatePriceAutomatically();
-                });
+        <?php
+        // sections/js_form_handling.php - Validation et formatage du formulaire de commande
+        ?>
+        <script>
+        (() => {
+            const orderForm = document.getElementById('orderForm');
+            // Validation e-mail
+            function isValidEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+            // Validation téléphone CI
+            function isValidPhone(v) { const c=v.replace(/\s/g,''); return /^((\+225|225|0)\d{8,9})$/.test(c); }
+            // Formatage téléphone CI
+            function formatPhone(v) {
+                let d=v.replace(/\D/g,''); if(d.startsWith('225'))d=d.slice(3); if(!d.startsWith('0')&&d.length===8)d='0'+d;
+                return d.replace(/(\d{2})(?=\d)/g,'$1 ');
+            }
+            function showError(el,msg){ let e=el.parentNode.querySelector('.field-error'); if(e)e.remove(); e=document.createElement('div');e.className='field-error';e.style.color='#f00';e.textContent=msg;el.parentNode.appendChild(e); }
+            function hideError(el){ let e=el.parentNode.querySelector('.field-error'); if(e)e.remove(); }
+            function validate() {
+                const dep=document.getElementById('departure'), dst=document.getElementById('destination'), phone=document.getElementById('senderPhone'), pr=document.querySelector('input[name=priority]:checked');
+                let ok=true, msgs=[];
+                if(!dep.value.trim()){ok=false;msgs.push('Départ requis');dep.style.borderColor='#f00';}else{dep.style.borderColor='';}
+                if(!dst.value.trim()){ok=false;msgs.push('Destination requise');dst.style.borderColor='#f00';}else{dst.style.borderColor='';}
+                if(!phone.value.trim()||!isValidPhone(phone.value)){ok=false;msgs.push('Téléphone invalide');phone.style.borderColor='#f00';}else{phone.style.borderColor='';}
+                if(!pr){ok=false;msgs.push('Priorité requise');}
+                if(!ok){alert(msgs.join('\n'));}
+                return ok;
+            }
+            function onSubmit(e){ e.preventDefault(); if(validate()){orderForm.submit();} }
+            document.addEventListener('DOMContentLoaded',()=>{
+                document.getElementById('senderPhone').addEventListener('input',e=>e.target.value=formatPhone(e.target.value));
+                document.querySelectorAll('input[type=email]').forEach(i=>i.addEventListener('blur',e=>{if(i.value&&!isValidEmail(i.value)){showError(i,'Email invalide');}else{hideError(i);}}));
+                const btn=document.querySelector('.submit-btn'); if(btn){btn.addEventListener('click',onSubmit);}  
             });
-        }
-    }
-
-    // Fonction principale de calcul automatique
-    function calculatePriceAutomatically() {
-    console.log('calculatePriceAutomatically: appelée');
-    const departure = document.getElementById('departure')?.value?.trim();
-        const destination = document.getElementById('destination')?.value?.trim();
-        const selectedPriority = document.querySelector('input[name="priority"]:checked')?.value || 'normale';
-
-        // Vérifier si on a les deux adresses
-        if (!departure || !destination || departure.length < 3 || destination.length < 3) {
-            clearPriceDisplay();
-            return;
-        }
-
-        // Annuler la requête précédente si elle existe
-        if (lastCalculationRequest) {
-            lastCalculationRequest.abort = true;
-        }
-
-    // ESTIMATION IMMÉDIATE (fallback) pour garantir affichage sans attendre l'API
-    estimatePriceWithoutAPI(departure, destination, selectedPriority);
-    return;
-    }
-
-    // Calcul et affichage du prix
-    function calculateAndDisplayPrice(distance, duration, priority) {
-        const config = PRICING_CONFIG[priority] || PRICING_CONFIG.normale;
-        const distanceKm = distance.value / 1000; // Convertir en km
-        
-        // Calculs
-        const baseFare = config.baseFare;
-        const distanceCost = Math.ceil(distanceKm * config.perKmRate);
-        const totalPrice = baseFare + distanceCost;
-        
-        // Affichage
-        displayPriceBreakdown({
-            distance: distance,
-            duration: duration,
-            priority: priority,
-            config: config,
-            baseFare: baseFare,
-            distanceCost: distanceCost,
-            totalPrice: totalPrice,
-            distanceKm: distanceKm
-        });
-    }
-
-    // Affichage détaillé du calcul de prix
-    function displayPriceBreakdown(calculation) {
-        const priceSection = document.getElementById('price-calculation-section');
-        const distanceInfo = document.getElementById('distance-info');
-        const timeInfo = document.getElementById('time-info');
-        const priceBreakdown = document.getElementById('price-breakdown');
-        const totalPriceElement = document.getElementById('total-price');
-
-        if (!priceSection) return;
-
-        // Afficher la section
-        priceSection.style.display = 'block';
-        priceSection.classList.add('price-calculated');
-
-        // Distance et durée
-        if (distanceInfo) {
-            distanceInfo.innerHTML = `
-                <i class="fas fa-route"></i>
-                <span class="distance-value">${calculation.distance.text}</span>
-            `;
-            // Champs estimés basiques
-            const estDistanceInput = document.getElementById('estDistance');
-            if (estDistanceInput) estDistanceInput.value = calculation.distance.text;
-        }
-
-        if (timeInfo) {
-            timeInfo.innerHTML = `
-                <i class="fas fa-clock"></i>
-                <span class="time-value">${calculation.duration.text}</span>
+        })();
+        </script>
             `;
             const estDurationInput = document.getElementById('estDuration');
             if (estDurationInput) estDurationInput.value = calculation.duration.text;
