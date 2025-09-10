@@ -515,11 +515,13 @@
             const o = dep.value.trim();
             const d = dest.value.trim();
             // Debug: log des valeurs saisies
-            console.log('PriceCalc.calculate appelé avec', o, d);
+            console.log('🧮 PriceCalc.calculate appelé avec:', {depart: o, destination: d});
             if (!o || !d) {
+                console.log('⚠️ Un des champs est vide, masquage section');
                 section.style.display = 'none';
                 return;
             }
+            console.log('🚀 Appel Google DistanceMatrix...');
             service.getDistanceMatrix({
                 origins: [o],
                 destinations: [d],
