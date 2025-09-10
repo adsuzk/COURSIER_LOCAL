@@ -1,10 +1,17 @@
 <?php
-session_start();
+// Ne pas relancer session_start si elle est déjà active
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
 require_once __DIR__ . '/../config.php';
 $pdo = getPDO();
-
 // Statistiques dynamiques : seules connexions coursiers actives
-$onlineCouriers = (int)$pdo->query("SELECT COUNT(*) FROM agents_suzosky WHERE type_poste='coursier' AND status='actif'")->fetchColumn();
+try {
+    $onlineCouriers = (int)$pdo->query("SELECT COUNT(*) FROM agents_suzosky WHERE type_poste='coursier' AND status='actif'")->fetchColumn();
+} catch (PDOException $e) {
+    // Table non trouvée en local ou autre erreur
+    $onlineCouriers = 0;
+}
 // Désactivation des autres statistiques
 // $agentCount, $ordersToday, $revenueToday, $clientsCount, $supportMessages
 
