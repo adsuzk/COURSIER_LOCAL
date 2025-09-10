@@ -442,12 +442,16 @@
             // Calcul automatique avec debounce sur les adresses
             const debouncedCalculation = debounce(calculatePriceAutomatically, 1500);
             
+            // Recalculer automatiquement lors de la saisie ou perte de focus
             departureInput.addEventListener('input', debouncedCalculation);
+            destinationInput.addEventListener('input', debouncedCalculation);
             destinationInput.addEventListener('blur', debouncedCalculation);
             
             // Calcul immédiat sur changement de priorité
             priorityInputs.forEach(input => {
-                input.addEventListener('change', calculatePriceAutomatically);
+                input.addEventListener('change', event => {
+                    calculatePriceAutomatically();
+                });
             });
         }
     }
