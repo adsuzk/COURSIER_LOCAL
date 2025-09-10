@@ -134,18 +134,19 @@ $messages = [];
 }
 
 .sidebar-header {
-    padding: 20px;
+    padding: 15px 20px;
     border-bottom: 1px solid var(--glass-border);
     background: rgba(255,255,255,0.05);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    min-height: 60px;
 }
 
 .sidebar-header h3 {
     color: var(--primary-gold);
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-family: 'Montserrat', sans-serif;
 }
 
