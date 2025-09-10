@@ -369,10 +369,11 @@ $messages = [];
 
 /* === MESSAGES === */
 .message {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     display: flex;
     align-items: flex-end;
-    gap: 10px;
+    gap: 12px;
+    animation: messageSlideIn 0.3s ease;
 }
 
 .message.admin {
@@ -382,36 +383,49 @@ $messages = [];
 .message.admin .message-content {
     background: var(--gradient-gold);
     color: var(--primary-dark);
-    border-radius: 18px 18px 5px 18px;
+    border-radius: 20px 20px 8px 20px;
+    max-width: 75%;
 }
 
 .message.client .message-content {
-    background: rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.12);
     color: #FFFFFF;
-    border-radius: 18px 18px 18px 5px;
+    border-radius: 20px 20px 20px 8px;
+    max-width: 75%;
 }
 
 .message-content {
-    max-width: 70%;
-    padding: 12px 18px;
+    padding: 15px 20px;
     backdrop-filter: blur(10px);
     border: 1px solid var(--glass-border);
     position: relative;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
 .message-content p {
     margin: 0;
-    font-size: 0.9rem;
-    line-height: 1.4;
+    font-size: 0.95rem;
+    line-height: 1.5;
     font-weight: 500;
 }
 
 .message-time {
     display: block;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     opacity: 0.7;
-    margin-top: 5px;
+    margin-top: 8px;
     font-weight: 400;
+}
+
+@keyframes messageSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* === ZONE SAISIE MESSAGE === */
