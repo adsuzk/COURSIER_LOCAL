@@ -1,17 +1,60 @@
 <?php
-// sections index/payment_methods.php - Gestion des modes de paiement
-?>
-
 <style>
-/* === STYLES MODES DE PAIEMENT SUZOSKY === */
+/* Simplified payment icons selector */
 .payment-methods-section {
-    background: rgba(255, 255, 255, 0.08);
-    border: 2px solid rgba(212, 168, 83, 0.3);
-    border-radius: 18px;
-    padding: 25px;
-    margin: 25px 0;
-    backdrop-filter: blur(15px);
-    box-shadow: 0 8px 32px rgba(212, 168, 83, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin: 20px 0;
+}
+.payment-methods-section label {
+    display: inline-block;
+    cursor: pointer;
+}
+.payment-methods-section input[type="radio"] {
+    display: none;
+}
+.payment-methods-section input[type="radio"] + img {
+    width: 32px;
+    opacity: 0.6;
+    border: 2px solid transparent;
+    border-radius: 50%;
+    padding: 4px;
+    transition: opacity 0.3s, border-color 0.3s;
+}
+.payment-methods-section input[type="radio"]:checked + img {
+    opacity: 1;
+    border-color: #D4A853;
+}
+</style>
+
+<div class="payment-methods-section">
+    <label>
+        <input type="radio" name="paymentMethod" value="cash" required>
+        <img src="assets/img/payment/cash.svg" alt="Espèces">
+    </label>
+    <label>
+        <input type="radio" name="paymentMethod" value="orange_money">
+        <img src="assets/img/payment/orange-money.svg" alt="Orange Money">
+    </label>
+    <label>
+        <input type="radio" name="paymentMethod" value="mtn_money">
+        <img src="assets/img/payment/mtn-money.svg" alt="MTN Money">
+    </label>
+    <label>
+        <input type="radio" name="paymentMethod" value="moov_money">
+        <img src="assets/img/payment/moov-money.svg" alt="Moov Money">
+    </label>
+    <label>
+        <input type="radio" name="paymentMethod" value="wave">
+        <img src="assets/img/payment/wave.svg" alt="Wave">
+    </label>
+    <label>
+        <input type="radio" name="paymentMethod" value="card">
+        <img src="assets/img/payment/card.svg" alt="Carte bancaire">
+    </label>
+</div>
     opacity: 0;
     transform: translateY(20px);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
