@@ -31576,3 +31576,280 @@
         }
     ]
 }
+{
+    "system": {
+        "timestamp": "2025-09-10 19:03:38.000000",
+        "microtime": 1757523818.837933,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "INDEX",
+        "level": "INFO",
+        "pid": 12860,
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/140.0.0.0 Safari\/537.36 Edg\/140.0.0.0",
+        "ip_address": "::1",
+        "request_uri": "\/COURSIER_LOCAL\/",
+        "request_method": "GET",
+        "session_id": "ubsctss9nkt2f9ppsv9dctup8u",
+        "execution_time": 0.1152,
+        "file": "logging_hooks.php",
+        "line": 16,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "Démarrage interface INDEX",
+    "context": {
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/140.0.0.0 Safari\/537.36 Edg\/140.0.0.0",
+        "ip_address": "::1",
+        "request_uri": "\/COURSIER_LOCAL\/",
+        "request_method": "GET",
+        "session_status": 2,
+        "php_version": "8.2.12",
+        "memory_limit": "512M"
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\logging_hooks.php",
+            "line": 16,
+            "function": "logInfo"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\index.php",
+            "line": 18,
+            "function": "initLogging"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-10 19:03:38.000000",
+        "microtime": 1757523818.950047,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "INDEX",
+        "level": "INFO",
+        "pid": 12860,
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/140.0.0.0 Safari\/537.36 Edg\/140.0.0.0",
+        "ip_address": "::1",
+        "request_uri": "\/COURSIER_LOCAL\/",
+        "request_method": "GET",
+        "session_id": "ubsctss9nkt2f9ppsv9dctup8u",
+        "execution_time": 0.2249,
+        "file": "index.php",
+        "line": 21,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "Chargement page d'accueil",
+    "context": {
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/140.0.0.0 Safari\/537.36 Edg\/140.0.0.0",
+        "ip_address": "::1",
+        "referer": "direct"
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\index.php",
+            "line": 21,
+            "function": "logInfo"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-10 19:03:39.000000",
+        "microtime": 1757523819.04521,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "INDEX",
+        "level": "INFO",
+        "pid": 12860,
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/140.0.0.0 Safari\/537.36 Edg\/140.0.0.0",
+        "ip_address": "::1",
+        "request_uri": "\/COURSIER_LOCAL\/",
+        "request_method": "GET",
+        "session_id": "ubsctss9nkt2f9ppsv9dctup8u",
+        "execution_time": 0.32,
+        "file": "index.php",
+        "line": 65,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "Page d'accueil chargée avec succès",
+    "context": {
+        "sections_loaded": 18,
+        "load_time": 0.2073
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\index.php",
+            "line": 65,
+            "function": "logInfo"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-10 19:03:39.000000",
+        "microtime": 1757523819.10415,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "INDEX",
+        "level": "INFO",
+        "pid": 12860,
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/140.0.0.0 Safari\/537.36 Edg\/140.0.0.0",
+        "ip_address": "::1",
+        "request_uri": "\/COURSIER_LOCAL\/",
+        "request_method": "GET",
+        "session_id": "ubsctss9nkt2f9ppsv9dctup8u",
+        "execution_time": 0.379,
+        "file": "advanced_logger.php",
+        "line": 354,
+        "function": "logPerformance",
+        "class": "AdvancedLogger"
+    },
+    "message": "Performance: index_page_complete",
+    "context": {
+        "operation": "index_page_complete",
+        "duration": 0.266247034072876,
+        "memory_usage": 2097152,
+        "peak_memory": 2097152,
+        "memory_limit": "512M"
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 230,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 354,
+            "function": "logPerformance",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\index.php",
+            "line": 90,
+            "function": "logPerformance"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-10 19:03:39.000000",
+        "microtime": 1757523819.18733,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "INDEX",
+        "level": "INFO",
+        "pid": 12860,
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/140.0.0.0 Safari\/537.36 Edg\/140.0.0.0",
+        "ip_address": "::1",
+        "request_uri": "\/COURSIER_LOCAL\/",
+        "request_method": "GET",
+        "session_id": "ubsctss9nkt2f9ppsv9dctup8u",
+        "execution_time": 0.4621,
+        "file": "advanced_logger.php",
+        "line": 354,
+        "function": "logPerformance",
+        "class": "AdvancedLogger"
+    },
+    "message": "Performance: interface_INDEX",
+    "context": {
+        "operation": "interface_INDEX",
+        "duration": 0.3494150638580322,
+        "memory_usage": 2097152,
+        "peak_memory": 2097152,
+        "memory_limit": "512M"
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 230,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 354,
+            "function": "logPerformance",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\logging_hooks.php",
+            "line": 36,
+            "function": "logPerformance"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-10 19:03:39.000000",
+        "microtime": 1757523819.294308,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "INDEX",
+        "level": "INFO",
+        "pid": 12860,
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/140.0.0.0 Safari\/537.36 Edg\/140.0.0.0",
+        "ip_address": "::1",
+        "request_uri": "\/COURSIER_LOCAL\/",
+        "request_method": "GET",
+        "session_id": "ubsctss9nkt2f9ppsv9dctup8u",
+        "execution_time": 0.5691,
+        "file": "logging_hooks.php",
+        "line": 38,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "Fin interface INDEX",
+    "context": {
+        "execution_time": 0.3494,
+        "memory_usage": 2097152,
+        "peak_memory": 2097152,
+        "included_files": 21,
+        "response_code": 200
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\logging_hooks.php",
+            "line": 38,
+            "function": "logInfo"
+        },
+        {
+            "function": "{closure}"
+        }
+    ]
+}
