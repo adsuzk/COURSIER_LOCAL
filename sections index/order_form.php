@@ -746,7 +746,8 @@
         const dest = document.getElementById('destination').value.trim();
         if (!dep || !dest) return;
         const pr = document.querySelector('input[name="priority"]:checked').value;
-        fetch(`./Test/test_distance_api.php?origin=${encodeURIComponent(dep)}&destination=${encodeURIComponent(dest)}`)
+        // Chemin relatif depuis la page index.php vers Test/test_distance_api.php
+        fetch(`Test/test_distance_api.php?origin=${encodeURIComponent(dep)}&destination=${encodeURIComponent(dest)}`)
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
