@@ -54,6 +54,12 @@ console.log('🔧 Module de calcul de prix chargé');
                 console.log('📡 Réponse Google DistanceMatrix:', {status, response});
                 if (status !== 'OK') {
                     console.error('❌ DistanceMatrixService status:', status);
+                    // Afficher une erreur si la clé n'est pas autorisée
+                    if (status === 'REQUEST_DENIED') {
+                        section.style.display = 'block';
+                        section.classList.add('price-error');
+                        section.innerHTML = '<div class="error-message">Clé API non autorisée pour Distance Matrix</div>';
+                    }
                     return;
                 }
                 const el = response.rows[0].elements[0];
