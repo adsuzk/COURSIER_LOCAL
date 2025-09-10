@@ -477,56 +477,9 @@
             lastCalculationRequest.abort = true;
         }
 
-        // Afficher le loading
-        showPriceLoading();
-
-        // Créer une nouvelle requête
-        const currentRequest = {
-            abort: false,
-            timestamp: Date.now()
-        };
-        lastCalculationRequest = currentRequest;
-
-        // Calculer la distance avec Google Distance Matrix
-        if (priceCalculationService) {
-            priceCalculationService.getDistanceMatrix({
-                origins: [departure],
-                destinations: [destination],
-                travelMode: google.maps.TravelMode.DRIVING,
-                unitSystem: google.maps.UnitSystem.METRIC,
-                avoidHighways: false,
-                avoidTolls: false
-            }, (response, status) => {
-                // Vérifier si cette requête n'a pas été annulée
-                if (currentRequest.abort) {
-                    return;
-                }
-
-                if (status === google.maps.DistanceMatrixStatus.OK) {
-                    const element = response.rows[0].elements[0];
-                    
-                    if (element.status === 'OK') {
-                        const distance = element.distance;
-                        const duration = element.duration;
-                        
-                        // Calculer et afficher le prix
-                        calculateAndDisplayPrice(distance, duration, selectedPriority);
-                    } else {
-                        showPriceError('Impossible de calculer la distance entre ces adresses');
-                    }
-                } else {
-                    showPriceError('Erreur du service de calcul de distance');
-                }
-                
-                // Nettoyer la référence
-                if (lastCalculationRequest === currentRequest) {
-                    lastCalculationRequest = null;
-                }
-            });
-        } else {
-            // Fallback : estimation basique
-            estimatePriceWithoutAPI(departure, destination, selectedPriority);
-        }
+    // ESTIMATION IMMÉDIATE (fallback) pour garantir affichage sans attendre l'API
+    estimatePriceWithoutAPI(departure, destination, selectedPriority);
+    return;
     }
 
     // Calcul et affichage du prix
