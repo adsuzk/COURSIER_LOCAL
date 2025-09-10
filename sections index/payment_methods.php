@@ -99,61 +99,61 @@
     filter: brightness(1.1);
 }
 
-.payment-details {
-    flex: 1;
-}
-
-.payment-name {
-    display: block;
-    font-weight: 700;
-    font-size: 1.05rem;
-    margin-bottom: 5px;
-    color: #fff;
-    font-family: 'Montserrat', sans-serif;
-}
-
-.payment-info {
-    display: block;
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.7);
-    font-weight: 400;
-    line-height: 1.3;
-}
-
-.payment-badge {
-    display: inline-block;
-    background: rgba(212, 168, 83, 0.2);
-    color: #D4A853;
-    font-size: 0.7rem;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 8px;
-    margin-top: 5px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-/* Catégories de paiement */
-.payment-category {
-    margin-bottom: 25px;
-}
-
-.payment-category-title {
-    color: #D4A853;
-    font-size: 1rem;
-    font-weight: 700;
-    margin-bottom: 15px;
+<?php
+// Simplified payment methods section
+?>
+<style>
+/* Simplified Suzosky payment icons selector */
+.payment-methods-section {
     display: flex;
+    justify-content: center;
     align-items: center;
-    gap: 10px;
-    font-family: 'Montserrat', sans-serif;
-    padding-left: 5px;
+    gap: 12px;
+    margin: 20px 0;
 }
+.payment-methods-section input[type="radio"] {
+    display: none;
+}
+.payment-methods-section label {
+    cursor: pointer;
+}
+.payment-methods-section label img {
+    width: 24px;
+    opacity: 0.6;
+    transition: opacity 0.3s, transform 0.3s;
+}
+.payment-methods-section input[type="radio"]:checked + img {
+    opacity: 1;
+    transform: scale(1.2);
+}
+</style>
 
-.payment-category-title::before {
-    content: '';
-    width: 4px;
-    height: 20px;
+<div class="payment-methods-section">
+    <label>
+        <input type="radio" name="paymentMethod" value="cash" required>
+        <img src="assets/img/payment/cash.svg" alt="Espèces">
+    </label>
+    <label>
+        <input type="radio" name="paymentMethod" value="orange_money">
+        <img src="assets/img/payment/orange-money.svg" alt="Orange Money">
+    </label>
+    <label>
+        <input type="radio" name="paymentMethod" value="mtn_money">
+        <img src="assets/img/payment/mtn-money.svg" alt="MTN Money">
+    </label>
+    <label>
+        <input type="radio" name="paymentMethod" value="moov_money">
+        <img src="assets/img/payment/moov-money.svg" alt="Moov Money">
+    </label>
+    <label>
+        <input type="radio" name="paymentMethod" value="wave">
+        <img src="assets/img/payment/wave.svg" alt="Wave">
+    </label>
+    <label>
+        <input type="radio" name="paymentMethod" value="card">
+        <img src="assets/img/payment/card.svg" alt="Carte bancaire">
+    </label>
+</div>
     background: linear-gradient(135deg, #D4A853, #F4E4B8);
     border-radius: 2px;
 }
