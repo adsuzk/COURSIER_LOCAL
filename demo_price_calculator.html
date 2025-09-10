@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚛 Démonstration - Calcul Automatique des Prix Suzosky</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .demo-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .demo-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .demo-header h1 {
+            color: #D4A853;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .demo-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .form-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid rgba(212, 168, 83, 0.2);
+        }
+        
+        .form-section h3 {
+            color: #D4A853;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+        
+        input[type="text"]:focus {
+            border-color: #D4A853;
+            outline: none;
+            box-shadow: 0 0 10px rgba(212, 168, 83, 0.2);
+        }
+        
+        .priority-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .priority-option {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .priority-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .priority-option.active {
+            border-color: #D4A853;
+            background: rgba(212, 168, 83, 0.1);
+        }
+        
+        .priority-option input {
+            display: none;
+        }
+        
+        .priority-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .priority-details {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .results-section {
+            background: linear-gradient(135deg, rgba(212, 168, 83, 0.1) 0%, rgba(212, 168, 83, 0.05) 100%);
+            border: 2px solid rgba(212, 168, 83, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            min-height: 200px;
+        }
+        
+        .results-section h3 {
+            color: #D4A853;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            text-align: center;
+        }
+        
+        .calculation-display {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s ease;
+        }
+        
+        .calculation-display.visible {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(212, 168, 83, 0.2);
+            margin-bottom: 10px;
+        }
+        
+        .info-label {
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .info-value {
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .price-breakdown {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 1px solid rgba(212, 168, 83, 0.3);
+        }
+        
+        .price-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .price-total {
+            border-top: 2px solid #D4A853;
+            padding-top: 15px;
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .total-amount {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #D4A853;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .loading-state {
+            text-align: center;
+            color: #D4A853;
+            font-weight: 600;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .error-state {
+            text-align: center;
+            color: #e74c3c;
+            background: rgba(231, 76, 60, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+        
+        .status-bar {
+            background: #2c3e50;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .test-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .test-btn {
+            background: linear-gradient(135deg, #D4A853 0%, #F4E4B8 100%);
+            color: #333;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .test-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 168, 83, 0.4);
+        }
+        
+        @media (max-width: 768px) {
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .priority-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .demo-container {
+                padding: 20px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1><i class="fas fa-shipping-fast"></i> Suzosky Price Calculator</h1>
+            <p>Démonstration du calcul automatique des prix de livraison</p>
+        </div>
+        
+        <div class="demo-grid">
+            <!-- Section Formulaire -->
+            <div class="form-section">
+                <h3><i class="fas fa-map-marker-alt"></i> Informations de Livraison</h3>
+                
+                <div class="form-group">
+                    <label for="departure">📍 Adresse de départ :</label>
+                    <input type="text" id="departure" placeholder="Ex: Cocody, Abidjan" value="">
+                </div>
+                
+                <div class="form-group">
+                    <label for="destination">🎯 Adresse de destination :</label>
+                    <input type="text" id="destination" placeholder="Ex: Plateau, Abidjan" value="">
+                </div>
+                
+                <div class="form-group">
+                    <label>⚡ Priorité de livraison :</label>
+                    <div class="priority-group">
+                        <div class="priority-option active" data-priority="normale">
+                            <input type="radio" name="priority" value="normale" checked>
+                            <div class="priority-name">🚛 Normal</div>
+                            <div class="priority-details">300 FCFA + 300/km</div>
+                        </div>
+                        <div class="priority-option" data-priority="urgente">
+                            <input type="radio" name="priority" value="urgente">
+                            <div class="priority-name">🚀 Urgent</div>
+                            <div class="priority-details">1000 FCFA + 500/km</div>
+                        </div>
+                        <div class="priority-option" data-priority="express">
+                            <input type="radio" name="priority" value="express">
+                            <div class="priority-name">⚡ Express</div>
+                            <div class="priority-details">1500 FCFA + 700/km</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="test-buttons">
+                    <button class="test-btn" onclick="testExample1()">
+                        <i class="fas fa-play"></i> Test Cocody → Plateau
+                    </button>
+                    <button class="test-btn" onclick="testExample2()">
+                        <i class="fas fa-play"></i> Test Yopougon → Marcory
+                    </button>
+                    <button class="test-btn" onclick="clearForm()">
+                        <i class="fas fa-times"></i> Effacer
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Section Résultats -->
+            <div class="results-section">
+                <h3><i class="fas fa-calculator"></i> Estimation du Prix</h3>
+                
+                <div id="loadingState" class="loading-state" style="display: none;">
+                    <div class="loading-spinner"><i class="fas fa-spinner"></i></div>
+                    Calcul en cours avec l'API Google Distance Matrix...
+                </div>
+                
+                <div id="errorState" class="error-state" style="display: none;"></div>
+                
+                <div id="calculationDisplay" class="calculation-display">
+                    <div id="distanceInfo" class="info-row">
+                        <span class="info-label"><i class="fas fa-route"></i> Distance</span>
+                        <span class="info-value" id="distanceValue">-</span>
+                    </div>
+                    
+                    <div id="durationInfo" class="info-row">
+                        <span class="info-label"><i class="fas fa-clock"></i> Durée estimée</span>
+                        <span class="info-value" id="durationValue">-</span>
+                    </div>
+                    
+                    <div class="price-breakdown">
+                        <div class="price-line">
+                            <span>Tarif de base (<span id="priorityName">Normal</span>)</span>
+                            <span id="baseFareAmount">300 FCFA</span>
+                        </div>
+                        <div class="price-line">
+                            <span>Distance (<span id="distanceKm">0</span> km × <span id="perKmRate">300</span> FCFA/km)</span>
+                            <span id="distanceCostAmount">0 FCFA</span>
+                        </div>
+                        
+                        <div class="price-total">
+                            <span class="total-label">💰 Prix Total</span>
+                            <span class="total-amount" id="totalAmount">300 FCFA</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 15px; color: #666; font-size: 0.9rem;">
+                    <i class="fas fa-info-circle"></i> Les prix sont calculés en temps réel
+                </div>
+            </div>
+        </div>
+        
+        <div id="statusBar" class="status-bar">
+            <i class="fas fa-terminal"></i> Prêt - Saisissez les adresses pour commencer le calcul automatique...
+        </div>
+    </div>
+
+    <script>
+        const PRICING_CONFIG = {
+            normale: { name: 'Normal', baseFare: 300, perKmRate: 300, color: '#4CAF50' },
+            urgente: { name: 'Urgent', baseFare: 1000, perKmRate: 500, color: '#FF9800' },
+            express: { name: 'Express', baseFare: 1500, perKmRate: 700, color: '#F44336' }
+        };
+
+        let calculationTimeout;
+        let lastRequest;
+
+        // Fonction de debounce
+        function debounce(func, wait) {
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(calculationTimeout);
+                    func(...args);
+                };
+                clearTimeout(calculationTimeout);
+                calculationTimeout = setTimeout(later, wait);
+            };
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            updateStatus('System initialized - Ready for calculations');
+        });
+
+        function setupEventListeners() {
+            const departureInput = document.getElementById('departure');
+            const destinationInput = document.getElementById('destination');
+            const priorityOptions = document.querySelectorAll('.priority-option');
+
+            // Calcul automatique avec debounce
+            const debouncedCalculation = debounce(calculatePrice, 2000);
+            
+            departureInput.addEventListener('input', () => {
+                updateStatus(`Departure address updated: ${departureInput.value}`);
+                debouncedCalculation();
+            });
+            
+            destinationInput.addEventListener('input', () => {
+                updateStatus(`Destination address updated: ${destinationInput.value}`);
+                debouncedCalculation();
+            });
+
+            // Gestion des priorités
+            priorityOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Enlever la classe active de tous les éléments
+                    priorityOptions.forEach(opt => opt.classList.remove('active'));
+                    // Ajouter la classe active à l'élément cliqué
+                    this.classList.add('active');
+                    // Cocher le radio correspondant
+                    this.querySelector('input').checked = true;
+                    
+                    const priority = this.dataset.priority;
+                    updateStatus(`Priority changed to: ${PRICING_CONFIG[priority].name}`);
+                    calculatePrice();
+                });
+            });
+        }
+
+        function calculatePrice() {
+            const departure = document.getElementById('departure').value.trim();
+            const destination = document.getElementById('destination').value.trim();
+            const selectedPriority = document.querySelector('input[name="priority"]:checked').value;
+
+            if (!departure || !destination || departure.length < 3 || destination.length < 3) {
+                hideCalculation();
+                updateStatus('Waiting for complete addresses...');
+                return;
+            }
+
+            updateStatus(`Calculating price: ${departure} → ${destination} (${selectedPriority})`);
+            showLoading();
+
+            // Utiliser l'API PHP que nous avons créée
+            const url = `test_distance_api.php?origin=${encodeURIComponent(departure)}&destination=${encodeURIComponent(destination)}`;
+            
+            // Annuler la requête précédente si elle existe
+            if (lastRequest) {
+                lastRequest.abort();
+            }
+
+            lastRequest = new AbortController();
+            
+            fetch(url, { signal: lastRequest.signal })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const calculation = data.calculations[selectedPriority];
+                        displayCalculation(data.distance, data.duration, calculation, selectedPriority);
+                        updateStatus(`✅ Price calculated successfully: ${calculation.totalPrice} FCFA`);
+                    } else {
+                        showError(data.error || 'Erreur de calcul');
+                        updateStatus(`❌ Calculation failed: ${data.error}`);
+                    }
+                })
+                .catch(error => {
+                    if (error.name !== 'AbortError') {
+                        showError('Erreur de connexion à l\'API');
+                        updateStatus(`❌ Connection error: ${error.message}`);
+                    }
+                })
+                .finally(() => {
+                    lastRequest = null;
+                });
+        }
+
+        function displayCalculation(distance, duration, calculation, priority) {
+            const config = PRICING_CONFIG[priority];
+            
+            // Mettre à jour les valeurs
+            document.getElementById('distanceValue').textContent = distance.text;
+            document.getElementById('durationValue').textContent = duration.text;
+            document.getElementById('priorityName').textContent = config.name;
+            document.getElementById('baseFareAmount').textContent = config.baseFare + ' FCFA';
+            document.getElementById('distanceKm').textContent = calculation.distanceKm.toFixed(1);
+            document.getElementById('perKmRate').textContent = config.perKmRate;
+            document.getElementById('distanceCostAmount').textContent = calculation.distanceCost + ' FCFA';
+            document.getElementById('totalAmount').textContent = calculation.totalPrice + ' FCFA';
+            
+            // Changer la couleur selon la priorité
+            document.getElementById('totalAmount').style.color = config.color;
+            
+            // Afficher le calcul
+            hideLoading();
+            hideError();
+            showCalculation();
+        }
+
+        function showLoading() {
+            document.getElementById('loadingState').style.display = 'block';
+            document.getElementById('errorState').style.display = 'none';
+            document.getElementById('calculationDisplay').classList.remove('visible');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingState').style.display = 'none';
+        }
+
+        function showError(message) {
+            document.getElementById('errorState').textContent = message;
+            document.getElementById('errorState').style.display = 'block';
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('calculationDisplay').classList.remove('visible');
+        }
+
+        function hideError() {
+            document.getElementById('errorState').style.display = 'none';
+        }
+
+        function showCalculation() {
+            document.getElementById('calculationDisplay').classList.add('visible');
+        }
+
+        function hideCalculation() {
+            document.getElementById('calculationDisplay').classList.remove('visible');
+        }
+
+        function updateStatus(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            document.getElementById('statusBar').innerHTML = `<i class="fas fa-terminal"></i> [${timestamp}] ${message}`;
+        }
+
+        // Fonctions de test
+        function testExample1() {
+            document.getElementById('departure').value = 'Cocody, Abidjan';
+            document.getElementById('destination').value = 'Plateau, Abidjan';
+            updateStatus('Test example 1 loaded: Cocody → Plateau');
+            calculatePrice();
+        }
+
+        function testExample2() {
+            document.getElementById('departure').value = 'Yopougon, Abidjan';
+            document.getElementById('destination').value = 'Marcory, Abidjan';
+            updateStatus('Test example 2 loaded: Yopougon → Marcory');
+            calculatePrice();
+        }
+
+        function clearForm() {
+            document.getElementById('departure').value = '';
+            document.getElementById('destination').value = '';
+            hideCalculation();
+            hideError();
+            hideLoading();
+            updateStatus('Form cleared - Ready for new calculation');
+        }
+    </script>
+</body>
+</html>
