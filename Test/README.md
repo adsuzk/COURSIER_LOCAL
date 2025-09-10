@@ -18,6 +18,9 @@ Ce dossier contient tous les fichiers de test et de démonstration du système S
 - **`test_api_simple.php`** - Tests simples des API
 - **`test_simple.php`** - Tests généraux simplifiés
 
+### 📦 **TESTS DE DONNÉES**
+- **`create_test_orders.php`** - Création de commandes de test
+
 ### 📚 **DOCUMENTATION**
 - **`IMPLEMENTATION_CALCUL_PRIX.md`** - Documentation complète de l'implémentation du calcul automatique des prix
 
