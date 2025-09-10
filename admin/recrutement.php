@@ -38,11 +38,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Fetch postes
-$stmt = $pdo->query("SELECT * FROM postes ORDER BY date_expiration DESC");
-$postes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-$stmt2 = $pdo->query("SELECT c.*, p.titre AS poste_titre FROM candidatures c LEFT JOIN postes p ON c.poste_id = p.id ORDER BY c.id DESC");
-$candidatures = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+// Fetch postes with fallback if table missing
+try {
+    $stmt = $pdo->query("SELECT * FROM postes ORDER BY date_expiration DESC");
+    $postes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    // Table `postes` absente ou autre erreur
+    $postes = [];
+}
+// Fetch candidatures with fallback
+try {
+    $stmt2 = $pdo->query("SELECT c.*, p.titre AS poste_titre FROM candidatures c LEFT JOIN postes p ON c.poste_id = p.id ORDER BY c.id DESC");
+    $candidatures = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    // Table `candidatures` ou `postes` absente
+    $candidatures = [];
+}
 ?>
 
 <style>
