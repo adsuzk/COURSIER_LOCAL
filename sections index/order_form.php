@@ -562,7 +562,7 @@
                             </div>
                         </div>
                         
-                        <!-- Calcul automatique du prix -->
+                        <!-- Calcul automatique du prix - Version client simplifiée -->
                         <div class="price-calculation-section" id="price-calculation-section" style="display:none;">
                             <div class="price-display">
                                 <div class="price-header">
