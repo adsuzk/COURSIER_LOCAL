@@ -560,35 +560,15 @@ $messages = [];
             </div>
         </div>
         <div class="message-input-container">
-            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                <button onclick="addQuickReply('Merci pour votre message')" style="background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); border: 1px solid var(--glass-border); padding: 5px 10px; border-radius: 12px; font-size: 0.75rem; cursor: pointer; transition: all 0.3s ease;">
-                    Merci 👍
-                </button>
-                <button onclick="addQuickReply('Votre commande est en cours de traitement')" style="background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); border: 1px solid var(--glass-border); padding: 5px 10px; border-radius: 12px; font-size: 0.75rem; cursor: pointer; transition: all 0.3s ease;">
-                    En cours ⏳
-                </button>
-                <button onclick="addQuickReply('Nous vous recontactons dans les plus brefs délais')" style="background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); border: 1px solid var(--glass-border); padding: 5px 10px; border-radius: 12px; font-size: 0.75rem; cursor: pointer; transition: all 0.3s ease;">
-                    Recontact 📞
-                </button>
-            </div>
-            <div style="display: flex; gap: 15px; align-items: end;">
-                <button onclick="showEmojiPicker()" style="background: var(--glass-bg); border: 2px solid var(--glass-border); border-radius: 12px; padding: 12px; cursor: pointer; transition: all 0.3s ease; color: var(--primary-gold);">
-                    <i class="fas fa-smile"></i>
-                </button>
-                <textarea 
-                    class="message-input" 
-                    id="messageInput" 
-                    placeholder="Tapez votre message..." 
-                    onkeydown="handleKeyPress(event)"
-                    oninput="autoResize(this); showTypingIndicator()"
-                    style="flex: 1;"></textarea>
-                <button onclick="attachFile()" style="background: var(--glass-bg); border: 2px solid var(--glass-border); border-radius: 12px; padding: 12px; cursor: pointer; transition: all 0.3s ease; color: var(--primary-gold);">
-                    <i class="fas fa-paperclip"></i>
-                </button>
-                <button class="send-button" onclick="sendMessage()">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
+            <textarea 
+                class="message-input" 
+                id="messageInput" 
+                placeholder="Tapez votre message..." 
+                onkeydown="handleKeyPress(event)"
+                oninput="autoResize(this)"></textarea>
+            <button class="send-button" onclick="sendMessage()">
+                <i class="fas fa-paper-plane"></i>
+            </button>
         </div>
     </div>
 
