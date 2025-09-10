@@ -217,6 +217,7 @@ $messages = [];
 
 /* === ZONE PRINCIPALE MESSAGES === */
 .chat-main {
+    width: 60%;
     display: flex;
     flex-direction: column;
     background: rgba(255,255,255,0.03);
@@ -229,6 +230,7 @@ $messages = [];
     display: flex;
     background: rgba(255,255,255,0.05);
     border-bottom: 1px solid var(--glass-border);
+    flex-shrink: 0;
 }
 
 .chat-tab {
@@ -242,6 +244,7 @@ $messages = [];
     cursor: pointer;
     transition: all 0.3s ease;
     position: relative;
+    text-align: center;
 }
 
 .chat-tab.active {
@@ -269,6 +272,7 @@ $messages = [];
     padding: 20px;
     overflow-y: auto;
     background: rgba(0,0,0,0.1);
+    min-height: 400px;
 }
 
 /* === ZONE DÉTAILS === */
