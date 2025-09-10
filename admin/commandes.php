@@ -581,6 +581,40 @@ setInterval(() => {
 // Notification sonore pour nouvelles commandes
 let lastCommandCount = <?= count($commandes) ?>;
 
+// Fonction pour charger l'estimation de prix détaillée
+function loadPriceEstimation(button) {
+    const container = button.closest('.admin-price-estimation');
+    const departure = container.dataset.departure;
+    const destination = container.dataset.destination;
+    const priority = container.dataset.priority;
+    const resultDiv = container.querySelector('.estimation-result');
+    
+    if (!departure || !destination) {
+        resultDiv.innerHTML = '<div style="color: #E94560;">Adresses manquantes</div>';
+        return;
+    }
+    
+    button.disabled = true;
+    button.textContent = '⏳ Calcul...';
+    resultDiv.innerHTML = '<div style="color: #D4A853;">Calcul en cours...</div>';
+    
+    // Utiliser la fonction admin de calcul
+    calculatePriceAdmin(departure, destination, priority)
+        .then(priceData => {
+            resultDiv.innerHTML = generateAdminPriceDisplay(priceData);
+            button.style.display = 'none';
+        })
+        .catch(error => {
+            console.error('Erreur calcul prix:', error);
+            resultDiv.innerHTML = `<div style="color: #E94560;">Erreur: ${error}</div>`;
+            button.disabled = false;
+            button.textContent = '📊 Réessayer';
+        });
+}
+
+// Exposer la fonction globalement
+window.loadPriceEstimation = loadPriceEstimation;
+
 function checkNewCommands() {
     fetch('<?= $_SERVER['PHP_SELF'] ?>?section=commandes&ajax=1')
         .then(response => response.json())
