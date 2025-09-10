@@ -2,6 +2,13 @@
 // sections/js_initialization.php - Initialisation générale et fonctions utilitaires
 ?>
     <script>
+    // STUBS pour éviter les erreurs JS legacy
+    window.isLoggedIn = window.isLoggedIn || false;
+    window.logError = window.logError || function(){};
+    window.clearRoute = window.clearRoute || function(){};
+    window.clearMarkers = window.clearMarkers || function(){};
+    window.calculateRoute = window.calculateRoute || function(){};
+    window.updateAddressFromCoordinates = window.updateAddressFromCoordinates || function(pos, field){};
     // Variables globales pour l'application
     const APP_VERSION = '2.1.0'; // Version de l'application Suzosky Coursier
     const APP_BUILD = '20250905'; // Build date
