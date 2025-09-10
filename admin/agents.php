@@ -1369,14 +1369,10 @@ $newAgentsThisMonth = count(array_filter($agents, fn($a) => isset($a['created_at
         
         <div class="content-area fade-in">
 
-<div id="agents" class="content-section">
-  <!-- HEADER AVEC ACTIONS -->
-  <div class="section-header">
-    <h3 class="section-title">
-      <i class="fas fa-users"></i>
-      Gestion des Agents Suzosky
-    </h3>
-    <div class="header-actions">
+    <div id="agents" class="content-section">
+    <!-- HEADER AVEC ACTIONS (TITRE SUPPRIMÉ, évite doublon) -->
+    <div class="section-header">
+        <div class="header-actions">
       <button onclick="showAddAgentModal()" class="btn btn-primary">
         <i class="fas fa-user-plus"></i> Nouvel Agent
       </button>
