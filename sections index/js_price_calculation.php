@@ -79,17 +79,13 @@ console.log('🔧 Module de calcul de prix chargé');
                 const cfg = PRICING[pr];
                 const cost = cfg.base + Math.ceil(kmVal * cfg.perKm);
                 console.log('💰 Prix calculé:', {priorite: pr, config: cfg, cout: cost});
-                // Mise à jour UI
+                // Mise à jour UI - Version client simplifiée
                 document.getElementById('distance-info').innerHTML   = `📏 ${distText}`;
                 document.getElementById('time-info').innerHTML       = `⏱️ ${durText}`;
                 document.getElementById('price-breakdown').innerHTML = `
                     <div class="price-line">
-                        <span class="description">Base (${cfg.name})</span>
+                        <span class="description">Tarif ${cfg.name}</span>
                         <span class="amount">${cfg.base} FCFA</span>
-                    </div>
-                    <div class="price-line">
-                        <span class="description">${kmVal.toFixed(1)} km × ${cfg.perKm} FCFA/km</span>
-                        <span class="amount">${Math.ceil(kmVal * cfg.perKm)} FCFA</span>
                     </div>
                     <div class="price-separator"></div>`;
                 const tp = document.getElementById('total-price');
