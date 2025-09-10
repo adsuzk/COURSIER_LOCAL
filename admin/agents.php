@@ -1365,20 +1365,6 @@ $newAgentsThisMonth = count(array_filter($agents, fn($a) => isset($a['created_at
                 <p class="page-subtitle">Interface d'administration SUZOSKY</p>
             </div>
             
-            <div class="admin-info">
-                <div class="admin-card">
-                    <div class="admin-avatar">
-                        <i class="fas fa-user-shield"></i>
-                    </div>
-                    <div class="admin-details">
-                        <div class="admin-name">Administrateur</div>
-                        <div class="admin-role">Super Admin</div>
-                    </div>
-                    <div class="admin-status">
-                        <span class="status-indicator online"></span>
-                    </div>
-                </div>
-            </div>
         </div>
         
         <div class="content-area fade-in">
