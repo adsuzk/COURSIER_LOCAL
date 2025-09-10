@@ -5,6 +5,9 @@ var markerA = null, markerB = null;
 ?>
     <!-- Gestion d'erreur Google Maps -->
     <script>
+    // Variables globales pour markers afin d'éviter les ReferenceError
+    window.markerA = window.markerA || null;
+    window.markerB = window.markerB || null;
         // Global JS error logging
         window.addEventListener('error', function(event) {
             try {
