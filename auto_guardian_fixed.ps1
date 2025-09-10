@@ -2,7 +2,7 @@
 # Surveillance permanente et sauvegarde automatique sur GitHub
 
 param(
-    [int]$IntervalSeconds = 30
+    [int]$IntervalSeconds = 5
 )
 
 # Configuration des dossiers a surveiller

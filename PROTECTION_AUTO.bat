@@ -9,7 +9,7 @@ echo.
 echo  Demarrage de la surveillance permanente...
 echo  Dossiers surveilles: COURSIER_LOCAL + coursier_prod  
 echo  Sauvegarde automatique sur GitHub
-echo  Verification toutes les 30 secondes
+echo  Verification toutes les 5 secondes
 echo.
 echo  GARDEZ CETTE FENETRE OUVERTE
 echo.
