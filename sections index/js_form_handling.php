@@ -486,10 +486,11 @@
         // Attente que Google DistanceMatrixService soit disponible
         function setupPriceCalc() {
             if (!window.google || !google.maps || !google.maps.DistanceMatrixService) {
-                console.log('DistanceMatrixService non chargé, tentative dans 500ms');
-                setTimeout(setupPriceCalc, 500);
+                console.log('DistanceMatrixService non chargé, tentative dans 1000ms...');
+                setTimeout(setupPriceCalc, 1000);
                 return;
             }
+            console.log('✅ Google DistanceMatrixService prêt!');
             const service = new google.maps.DistanceMatrixService();
             const dep = document.getElementById('departure');
             const dest = document.getElementById('destination');
