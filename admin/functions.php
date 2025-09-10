@@ -1498,6 +1498,12 @@ function renderFooter() {
             </div>
         </div>
         <script src="../assets/js/admin.js"></script>
+        <?php 
+        // Inclure le module de calcul de prix détaillé pour l'admin
+        if (file_exists(__DIR__ . '/js_price_calculation_admin.php')) {
+            include __DIR__ . '/js_price_calculation_admin.php';
+        }
+        ?>
     </body>
     </html>
     <?php
