@@ -83,7 +83,13 @@
                         if(!pr){ok=false;msg.push('Priorité requise');}
                         if(!ok)alert(msg.join("\n")); return ok;
                     }
-                    function onSub(e){ e.preventDefault(); if(valid())form.submit(); }
+                        function onSub(e){ e.preventDefault(); if(valid())form.submit(); }
+                        // Exposer processOrder pour l'attribut onclick inline
+                        window.processOrder = function() {
+                            if (valid()) {
+                                form.submit();
+                            }
+                        };
                     document.addEventListener('DOMContentLoaded',()=>{
                         document.getElementById('senderPhone').addEventListener('input',e=>e.target.value=fPhone(e.target.value));
                         document.querySelectorAll('input[type=email]').forEach(i=>i.addEventListener('blur',e=>{ if(i.value&&!vEmail(i.value)){sErr(i,'Email invalide');}else{hErr(i);} }));
