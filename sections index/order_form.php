@@ -563,7 +563,7 @@
                         </div>
                         
                         <!-- Calcul automatique du prix -->
-                        <div class="price-calculation-section" id="priceSection" style="display:none;">
+                        <div class="price-calculation-section" id="price-calculation-section" style="display:none;">
                             <div class="price-display">
                                 <div class="price-header">
                                     <h3>💰 Estimation de votre course</h3>
