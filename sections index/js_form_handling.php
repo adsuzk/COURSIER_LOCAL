@@ -648,15 +648,18 @@
 
     // Initialisation au chargement : Price Calculation via Google Distance Matrix
     document.addEventListener('DOMContentLoaded', function() {
-        if (!window.google || !google.maps || !google.maps.DistanceMatrixService) {
-            console.error('Google Maps DistanceMatrix non disponible');
-            return;
-        }
-        const service = new google.maps.DistanceMatrixService();
-        const dep = document.getElementById('departure');
-        const dest = document.getElementById('destination');
-        const prios = document.querySelectorAll('input[name="priority"]');
-        const section = document.getElementById('price-calculation-section');
+        // Attente que Google DistanceMatrixService soit disponible
+        function setupPriceCalc() {
+            if (!window.google || !google.maps || !google.maps.DistanceMatrixService) {
+                console.log('DistanceMatrixService non chargé, tentative dans 500ms');
+                setTimeout(setupPriceCalc, 500);
+                return;
+            }
+            const service = new google.maps.DistanceMatrixService();
+            const dep = document.getElementById('departure');
+            const dest = document.getElementById('destination');
+            const prios = document.querySelectorAll('input[name="priority"]');
+            const section = document.getElementById('price-calculation-section');
         
         // Tarifaires
         const PRICING = {
@@ -711,8 +714,10 @@
         }
         
         // Événements
-        dep.addEventListener('blur', calculate);
-        dest.addEventListener('blur', calculate);
-        prios.forEach(r => r.addEventListener('change', calculate));
+            dep.addEventListener('blur', calculate);
+            dest.addEventListener('blur', calculate);
+            prios.forEach(r => r.addEventListener('change', calculate));
+        }
+        setupPriceCalc();
     });
     </script>
