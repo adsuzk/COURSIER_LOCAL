@@ -40,20 +40,25 @@ if ($filter_max_cons !== '') { $havingP[] = 'consommation <= ?'; $paramsH[] = $f
             $privateClients = $pdo->query("SELECT *, 0 AS consommation FROM clients_particuliers ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
         }
 
-// Récupérer clients business (sans consommation)
-$whereB = []; $paramsB = [];
-if ($filter_status !== '') { $whereB[] = 'statut = ?'; $paramsB[] = $filter_status; }
-if ($filter_email !== '') {
-    if ($filter_email === '1') { $whereB[] = 'contact_email IS NOT NULL AND contact_email <> ""'; }
-    else { $whereB[] = '(contact_email IS NULL OR contact_email = "")'; }
-}
-if ($filter_from !== '') { $whereB[] = 'date_creation >= ?'; $paramsB[] = $filter_from.' 00:00:00'; }
-if ($filter_to !== '')   { $whereB[] = 'date_creation <= ?'; $paramsB[] = $filter_to.' 23:59:59'; }
+// Récupérer clients business (sans consommation) avec fallback
+try {
+    $whereB = []; $paramsB = [];
+    if ($filter_status !== '') { $whereB[] = 'statut = ?'; $paramsB[] = $filter_status; }
+    if ($filter_email !== '') {
+        if ($filter_email === '1') { $whereB[] = 'contact_email IS NOT NULL AND contact_email <> ""'; }
+        else { $whereB[] = '(contact_email IS NULL OR contact_email = "")'; }
+    }
+    if ($filter_from !== '') { $whereB[] = 'date_creation >= ?'; $paramsB[] = $filter_from.' 00:00:00'; }
+    if ($filter_to !== '')   { $whereB[] = 'date_creation <= ?'; $paramsB[] = $filter_to.' 23:59:59'; }
 
-$sqlB = 'SELECT * FROM business_clients' . (count($whereB) ? ' WHERE ' . implode(' AND ', $whereB) : '') . ' ORDER BY id DESC';
-$stmtB = $pdo->prepare($sqlB);
-$stmtB->execute($paramsB);
-$businessClients = $stmtB->fetchAll(PDO::FETCH_ASSOC);
+    $sqlB = 'SELECT * FROM business_clients' . (count($whereB) ? ' WHERE ' . implode(' AND ', $whereB) : '') . ' ORDER BY id DESC';
+    $stmtB = $pdo->prepare($sqlB);
+    $stmtB->execute($paramsB);
+    $businessClients = $stmtB->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    // Table business_clients absente ou autre erreur
+    $businessClients = [];
+}
 
 // Fin de la récupération des données (filtres et consommation appliqués)
 ?>
