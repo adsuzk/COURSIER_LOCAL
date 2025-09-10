@@ -563,6 +563,8 @@
             dest.addEventListener('input', calculate);
             dest.addEventListener('blur', calculate);
             prios.forEach(r => r.addEventListener('change', calculate));
+            // Calcul initial si les deux champs sont déjà remplis
+            calculate();
         }
         setupPriceCalc();
     });
