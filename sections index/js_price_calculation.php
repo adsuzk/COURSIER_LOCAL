@@ -4,9 +4,8 @@
 <script>
 console.log('🔧 Module de calcul de prix chargé');
 
-// Initialisation au chargement : Price Calculation via Google Distance Matrix
-document.addEventListener('DOMContentLoaded', function() {
-    // Attente que Google DistanceMatrixService soit disponible
+// Initialisation du module de calcul de prix (attend DOM si nécessaire)
+(function() {
     function setupPriceCalc() {
         if (!window.google || !google.maps || !google.maps.DistanceMatrixService) {
             console.log('🔄 DistanceMatrixService non chargé, tentative dans 1000ms...');
@@ -107,6 +106,11 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('🔄 Calcul initial...');
         calculate();
     }
-    setupPriceCalc();
-});
+    // Si document déjà prêt, exécuter immédiatement
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setupPriceCalc);
+    } else {
+        setupPriceCalc();
+    }
+})();
 </script>
