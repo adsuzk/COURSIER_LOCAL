@@ -277,6 +277,8 @@ $messages = [];
 
 /* === ZONE DÉTAILS === */
 .chat-details {
+    width: 15%;
+    min-width: 250px;
     background: rgba(255,255,255,0.03);
     border: 1px solid var(--glass-border);
     border-radius: 15px;
