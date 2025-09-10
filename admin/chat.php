@@ -111,14 +111,15 @@ $messages = [];
 /* === INTERFACE CHAT PRINCIPAL === */
 .chat-interface {
     display: grid;
-    grid-template-columns: 350px 1fr 300px;
-    gap: 25px;
-    height: 70vh;
+    grid-template-columns: 400px 1fr 350px;
+    gap: 20px;
+    height: 75vh;
+    min-height: 600px;
     background: var(--glass-bg);
     backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border);
     border-radius: 20px;
-    padding: 25px;
+    padding: 20px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.2);
 }
 
