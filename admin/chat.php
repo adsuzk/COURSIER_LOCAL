@@ -791,70 +791,9 @@ function refreshConversations() {
     console.log('Rafraîchissement des conversations Suzosky...');
 }
 
-function filterConversations(filter) {
-    // Mettre à jour les boutons de filtre
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.remove('active');
-        btn.style.background = 'rgba(255,255,255,0.1)';
-        btn.style.color = 'rgba(255,255,255,0.8)';
-    });
-    
-    const activeBtn = document.querySelector(`[data-filter="${filter}"]`);
-    if (activeBtn) {
-        activeBtn.classList.add('active');
-        activeBtn.style.background = 'var(--primary-gold)';
-        activeBtn.style.color = 'var(--primary-dark)';
-    }
-    
-    // Filtrer les conversations
-    const conversations = document.querySelectorAll('.conversation-item');
-    conversations.forEach(conv => {
-        const status = conv.dataset.status;
-        const unread = parseInt(conv.dataset.unread || '0');
-        
-        let show = true;
-        if (filter === 'unread' && unread === 0) show = false;
-        if (filter === 'vip' && status !== 'vip') show = false;
-        
-        conv.style.display = show ? 'flex' : 'none';
-        if (show) {
-            conv.style.animation = 'slideIn 0.3s ease';
-        }
-    });
-}
-
-function addQuickReply(text) {
-    const messageInput = document.getElementById('messageInput');
-    messageInput.value = text;
-    autoResize(messageInput);
-    messageInput.focus();
-}
-
-function showEmojiPicker() {
-    const emojis = ['😊', '👍', '❤️', '😅', '🙏', '👌', '✅', '📦', '🚚', '⏰'];
-    const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
-    
-    const messageInput = document.getElementById('messageInput');
-    messageInput.value += randomEmoji;
-    autoResize(messageInput);
-    messageInput.focus();
-}
-
-function showTypingIndicator() {
-    const indicator = document.getElementById('typingIndicator');
-    const messageInput = document.getElementById('messageInput');
-    
-    if (messageInput.value.trim()) {
-        // Simuler que l'autre personne voit qu'on tape
-        clearTimeout(window.typingTimeout);
-        window.typingTimeout = setTimeout(() => {
-            // Masquer après 3 secondes d'inactivité
-        }, 3000);
-    }
-}
-
 function toggleFilter() {
     console.log('Basculer les filtres...');
+}
 }
 
 function viewClientInfo() {
