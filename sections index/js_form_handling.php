@@ -169,9 +169,9 @@
         const formInputs = document.querySelectorAll('#orderForm input, #orderForm select');
         
         formInputs.forEach(input => {
-            input.addEventListener('input', debounce(() => {
+            input.addEventListener('input', () => {
                 saveFormDraft();
-            }, 1000));
+            });
         });
     }
     
