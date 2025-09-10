@@ -545,7 +545,7 @@ $messages = [];
             <button class="chat-tab" data-tab="agent">Agents</button>
         </div>
         <div class="messages" id="messagesContainer">
-            <!-- Messages avec indicateurs de livraison améliorés -->
+            <!-- Messages exemples -->
             <div class="message client">
                 <div class="message-content">
                     <p>Bonjour, je voudrais suivre ma commande s'il vous plaît</p>
@@ -555,23 +555,7 @@ $messages = [];
             <div class="message admin">
                 <div class="message-content">
                     <p>Bonjour ! Votre commande est en cours de préparation. Vous recevrez un SMS dès qu'elle sera prise en charge par notre coursier.</p>
-                    <span class="message-time">14:32 <i class="fas fa-check-double" style="color: var(--success-color); margin-left: 5px;" title="Message lu"></i></span>
-                </div>
-            </div>
-            <div class="message client">
-                <div class="message-content">
-                    <p>Parfait, merci beaucoup pour votre rapidité ! 👍</p>
-                    <span class="message-time">14:35</span>
-                </div>
-            </div>
-            <div class="typing-indicator" id="typingIndicator" style="display: none;">
-                <div style="display: flex; align-items: center; gap: 10px; padding: 12px 18px; background: rgba(255,255,255,0.1); border-radius: 18px 18px 18px 5px; max-width: 70%;">
-                    <div style="display: flex; gap: 3px;">
-                        <div style="width: 6px; height: 6px; background: rgba(255,255,255,0.6); border-radius: 50%; animation: typing 1.4s infinite ease-in-out;"></div>
-                        <div style="width: 6px; height: 6px; background: rgba(255,255,255,0.6); border-radius: 50%; animation: typing 1.4s infinite ease-in-out 0.2s;"></div>
-                        <div style="width: 6px; height: 6px; background: rgba(255,255,255,0.6); border-radius: 50%; animation: typing 1.4s infinite ease-in-out 0.4s;"></div>
-                    </div>
-                    <span style="font-size: 0.8rem; color: rgba(255,255,255,0.6); font-style: italic;">Jean est en train d'écrire...</span>
+                    <span class="message-time">14:32</span>
                 </div>
             </div>
         </div>
