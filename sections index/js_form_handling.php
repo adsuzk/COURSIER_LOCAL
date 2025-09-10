@@ -549,7 +549,10 @@
         }
         
         // Événements
+            // Déclenche le calcul lors de la saisie ou perte de focus
+            dep.addEventListener('input', calculate);
             dep.addEventListener('blur', calculate);
+            dest.addEventListener('input', calculate);
             dest.addEventListener('blur', calculate);
             prios.forEach(r => r.addEventListener('change', calculate));
         }
