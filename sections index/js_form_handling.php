@@ -439,6 +439,7 @@
         const priorityInputs = document.querySelectorAll('input[name="priority"]');
 
         if (departureInput && destinationInput) {
+            console.log('setupPriceCalculationListeners: initialisation des écouteurs');
             // Calcul automatique avec debounce sur les adresses
             const debouncedCalculation = debounce(calculatePriceAutomatically, 1500);
             
@@ -458,7 +459,8 @@
 
     // Fonction principale de calcul automatique
     function calculatePriceAutomatically() {
-        const departure = document.getElementById('departure')?.value?.trim();
+    console.log('calculatePriceAutomatically: appelée');
+    const departure = document.getElementById('departure')?.value?.trim();
         const destination = document.getElementById('destination')?.value?.trim();
         const selectedPriority = document.querySelector('input[name="priority"]:checked')?.value || 'normale';
 
