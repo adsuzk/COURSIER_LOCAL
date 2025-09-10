@@ -1,5 +1,7 @@
 <?php
 // sections/js_google_maps.php - Fonctions Google Maps et géolocalisation
+// Variables globales pour markers
+let markerA = null, markerB = null;
 ?>
     <!-- Gestion d'erreur Google Maps -->
     <script>
@@ -124,14 +126,6 @@
                 },
                 {
                     "featureType": "administrative",
-                    "elementType": "labels.text",
-                    "stylers": [
-                        { "color": "#f0f0f0" },
-                        { "fontWeight": "normal" }
-                    ]
-                },
-                {
-                    "featureType": "locality",
                     "elementType": "labels.text",
                     "stylers": [
                         { "color": "#f0f0f0" },
