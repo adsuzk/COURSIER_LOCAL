@@ -321,7 +321,14 @@
                             <div class="form-group">
                                 <label for="senderPhone"><i class="fas fa-phone"></i> Téléphone Expéditeur</label>
                                 <div class="input-with-icon phone">
-                                    <input type="tel" id="senderPhone" name="senderPhone" placeholder="+225 XX XX XX XX XX" maxlength="17" required>
+                                    <?php $sessionPhone = $_SESSION['client_telephone'] ?? ''; ?>
+                                    <input type="tel" id="senderPhone" name="senderPhone"
+                                        placeholder="+225 XX XX XX XX XX"
+                                        maxlength="17"
+                                        required
+                                        value="<?= htmlspecialchars($sessionPhone) ?>"
+                                        <?= $sessionPhone ? 'readonly' : '' ?>
+                                    >
                                 </div>
                             </div>
                             <div class="form-group">
