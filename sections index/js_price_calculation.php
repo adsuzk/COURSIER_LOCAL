@@ -90,7 +90,8 @@ console.log('🔧 Module de calcul de prix chargé');
                 tp.innerHTML = `💰 ${cost} FCFA`;
                 tp.style.borderColor = cfg.color;
                 section.style.display = 'block';
-                console.log('✅ Interface mise à jour, section affichée!');
+                section.classList.add('price-visible');
+                console.log('✅ Interface mise à jour, section affichée! (price-visible ajoutée)');
             });
         }
         
