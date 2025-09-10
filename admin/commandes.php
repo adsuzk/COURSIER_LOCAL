@@ -16,33 +16,54 @@ require_once __DIR__ . '/../config.php';
 // Récupérer les commandes avec les informations des coursiers
 function getCommandesWithCouriers() {
     $pdo = getDBConnection();
-    
-    // Détecter les colonnes de la table commandes
-    $cols = $pdo->query("SHOW COLUMNS FROM commandes")->fetchAll(PDO::FETCH_COLUMN);
-    $orderNumCol = in_array('numero_commande', $cols) ? 'numero_commande' : 
-                   (in_array('order_number', $cols) ? 'order_number' : 'code_commande');
-    
-    $sql = "
-    SELECT 
-        c.*,
-        a.nom as coursier_nom,
-        a.prenoms as coursier_prenoms,
-        a.telephone as coursier_telephone,
-        a.statut_connexion,
-        a.latitude as coursier_lat,
-        a.longitude as coursier_lng,
-        cl.nom as client_nom,
-        cl.telephone as client_telephone
-    FROM commandes c
-    LEFT JOIN agents_suzosky a ON c.coursier_id = a.id_coursier
-    LEFT JOIN clients cl ON c.client_id = cl.id
-    ORDER BY c.created_at DESC, c.id DESC
-    LIMIT 50
-    ";
-    
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    try {
+        // Détecter la colonne de numéro de commande
+        $cols = $pdo->query("SHOW COLUMNS FROM commandes")->fetchAll(PDO::FETCH_COLUMN);
+        $orderNumCol = in_array('numero_commande', $cols) ? 'numero_commande' : 
+                       (in_array('order_number', $cols) ? 'order_number' : 'code_commande');
+        
+        $sql = "
+        SELECT 
+            c.*,
+            a.nom as coursier_nom,
+            a.prenoms as coursier_prenoms,
+            a.telephone as coursier_telephone,
+            a.statut_connexion,
+            a.latitude as coursier_lat,
+            a.longitude as coursier_lng,
+            cl.nom as client_nom,
+            cl.telephone as client_telephone
+        FROM commandes c
+        LEFT JOIN agents_suzosky a ON c.coursier_id = a.id_coursier
+        LEFT JOIN clients cl ON c.client_id = cl.id
+        ORDER BY c.created_at DESC, c.id DESC
+        LIMIT 50
+        ";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        // Fallback si agents_suzosky manquante : commandes sans coursier
+        $sqlFallback = "
+        SELECT 
+            c.*,
+            '' as coursier_nom,
+            '' as coursier_prenoms,
+            '' as coursier_telephone,
+            '' as statut_connexion,
+            0 as coursier_lat,
+            0 as coursier_lng,
+            cl.nom as client_nom,
+            cl.telephone as client_telephone
+        FROM commandes c
+        LEFT JOIN clients cl ON c.client_id = cl.id
+        ORDER BY c.created_at DESC, c.id DESC
+        LIMIT 50
+        ";
+        $stmt = $pdo->prepare($sqlFallback);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 
 // Récupérer les coursiers actifs
