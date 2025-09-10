@@ -528,13 +528,15 @@
                 travelMode: google.maps.TravelMode.DRIVING,
                 unitSystem: google.maps.UnitSystem.METRIC
             }, function(response, status) {
+                console.log('📡 Réponse Google DistanceMatrix:', {status, response});
                 if (status !== 'OK') {
-                    console.error('DistanceMatrixService status:', status);
+                    console.error('❌ DistanceMatrixService status:', status);
                     return;
                 }
                 const el = response.rows[0].elements[0];
+                console.log('📍 Element de réponse:', el);
                 if (el.status !== 'OK') {
-                    console.error('DistanceMatrix element status:', el.status);
+                    console.error('❌ DistanceMatrix element status:', el.status);
                     return;
                 }
                 // Récupération
