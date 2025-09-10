@@ -242,6 +242,91 @@
             }
         }
 
+        /* ANIMATIONS ET ÉTATS DE CHARGEMENT POUR LE CALCUL DE PRIX */
+        .price-calculation-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .price-calculation-section.price-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .price-calculation-section.price-loading {
+            opacity: 0.7;
+            background: rgba(212, 168, 83, 0.05);
+            border-color: rgba(212, 168, 83, 0.2);
+        }
+
+        .price-calculation-section.price-loading * {
+            color: rgba(255, 255, 255, 0.6) !important;
+            animation: priceLoadingPulse 2s ease-in-out infinite;
+        }
+
+        .price-calculation-section.price-error {
+            background: rgba(244, 67, 54, 0.1);
+            border-color: rgba(244, 67, 54, 0.4);
+        }
+
+        .price-calculation-section.price-error .error-message {
+            color: #ff5757 !important;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        @keyframes priceLoadingPulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* Spinner pour le chargement */
+        .price-calculation-section .fa-spinner {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Amélioration des détails de prix */
+        .distance-info i, .time-info i {
+            color: #D4A853;
+            margin-right: 8px;
+            width: 16px;
+            text-align: center;
+        }
+
+        .price-line {
+            transition: all 0.2s ease;
+        }
+
+        .price-line:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 4px 8px;
+        }
+
+        .price-separator {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #D4A853, transparent);
+            margin: 10px 0;
+        }
+
+        /* Responsive pour les nouvelles animations */
+        @media (max-width: 768px) {
+            .price-calculation-section {
+                transform: translateY(10px);
+            }
+            
+            .price-line:hover {
+                background: none;
+                padding: 0;
+            }
+        }
+
         /* ESTIMATION DE PRIX - CONFORME CHARTE SUZOSKY */
         .price-estimate {
             background: rgba(212, 168, 83, 0.1);
