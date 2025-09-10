@@ -652,5 +652,41 @@
         setupPriceCalculationListeners();
         // Initialiser le service de calcul de prix (tentative immédiate)
         initializePriceCalculation();
+        // SIMPLE ESTIMATION IMMEDIATE pour formulaire de commande
+        function simpleEstimate() {
+            const dep = document.getElementById('departure')?.value.trim();
+            const dest = document.getElementById('destination')?.value.trim();
+            const pr = document.querySelector('input[name="priority"]:checked')?.value || 'normale';
+            if (dep && dest) {
+                // Fallback rapide sans API
+                const est = computeFallback(dep, dest, pr);
+                document.getElementById('estDistance').value = est.distanceText;
+                document.getElementById('estDuration').value = est.durationText;
+                document.getElementById('estPrice').value = est.totalPrice + ' FCFA';
+            }
+        }
+        // Fonction de calcul de fallback statique
+        function computeFallback(dep, dest, priority) {
+            const km = Math.max(1, Math.min(50, (dep.length + dest.length) / 10));
+            const minutes = Math.ceil(km * 2);
+            let base, rate;
+            switch(priority) {
+                case 'urgente': base = 1000; rate = 500; break;
+                case 'express': base = 1500; rate = 700; break;
+                default: base = 300; rate = 300;
+            }
+            const price = Math.max(base, Math.ceil(km * rate));
+            return {
+                distanceText: km.toFixed(1) + ' km',
+                durationText: minutes + ' min',
+                totalPrice: price
+            };
+        }
+        // Attacher aux champs du formulaire
+        ['input','blur'].forEach(evt => {
+            document.getElementById('departure')?.addEventListener(evt, simpleEstimate);
+            document.getElementById('destination')?.addEventListener(evt, simpleEstimate);
+        });
+        document.querySelectorAll('input[name="priority"]').forEach(r => r.addEventListener('change', simpleEstimate));
     });
     </script>
