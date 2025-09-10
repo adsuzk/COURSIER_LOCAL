@@ -201,8 +201,7 @@
             }
             
             // Réinitialiser les informations de prix et distance
-            document.getElementById('distance-info').innerHTML = '';
-            document.getElementById('price-info').innerHTML = '';
+            clearPriceDisplay();
             
             // Recentrer la carte sur Abidjan
             if (map) {
