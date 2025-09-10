@@ -683,6 +683,62 @@
                         <button type="button" class="submit-btn" onclick="processOrder()">
                             🛵 Commander maintenant
                         </button>
+                        <!-- Script d'estimation simple intégré -->
+                        <script>
+                        (function() {
+                            // Service Google Distance Matrix
+                            let dmService;
+                            function initDMService() {
+                                if (window.google && google.maps && google.maps.DistanceMatrixService) {
+                                    dmService = new google.maps.DistanceMatrixService();
+                                } else {
+                                    setTimeout(initDMService, 500);
+                                }
+                            }
+                            initDMService();
+
+                            function updateEstimate() {
+                                const dep = document.getElementById('departure').value.trim();
+                                const dest = document.getElementById('destination').value.trim();
+                                const pr = document.querySelector('input[name="priority"]:checked');
+                                if (!dep || !dest || !dmService || !pr) return;
+                                dmService.getDistanceMatrix({
+                                    origins: [dep],
+                                    destinations: [dest],
+                                    travelMode: google.maps.TravelMode.DRIVING,
+                                    unitSystem: google.maps.UnitSystem.METRIC
+                                }, (response, status) => {
+                                    if (status === 'OK') {
+                                        const elem = response.rows[0].elements[0];
+                                        if (elem.status === 'OK') {
+                                            const km = elem.distance.value / 1000;
+                                            const dur = elem.duration.text;
+                                            let base, rate;
+                                            switch (pr.value) {
+                                                case 'urgente': base = 1000; rate = 500; break;
+                                                case 'express': base = 1500; rate = 700; break;
+                                                default: base = 300; rate = 300;
+                                            }
+                                            const cost = Math.max(base, Math.ceil(km * rate));
+                                            // Affichage dans les champs
+                                            const distIn = document.getElementById('estDistance');
+                                            const durIn = document.getElementById('estDuration');
+                                            const priceIn = document.getElementById('estPrice');
+                                            if (distIn) distIn.value = elem.distance.text;
+                                            if (durIn) durIn.value = dur;
+                                            if (priceIn) priceIn.value = cost + ' FCFA';
+                                        }
+                                    }
+                                });
+                            }
+                            // Listeners
+                            document.getElementById('departure').addEventListener('change', updateEstimate);
+                            document.getElementById('destination').addEventListener('change', updateEstimate);
+                            document.querySelectorAll('input[name="priority"]').forEach(function(r) {
+                                r.addEventListener('change', updateEstimate);
+                            });
+                        })();
+                        </script>
                     </form>
                 </div>
                 </div>
