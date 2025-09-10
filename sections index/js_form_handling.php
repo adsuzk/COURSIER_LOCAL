@@ -573,12 +573,15 @@
         
         // Événements
             // Déclenche le calcul lors de la saisie ou perte de focus
+            console.log('🎯 Attachement des événements...');
             dep.addEventListener('input', calculate);
             dep.addEventListener('blur', calculate);
             dest.addEventListener('input', calculate);
             dest.addEventListener('blur', calculate);
             prios.forEach(r => r.addEventListener('change', calculate));
+            console.log('✅ Événements attachés');
             // Calcul initial si les deux champs sont déjà remplis
+            console.log('🔄 Calcul initial...');
             calculate();
         }
         setupPriceCalc();
