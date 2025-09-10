@@ -110,17 +110,52 @@ $messages = [];
 
 /* === INTERFACE CHAT PRINCIPAL === */
 .chat-interface {
-    display: grid;
-    grid-template-columns: 400px 1fr 350px;
+    display: flex;
     gap: 20px;
-    height: 75vh;
-    min-height: 600px;
+    height: 80vh;
+    min-height: 700px;
     background: var(--glass-bg);
     backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border);
     border-radius: 20px;
     padding: 20px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+
+/* === SIDEBAR CONVERSATIONS (25% de largeur) === */
+.chat-sidebar {
+    width: 25%;
+    min-width: 320px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--glass-border);
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* === ZONE PRINCIPALE MESSAGES (60% de largeur) === */
+.chat-main {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--glass-border);
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+/* === ZONE DÉTAILS (15% de largeur) === */
+.chat-details {
+    width: 15%;
+    min-width: 250px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--glass-border);
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 /* === SIDEBAR CONVERSATIONS === */
