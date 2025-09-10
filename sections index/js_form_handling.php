@@ -392,4 +392,303 @@
             timeout = setTimeout(later, wait);
         };
     }
+
+    // CALCUL AUTOMATIQUE DES PRIX
+    let priceCalculationService;
+    let lastCalculationRequest = null;
+
+    // Configuration des tarifs
+    const PRICING_CONFIG = {
+        normale: {
+            name: 'Normal',
+            baseFare: 300, // FCFA
+            perKmRate: 300, // FCFA par km
+            color: '#4CAF50'
+        },
+        urgente: {
+            name: 'Urgent',
+            baseFare: 1000, // FCFA
+            perKmRate: 500, // FCFA par km
+            color: '#FF9800'
+        },
+        express: {
+            name: 'Express',
+            baseFare: 1500, // FCFA
+            perKmRate: 700, // FCFA par km
+            color: '#F44336'
+        }
+    };
+
+    // Initialisation du service de calcul des prix
+    function initializePriceCalculation() {
+        if (typeof google !== 'undefined' && google.maps && google.maps.DistanceMatrixService) {
+            priceCalculationService = new google.maps.DistanceMatrixService();
+            console.log('Service de calcul des prix initialisé');
+            
+            // Écouter les changements d'adresses
+            setupPriceCalculationListeners();
+        } else {
+            console.warn('Google Maps API non disponible pour le calcul des prix');
+            setTimeout(initializePriceCalculation, 1000);
+        }
+    }
+
+    // Configuration des écouteurs pour le calcul automatique
+    function setupPriceCalculationListeners() {
+        const departureInput = document.getElementById('departure');
+        const destinationInput = document.getElementById('destination');
+        const priorityInputs = document.querySelectorAll('input[name="priority"]');
+
+        if (departureInput && destinationInput) {
+            // Calcul automatique avec debounce sur les adresses
+            const debouncedCalculation = debounce(calculatePriceAutomatically, 1500);
+            
+            departureInput.addEventListener('input', debouncedCalculation);
+            destinationInput.addEventListener('blur', debouncedCalculation);
+            
+            // Calcul immédiat sur changement de priorité
+            priorityInputs.forEach(input => {
+                input.addEventListener('change', calculatePriceAutomatically);
+            });
+        }
+    }
+
+    // Fonction principale de calcul automatique
+    function calculatePriceAutomatically() {
+        const departure = document.getElementById('departure')?.value?.trim();
+        const destination = document.getElementById('destination')?.value?.trim();
+        const selectedPriority = document.querySelector('input[name="priority"]:checked')?.value || 'normale';
+
+        // Vérifier si on a les deux adresses
+        if (!departure || !destination || departure.length < 3 || destination.length < 3) {
+            clearPriceDisplay();
+            return;
+        }
+
+        // Annuler la requête précédente si elle existe
+        if (lastCalculationRequest) {
+            lastCalculationRequest.abort = true;
+        }
+
+        // Afficher le loading
+        showPriceLoading();
+
+        // Créer une nouvelle requête
+        const currentRequest = {
+            abort: false,
+            timestamp: Date.now()
+        };
+        lastCalculationRequest = currentRequest;
+
+        // Calculer la distance avec Google Distance Matrix
+        if (priceCalculationService) {
+            priceCalculationService.getDistanceMatrix({
+                origins: [departure],
+                destinations: [destination],
+                travelMode: google.maps.TravelMode.DRIVING,
+                unitSystem: google.maps.UnitSystem.METRIC,
+                avoidHighways: false,
+                avoidTolls: false
+            }, (response, status) => {
+                // Vérifier si cette requête n'a pas été annulée
+                if (currentRequest.abort) {
+                    return;
+                }
+
+                if (status === google.maps.DistanceMatrixStatus.OK) {
+                    const element = response.rows[0].elements[0];
+                    
+                    if (element.status === 'OK') {
+                        const distance = element.distance;
+                        const duration = element.duration;
+                        
+                        // Calculer et afficher le prix
+                        calculateAndDisplayPrice(distance, duration, selectedPriority);
+                    } else {
+                        showPriceError('Impossible de calculer la distance entre ces adresses');
+                    }
+                } else {
+                    showPriceError('Erreur du service de calcul de distance');
+                }
+                
+                // Nettoyer la référence
+                if (lastCalculationRequest === currentRequest) {
+                    lastCalculationRequest = null;
+                }
+            });
+        } else {
+            // Fallback : estimation basique
+            estimatePriceWithoutAPI(departure, destination, selectedPriority);
+        }
+    }
+
+    // Calcul et affichage du prix
+    function calculateAndDisplayPrice(distance, duration, priority) {
+        const config = PRICING_CONFIG[priority] || PRICING_CONFIG.normale;
+        const distanceKm = distance.value / 1000; // Convertir en km
+        
+        // Calculs
+        const baseFare = config.baseFare;
+        const distanceCost = Math.ceil(distanceKm * config.perKmRate);
+        const totalPrice = baseFare + distanceCost;
+        
+        // Affichage
+        displayPriceBreakdown({
+            distance: distance,
+            duration: duration,
+            priority: priority,
+            config: config,
+            baseFare: baseFare,
+            distanceCost: distanceCost,
+            totalPrice: totalPrice,
+            distanceKm: distanceKm
+        });
+    }
+
+    // Affichage détaillé du calcul de prix
+    function displayPriceBreakdown(calculation) {
+        const priceSection = document.getElementById('price-calculation-section');
+        const distanceInfo = document.getElementById('distance-info');
+        const timeInfo = document.getElementById('time-info');
+        const priceBreakdown = document.getElementById('price-breakdown');
+        const totalPriceElement = document.getElementById('total-price');
+
+        if (!priceSection) return;
+
+        // Afficher la section
+        priceSection.style.display = 'block';
+        priceSection.classList.add('price-calculated');
+
+        // Distance et durée
+        if (distanceInfo) {
+            distanceInfo.innerHTML = `
+                <i class="fas fa-route"></i>
+                <span class="distance-value">${calculation.distance.text}</span>
+            `;
+        }
+
+        if (timeInfo) {
+            timeInfo.innerHTML = `
+                <i class="fas fa-clock"></i>
+                <span class="time-value">${calculation.duration.text}</span>
+            `;
+        }
+
+        // Détail du calcul
+        if (priceBreakdown) {
+            priceBreakdown.innerHTML = `
+                <div class="price-line">
+                    <span class="price-label">Tarif de base (${calculation.config.name})</span>
+                    <span class="price-value">${calculation.baseFare} FCFA</span>
+                </div>
+                <div class="price-line">
+                    <span class="price-label">Distance (${calculation.distanceKm.toFixed(1)} km × ${calculation.config.perKmRate} FCFA/km)</span>
+                    <span class="price-value">${calculation.distanceCost} FCFA</span>
+                </div>
+                <div class="price-separator"></div>
+            `;
+        }
+
+        // Prix total
+        if (totalPriceElement) {
+            totalPriceElement.innerHTML = `
+                <span class="total-label">Prix total estimé</span>
+                <span class="total-amount">${calculation.totalPrice} FCFA</span>
+            `;
+            totalPriceElement.style.borderColor = calculation.config.color;
+        }
+
+        // Animation d'apparition
+        setTimeout(() => {
+            priceSection.classList.add('price-visible');
+        }, 100);
+    }
+
+    // Affichage du loading
+    function showPriceLoading() {
+        const priceSection = document.getElementById('price-calculation-section');
+        const distanceInfo = document.getElementById('distance-info');
+        const timeInfo = document.getElementById('time-info');
+        const priceBreakdown = document.getElementById('price-breakdown');
+        const totalPriceElement = document.getElementById('total-price');
+
+        if (!priceSection) return;
+
+        priceSection.style.display = 'block';
+        priceSection.classList.remove('price-calculated', 'price-visible');
+        priceSection.classList.add('price-loading');
+
+        const loadingHTML = '<i class="fas fa-spinner fa-spin"></i> Calcul en cours...';
+        
+        if (distanceInfo) distanceInfo.innerHTML = loadingHTML;
+        if (timeInfo) timeInfo.innerHTML = loadingHTML;
+        if (priceBreakdown) priceBreakdown.innerHTML = loadingHTML;
+        if (totalPriceElement) totalPriceElement.innerHTML = loadingHTML;
+    }
+
+    // Effacement de l'affichage du prix
+    function clearPriceDisplay() {
+        const priceSection = document.getElementById('price-calculation-section');
+        if (priceSection) {
+            priceSection.style.display = 'none';
+            priceSection.classList.remove('price-calculated', 'price-visible', 'price-loading');
+        }
+    }
+
+    // Affichage d'erreur
+    function showPriceError(message) {
+        const priceSection = document.getElementById('price-calculation-section');
+        const totalPriceElement = document.getElementById('total-price');
+        
+        if (priceSection && totalPriceElement) {
+            priceSection.style.display = 'block';
+            priceSection.classList.remove('price-loading', 'price-calculated');
+            priceSection.classList.add('price-error');
+            
+            totalPriceElement.innerHTML = `
+                <span class="error-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    ${message}
+                </span>
+            `;
+            
+            // Masquer après 5 secondes
+            setTimeout(clearPriceDisplay, 5000);
+        }
+    }
+
+    // Estimation de prix sans API (fallback)
+    function estimatePriceWithoutAPI(departure, destination, priority) {
+        // Estimation très basique basée sur la longueur des adresses
+        const estimatedKm = Math.max(2, Math.min(50, (departure.length + destination.length) / 10));
+        const config = PRICING_CONFIG[priority] || PRICING_CONFIG.normale;
+        
+        const baseFare = config.baseFare;
+        const distanceCost = Math.ceil(estimatedKm * config.perKmRate);
+        const totalPrice = baseFare + distanceCost;
+        
+        displayPriceBreakdown({
+            distance: { text: `~${estimatedKm.toFixed(1)} km`, value: estimatedKm * 1000 },
+            duration: { text: `~${Math.ceil(estimatedKm * 2)} min` },
+            priority: priority,
+            config: config,
+            baseFare: baseFare,
+            distanceCost: distanceCost,
+            totalPrice: totalPrice,
+            distanceKm: estimatedKm
+        });
+    }
+
+    // Initialisation au chargement de la page
+    document.addEventListener('DOMContentLoaded', function() {
+        // Attendre que Google Maps soit chargé
+        if (typeof google !== 'undefined') {
+            initializePriceCalculation();
+        } else {
+            // Attendre le chargement de Google Maps
+            window.addEventListener('load', function() {
+                setTimeout(initializePriceCalculation, 1000);
+            });
+        }
+    });
     </script>
