@@ -10,7 +10,7 @@ if (isset($_POST['login'])) {
     if ($username === 'admin' && $password === 'suzosky2024') {
         $_SESSION['admin_logged_in'] = true;
         $_SESSION['admin_username'] = $username;
-        header('Location: ../admin.php?section=dashboard');
+    header('Location: admin.php?section=dashboard');
         exit;
     } else {
         renderLoginForm('Identifiants incorrects');
@@ -21,7 +21,7 @@ if (isset($_POST['login'])) {
 // Gestion de la déconnexion
 if (($_GET['section'] ?? '') === 'logout') {
     session_destroy();
-    header('Location: ../admin.php');
+    header('Location: admin.php');
     exit;
 }
 
