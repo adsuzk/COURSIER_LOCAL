@@ -562,6 +562,19 @@
                             </div>
                         </div>
                         
+                        <!-- Champs estimations simples -->
+                        <div class="form-group">
+                            <label for="estDistance">Distance estimée</label>
+                            <input type="text" id="estDistance" readonly placeholder="- km" style="width:100%; padding:8px; margin-bottom:10px; border-radius:4px;">
+                        </div>
+                        <div class="form-group">
+                            <label for="estDuration">Durée estimée</label>
+                            <input type="text" id="estDuration" readonly placeholder="- min" style="width:100%; padding:8px; margin-bottom:10px; border-radius:4px;">
+                        </div>
+                        <div class="form-group">
+                            <label for="estPrice">Prix estimé</label>
+                            <input type="text" id="estPrice" readonly placeholder="- FCFA" style="width:100%; padding:8px; margin-bottom:10px; border-radius:4px;">
+                        </div>
                         <!-- Calcul automatique du prix -->
                         <div class="price-calculation-section" id="price-calculation-section" style="display:none;">
                             <div class="price-display">
