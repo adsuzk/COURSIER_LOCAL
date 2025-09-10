@@ -1,13 +1,14 @@
 <?php
 // sections/js_google_maps.php - Fonctions Google Maps et géolocalisation
-// Variables globales pour markers (attachées à window)
-var markerA = null, markerB = null;
 ?>
     <!-- Gestion d'erreur Google Maps -->
     <script>
-    // Variables globales pour markers afin d'éviter les ReferenceError
+    // Initialisation globale des marqueurs
     window.markerA = window.markerA || null;
     window.markerB = window.markerB || null;
+    // Variables locales référant aux globals
+    var markerA = window.markerA;
+    var markerB = window.markerB;
         // Global JS error logging
         window.addEventListener('error', function(event) {
             try {
