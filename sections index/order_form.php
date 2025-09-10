@@ -577,80 +577,8 @@
                             </div>
                         </div>
                         
-                        <!-- Sélection mode de paiement -->
-                        <div class="payment-methods-container" id="paymentMethods" style="display:none;">
-                            <h3 class="payment-title">💳 Choisissez votre mode de paiement</h3>
-                            
-                            <!-- Liste des modes de paiement horizontale -->
-                            <div class="payment-options">
-                                <!-- Espèces à la livraison -->
-                                <div class="payment-option" data-method="cash" data-default="true">
-                                    <input type="radio" name="paymentMethod" value="cash" id="cash" checked>
-                                    <label for="cash">
-                                        <div class="payment-icon"><img src="assets/img/payment/cash.svg" alt="Espèces" class="payment-logo"></div>
-                                        <div class="payment-details">
-                                            <span class="payment-name">Espèces à la livraison</span>
-                                            <span class="payment-info">Paiement au coursier • Sans frais</span>
-                                        </div>
-                                    </label>
-                                </div>
-                                <!-- Orange Money -->
-                                <div class="payment-option" data-method="orange_money">
-                                    <input type="radio" name="paymentMethod" value="orange_money" id="orange_money">
-                                    <label for="orange_money">
-                                        <div class="payment-icon"><img src="assets/img/payment/orange-money.svg" alt="Orange Money" class="payment-logo"></div>
-                                        <div class="payment-details">
-                                            <span class="payment-name">Orange Money</span>
-                                            <span class="payment-info">Instantané • Sans frais</span>
-                                        </div>
-                                    </label>
-                                </div>
-                                <!-- MTN Money -->
-                                <div class="payment-option" data-method="mtn_money">
-                                    <input type="radio" name="paymentMethod" value="mtn_money" id="mtn_money">
-                                    <label for="mtn_money">
-                                        <div class="payment-icon"><img src="assets/img/payment/mtn-money.svg" alt="MTN Money" class="payment-logo"></div>
-                                        <div class="payment-details">
-                                            <span class="payment-name">MTN Money</span>
-                                            <span class="payment-info">Instantané • Sans frais</span>
-                                        </div>
-                                    </label>
-                                </div>
-                                <!-- Moov Money -->
-                                <div class="payment-option" data-method="moov_money">
-                                    <input type="radio" name="paymentMethod" value="moov_money" id="moov_money">
-                                    <label for="moov_money">
-                                        <div class="payment-icon"><img src="assets/img/payment/moov-money.svg" alt="Moov Money" class="payment-logo"></div>
-                                        <div class="payment-details">
-                                            <span class="payment-name">Moov Money</span>
-                                            <span class="payment-info">Instantané • Sans frais</span>
-                                        </div>
-                                    </label>
-                                </div>
-                                <!-- Wave -->
-                                <div class="payment-option" data-method="wave">
-                                    <input type="radio" name="paymentMethod" value="wave" id="wave">
-                                    <label for="wave">
-                                        <div class="payment-icon"><img src="assets/img/payment/wave.svg" alt="Wave" class="payment-logo"></div>
-                                        <div class="payment-details">
-                                            <span class="payment-name">Wave</span>
-                                            <span class="payment-info">Instantané • Sans frais</span>
-                                        </div>
-                                    </label>
-                                </div>
-                                <!-- Carte bancaire -->
-                                <div class="payment-option" data-method="card">
-                                    <input type="radio" name="paymentMethod" value="card" id="card">
-                                    <label for="card">
-                                        <div class="payment-icon"><img src="assets/img/payment/card.svg" alt="Carte bancaire" class="payment-logo"></div>
-                                        <div class="payment-details">
-                                            <span class="payment-name">Visa / Mastercard</span>
-                                            <span class="payment-info">1-3 min • Frais 2.5%</span>
-                                        </div>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
+                        <!-- Inclusion de la gestion des modes de paiement -->
+                        <?php include __DIR__ . '/payment_methods.php'; ?>
                         <div class="map-controls" style="display:flex; gap:10px; margin:10px 0;">
                             <button type="button" onclick="clearRoute()" style="background:rgba(212,168,83,0.2); color:#D4A853; border:1px solid #D4A853; padding:8px 16px; border-radius:8px; cursor:pointer;">
                                 🔄 Réafficher marqueurs
