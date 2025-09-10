@@ -1,5 +1,8 @@
 <?php
-session_start();
+// Ne pas relancer session_start si déjà active
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
 require_once __DIR__ . '/../config.php';
 // Les données seront chargées dynamiquement via AJAX
 $conversations = [];
