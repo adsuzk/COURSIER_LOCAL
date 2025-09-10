@@ -648,6 +648,56 @@
 
     // Initialisation au chargement de la page
     document.addEventListener('DOMContentLoaded', function() {
+        // Estimation simple fallback pour afficher distance, durée et prix immédiatement
+        function updateFallbackEstimate() {
+            const dep = document.getElementById('departure')?.value.trim();
+            const dest = document.getElementById('destination')?.value.trim();
+            const section = document.getElementById('price-calculation-section');
+            if (!dep || !dest) {
+                if (section) section.style.display = 'none';
+                return;
+            }
+            // Calcul de distance simulée (basé sur longueur de texte)
+            const km = Math.max(1, Math.round((dep.length + dest.length) / 10));
+            const mins = km * 2;
+            // Tarification selon priorité
+            const pr = document.querySelector('input[name="priority"]:checked')?.value || 'normale';
+            let base, perKm;
+            if (pr === 'urgente') { base = 1000; perKm = 500; }
+            else if (pr === 'express') { base = 1500; perKm = 700; }
+            else { base = 300; perKm = 300; }
+            const distanceCost = km * perKm;
+            const total = base + distanceCost;
+            // Affichage
+            if (section) section.style.display = 'block';
+            const di = document.getElementById('distance-info');
+            const ti = document.getElementById('time-info');
+            const pb = document.getElementById('price-breakdown');
+            const tp = document.getElementById('total-price');
+            if (di) di.innerHTML = `📏 ${km} km`;
+            if (ti) ti.innerHTML = `⏱️ ${mins} min`;
+            if (pb) pb.innerHTML = `
+                <div class="price-line">
+                    <span class="description">Base (${pr})</span>
+                    <span class="amount">${base} FCFA</span>
+                </div>
+                <div class="price-line">
+                    <span class="description">${km} km × ${perKm} FCFA/km</span>
+                    <span class="amount">${distanceCost} FCFA</span>
+                </div>
+                <div class="price-separator"></div>`;
+            if (tp) {
+                tp.innerHTML = `<span class="total-label">Total estimé</span> <span class="total-amount">${total} FCFA</span>`;
+                // Couleur selon priorité
+                tp.style.borderColor = pr === 'urgente' ? '#FF9800' : pr === 'express' ? '#F44336' : '#4CAF50';
+            }
+        }
+        // Attacher événements
+        ['input','blur'].forEach(evt => {
+            document.getElementById('departure')?.addEventListener(evt, updateFallbackEstimate);
+            document.getElementById('destination')?.addEventListener(evt, updateFallbackEstimate);
+        });
+        document.querySelectorAll('input[name="priority"]').forEach(r => r.addEventListener('change', updateFallbackEstimate));
         // Configurer les écouteurs pour le calcul automatique
         setupPriceCalculationListeners();
         // Initialiser le service de calcul de prix (tentative immédiate)
