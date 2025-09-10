@@ -506,8 +506,18 @@ $messages = [];
                 </button>
             </div>
         </div>
-        <div class="quick-filters">
-            <!-- Les filtres rapides seront ajoutés ici -->
+        <div class="quick-filters" style="padding: 15px; border-bottom: 1px solid var(--glass-border); background: rgba(255,255,255,0.03);">
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button class="filter-btn active" data-filter="all" onclick="filterConversations('all')" style="background: var(--primary-gold); color: var(--primary-dark); border: none; padding: 6px 12px; border-radius: 15px; font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+                    Tous
+                </button>
+                <button class="filter-btn" data-filter="unread" onclick="filterConversations('unread')" style="background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); border: 1px solid var(--glass-border); padding: 6px 12px; border-radius: 15px; font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+                    Non lus
+                </button>
+                <button class="filter-btn" data-filter="vip" onclick="filterConversations('vip')" style="background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); border: 1px solid var(--glass-border); padding: 6px 12px; border-radius: 15px; font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+                    VIP
+                </button>
+            </div>
         </div>
         <div class="conversations" id="conversationsList">
             <!-- Conversations exemples -->
