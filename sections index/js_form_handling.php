@@ -680,14 +680,9 @@
 
     // Initialisation au chargement de la page
     document.addEventListener('DOMContentLoaded', function() {
-        // Attendre que Google Maps soit chargé
-        if (typeof google !== 'undefined') {
-            initializePriceCalculation();
-        } else {
-            // Attendre le chargement de Google Maps
-            window.addEventListener('load', function() {
-                setTimeout(initializePriceCalculation, 1000);
-            });
-        }
+        // Configurer les écouteurs pour le calcul automatique
+        setupPriceCalculationListeners();
+        // Initialiser le service de calcul de prix (tentative immédiate)
+        initializePriceCalculation();
     });
     </script>
