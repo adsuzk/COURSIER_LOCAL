@@ -543,11 +543,13 @@
                 const distText = el.distance.text;
                 const durText  = el.duration.text;
                 const kmVal    = el.distance.value / 1000;
+                console.log('📊 Données calculées:', {distText, durText, kmVal});
                 // Priorité choisie
                 let pr = 'normale';
                 prios.forEach(r => { if (r.checked) pr = r.value; });
                 const cfg = PRICING[pr];
                 const cost = cfg.base + Math.ceil(kmVal * cfg.perKm);
+                console.log('💰 Prix calculé:', {priorite: pr, config: cfg, cout: cost});
                 // Mise à jour UI
                 document.getElementById('distance-info').innerHTML   = `📏 ${distText}`;
                 document.getElementById('time-info').innerHTML       = `⏱️ ${durText}`;
@@ -565,6 +567,7 @@
                 tp.innerHTML = `💰 ${cost} FCFA`;
                 tp.style.borderColor = cfg.color;
                 section.style.display = 'block';
+                console.log('✅ Interface mise à jour, section affichée!');
             });
         }
         
