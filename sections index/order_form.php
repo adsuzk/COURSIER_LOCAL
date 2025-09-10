@@ -569,24 +569,10 @@
                                     <h3>💰 Estimation de votre course</h3>
                                 </div>
                                 <div class="price-details">
-                                    <div class="distance-info">
-                                        <span class="label">📏 Distance :</span>
-                                        <span class="value" id="courseDistance">-</span>
-                                    </div>
-                                    <div class="time-info">
-                                        <span class="label">⏱️ Durée estimée :</span>
-                                        <span class="value" id="courseDuration">-</span>
-                                    </div>
-                                    <div class="price-breakdown">
-                                        <div class="price-line">
-                                            <span class="description" id="priceDescription">Tarif de base :</span>
-                                            <span class="amount" id="priceAmount">-</span>
-                                        </div>
-                                        <div class="price-total">
-                                            <span class="total-label">Prix total :</span>
-                                            <span class="total-amount" id="totalPrice">- FCFA</span>
-                                        </div>
-                                    </div>
+                                    <div class="distance-info" id="distance-info"></div>
+                                    <div class="time-info" id="time-info"></div>
+                                    <div class="price-breakdown" id="price-breakdown"></div>
+                                    <div class="price-total" id="total-price"></div>
                                 </div>
                             </div>
                         </div>
