@@ -2,7 +2,13 @@
 // Server-side listing of agents selon charte Suzosky
 require_once __DIR__ . '/../config.php';
 $pdo = getPDO();
-$agents = $pdo->query("SELECT * FROM agents_suzosky ORDER BY created_at DESC")->fetchAll(PDO::FETCH_ASSOC);
+// Récupérer la liste des agents, avec fallback si table manquante en local
+try {
+    $agents = $pdo->query("SELECT * FROM agents_suzosky ORDER BY created_at DESC")->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    // Table absente ou autre erreur, retourner liste vide
+    $agents = [];
+}
 
 // Séparer les agents par type de poste
 $coursiers = array_filter($agents, function($agent) {
