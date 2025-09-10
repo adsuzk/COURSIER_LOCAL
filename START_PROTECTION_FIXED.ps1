@@ -5,7 +5,7 @@ Write-Host "DEMARRAGE DU SYSTEME DE PROTECTION AUTOMATIQUE" -ForegroundColor Gre
 Write-Host ""
 Write-Host "Vos dossiers COURSIER_LOCAL et coursier_prod seront surveilles 24/7" -ForegroundColor Cyan
 Write-Host "Toute modification sera automatiquement sauvegardee sur GitHub" -ForegroundColor Yellow
-Write-Host "Verification toutes les 30 secondes" -ForegroundColor White
+Write-Host "Verification toutes les 5 secondes" -ForegroundColor White
 Write-Host ""
 Write-Host "IMPORTANT: Gardez cette fenetre ouverte pour maintenir la protection" -ForegroundColor Red
 Write-Host ""
