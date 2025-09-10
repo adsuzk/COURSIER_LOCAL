@@ -506,6 +506,8 @@
         function calculate() {
             const o = dep.value.trim();
             const d = dest.value.trim();
+            // Debug: log des valeurs saisies
+            console.log('PriceCalc.calculate appelé avec', o, d);
             if (!o || !d) {
                 section.style.display = 'none';
                 return;
