@@ -1400,19 +1400,19 @@ function renderHeader() {
             
             <nav class="sidebar-nav">
                 <div class="nav-section">
-                    <a href="../admin.php?section=dashboard" class="menu-item <?php echo ($_GET['section'] ?? 'dashboard') === 'dashboard' ? 'active' : ''; ?>">
+                    <a href="admin.php?section=dashboard" class="menu-item <?php echo ($_GET['section'] ?? 'dashboard') === 'dashboard' ? 'active' : ''; ?>">
                         <i class="fas fa-tachometer-alt"></i>
                         <span>Tableau de bord</span>
                     </a>
-                    <a href="../admin.php?section=commandes" class="menu-item <?php echo ($_GET['section'] ?? '') === 'commandes' ? 'active' : ''; ?>">
+                    <a href="admin.php?section=commandes" class="menu-item <?php echo ($_GET['section'] ?? '') === 'commandes' ? 'active' : ''; ?>">
                         <i class="fas fa-shipping-fast"></i>
                         <span>Gestion des commandes</span>
                     </a>
-                    <a href="../admin.php?section=agents" class="menu-item <?php echo ($_GET['section'] ?? '') === 'agents' ? 'active' : ''; ?>">
+                    <a href="admin.php?section=agents" class="menu-item <?php echo ($_GET['section'] ?? '') === 'agents' ? 'active' : ''; ?>">
                         <i class="fas fa-users"></i>
                         <span>Gestion des agents</span>
                     </a>
-                    <a href="../admin.php?section=chat" class="menu-item <?php echo ($_GET['section'] ?? '') === 'chat' ? 'active' : ''; ?>">
+                    <a href="admin.php?section=chat" class="menu-item <?php echo ($_GET['section'] ?? '') === 'chat' ? 'active' : ''; ?>">
                         <i class="fas fa-comments"></i>
                         <span>Support Chat</span>
                     </a>
@@ -1420,7 +1420,7 @@ function renderHeader() {
                 
                 <div class="nav-section">
                     <div class="nav-section-title">Gestion clients</div>
-                    <a href="../admin.php?section=clients" class="menu-item <?php echo ($_GET['section'] ?? '') === 'clients' ? 'active' : ''; ?>">
+                    <a href="admin.php?section=clients" class="menu-item <?php echo ($_GET['section'] ?? '') === 'clients' ? 'active' : ''; ?>">
                         <i class="fas fa-address-book"></i>
                         <span>Base clients</span>
                     </a>
@@ -1428,7 +1428,7 @@ function renderHeader() {
                 
                 <div class="nav-section">
                     <div class="nav-section-title">Ressources humaines</div>
-                    <a href="../admin.php?section=recrutement" class="menu-item <?php echo ($_GET['section'] ?? '') === 'recrutement' ? 'active' : ''; ?>">
+                    <a href="admin.php?section=recrutement" class="menu-item <?php echo ($_GET['section'] ?? '') === 'recrutement' ? 'active' : ''; ?>">
                         <i class="fas fa-briefcase"></i>
                         <span>Emploi & Recrutement</span>
                     </a>
@@ -1436,7 +1436,7 @@ function renderHeader() {
             </nav>
             
             <div class="sidebar-footer">
-                <a href="../admin.php?section=logout" class="logout-btn">
+                <a href="admin.php?section=logout" class="logout-btn">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Déconnexion</span>
                 </a>
