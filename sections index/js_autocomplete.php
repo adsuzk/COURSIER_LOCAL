@@ -99,10 +99,6 @@
             if (destination && destination.trim() !== '' && markerB) {
                 calculateRoute(place.geometry.location, markerB.getPosition());
             }
-            // Déclencher le calcul automatique du prix
-            if (departureInput.value.trim() && destinationInput.value.trim()) {
-                calculatePriceAutomatically();
-            }
         });
 
         // Gestion de la sélection destination
@@ -162,10 +158,6 @@
             const departure = departureInput.value;
             if (departure && departure.trim() !== '' && markerA) {
                 calculateRoute(markerA.getPosition(), place.geometry.location);
-            }
-            // Déclencher le calcul automatique du prix
-            if (departureInput.value.trim() && destinationInput.value.trim()) {
-                calculatePriceAutomatically();
             }
         });
 
