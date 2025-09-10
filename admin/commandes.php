@@ -7,7 +7,7 @@
 
 // Vérifier l'authentification admin
 if (!checkAdminAuth()) {
-    header('Location: ../admin.php');
+    header('Location: admin.php');
     exit;
 }
 
