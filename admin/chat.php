@@ -422,6 +422,7 @@ $messages = [];
     display: flex;
     gap: 15px;
     align-items: end;
+    flex-shrink: 0;
 }
 
 .message-input {
@@ -436,7 +437,7 @@ $messages = [];
     font-weight: 500;
     resize: none;
     min-height: 45px;
-    max-height: 100px;
+    max-height: 120px;
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
 }
