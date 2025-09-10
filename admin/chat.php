@@ -640,6 +640,14 @@ $messages = [];
             <button class="chat-tab" data-tab="agent">Agents</button>
         </div>
         <div class="messages" id="messagesContainer">
+            <!-- Zone d'affichage des messages avec indicateur de type actuel -->
+            <div class="chat-type-indicator" style="text-align: center; padding: 15px; margin-bottom: 20px; background: rgba(212, 168, 83, 0.1); border: 1px solid var(--primary-gold); border-radius: 12px;">
+                <i class="fas fa-user" style="color: var(--primary-gold); font-size: 1.2rem; margin-right: 8px;"></i>
+                <span style="color: var(--primary-gold); font-weight: 700; font-family: 'Montserrat', sans-serif;">
+                    Conversations avec les clients particuliers
+                </span>
+            </div>
+            
             <!-- Messages exemples -->
             <div class="message client">
                 <div class="message-content">
@@ -651,6 +659,12 @@ $messages = [];
                 <div class="message-content">
                     <p>Bonjour ! Votre commande est en cours de préparation. Vous recevrez un SMS dès qu'elle sera prise en charge par notre coursier.</p>
                     <span class="message-time">14:32</span>
+                </div>
+            </div>
+            <div class="message client">
+                <div class="message-content">
+                    <p>Parfait, merci beaucoup pour votre réactivité ! 👍</p>
+                    <span class="message-time">14:35</span>
                 </div>
             </div>
         </div>
