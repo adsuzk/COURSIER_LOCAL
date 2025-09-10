@@ -496,6 +496,13 @@
             const dest = document.getElementById('destination');
             const prios = document.querySelectorAll('input[name="priority"]');
             const section = document.getElementById('price-calculation-section');
+            
+            // Vérifier que tous les éléments DOM existent
+            if (!dep || !dest || !section) {
+                console.error('❌ Éléments DOM manquants:', {dep: !!dep, dest: !!dest, section: !!section});
+                return;
+            }
+            console.log('✅ Tous les éléments DOM trouvés');
         
         // Tarifaires
         const PRICING = {
