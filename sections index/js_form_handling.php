@@ -538,12 +538,12 @@
         if (priceBreakdown) {
             priceBreakdown.innerHTML = `
                 <div class="price-line">
-                    <span class="price-label">Tarif de base (${calculation.config.name})</span>
-                    <span class="price-value">${calculation.baseFare} FCFA</span>
+                    <span class="description">Tarif de base (${calculation.config.name})</span>
+                    <span class="amount">${calculation.baseFare} FCFA</span>
                 </div>
                 <div class="price-line">
-                    <span class="price-label">Distance (${calculation.distanceKm.toFixed(1)} km × ${calculation.config.perKmRate} FCFA/km)</span>
-                    <span class="price-value">${calculation.distanceCost} FCFA</span>
+                    <span class="description">Distance (${calculation.distanceKm.toFixed(1)} km × ${calculation.config.perKmRate} FCFA/km)</span>
+                    <span class="amount">${calculation.distanceCost} FCFA</span>
                 </div>
                 <div class="price-separator"></div>
             `;
