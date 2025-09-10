@@ -724,6 +724,32 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function loadTabContent(tabType) {
+    const indicator = document.querySelector('.chat-type-indicator');
+    const iconMap = {
+        'particulier': { icon: 'fa-user', text: 'Conversations avec les clients particuliers' },
+        'business': { icon: 'fa-building', text: 'Conversations avec les clients business' },
+        'agent': { icon: 'fa-users', text: 'Conversations avec les agents' }
+    };
+    
+    if (indicator && iconMap[tabType]) {
+        const config = iconMap[tabType];
+        indicator.innerHTML = `
+            <i class="fas ${config.icon}" style="color: var(--primary-gold); font-size: 1.2rem; margin-right: 8px;"></i>
+            <span style="color: var(--primary-gold); font-weight: 700; font-family: 'Montserrat', sans-serif;">
+                ${config.text}
+            </span>
+        `;
+    }
+    
+    // Animation de changement
+    const messagesContainer = document.getElementById('messagesContainer');
+    if (messagesContainer) {
+        messagesContainer.style.opacity = '0.7';
+        setTimeout(() => {
+            messagesContainer.style.opacity = '1';
+        }, 200);
+    }
+    
     console.log('Chargement du contenu pour:', tabType);
     // Ici vous chargerez le contenu spécifique selon le type
 }
