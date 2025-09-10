@@ -1356,17 +1356,7 @@ $newAgentsThisMonth = count(array_filter($agents, fn($a) => isset($a['created_at
     <!-- Rely on global navigation sidebar loaded elsewhere -->
     
     <div class="main-content">
-        <div class="top-bar">
-            <div class="page-header">
-                <h1 class="page-title">
-                    <i class="fas fa-users"></i>
-                    Gestion des agents
-                </h1>
-                <p class="page-subtitle">Interface d'administration SUZOSKY</p>
-            </div>
-            
-        </div>
-        
+        <!-- header local supprimé, on utilise renderHeader() global -->
         <div class="content-area fade-in">
 
     <div id="agents" class="content-section">
