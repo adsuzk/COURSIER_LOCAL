@@ -1,0 +1,14 @@
+# Logs de CinetPay
+logs/*.log
+diagnostics_cinetpay.log
+
+# Fichiers de configuration sensibles
+config_prod.php
+secrets.php
+
+# Fichiers temporaires
+*.tmp
+*.bak
+
+# Données de test
+test_transactions.json

@@ -1,0 +1,6 @@
+# diagnostics_apache.log
+
+# Merged Apache logs for error and access (to be generated server-side)
+# Example commands:
+# tail -n 100 /var/log/apache2/error.log >> diagnostics_apache.log
+# tail -n 100 /var/log/apache2/access.log >> diagnostics_apache.log

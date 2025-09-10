@@ -1,0 +1,42 @@
+[2025-09-03 20:38:54] Initiation paiement pour order_number: 
+[2025-09-03 20:38:55] Paiement initié URL: https://checkout.cinetpay.com/payment/db59444b0a2b160722df251abf8f1fa9aeafef51389aab0c8c6c50be3b9905ab0b003c7011a58ef7fb02eee48c7ef83589ef96f6f391c7
+[2025-09-03 20:40:22] Initiation paiement pour order_number: CMD002
+[2025-09-03 20:40:22] Paiement initié URL: https://checkout.cinetpay.com/payment/591832af2ee4347113892f0b8e751e6291c837462c9df499d1d2493f9bd06a0f74e57cf9e022bd64dbfc1f32316c4f23260b32717c384e
+[2025-09-03 20:47:55] Tentative de connexion à la base
+[2025-09-03 20:47:55] Connexion DB réussie
+[2025-09-03 20:47:55] Execution INSERT réussie
+[2025-09-03 20:48:57] Tentative de connexion à la base
+[2025-09-03 20:48:57] Connexion DB réussie
+[2025-09-03 20:48:57] Execution INSERT réussie
+[2025-09-04 14:30:50] Tentative de connexion à la base
+[2025-09-04 14:30:50] Connexion DB réussie
+[2025-09-04 14:30:50] Execution INSERT réussie
+[2025-09-04 14:32:22] Tentative de connexion à la base
+[2025-09-04 14:32:22] Connexion DB réussie
+[2025-09-04 14:32:22] Execution INSERT réussie
+[2025-09-04 14:54:18] Tentative de connexion à la base
+[2025-09-04 14:54:18] Connexion DB réussie
+[2025-09-04 14:54:18] Execution INSERT réussie
+[2025-09-04 21:18:35] Tentative de connexion à la base
+[2025-09-04 21:19:05] Tentative de connexion à la base
+[2025-09-04 21:19:05] Connexion DB réussie
+[2025-09-04 21:24:50] Tentative de connexion à la base
+[2025-09-04 21:24:50] Connexion DB réussie
+[2025-09-04 21:25:26] Tentative de connexion à la base
+[2025-09-04 21:25:26] Connexion DB réussie
+[2025-09-04 22:03:46] Tentative de connexion à la base
+[2025-09-04 22:03:46] Connexion DB réussie
+[2025-09-04 22:03:46] Execution INSERT réussie
+[2025-09-04 22:07:19] Tentative de connexion à la base
+[2025-09-04 22:07:19] Connexion DB réussie
+[2025-09-04 22:07:19] Execution INSERT réussie
+[2025-09-04 22:13:44] Tentative de connexion à la base
+[2025-09-04 22:13:44] Connexion DB réussie
+[2025-09-04 22:13:44] Execution INSERT réussie
+[2025-09-04 22:16:27] Tentative de connexion à la base
+[2025-09-04 22:16:27] Connexion DB réussie
+[2025-09-04 22:16:27] Execution INSERT réussie
+[2025-09-04 22:18:25] Tentative de connexion à la base
+[2025-09-04 22:18:25] Connexion DB réussie
+[2025-09-04 22:18:25] Table clients vérifiée/créée avec succès
+[2025-09-04 22:18:25] Execution INSERT réussie

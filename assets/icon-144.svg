@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="144" height="144" viewBox="0 0 144 144" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#1A1A2E;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#16213E;stop-opacity:1" />
+        </linearGradient>
+        <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#D4A853;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#F4D878;stop-opacity:1" />
+        </linearGradient>
+    </defs>
+    
+    <!-- Arrière-plan -->
+    <rect width="144" height="144" fill="url(#bg)" rx="14.4"/>
+    
+    <!-- Cercle central -->
+    <circle cx="72" cy="72" r="50.4" fill="url(#gold)" opacity="0.2"/>
+    
+    <!-- Logo S stylisé -->
+    <path d="M 36 50.4 
+             Q 108 36 108 64.8
+             Q 108 79.2 36 79.2
+             Q 36 93.6 108 93.6
+             Q 36 108 36 79.2"
+          fill="url(#gold)" stroke="url(#gold)" stroke-width="2.88"/>
+    
+    <!-- Texte SUZOSKY (si taille suffisante) -->
+    <text x="72" y="122.4" 
+                           font-family="Arial,sans-serif" 
+                           font-size="11.52" 
+                           font-weight="bold" 
+                           text-anchor="middle" 
+                           fill="url(#gold)">SUZOSKY</text>
+    
+    <!-- Points décoratifs -->
+    <circle cx="21.6" cy="21.6" r="2.88" fill="url(#gold)" opacity="0.6"/>
+    <circle cx="122.4" cy="122.4" r="2.88" fill="url(#gold)" opacity="0.6"/>
+</svg>

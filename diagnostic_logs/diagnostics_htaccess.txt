@@ -1,0 +1,87 @@
+".htaccess" server configuration from project root:
+
+RewriteEngine On
+
+# 🔒 PAGE D'ACCUEIL STATIQUE - SUZOSKY 2025
+# index.html prioritaire - statique  
+DirectoryIndex index.html
+
+# 🎯 REDIRECTIONS INTERFACES PRINCIPALES
+# /admin → admin.php (interface administration avec PHP)
+RewriteRule ^admin/?$ admin.php [L]
+
+# /business → business.html (interface entreprise statique)
+RewriteRule ^business/?$ business.html [L]
+
+# /coursier → coursier.php (interface coursier)
+RewriteRule ^coursier/?$ coursier.php [L]
+
+# /concierge → concierge.php (interface concierge avec connexion intégrée)
+RewriteRule ^concierge/?$ concierge.php [L]
+
+# 🔄 REDIRECTIONS PAGES STATIQUES
+# /recrutement → recrutement.html (page de recrutement)
+RewriteRule ^recrutement/?$ recrutement.html [L]
+
+# /suivi → suivi.html (page de suivi)
+RewriteRule ^suivi/?$ suivi.html [L]
+
+# /cgu → cgu.html (conditions générales)
+RewriteRule ^cgu/?$ cgu.html [L]
+
+# 🔌 REDIRECTIONS APPLICATIONS MOBILES CORRIGÉES
+# /app → app.php (gestion centralisée)
+RewriteRule ^app/?$ app.php [L]
+
+# /apk → apk.php (gestion centralisée)
+RewriteRule ^apk/?$ apk.php [L]
+
+# Interdire l'accès aux anciennes versions d'index
+<FilesMatch "^index_(backup|lws|perfect|secured|final)\.html$">
+	Order allow,deny
+	Deny from all
+</FilesMatch>
+
+# Gestion des erreurs 404 - DÉSACTIVÉE pour éviter redirections intempestives
+# ErrorDocument 404 /index.html
+
+# Protection des fichiers sensibles
+<Files "*.sql">
+	Order allow,deny
+	Deny from all
+</Files>
+
+# Protection des fichiers de configuration (SAUF config_db.php nécessaire)
+<FilesMatch "^config_(?!db\.php$).*\.php$">
+	Order allow,deny
+	Deny from all
+</FilesMatch>
+
+# Cache des ressources statiques
+<IfModule mod_expires.c>
+	ExpiresActive On
+	ExpiresByType image/svg+xml "access plus 1 month"
+	ExpiresByType text/css "access plus 1 month"
+	ExpiresByType application/javascript "access plus 1 month"
+</IfModule>
+
+# Compression GZIP
+<IfModule mod_deflate.c>
+	AddOutputFilterByType DEFLATE text/plain
+	AddOutputFilterByType DEFLATE text/html
+	AddOutputFilterByType DEFLATE text/xml
+	AddOutputFilterByType DEFLATE text/css
+	AddOutputFilterByType DEFLATE application/xml
+	AddOutputFilterByType DEFLATE application/xhtml+xml
+	AddOutputFilterByType DEFLATE application/rss+xml
+	AddOutputFilterByType DEFLATE application/javascript
+	AddOutputFilterByType DEFLATE application/x-javascript
+</IfModule>
+
+# Sécurité headers
+<IfModule mod_headers.c>
+	Header always set X-Content-Type-Options nosniff
+	Header always set X-Frame-Options DENY
+	Header always set X-XSS-Protection "1; mode=block"
+</IfModule>
+

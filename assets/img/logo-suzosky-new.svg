@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">
+  <!-- Fond élégant -->
+  <defs>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D4A853"/>
+      <stop offset="100%" stop-color="#B8941F"/>
+    </linearGradient>
+    <radialGradient id="bgGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#1A1A1A"/>
+      <stop offset="100%" stop-color="#0D0D0D"/>
+    </radialGradient>
+  </defs>
+  
+  <!-- Fond carré élégant -->
+  <rect width="300" height="300" fill="url(#bgGradient)" rx="20"/>
+  
+  <!-- Main avec cloche de service centrée -->
+  <g transform="translate(120, 80)">
+    <!-- Main stylisée -->
+    <path d="M10 40 Q5 30 15 25 L50 20 Q60 15 65 25 Q70 35 55 40 L20 45 Q10 50 10 40 Z" 
+          fill="url(#goldGradient)" stroke="#8B7355" stroke-width="2"/>
+    
+    <!-- Cloche de service -->
+    <ellipse cx="40" cy="55" rx="20" ry="15" fill="url(#goldGradient)" stroke="#8B7355" stroke-width="2"/>
+    <ellipse cx="40" cy="52" rx="15" ry="12" fill="none" stroke="#8B7355" stroke-width="1"/>
+    <ellipse cx="40" cy="49" rx="10" ry="8" fill="none" stroke="#8B7355" stroke-width="1"/>
+    
+    <!-- Bouton de la cloche -->
+    <circle cx="40" cy="35" r="4" fill="url(#goldGradient)" stroke="#8B7355" stroke-width="1"/>
+  </g>
+  
+  <!-- Texte SUZOSKY centré -->
+  <text x="150" y="180" font-family="Montserrat, sans-serif" font-size="24" font-weight="900" 
+        fill="url(#goldGradient)" letter-spacing="1px" text-anchor="middle">SUZOSKY</text>
+  
+  <!-- Sous-titre centré -->
+  <text x="150" y="200" font-family="Montserrat, sans-serif" font-size="10" font-weight="600" 
+        fill="#8B7355" letter-spacing="2px" text-anchor="middle">CONCIERGERIE PRIVÉE</text>
+  
+  <!-- Ligne décorative -->
+  <line x1="80" y1="215" x2="220" y2="215" stroke="url(#goldGradient)" stroke-width="2"/>
+  
+  <!-- Éléments décoratifs coins -->
+  <circle cx="50" cy="50" r="3" fill="url(#goldGradient)" opacity="0.7"/>
+  <circle cx="250" cy="50" r="3" fill="url(#goldGradient)" opacity="0.7"/>
+  <circle cx="50" cy="250" r="3" fill="url(#goldGradient)" opacity="0.7"/>
+  <circle cx="250" cy="250" r="3" fill="url(#goldGradient)" opacity="0.7"/>
+</svg>

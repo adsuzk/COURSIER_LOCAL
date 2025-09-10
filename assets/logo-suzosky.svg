@@ -1,0 +1,41 @@
+<svg width="200" height="80" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F4D03F;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#D4A853;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#B7950B;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="darkGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2C3E50;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1A1A2E;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="40" cy="40" r="35" fill="url(#darkGradient)" stroke="url(#goldGradient)" stroke-width="2"/>
+  
+  <!-- Crown icon -->
+  <g transform="translate(20, 20)">
+    <path d="M10 15 L15 8 L20 12 L25 8 L30 12 L35 8 L40 15 L35 25 L5 25 Z" 
+          fill="url(#goldGradient)" 
+          filter="url(#glow)"/>
+    <circle cx="20" cy="10" r="2" fill="#F4D03F"/>
+    <circle cx="30" cy="14" r="1.5" fill="#F4D03F"/>
+    <circle cx="10" cy="14" r="1.5" fill="#F4D03F"/>
+  </g>
+  
+  <!-- Company name -->
+  <text x="90" y="30" font-family="Montserrat, Arial, sans-serif" 
+        font-weight="900" font-size="18" fill="url(#goldGradient)">SUZOSKY</text>
+  <text x="90" y="50" font-family="Montserrat, Arial, sans-serif" 
+        font-weight="600" font-size="12" fill="#1A1A2E">CONCIERGERIE</text>
+  <text x="90" y="65" font-family="Montserrat, Arial, sans-serif" 
+        font-weight="400" font-size="10" fill="#666">PREMIUM DELIVERY</text>
+</svg>

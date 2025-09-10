@@ -1,0 +1,183 @@
+# 🚀 CONFIGURATION .HTACCESS COMPLÈTE - SITE COURSIER SUZOSKY
+# Optimisée pour LWS Production - Version finale
+
+Options +FollowSymLinks
+RewriteEngine On
+
+# ========================================
+# 🔗 REDIRECTIONS PRINCIPALES
+# ========================================
+
+# ✅ Interface Admin (avec et sans slash)
+RewriteRule ^admin/?$ admin.php [L]
+
+# ✅ Interface Coursier (avec et sans slash)
+RewriteRule ^coursier/?$ coursier.php [L]
+
+# ✅ Pages Business et Recrutement
+RewriteRule ^business/?$ business.php [L]
+RewriteRule ^recrutement/?$ recrutement.html [L]
+RewriteRule ^suivi/?$ suivi.html [L]
+RewriteRule ^cgu/?$ cgu.html [L]
+
+# ✅ Application mobile
+RewriteRule ^app/?$ app.php [L]
+RewriteRule ^apk/?$ apk.php [L]
+
+# ========================================
+# 🛡️ SÉCURITÉ AVANCÉE
+# ========================================
+
+# Protection des fichiers de base de données
+<Files "*.sql">
+    Require all denied
+</Files>
+
+# Protection des fichiers de configuration
+<Files "config_*.php">
+    Require all denied
+</Files>
+
+# Protection des fichiers sensibles
+<FilesMatch "\.(md|txt|log|bak|backup|old|tmp)$">
+    Require all denied
+</FilesMatch>
+
+# Protection des dossiers système
+<IfModule mod_rewrite.c>
+    RewriteRule ^(DOCUMENTATION_FINALE|FICHIERS_TEMPORAIRES)/.*$ - [F,L]
+    RewriteRule ^uploads/.*\.(php|phtml|php3|php4|php5|pl|py|jsp|asp|sh|cgi)$ - [F,L]
+</IfModule>
+
+# Protection contre l'accès direct aux fichiers de test
+<FilesMatch "^(test_|debug_|diagnostic_).*\.php$">
+    <RequireAll>
+        Require ip 127.0.0.1
+        Require ip ::1
+        Require local
+    </RequireAll>
+</FilesMatch>
+
+# ========================================
+# 🔧 API ET CORS
+# ========================================
+
+# Configuration CORS pour l'API
+<IfModule mod_headers.c>
+    # CORS pour l'API mobile
+    <FilesMatch "^api/.*\.php$">
+        Header always set Access-Control-Allow-Origin "*"
+        Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+        Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+        Header always set Access-Control-Max-Age "3600"
+    </FilesMatch>
+    
+    # Headers de sécurité généraux
+    Header always set X-Content-Type-Options nosniff
+    Header always set X-Frame-Options SAMEORIGIN
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+</IfModule>
+
+# Traitement des requêtes OPTIONS pour CORS
+<IfModule mod_rewrite.c>
+    RewriteCond %{REQUEST_METHOD} OPTIONS
+    RewriteRule ^api/ - [R=200,L]
+</IfModule>
+
+# ========================================
+# ⚡ OPTIMISATIONS PERFORMANCE
+# ========================================
+
+# Compression GZIP
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# Cache des fichiers statiques
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/jpg "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/gif "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+    ExpiresByType image/x-icon "access plus 1 year"
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
+
+# Cache control headers
+<IfModule mod_headers.c>
+    <FilesMatch "\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2)$">
+        Header set Cache-Control "public, max-age=31536000"
+    </FilesMatch>
+</IfModule>
+
+# ========================================
+# 🚫 PROTECTION CONTRE LES ATTAQUES
+# ========================================
+
+# Protection contre les injections
+<IfModule mod_rewrite.c>
+    RewriteCond %{QUERY_STRING} (\<|%3C).*script.*(\>|%3E) [NC,OR]
+    RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]
+    RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2}) [OR]
+    RewriteCond %{QUERY_STRING} (\<|%3C).*iframe.*(\>|%3E) [NC,OR]
+    RewriteCond %{QUERY_STRING} (\<|%3C).*object.*(\>|%3E) [NC,OR]
+    RewriteCond %{QUERY_STRING} (\<|%3C).*embed.*(\>|%3E) [NC,OR]
+    RewriteCond %{QUERY_STRING} base64_encode.*\(.*\) [NC,OR]
+    RewriteCond %{QUERY_STRING} base64_(en|de)code[^(]*\([^)]*\) [NC,OR]
+    RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]
+    RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2})
+    RewriteRule ^(.*)$ - [F,L]
+</IfModule>
+
+# Limitation de la taille des uploads
+<IfModule mod_php7.c>
+    php_value upload_max_filesize 10M
+    php_value post_max_size 10M
+    php_value max_execution_time 300
+    php_value max_input_time 300
+</IfModule>
+
+# ========================================
+# 📱 REDIRECTIONS MOBILES SPÉCIALES
+# ========================================
+
+# Applications mobiles externes
+RewriteRule ^app/?$ /appmobile/ [R=302,L]
+RewriteRule ^apk/?$ /appmobile/suzosky_coursier_app.apk [R=302,L]
+
+# ========================================
+# 🏠 PAGE D'ACCUEIL
+# ========================================
+
+# Par défaut : index.php (PAS index.html pour éviter les redirections)
+DirectoryIndex index.php index.html
+
+# ========================================
+# 🔍 URLS PROPRES POUR LE SEO
+# ========================================
+
+# Redirection www vers non-www (si applicable)
+# RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+# RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+
+# Force HTTPS (décommentez si vous avez SSL sur LWS)
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
