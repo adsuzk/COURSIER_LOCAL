@@ -741,27 +741,43 @@
                         </script>
                     </form>
                     <script>
-    function fetchEstimate() {
-        const dep = document.getElementById('departure').value.trim();
-        const dest = document.getElementById('destination').value.trim();
-        if (!dep || !dest) return;
-        const pr = document.querySelector('input[name="priority"]:checked').value;
-        // Chemin relatif depuis la page index.php vers Test/test_distance_api.php
-        fetch(`Test/test_distance_api.php?origin=${encodeURIComponent(dep)}&destination=${encodeURIComponent(dest)}`)
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    document.getElementById('estDistance').value = data.distance.text;
-                    document.getElementById('estDuration').value = data.duration.text;
-                    const calc = data.calculations[pr];
-                    document.getElementById('estPrice').value = calc.totalPrice + ' FCFA';
-                }
-            }).catch(err => console.error('Estimate error', err));
-    }
-    document.getElementById('departure').addEventListener('blur', fetchEstimate);
-    document.getElementById('destination').addEventListener('blur', fetchEstimate);
-    document.querySelectorAll('input[name="priority"]').forEach(el=>el.addEventListener('change', fetchEstimate));
-</script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            // Fonction d'estimation via API PHP
+                            function fetchEstimate() {
+                                const depEl = document.getElementById('departure');
+                                const destEl = document.getElementById('destination');
+                                if (!depEl || !destEl) return;
+                                const dep = depEl.value.trim();
+                                const dest = destEl.value.trim();
+                                if (!dep || !dest) return;
+                                const pr = document.querySelector('input[name="priority"]:checked')?.value || 'normale';
+                                // Chemin absolu depuis la racine du site
+                                fetch('/COURSIER_LOCAL/Test/test_distance_api.php?origin=' + encodeURIComponent(dep) + '&destination=' + encodeURIComponent(dest))
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        if (data.success) {
+                                            document.getElementById('estDistance').value = data.distance.text;
+                                            document.getElementById('estDuration').value = data.duration.text;
+                                            const calc = data.calculations[pr];
+                                            document.getElementById('estPrice').value = calc.totalPrice + ' FCFA';
+                                        }
+                                    })
+                                    .catch(err => console.error('Estimate error', err));
+                            }
+                            // Écouteurs pour adresse et priorité
+                            const depInput = document.getElementById('departure');
+                            const destInput = document.getElementById('destination');
+                            if (depInput && destInput) {
+                                ['input', 'blur'].forEach(evt => {
+                                    depInput.addEventListener(evt, fetchEstimate);
+                                    destInput.addEventListener(evt, fetchEstimate);
+                                });
+                            }
+                            document.querySelectorAll('input[name="priority"]').forEach(radio => {
+                                radio.addEventListener('change', fetchEstimate);
+                            });
+                        });
+                    </script>
                 </div>
                 </div>
                 
