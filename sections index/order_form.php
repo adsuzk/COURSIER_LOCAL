@@ -740,6 +740,27 @@
                         })();
                         </script>
                     </form>
+                    <script>
+    function fetchEstimate() {
+        const dep = document.getElementById('departure').value.trim();
+        const dest = document.getElementById('destination').value.trim();
+        if (!dep || !dest) return;
+        const pr = document.querySelector('input[name="priority"]:checked').value;
+        fetch(`./Test/test_distance_api.php?origin=${encodeURIComponent(dep)}&destination=${encodeURIComponent(dest)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('estDistance').value = data.distance.text;
+                    document.getElementById('estDuration').value = data.duration.text;
+                    const calc = data.calculations[pr];
+                    document.getElementById('estPrice').value = calc.totalPrice + ' FCFA';
+                }
+            }).catch(err => console.error('Estimate error', err));
+    }
+    document.getElementById('departure').addEventListener('blur', fetchEstimate);
+    document.getElementById('destination').addEventListener('blur', fetchEstimate);
+    document.querySelectorAll('input[name="priority"]').forEach(el=>el.addEventListener('change', fetchEstimate));
+</script>
                 </div>
                 </div>
                 
