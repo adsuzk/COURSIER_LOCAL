@@ -145,6 +145,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     
     <!-- 🔄 STYLES PARTAGÉS SYNCHRONISÉS - NE PAS MODIFIER MANUELLEMENT -->
     <style>
@@ -223,7 +226,7 @@
                 <div class="nav-auth" id="navAuth">
                     <!-- État non connecté -->
                     <div id="guestNav" class="auth-state">
-                        <a href="#" onclick="openConnexionModal()" class="nav-login">Connexion Particulier</a>
+                        <a href="#" id="openConnexionLink" class="nav-login">Connexion Particulier</a>
                         <a href="business.html" class="nav-login">Espace Business</a>
                     </div>
                     <!-- État connecté -->
