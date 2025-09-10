@@ -434,6 +434,7 @@ $messages = [];
 @media (max-width: 1200px) {
     .chat-interface {
         grid-template-columns: 300px 1fr 250px;
+        gap: 15px;
     }
 }
 
@@ -442,9 +443,13 @@ $messages = [];
         grid-template-columns: 1fr;
         grid-template-rows: auto 1fr;
         height: auto;
+        min-height: 500px;
     }
     
-    .chat-sidebar,
+    .chat-sidebar {
+        max-height: 200px;
+    }
+    
     .chat-details {
         display: none;
     }
@@ -460,6 +465,7 @@ $messages = [];
         flex-direction: column;
         text-align: center;
         gap: 20px;
+        padding: 20px;
     }
     
     .hero-decoration {
@@ -468,6 +474,12 @@ $messages = [];
     
     .hero-content h1 {
         font-size: 1.5rem;
+    }
+    
+    .chat-interface {
+        padding: 15px;
+        height: 60vh;
+        min-height: 400px;
     }
 }
 </style>
