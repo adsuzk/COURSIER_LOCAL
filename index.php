@@ -52,6 +52,7 @@ try {
     include __DIR__ . '/sections index/js_geolocation.php';
     include __DIR__ . '/sections index/js_authentication.php';
     include __DIR__ . '/sections index/js_form_handling.php';
+    include __DIR__ . '/sections index/js_price_calculation.php';
     
     // Include modal connexion script
     echo '<script src="assets/js/connexion_modal.js"></script>';
