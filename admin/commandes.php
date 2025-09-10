@@ -17,10 +17,13 @@ require_once __DIR__ . '/../config.php';
 function getCommandesWithCouriers() {
     $pdo = getDBConnection();
     try {
-        // Détecter la colonne de numéro de commande
+        // Détecter les colonnes de la table commandes
         $cols = $pdo->query("SHOW COLUMNS FROM commandes")->fetchAll(PDO::FETCH_COLUMN);
+        // Numéro de commande si existant
         $orderNumCol = in_array('numero_commande', $cols) ? 'numero_commande' : 
                        (in_array('order_number', $cols) ? 'order_number' : 'code_commande');
+        // Choisir le champ pour trier chronologiquement
+        $orderBy = in_array('created_at', $cols) ? 'c.created_at DESC, c.id DESC' : 'c.id DESC';
         
         $sql = "
         SELECT 
@@ -36,7 +39,7 @@ function getCommandesWithCouriers() {
         FROM commandes c
         LEFT JOIN agents_suzosky a ON c.coursier_id = a.id_coursier
         LEFT JOIN clients cl ON c.client_id = cl.id
-        ORDER BY c.created_at DESC, c.id DESC
+        ORDER BY $orderBy
         LIMIT 50
         ";
         $stmt = $pdo->prepare($sql);
@@ -44,6 +47,7 @@ function getCommandesWithCouriers() {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
         // Fallback si agents_suzosky manquante : commandes sans coursier
+        $orderByFb = in_array('created_at', $cols) ? 'c.created_at DESC, c.id DESC' : 'c.id DESC';
         $sqlFallback = "
         SELECT 
             c.*,
@@ -57,7 +61,7 @@ function getCommandesWithCouriers() {
             cl.telephone as client_telephone
         FROM commandes c
         LEFT JOIN clients cl ON c.client_id = cl.id
-        ORDER BY c.created_at DESC, c.id DESC
+        ORDER BY $orderByFb
         LIMIT 50
         ";
         $stmt = $pdo->prepare($sqlFallback);
