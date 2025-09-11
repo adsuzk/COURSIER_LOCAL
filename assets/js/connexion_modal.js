@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   openBtn.addEventListener('click', async e => {
     e.preventDefault();
     try {
-      const res = await fetch(encodeURI('sections index/connexion.php'));
+  const res = await fetch(encodeURI('/COURSIER_LOCAL/sections index/connexion.php'));
       const html = await res.text();
       body.innerHTML = html;
       modal.style.display = 'flex';
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const fd = new FormData(loginForm);
           fd.append('action', 'login');
           try {
-            const apiRes = await fetch('api/auth.php?action=login', {
+            const apiRes = await fetch('/COURSIER_LOCAL/api/auth.php?action=login', {
               method: 'POST',
               credentials: 'same-origin',
               body: fd
