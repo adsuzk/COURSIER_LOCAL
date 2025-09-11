@@ -30,8 +30,6 @@
             }
             return grouped;
         }
-        // Debug formatPhone
-        console.log('formatPhone:', formatPhone(''), formatPhone('123'), formatPhone('1234567890'));
 
         // Validate phone number: supports +225, 225 or 0 prefix and 8-9 digits
         function validatePhone(v) {
@@ -39,8 +37,6 @@
             // Accept +225XXXXXXXXXX or XXXXXXXXXX (10 digits)
             return /^\+225\d{10}$/.test(c) || /^\d{10}$/.test(c);
         }
-        // Debug validatePhone
-        console.log('validatePhone:', validatePhone('1234567890'), validatePhone('+2251234567890'));
 
         // Attach formatting to phone inputs
         const sender = document.getElementById('senderPhone');
