@@ -40,33 +40,7 @@ try {
 
     // Sections du footer (divisées)
     include __DIR__ . '/sections index/footer_copyright.php';
-    include __DIR__ . '/sections index/modals.php';
-    include __DIR__ . '/sections index/chat_support.php';
     
-    // Sections d'authentification
-
-    // Sections JavaScript (divisées par fonctionnalité)
-    include __DIR__ . '/sections index/js_google_maps.php';
-    include __DIR__ . '/sections index/js_autocomplete.php';
-    // include __DIR__ . '/sections index/js_route_calculation.php'; // Désactivé, calcul dédié via js_price_calculation
-    include __DIR__ . '/sections index/js_geolocation.php';
-    include __DIR__ . '/sections index/js_authentication.php';
-    include __DIR__ . '/sections index/js_form_handling.php';
-    include __DIR__ . '/sections index/js_price_calculation.php';
-    
-    // Include modal connexion script
-    echo '<script src="assets/js/connexion_modal.js"></script>';
-    
-    include __DIR__ . '/sections index/js_chat_support.php';
-    include __DIR__ . '/sections index/js_payment.php';
-    include __DIR__ . '/sections index/js_initialization.php';
-
-    // Log de succès du chargement complet
-    logInfo("Page d'accueil chargée avec succès", [
-        'sections_loaded' => 18,
-        'load_time' => round(microtime(true) - $interface_start_time, 4)
-    ], 'INDEX');
-
 } catch (Exception $e) {
     // Log des erreurs de chargement
     logInterfaceError("Erreur lors du chargement de la page d'accueil", [
@@ -81,11 +55,4 @@ try {
     echo 'Une erreur est survenue lors du chargement de la page. Veuillez réessayer.';
     echo '</div>';
 }
-
-// Log final des statistiques de performance
-$final_memory = memory_get_usage(true);
-$peak_memory = memory_get_peak_usage(true);
-$execution_time = microtime(true) - $interface_start_time;
-
-logPerformance('index_page_complete', $interface_start_time, microtime(true), 'INDEX');
 ?>
