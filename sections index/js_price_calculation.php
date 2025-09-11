@@ -110,13 +110,15 @@ console.log('🔧 Module de calcul de prix chargé');
                     section.style.display = 'block';
                     section.classList.add('price-visible');
                 }
-                // Update map overlay if present
+                // Update map overlay if present and show it
                 const rd = document.getElementById('routeDistance');
-                if (rd) rd.textContent = distText;
                 const rt = document.getElementById('routeDuration');
-                if (rt) rt.textContent = durText;
                 const rp = document.getElementById('routePrice');
+                const routeInfo = document.getElementById('routeInfo');
+                if (rd) rd.textContent = distText;
+                if (rt) rt.textContent = durText;
                 if (rp) rp.textContent = cost;
+                if (routeInfo) routeInfo.style.display = 'block';
                 console.log('✅ Prix mis à jour et section affichée:', {cost});
             });
         }
