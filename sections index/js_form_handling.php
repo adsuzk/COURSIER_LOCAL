@@ -11,16 +11,20 @@
         function formatPhone(v) {
             // Remove non-digits
             let d = v.replace(/\D/g, '');
-            // Strip leading country code digits if user pasted full number
+            // Strip leading country code if pasted
             if (d.startsWith('225')) d = d.slice(3);
-            // Limit to 10 digits local number
+            // Limit to 10 digits
             d = d.slice(0, 10);
-            // Split into pairs
-            const parts = d.match(/\d{1,2}/g) || [];
-            // If no digits, return empty string
-            if (parts.length === 0) return '';
-            // Build final string with country code prefix
-            return '+225 ' + parts.join(' ');
+            // No digits → empty
+            if (d.length === 0) return '';
+            const prefix = '+225';
+            // If less than 10 digits, show raw digits after prefix
+            if (d.length < 10) {
+                return `${prefix} ${d}`;
+            }
+            // Exactly 10 digits → split into 5 pairs
+            const parts = d.match(/\d{2}/g) || [];
+            return `${prefix} ${parts.join(' ')}`;
         }
 
         // Validate phone number: supports +225, 225 or 0 prefix and 8-9 digits
