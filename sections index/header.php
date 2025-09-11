@@ -207,8 +207,6 @@
     </style>
 </head>
 <body>
-    <!-- Modal Connexion Particulier -->
-    <script src="assets/js/connexion_modal.js"></script>
         <!-- Chargement du script du modal connexion Particulier -->
         <script src="assets/js/connexion_modal.js"></script>
     <!-- Navigation Header -->
