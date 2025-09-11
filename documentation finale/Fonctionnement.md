@@ -23,6 +23,7 @@ Ce document décrit la logique et le fonctionnement détaillé des principales f
    - Insère des espaces toutes les 2 chiffres.
    - Préfixe la valeur par `+225 `.
 - Appliqué aux champs `senderPhone` et `receiverPhone` pour cohérence.
+  - Sur chargement de la page, le script reformate automatiquement toute valeur préremplie (session) dans ces champs.
 
 ## 3. Validation du formulaire
 - Champs obligatoires :
