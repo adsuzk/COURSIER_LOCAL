@@ -99,7 +99,9 @@ console.log('🔧 Module de calcul de prix chargé');
                 tp.innerHTML = `💰 ${cost} FCFA`;
                 tp.style.borderColor = cfg.color;
                 section.style.display = 'block';
-                console.log('✅ Prix mis à jour:', {cost});
+                // Show with animation
+                section.classList.add('price-visible');
+                console.log('✅ Prix mis à jour et section affichée:', {cost});
             });
         }
         
