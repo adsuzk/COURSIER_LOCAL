@@ -17,12 +17,12 @@ Ce document décrit la logique et le fonctionnement détaillé des principales f
 
 ## 2. Formatage des numéros de téléphone
 
-- Fonction `formatPhone(v)` :
-  - Supprime tous les caractères non numériques.
-  - Retire l’indicatif `225` si présent.
-  - Limite la saisie à 10 chiffres locaux.
-  - Insère des espaces toutes les 2 chiffres.
-  - Préfixe la valeur par `+225 `.
+ - Fonction `formatPhone(v)` :
+   - Supprime tous les caractères non numériques.
+   - Retire l’indicatif `225` si présent.
+   - Limite la saisie à 10 chiffres locaux.
+   - Découpe en groupes de 1 ou 2 chiffres dès le premier chiffre saisi.
+   - Préfixe la valeur par `+225 ` puis espace, ex. `+225 1 23 45...`.
 
  - Application sur les champs `senderPhone` et `receiverPhone` :
    - Au **premier chiffre** saisi, le préfixe `+225 ` est **ajouté automatiquement**.
