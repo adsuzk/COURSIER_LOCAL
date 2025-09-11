@@ -11,33 +11,31 @@
         function formatPhone(v) {
             // Remove non-digit characters
             let d = v.replace(/\D/g, '');
-            
+
             // Strip leading country code if pasted
             if (d.startsWith('225')) d = d.slice(3);
-            
+
             // Limit to maximum 10 digits
             d = d.slice(0, 10);
-            
+
             // If no digits, return empty
             if (!d) return '';
-            
-            // Return formatted phone ONLY if exactly 10 digits
+
+            // Group digits in pairs for display
+            const grouped = d.replace(/(\d{2})(?=\d)/g, '$1 ');
+
+            // Prefix with country code if exactly 10 digits
             if (d.length === 10) {
-                // Group digits in pairs: insert space after each 2 digits when another digit follows
-                const grouped = d.replace(/(\d{2})(?=\d)/g, '$1 ');
-                // Prefix with country code
                 return '+225 ' + grouped;
-            } else {
-                // For less than 10 digits, return just the digits without +225 prefix
-                return d;
             }
+            return grouped;
         }
 
         // Validate phone number: supports +225, 225 or 0 prefix and 8-9 digits
         function validatePhone(v) {
             const c = v.replace(/\s/g, '');
-            // Expect +225 followed by exactly 10 digits
-            return /^\+225\d{10}$/.test(c);
+            // Accept +225XXXXXXXXXX or XXXXXXXXXX (10 digits)
+            return /^\+225\d{10}$/.test(c) || /^\d{10}$/.test(c);
         }
 
         // Attach formatting to phone inputs
@@ -114,7 +112,7 @@
                     body: formData
                 })
                 .then(res => res.json())
-                .then(data => {
+                .then data => {
                     if (data.success && data.payment_url) {
                         showPaymentModal(data.payment_url);
                     } else {
