@@ -95,11 +95,9 @@
                 updateAddressFromCoordinates(newPosition, 'departure');
             });
             
-            // Calculer l'itinéraire et le prix si les deux adresses sont remplies
-            const destination = destinationInput.value;
-            if (destination && destination.trim() !== '' && markerB) {
-                calculateRoute(place.geometry.location, markerB.getPosition());
-            }
+            // Déclencher le calcul de prix via le formulaire
+            const depInput = document.getElementById('departure');
+            if (depInput) depInput.dispatchEvent(new Event('input'));
         });
 
         // Gestion de la sélection destination
@@ -156,11 +154,9 @@
                 updateAddressFromCoordinates(newPosition, 'destination');
             });
             
-            // Calculer l'itinéraire et le prix si les deux adresses sont remplies
-            const departure = departureInput.value;
-            if (departure && departure.trim() !== '' && markerA) {
-                calculateRoute(markerA.getPosition(), place.geometry.location);
-            }
+            // Déclencher le calcul de prix via le formulaire
+            const destInput = document.getElementById('destination');
+            if (destInput) destInput.dispatchEvent(new Event('input'));
         });
 
         // Styles pour les suggestions d'autocomplétion
