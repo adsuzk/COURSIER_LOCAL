@@ -3,12 +3,22 @@
 ?>
 <style>
 /* Simplified Suzosky payment icons selector */
+.payment-methods-container {
+    margin: 20px 0;
+}
+.payment-methods-title {
+    text-align: center;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    font-family: 'Montserrat', sans-serif;
+}
 .payment-methods-section {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 12px;
-    margin: 20px 0;
 }
 .payment-methods-section input[type="radio"] {
     display: none;
