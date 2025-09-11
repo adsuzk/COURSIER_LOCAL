@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Chargement des partials PHP
   // --------------------------------
   function loadView(path) {
-    fetch(path)
+  fetch(encodeURI(path))
       .then(r => r.text())
       .then(html => { body.innerHTML = html; showModal(); initPhoneFormatting(); })
       .catch(console.error);
