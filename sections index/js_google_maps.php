@@ -234,15 +234,14 @@
                     }
                 });
                 
-                markerA.addListener('dragend', function() {
-                    updateAddressFromCoordinates(markerA.getPosition(), 'departure');
-                    // Déclencher le calcul de prix après géocodage
-                    const depInput = document.getElementById('departure');
-                    if (depInput) depInput.dispatchEvent(new Event('input'));
-                    if (markerB) {
-                        calculateRoute(markerA.getPosition(), markerB.getPosition());
-                    }
-                });
+                    markerA.addListener('dragend', function() {
+                        updateAddressFromCoordinates(markerA.getPosition(), 'departure');
+                        // Déclencher le calcul de prix uniquement
+                        const depInput = document.getElementById('departure');
+                        if (depInput) depInput.dispatchEvent(new Event('input'));
+                        // Suppression du calcul d'itinéraire dans la carte
+                        // if (markerB) calculateRoute(markerA.getPosition(), markerB.getPosition());
+                    });
                 
                 updateAddressFromCoordinates(event.latLng, 'departure');
                 
@@ -288,10 +287,8 @@
                 updateAddressFromCoordinates(event.latLng, 'destination');
             }
             
-            // Recalculer l'itinéraire si les deux marqueurs existent
-            if (markerA && markerB) {
-                calculateRoute(markerA.getPosition(), markerB.getPosition());
-            }
+            // Recalcul du prix via form uniquement (suppression du calcul d'itinéraire sur carte)
+            // if (markerA && markerB) calculateRoute(markerA.getPosition(), markerB.getPosition());
         });
 
         // Configuration Google Places Autocomplete maintenant que l'API est chargée
