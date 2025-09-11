@@ -241,7 +241,7 @@
                                     $_SESSION['client_nom']
                                 ) ?></span>
                             </a>
-                            <a href="javascript:void(0)" onclick="logout(); return false;" class="nav-logout">Déconnexion</a>
+                            <a href="<?= dirname($_SERVER['SCRIPT_NAME']) ?>/logout.php" class="nav-logout">Déconnexion</a>
                         </div>
                     <?php else: ?>
                         <div id="guestNav" class="auth-state">
