@@ -1,46 +1,31 @@
-// assets/js/connexion_modal.js
-// Gestionnaire unifié du modal : Connexion / Inscription / Mot de passe oublié / Mon Compte
-
-document.addEventListener('DOMContentLoaded', () => {
-  // Sélecteurs principaux
-  const btnOpenConnexion = document.getElementById('openConnexionLink');
-  // Chemin de base de l'application (ex: /COURSIER_LOCAL)
-  const BASE_PATH = '/' + window.location.pathname.split('/')[1];
-  const modal            = document.getElementById('connexionModal');
-  const body             = document.getElementById('connexionModalBody');
-  const btnCloseModal    = document.getElementById('closeConnexionModal');
-
-  // Affiche/masque le modal
-  function showModal() { modal.style.display = 'block'; }
-  function hideModal() { modal.style.display = 'none'; body.innerHTML = ''; }
-
-  // Événements globaux pour ouvrir/fermer
-  if (btnOpenConnexion) btnOpenConnexion.addEventListener('click', e => { e.preventDefault(); loadLogin(); });
-  if (btnCloseModal)   btnCloseModal  .addEventListener('click', hideModal);
-  window.addEventListener('click', e => { if (e.target === modal) hideModal(); });
-
-  // Délégation click et submit dans le body du modal
-  body.addEventListener('click',  handleClick);
-  body.addEventListener('submit', handleSubmit);
-
-  // --------------------------------
-  // Chargement des partials PHP
-  // --------------------------------
-  function loadView(path) {
-    // Construire l’URL absolue de la vue
-    const url = BASE_PATH + '/' + path;
-    fetch(encodeURI(url))
-      .then(r => r.text())
-      .then(html => { body.innerHTML = html; showModal(); initPhoneFormatting(); })
-      .catch(console.error);
-  }
-  function loadLogin()    { loadView('sections index/connexion.php'); }
-  function loadRegister() { loadView('sections index/inscription.php'); }
-  function loadForgot()   { loadView('sections index/forgot_password.php'); }
-  // Fonctions globales pour liens externes
-  window.openConnexionModal = loadLogin;
-  window.openRegisterModal = loadRegister;
-  window.openForgotModal = loadForgot;
+// Simple modal loader for Connexion Particulier
+document.addEventListener('DOMContentLoaded', function() {
+  var openBtn = document.getElementById('openConnexionLink');
+  var modal = document.getElementById('connexionModal');
+  var closeBtn = document.getElementById('closeConnexionModal');
+  var container = document.getElementById('connexionModalBody');
+  if (!openBtn || !modal || !container) return;
+  // Show/hide helpers
+  function showModal() { modal.style.display = 'flex'; }
+  function hideModal() { modal.style.display = 'none'; container.innerHTML = ''; }
+  // Open modal on button click
+  openBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    fetch(encodeURI('sections index/connexion.php'))
+      .then(function(res) { return res.text(); })
+      .then(function(html) {
+        container.innerHTML = html;
+        showModal();
+      })
+      .catch(function(err) {
+        console.error('Erreur chargement modal login:', err);
+      });
+  });
+  // Close modal on close button or outside click
+  closeBtn.addEventListener('click', hideModal);
+  window.addEventListener('click', function(e) {
+    if (e.target === modal) hideModal();
+  });
 
   // --------------------------------
   // Mon Compte: onglets Profil/Commandes
