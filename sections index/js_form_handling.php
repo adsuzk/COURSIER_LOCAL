@@ -30,10 +30,18 @@
 
         // Attach formatting to phone inputs
         const sender = document.getElementById('senderPhone');
-        if (sender) sender.addEventListener('input', e => e.target.value = formatPhone(e.target.value));
+        if (sender) {
+            // Auto-format any prefilled value
+            if (sender.value) sender.value = formatPhone(sender.value);
+            sender.addEventListener('input', e => e.target.value = formatPhone(e.target.value));
+        }
 
         const receiver = document.getElementById('receiverPhone');
-        if (receiver) receiver.addEventListener('input', e => e.target.value = formatPhone(e.target.value));
+        if (receiver) {
+            // Auto-format any prefilled value
+            if (receiver.value) receiver.value = formatPhone(receiver.value);
+            receiver.addEventListener('input', e => e.target.value = formatPhone(e.target.value));
+        }
 
         // Validate form fields
         function validateForm() {
