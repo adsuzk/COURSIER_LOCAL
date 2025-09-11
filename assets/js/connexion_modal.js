@@ -4,6 +4,8 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Sélecteurs principaux
   const btnOpenConnexion = document.getElementById('openConnexionLink');
+  // Chemin de base de l'application (ex: /COURSIER_LOCAL)
+  const BASE_PATH = '/' + window.location.pathname.split('/')[1];
   const modal            = document.getElementById('connexionModal');
   const body             = document.getElementById('connexionModalBody');
   const btnCloseModal    = document.getElementById('closeConnexionModal');
@@ -25,8 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Chargement des partials PHP
   // --------------------------------
   function loadView(path) {
-    // Charger la vue depuis le chemin relatif (encode les espaces)
-    fetch(encodeURI(path))
+    // Construire l’URL absolue de la vue
+    const url = BASE_PATH + '/' + path;
+    fetch(encodeURI(url))
       .then(r => r.text())
       .then(html => { body.innerHTML = html; showModal(); initPhoneFormatting(); })
       .catch(console.error);
