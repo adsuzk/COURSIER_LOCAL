@@ -66,39 +66,31 @@ console.log('🔧 Module de calcul de prix chargé');
                 const el = response.rows[0].elements[0];
                 console.log('📍 Element de réponse:', el);
                 if (el.status !== 'OK') {
-                    console.error('❌ DistanceMatrix element status:', el.status);
-                    // Si pas de résultats, afficher uniquement estimation minimale
-                    if (el.status === 'ZERO_RESULTS') {
-                        // Priorité choisie
-                        let pr = 'normale';
-                        prios.forEach(r => { if (r.checked) pr = r.value; });
-                        const cfg = PRICING[pr];
-                        const fallbackCost = cfg.base;
-                        // Mettre à jour UI : masquer distance et détails, afficher temps et prix
-                        const distElem = document.getElementById('distance-info');
-                        if (distElem) distElem.style.display = 'none';
-                        const breakdownElem = document.getElementById('price-breakdown');
-                        if (breakdownElem) breakdownElem.style.display = 'none';
-                        const timeElem = document.getElementById('time-info');
-                        if (timeElem) {
-                            timeElem.style.display = 'block';
-                            timeElem.innerHTML = `⏱️ -`;
-                        }
-                        const totalElem = document.getElementById('total-price');
-                        if (totalElem) {
-                            totalElem.style.display = 'block';
-                            totalElem.innerHTML = `💰 ${fallbackCost} FCFA`;
-                            totalElem.style.borderColor = cfg.color;
-                        }
-                        // Afficher section
-                        section.style.display = 'block';
-                        section.classList.add('price-visible');
-                        return;
+                    console.warn('⚠️ DistanceMatrix element status non OK, status:', el.status);
+                    // Fallback universel : priorité définie, prix minimum, temps placeholder
+                    let pr = 'normale';
+                    prios.forEach(r => { if (r.checked) pr = r.value; });
+                    const cfg = PRICING[pr];
+                    const fallbackCost = cfg.base;
+                    // Mettre à jour UI : masquer distance et détails, afficher temps et prix
+                    const distElem = document.getElementById('distance-info');
+                    if (distElem) distElem.style.display = 'none';
+                    const breakdownElem = document.getElementById('price-breakdown');
+                    if (breakdownElem) breakdownElem.style.display = 'none';
+                    const timeElem = document.getElementById('time-info');
+                    if (timeElem) {
+                        timeElem.style.display = 'block';
+                        timeElem.innerHTML = `⏱️ -`;
                     }
-                    // Autres erreurs, affichage d'erreur
+                    const totalElem = document.getElementById('total-price');
+                    if (totalElem) {
+                        totalElem.style.display = 'block';
+                        totalElem.innerHTML = `💰 ${fallbackCost} FCFA`;
+                        totalElem.style.borderColor = cfg.color;
+                    }
+                    // Afficher section
                     section.style.display = 'block';
-                    section.classList.add('price-error');
-                    section.innerHTML = `<div class="error-message">Erreur itinéraire: ${el.status}</div>`;
+                    section.classList.add('price-visible');
                     return;
                 }
                 // Récupération
