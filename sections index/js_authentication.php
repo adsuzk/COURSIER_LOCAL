@@ -145,9 +145,8 @@
     function logout() {
         if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
             // Appel API pour détruire la session côté serveur
-            fetch('<?= dirname($_SERVER['SCRIPT_NAME']) ?>/api/auth.php?action=logout', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'}
+            fetch('api/auth.php?action=logout', {
+                method: 'POST'
             })
             .then(res => res.json())
             .then(data => {
