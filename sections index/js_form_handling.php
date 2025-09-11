@@ -7,10 +7,15 @@
 
         // Format Ivorian phone number: remove non-digits, strip 225, pad leading 0, add spaces every 2 digits
         function formatPhone(v) {
+            // Clean input, remove non-digits
             let d = v.replace(/\D/g, '');
+            // Remove country code if present
             if (d.startsWith('225')) d = d.slice(3);
-            if (!d.startsWith('0') && d.length === 8) d = '0' + d;
-            return d.replace(/(\d{2})(?=\d)/g, '$1 ');
+            // Use last 8 digits for local number
+            if (d.length > 8) d = d.slice(-8);
+            // Group into pairs
+            const parts = d.match(/\d{2}/g) || [d];
+            return '+225 ' + parts.join(' ');
         }
 
         // Validate phone number: supports +225, 225 or 0 prefix and 8-9 digits
@@ -51,6 +56,12 @@
         // Handle order submission
         function processOrder(e) {
             e.preventDefault();
+            // Enforce login: show modal if not connected
+            if (!window.currentClient) {
+                const openLink = document.getElementById('openConnexionLink');
+                if (openLink) openLink.click();
+                return;
+            }
             if (!validateForm()) return;
             const paymentMethod = (document.querySelector('input[name="paymentMethod"]:checked') || { value: 'cash' }).value;
             if (paymentMethod === 'cash') {
