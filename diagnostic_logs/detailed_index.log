@@ -43010,3 +43010,53 @@
         }
     ]
 }
+{
+    "system": {
+        "timestamp": "2025-09-11 05:40:22.000000",
+        "microtime": 1757562022.51747,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "INDEX",
+        "level": "INFO",
+        "pid": 31196,
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Code\/1.103.2 Chrome\/138.0.7204.100 Electron\/37.2.3 Safari\/537.36",
+        "ip_address": "::1",
+        "request_uri": "\/index.php?id=4d758914-a1a7-4e30-b720-77aed56cf48c&vscodeBrowserReqId=1757562022472",
+        "request_method": "GET",
+        "session_id": "ifj4umm3124msltofun7lkdtr7",
+        "execution_time": 0.0418,
+        "file": "logging_hooks.php",
+        "line": 16,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "Démarrage interface INDEX",
+    "context": {
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Code\/1.103.2 Chrome\/138.0.7204.100 Electron\/37.2.3 Safari\/537.36",
+        "ip_address": "::1",
+        "request_uri": "\/index.php?id=4d758914-a1a7-4e30-b720-77aed56cf48c&vscodeBrowserReqId=1757562022472",
+        "request_method": "GET",
+        "session_status": 2,
+        "php_version": "8.2.12",
+        "memory_limit": "512M"
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\logging_hooks.php",
+            "line": 16,
+            "function": "logInfo"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\index.php",
+            "line": 18,
+            "function": "initLogging"
+        }
+    ]
+}
