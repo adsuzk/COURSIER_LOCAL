@@ -47078,3 +47078,49 @@
         }
     ]
 }
+{
+    "system": {
+        "timestamp": "2025-09-11 08:12:47.000000",
+        "microtime": 1757571167.686782,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "INDEX",
+        "level": "INFO",
+        "pid": 8780,
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/140.0.0.0 Safari\/537.36 Edg\/140.0.0.0",
+        "ip_address": "::1",
+        "request_uri": "\/COURSIER_LOCAL\/",
+        "request_method": "GET",
+        "session_id": "nn55tiov1f8dhbr5q4kbkth4bu",
+        "execution_time": 0.8756,
+        "file": "logging_hooks.php",
+        "line": 38,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "Fin interface INDEX",
+    "context": {
+        "execution_time": 0.5374,
+        "memory_usage": 2097152,
+        "peak_memory": 2097152,
+        "included_files": 17,
+        "response_code": 200
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\logging_hooks.php",
+            "line": 38,
+            "function": "logInfo"
+        },
+        {
+            "function": "{closure}"
+        }
+    ]
+}
