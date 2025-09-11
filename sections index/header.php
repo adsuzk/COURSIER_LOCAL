@@ -207,12 +207,8 @@
     </style>
 </head>
 <body>
-    <!-- Chargement du script du modal connexion Particulier -->
-    <script src="assets/js/connexion_modal.js"></script>
-    <script>
-        // Base URL for API calls
-        const BASE_URL = "<?= rtrim(dirname($_SERVER['SCRIPT_NAME']), '/') ?>";
-    </script>
+        <!-- Chargement du script du modal connexion Particulier -->
+        <script src="assets/js/connexion_modal.js"></script>
     <!-- Navigation Header -->
     <nav class="main-nav">
         <div class="nav-container">
