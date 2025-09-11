@@ -42,6 +42,8 @@ try {
     include __DIR__ . '/sections index/footer_copyright.php';
     // Modals (connexion & payment)
     include __DIR__ . '/sections index/modals.php';
+    // Authentification - inclure les scripts de login/logout
+    include __DIR__ . '/sections index/js_authentication.php';
     // Google Maps scripts
     include __DIR__ . '/sections index/js_google_maps.php';
     // Autocomplete et géolocalisation pour saisie adresses
