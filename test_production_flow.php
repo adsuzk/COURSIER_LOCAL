@@ -104,6 +104,9 @@
             formData.append('priority', 'normale');
             formData.append('paymentMethod', 'orange_money');
             formData.append('price', '1500');
+            // Ajouter les champs requis pour l'API
+            formData.append('order_number', 'TEST' + Date.now());
+            formData.append('amount', '1500');
             
             const endpoint = `${ROOT_PATH}/api/initiate_order_payment.php`;
             logResult('payment-result', `🛵 Test payment endpoint: ${endpoint}`);
