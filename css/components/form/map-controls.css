@@ -1,0 +1,25 @@
+/* ========================================
+   FORM MAP CONTROLS
+======================================== */
+.form-map-controls {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+}
+.form-map-controls button {
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    font-size: 1rem;
+}
+.form-map-controls button.clear-route {
+    background: rgba(212,168,83,0.2);
+    color: #D4A853;
+    border: 1px solid #D4A853;
+}
+.form-map-controls button.clear-markers {
+    background: rgba(233,69,96,0.2);
+    color: #E94560;
+    border: 1px solid #E94560;
+}
