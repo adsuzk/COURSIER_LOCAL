@@ -38,6 +38,11 @@ Ce document décrit la logique et le fonctionnement détaillé des principales f
 
 ## 4. Estimation du prix (Price Calculation)
 - Inclus via `js_price_calculation.php`.
+ ### 4.1 Grille tarifaire
+ - **Normale** : Prix minimum 300 FCFA, 300 FCFA/km
+ - **Urgente** : Prix minimum 1 000 FCFA, 500 FCFA/km
+ - **Express** : Prix minimum 1 500 FCFA, 700 FCFA/km
+
  Fonction `setupPriceCalc()` :
    - Recherche la disponibilité de `google.maps.DistanceMatrixService`, et retente après 1000 ms si non chargée.
    - Attache les événements `input` et `blur` sur `#departure` et `#destination`, et `change` sur les radios priorité.
