@@ -1,0 +1,42 @@
+/* ========================================
+   FORM PRIORITY OPTIONS
+======================================== */
+.priority-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.priority-option {
+    position: relative;
+}
+
+.priority-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.priority-label {
+    display: block;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    text-align: center;
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.priority-option input[type="radio"]:checked + .priority-label {
+    background: var(--primary-gold);
+    color: var(--primary-dark);
+    border-color: var(--primary-gold);
+    box-shadow: 0 4px 16px rgba(212, 168, 83, 0.4);
+}
