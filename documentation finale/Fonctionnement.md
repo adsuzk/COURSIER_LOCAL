@@ -24,13 +24,13 @@ Ce document décrit la logique et le fonctionnement détaillé des principales f
   - Insère des espaces toutes les 2 chiffres.
   - Préfixe la valeur par `+225 `.
 
-- Application sur les champs `senderPhone` et `receiverPhone` :
-  - Au **premier chiffre** saisi, le préfixe `+225 ` est **ajouté automatiquement**.
-  - L’utilisateur saisit ensuite **10 chiffres** locaux.
-  - **Espaces** insérés **entre chaque 2 chiffres**, y compris **juste après** le préfixe, pour obtenir toujours le format final :
-    `+225 xx xx xx xx xx`.
-  - Au chargement de la page, toute valeur préremplie (session) est également formatée selon ces règles.
-
+ - Application sur les champs `senderPhone` et `receiverPhone` :
+   - Au **premier chiffre** saisi, le préfixe `+225 ` est **ajouté automatiquement**.
+   - L’utilisateur saisit **exactement 10 chiffres** locaux.
+   - Si moins de 10 chiffres, l’affichage reste `+225 ` suivi des chiffres bruts (pas de découpage en paires).
+   - Si exactement 10 chiffres, le numéro est découpé en 5 paires : `+225 xx xx xx xx xx`.
+   - Tout autre format (moins ou plus de 10 chiffres, mauvais découpage) est considéré **invalide**.
+   - Au chargement de la page, toute valeur préremplie est reformattée selon ces règles.
 ## 3. Validation du formulaire
 - Champs obligatoires :
   - Départ (`departure`), Destination (`destination`), Téléphone Expéditeur (`senderPhone`), Téléphone Destinataire (`receiverPhone`), Priorité.
