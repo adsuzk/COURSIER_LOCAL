@@ -14,66 +14,6 @@
                         <h1 class="hero-title">Commandez un coursier<br><span class="hero-accent">en 1 minute</span></h1>
                         <p class="hero-subtitle">Livraison express, sécurisée et suivie en temps réel à Abidjan.<br>Payez à la livraison ou par mobile money.</p>
                     </div>
-                    <div class="order-form">
-                        <h2 class="form-title">💫 Commander un coursier</h2>
-                        <form id="orderForm" action="/api/submit_order.php" method="POST">
-                            <div class="address-row">
-                                <div class="form-group">
-                                    <label for="departure">Départ (Expéditeur)</label>
-                                    <div class="input-with-icon departure">
-                                        <input type="text" id="departure" name="departure" placeholder="Adresse de départ..." required autocomplete="off">
-                                    </div>
-                                    <div class="location-controls">
-                                        <button type="button" onclick="getCurrentLocation('departure')" class="gps-btn">
-                                            📍 Ma position (A)
-                                        </button>
-                                    <small style="color: rgba(255,255,255,0.7);">💡 Déplacez le marqueur A pour plus de précision</small>
-                                </div>
-                            </div>
-                            <div class="route-arrow">→</div>
-                            <div class="form-group">
-                                <label for="destination">Arrivée (Destinataire)</label>
-                                <div class="input-with-icon destination">
-                                    <input type="text" id="destination" name="destination" placeholder="Adresse de destination..." required autocomplete="off">
-                                </div>
-                                <div class="location-controls">
-                                    <button type="button" onclick="getCurrentLocation('destination')" class="gps-btn">
-                                        📍 Ma position (B)
-                                    </button>
-                                    <small style="color: rgba(255,255,255,0.7);">💡 Déplacez le marqueur B pour plus de précision</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="phone-row">
-                            <div class="form-group">
-                                <label for="senderPhone"><i class="fas fa-phone"></i> Téléphone Expéditeur</label>
-                                <div class="input-with-icon phone">
-                                    <?php $sessionPhone = $_SESSION['client_telephone'] ?? ''; ?>
-                                    <input type="tel" id="senderPhone" name="senderPhone"
-                                        placeholder="+225 xx xx xx xx xx"
-                                        maxlength="19"
-                                        required
-                                        <?php if (!empty($_SESSION['client_id']) && $sessionPhone): ?>
-                                            value="<?= htmlspecialchars($sessionPhone) ?>" readonly
-                                        <?php endif; ?>
-                                    >
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="receiverPhone"><i class="fas fa-phone"></i> Téléphone Destinataire</label>
-                                <div class="input-with-icon phone">
-                                    <input type="tel" id="receiverPhone" name="receiverPhone" placeholder="+225 xx xx xx xx xx" maxlength="19" required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="package-details">
-                            <div class="form-group">
-                                <label for="packageDesc">Description du colis</label>
-                                <textarea id="packageDesc" name="packageDesc" placeholder="Documents, vêtements, nourriture..." rows="2"></textarea>
-                            </div>
-                        </div>
-                        <div class="priority-options">
-                            <div class="priority-option">
                                 <input type="radio" id="normal" name="priority" value="normale" checked>
                                 <label for="normal" class="priority-label">🚶 Normal<br><small>1-2h</small></label>
                             </div>
