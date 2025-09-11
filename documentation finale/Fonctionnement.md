@@ -16,7 +16,7 @@ Ce document décrit la logique et le fonctionnement détaillé des principales f
     - Sur `submit` du formulaire (`#loginForm`), il POSTe `action=login` à `/COURSIER_LOCAL/api/auth.php?action=login`, et en cas de `data.success`, recharge la page pour appliquer la session PHP.
 
 ## 2. Formatage des numéros de téléphone
- 
+
 - Fonction `formatPhone(v)` :
   - Supprime tous les caractères non numériques.
   - Retire l’indicatif `225` si présent.
@@ -24,8 +24,9 @@ Ce document décrit la logique et le fonctionnement détaillé des principales f
   - Insère des espaces toutes les 2 chiffres.
   - Préfixe la valeur par `+225 `.
 
-- Appliqué aux champs `senderPhone` et `receiverPhone` pour cohérence.
-  - Sur chargement de la page, le script reformate automatiquement toute valeur préremplie (session) dans ces champs.
+- Application sur les champs `senderPhone` et `receiverPhone` :
+  - À chaque saisie (`input`), le numéro est automatiquement reformatté.
+  - Au chargement de la page, toute valeur préremplie est également formatée.
 
 ## 3. Validation du formulaire
 - Champs obligatoires :
