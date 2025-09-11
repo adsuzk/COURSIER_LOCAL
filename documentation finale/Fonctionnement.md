@@ -25,8 +25,11 @@ Ce document décrit la logique et le fonctionnement détaillé des principales f
   - Préfixe la valeur par `+225 `.
 
 - Application sur les champs `senderPhone` et `receiverPhone` :
-  - À chaque saisie (`input`), le numéro est automatiquement reformatté.
-  - Au chargement de la page, toute valeur préremplie est également formatée.
+  - Au **premier chiffre** saisi, le préfixe `+225 ` est **ajouté automatiquement**.
+  - L’utilisateur saisit ensuite **10 chiffres** locaux.
+  - **Espaces** insérés **entre chaque 2 chiffres**, y compris **juste après** le préfixe, pour obtenir toujours le format final :
+    `+225 xx xx xx xx xx`.
+  - Au chargement de la page, toute valeur préremplie (session) est également formatée selon ces règles.
 
 ## 3. Validation du formulaire
 - Champs obligatoires :
