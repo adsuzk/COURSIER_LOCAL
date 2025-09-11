@@ -11,7 +11,9 @@ Ce document décrit la logique et le fonctionnement détaillé des principales f
   - Dans l’en-tête (`sections/index/header.php`) :
     - Si `$_SESSION['client_id']` existe, on affiche le nom du client (`$_SESSION['client_nom']`) et le lien “Déconnexion” (vers `logout.php`).
     - Sinon, on affiche le lien “Connexion Particulier” (bouton avec id `openConnexionLink`) et “Espace Business”.
-  - Le script `assets/js/connexion_modal.js` est inclus dans `index.php` juste après les modals, et charge via `fetch('sections index/connexion.php')` le contenu du modal.
+  - Le script `assets/js/connexion_modal.js` est inclus dans `index.php` juste après les modals :
+    - Au clic sur “Connexion Particulier” (lien avec id `openConnexionLink`), il fait un fetch de `/COURSIER_LOCAL/sections index/connexion.php` pour charger dynamiquement le formulaire.
+    - Sur `submit` du formulaire (`#loginForm`), il POSTe `action=login` à `/COURSIER_LOCAL/api/auth.php?action=login`, et en cas de `data.success`, recharge la page pour appliquer la session PHP.
 
 ## 2. Formatage des numéros de téléphone
 - Fonction `fPhoneNumber(v)` :
