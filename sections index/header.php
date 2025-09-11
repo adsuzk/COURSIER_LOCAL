@@ -224,18 +224,27 @@
                 <a href="cgu.html" class="nav-link">CGU</a>
                 <a href="#contact" class="nav-link">Contact</a>
                 <div class="nav-auth" id="navAuth">
-                    <!-- État non connecté -->
-                    <div id="guestNav" class="auth-state">
-                        <a href="#" id="openConnexionLink" class="nav-login">Connexion Particulier</a>
-                        <a href="business.html" class="nav-login">Espace Business</a>
-                    </div>
-                    <!-- État connecté -->
-                    <div id="userNav" class="auth-state" style="display: none;">
-                        <a href="#" onclick="openAccountModal()" class="nav-login">
-                            <span class="user-name">Mon Compte</span>
-                        </a>
-                        <a href="#" onclick="logout()" class="nav-logout">Déconnexion</a>
-                    </div>
+                    <?php if (!empty(
+                    
+                        $_SESSION['client_id']
+                    )): ?>
+                        <div id="userNav" class="auth-state">
+                            <a href="#" onclick="openAccountModal()" class="nav-login">
+                                <span class="user-name"><?= htmlspecialchars(
+                                
+                                
+                                
+                                    $_SESSION['client_nom']
+                                ) ?></span>
+                            </a>
+                            <a href="#" onclick="logout()" class="nav-logout">Déconnexion</a>
+                        </div>
+                    <?php else: ?>
+                        <div id="guestNav" class="auth-state">
+                            <a href="#" id="openConnexionLink" class="nav-login">Connexion Particulier</a>
+                            <a href="business.html" class="nav-login">Espace Business</a>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
             <div class="mobile-menu-toggle" onclick="toggleMobileMenu()">
