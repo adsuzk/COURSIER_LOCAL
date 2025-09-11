@@ -1,0 +1,36 @@
+/* TYPOGRAPHY STYLES */
+
+h1, h2, h3, h4, h5, h6 {
+    margin-bottom: 1rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    color: #fff;
+}
+
+a {
+    color: var(--primary-gold);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+a:hover {
+    color: var(--accent-blue);
+}
+
+ul, ol {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+    color: #fff;
+}
+
+blockquote {
+    margin: 1rem 0;
+    padding: 1rem 1.5rem;
+    border-left: 4px solid var(--primary-gold);
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+}
