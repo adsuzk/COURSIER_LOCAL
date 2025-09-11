@@ -14,7 +14,39 @@ document.addEventListener('DOMContentLoaded', () => {
       .then(html => {
         body.innerHTML = html;
         modal.style.display = 'flex';
-      })
+        // Bind login form submission
+        const loginForm = body.querySelector('#loginForm');
+        if (loginForm) {
+          loginForm.addEventListener('submit', async function(ev) {
+            ev.preventDefault();
+            const submitBtn = loginForm.querySelector('button[type="submit"]');
+            const origText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Connexion...';
+            const formData = new FormData(loginForm);
+            formData.append('action', 'login');
+            try {
+              const resp = await fetch('api/auth.php?action=login', {
+                method: 'POST',
+                credentials: 'same-origin',
+                body: formData
+              });
+              const data = await resp.json();
+              if (data.success) {
+                // Reload to apply PHP session
+                window.location.reload();
+              } else {
+                alert(data.error || 'Erreur de connexion');
+              }
+            } catch (err) {
+              console.error('Erreur connexion:', err);
+              alert('Erreur réseau lors de la connexion');
+            } finally {
+              submitBtn.disabled = false;
+              submitBtn.textContent = origText;
+            }
+          });
+        }
       .catch(err => console.error('Erreur chargement modal login:', err));
   });
   // Close modal
