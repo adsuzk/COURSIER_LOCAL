@@ -26,27 +26,27 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData(loginForm);
             formData.append('action', 'login');
             try {
-              const resp = await fetch('api/auth.php?action=login', {
+              const resp = await fetch(`${window.API_BASE}/auth.php`, {
                 method: 'POST',
                 credentials: 'same-origin',
                 body: formData
               });
               const data = await resp.json();
               if (data.success) {
-                // Reload to apply PHP session
                 window.location.reload();
               } else {
                 alert(data.error || 'Erreur de connexion');
               }
             } catch (err) {
               console.error('Erreur connexion:', err);
-              alert('Erreur réseau lors de la connexion');
+              alert('Erreur réseau');
             } finally {
               submitBtn.disabled = false;
               submitBtn.textContent = origText;
             }
           });
         }
+      })
       .catch(err => console.error('Erreur chargement modal login:', err));
   });
   // Close modal
