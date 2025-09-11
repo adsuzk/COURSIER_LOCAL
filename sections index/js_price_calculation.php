@@ -105,7 +105,10 @@ console.log('🔧 Module de calcul de prix chargé');
                     }
                     const totalElem = document.getElementById('total-price');
                     if (totalElem) {
-                        totalElem.innerHTML = `💰 ${fallbackCost} FCFA`;
+                        totalElem.innerHTML = `
+                            <span class="total-label">Prix :</span>
+                            <span class="total-amount">${fallbackCost} FCFA</span>
+                        `;
                         totalElem.style.borderColor = cfg.color;
                     }
                     // Afficher section
@@ -133,7 +136,10 @@ console.log('🔧 Module de calcul de prix chargé');
                 if (timeElem2) timeElem2.innerHTML = `⏱️ ${durText}`;
                 const totalElem2 = document.getElementById('total-price');
                 if (totalElem2) {
-                    totalElem2.innerHTML = `💰 ${cost} FCFA`;
+                    totalElem2.innerHTML = `
+                        <span class="total-label">Prix :</span>
+                        <span class="total-amount">${cost} FCFA</span>
+                    `;
                     totalElem2.style.borderColor = cfg.color;
                 }
                 console.log('✅ Formulaire: prix mis à jour →', cost, 'FCFA');
