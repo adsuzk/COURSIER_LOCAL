@@ -5,8 +5,8 @@
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         const form = document.getElementById('orderForm');
-        // Helper to format Ivorian phone numbers like sender
-        function fPhoneNumber(v) {
+    // Helper to format Ivorian phone numbers like sender
+    function fPhoneNumber(v) {
             let d = v.replace(/\D/g, '');
             if (d.startsWith('225')) d = d.slice(3);
             // Ensure leading 0 if 8 digits
@@ -20,7 +20,7 @@
         const receiverInput = document.getElementById('receiverPhone');
         if (receiverInput) receiverInput.addEventListener('input', e => e.target.value = fPhoneNumber(e.target.value));
         const btn = document.querySelector('.submit-btn');
-        btn.addEventListener('click', (e) => {
+    btn.addEventListener('click', (e) => {
             // Only authenticated users can order
             if (!window.currentClient) {
                 const loginModal = document.getElementById('connexionModal');
@@ -32,11 +32,16 @@
             const dep = document.getElementById('departure').value.trim();
             const dst = document.getElementById('destination').value.trim();
             const ph = document.getElementById('senderPhone').value.trim();
+            const rc = document.getElementById('receiverPhone').value.trim();
             const pr = document.querySelector('input[name="priority"]:checked');
-            if (!dep || !dst || !ph || !pr) {
+            if (!dep || !dst || !ph || !rc || !pr) {
                 alert('Veuillez remplir tous les champs avant de commander.');
                 return;
             }
+            // Validate phone formats
+            function vPhone(v) { const c=v.replace(/\s+/g,''); return /^((\+225|225|0)\d{8,9})$/.test(c); }
+            if (!vPhone(ph)) { alert('Téléphone expéditeur invalide.'); return; }
+            if (!vPhone(rc)) { alert('Téléphone destinataire invalide.'); return; }
             // Determine payment method
             const pm = document.querySelector('input[name="paymentMethod"]:checked');
             const method = pm ? pm.value : 'cash';
