@@ -17,15 +17,15 @@ Ce document décrit la logique et le fonctionnement détaillé des principales f
 
 ## 2. Formatage des numéros de téléphone
  
- - Fonction `formatPhone(v)` :
-   - Supprime tous les caractères non numériques.
-   - Retire l’indicatif `225` si présent.
-   - Limite la saisie à 10 chiffres locaux.
-   - Insère des espaces toutes les 2 chiffres.
-   - Préfixe la valeur par `+225 `.
+- Fonction `formatPhone(v)` :
+  - Supprime tous les caractères non numériques.
+  - Retire l’indicatif `225` si présent.
+  - Limite la saisie à 10 chiffres locaux.
+  - Insère des espaces toutes les 2 chiffres.
+  - Préfixe la valeur par `+225 `.
 
- - Appliqué aux champs `senderPhone` et `receiverPhone` pour cohérence.
-   - Sur chargement de la page, le script reformate automatiquement toute valeur préremplie (session) dans ces champs.
+- Appliqué aux champs `senderPhone` et `receiverPhone` pour cohérence.
+  - Sur chargement de la page, le script reformate automatiquement toute valeur préremplie (session) dans ces champs.
 
 ## 3. Validation du formulaire
 - Champs obligatoires :
