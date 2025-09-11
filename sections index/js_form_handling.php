@@ -9,17 +9,15 @@
 
         // Format Ivorian phone number: remove non-digits, strip 225, pad leading 0, add spaces every 2 digits
         function formatPhone(v) {
-            // Remove non-digit characters and strip leading country code if pasted
+            // Normalize input: remove non-digits, strip leading country code, limit to 10 digits
             let d = v.replace(/\D/g, '');
             if (d.startsWith('225')) d = d.slice(3);
-            // Limit to 10 local digits
             d = d.slice(0, 10);
-            // Split into groups of 1 or 2 digits
-            const parts = d.match(/\d{1,2}/g) || [];
-            // If no digits, keep empty
-            if (parts.length === 0) return '';
-            // Build string: +225 plus grouped digits
-            return '+225 ' + parts.join(' ');
+            // If empty, return empty
+            if (!d) return '';
+            // Insert space every 2 digits (works dynamically)
+            const grouped = d.replace(/(\d{2})(?=\d)/g, '$1 ');
+            return '+225 ' + grouped;
         }
 
         // Validate phone number: supports +225, 225 or 0 prefix and 8-9 digits
