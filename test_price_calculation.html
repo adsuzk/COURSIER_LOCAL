@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Calcul Automatique des Prix</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-form {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input:focus {
+            border-color: #D4A853;
+            outline: none;
+        }
+        .priority-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .priority-option {
+            flex: 1;
+            text-align: center;
+        }
+        .priority-option input {
+            width: auto;
+            margin-bottom: 5px;
+        }
+        .price-calculation-section {
+            background: rgba(212, 168, 83, 0.1);
+            border: 2px solid rgba(212, 168, 83, 0.3);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 20px 0;
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s ease;
+        }
+        .price-calculation-section.price-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .price-calculation-section.price-loading {
+            opacity: 0.7;
+        }
+        .price-header h3 {
+            color: #D4A853;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .distance-info, .time-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+        }
+        .price-breakdown {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid rgba(212, 168, 83, 0.3);
+        }
+        .price-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .price-separator {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #D4A853, transparent);
+            margin: 10px 0;
+        }
+        .total-price {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-top: 2px solid #D4A853;
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        .total-amount {
+            color: #D4A853;
+            font-size: 1.4em;
+        }
+        .loading {
+            text-align: center;
+            color: #666;
+        }
+        .fa-spinner {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="test-form">
+        <h1>🚛 Test - Calcul Automatique des Prix Suzosky</h1>
+        
+        <div class="form-group">
+            <label for="departure">Adresse de départ :</label>
+            <input type="text" id="departure" placeholder="Ex: Cocody, Abidjan">
+        </div>
+        
+        <div class="form-group">
+            <label for="destination">Adresse de destination :</label>
+            <input type="text" id="destination" placeholder="Ex: Plateau, Abidjan">
+        </div>
+        
+        <div class="form-group">
+            <label>Priorité :</label>
+            <div class="priority-group">
+                <div class="priority-option">
+                    <input type="radio" name="priority" value="normale" id="normale" checked>
+                    <label for="normale">Normal<br><small>300 FCFA + 300/km</small></label>
+                </div>
+                <div class="priority-option">
+                    <input type="radio" name="priority" value="urgente" id="urgente">
+                    <label for="urgente">Urgent<br><small>1000 FCFA + 500/km</small></label>
+                </div>
+                <div class="priority-option">
+                    <input type="radio" name="priority" value="express" id="express">
+                    <label for="express">Express<br><small>1500 FCFA + 700/km</small></label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section de calcul de prix -->
+        <div class="price-calculation-section" id="price-calculation-section">
+            <div class="price-header">
+                <h3><i class="fas fa-calculator"></i> Estimation du Prix</h3>
+            </div>
+            
+            <div id="distance-info" class="distance-info"></div>
+            <div id="time-info" class="time-info"></div>
+            
+            <div id="price-breakdown" class="price-breakdown"></div>
+            
+            <div id="total-price" class="total-price"></div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration des tarifs (même que dans le vrai système)
+        const PRICING_CONFIG = {
+            normale: {
+                name: 'Normal',
+                baseFare: 300,
+                perKmRate: 300,
+                color: '#4CAF50'
+            },
+            urgente: {
+                name: 'Urgent',
+                baseFare: 1000,
+                perKmRate: 500,
+                color: '#FF9800'
+            },
+            express: {
+                name: 'Express',
+                baseFare: 1500,
+                perKmRate: 700,
+                color: '#F44336'
+            }
+        };
+
+        let priceCalculationService;
+        let lastCalculationRequest = null;
+
+        // Fonction de debounce
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Initialisation avec Google Maps (simulation)
+        function initializePriceCalculation() {
+            console.log('🚀 Service de calcul des prix initialisé (mode test)');
+            setupPriceCalculationListeners();
+        }
+
+        // Configuration des écouteurs
+        function setupPriceCalculationListeners() {
+            const departureInput = document.getElementById('departure');
+            const destinationInput = document.getElementById('destination');
+            const priorityInputs = document.querySelectorAll('input[name="priority"]');
+
+            const debouncedCalculation = debounce(calculatePriceAutomatically, 1500);
+            
+            departureInput.addEventListener('input', debouncedCalculation);
+            destinationInput.addEventListener('blur', debouncedCalculation);
+            
+            priorityInputs.forEach(input => {
+                input.addEventListener('change', calculatePriceAutomatically);
+            });
+        }
+
+        // Calcul automatique (version test avec simulation)
+        function calculatePriceAutomatically() {
+            const departure = document.getElementById('departure').value.trim();
+            const destination = document.getElementById('destination').value.trim();
+            const selectedPriority = document.querySelector('input[name="priority"]:checked').value || 'normale';
+
+            if (!departure || !destination || departure.length < 3 || destination.length < 3) {
+                clearPriceDisplay();
+                return;
+            }
+
+            console.log(`📍 Calcul pour: ${departure} → ${destination} (${selectedPriority})`);
+            
+            showPriceLoading();
+
+            // Simulation d'un délai d'API
+            setTimeout(() => {
+                // Simulation basique de distance
+                const estimatedKm = Math.max(2, Math.min(50, (departure.length + destination.length) / 8));
+                const estimatedMinutes = Math.ceil(estimatedKm * 2.5);
+                
+                const mockDistance = {
+                    text: `${estimatedKm.toFixed(1)} km`,
+                    value: estimatedKm * 1000
+                };
+                
+                const mockDuration = {
+                    text: `${estimatedMinutes} min`
+                };
+                
+                calculateAndDisplayPrice(mockDistance, mockDuration, selectedPriority);
+            }, 2000);
+        }
+
+        // Calcul et affichage du prix
+        function calculateAndDisplayPrice(distance, duration, priority) {
+            const config = PRICING_CONFIG[priority] || PRICING_CONFIG.normale;
+            const distanceKm = distance.value / 1000;
+            
+            const baseFare = config.baseFare;
+            const distanceCost = Math.ceil(distanceKm * config.perKmRate);
+            const totalPrice = baseFare + distanceCost;
+            
+            displayPriceBreakdown({
+                distance: distance,
+                duration: duration,
+                priority: priority,
+                config: config,
+                baseFare: baseFare,
+                distanceCost: distanceCost,
+                totalPrice: totalPrice,
+                distanceKm: distanceKm
+            });
+        }
+
+        // Affichage détaillé
+        function displayPriceBreakdown(calculation) {
+            const priceSection = document.getElementById('price-calculation-section');
+            const distanceInfo = document.getElementById('distance-info');
+            const timeInfo = document.getElementById('time-info');
+            const priceBreakdown = document.getElementById('price-breakdown');
+            const totalPriceElement = document.getElementById('total-price');
+
+            priceSection.style.display = 'block';
+            priceSection.classList.remove('price-loading');
+            priceSection.classList.add('price-calculated');
+
+            distanceInfo.innerHTML = `
+                <span><i class="fas fa-route"></i> Distance</span>
+                <span class="distance-value">${calculation.distance.text}</span>
+            `;
+
+            timeInfo.innerHTML = `
+                <span><i class="fas fa-clock"></i> Durée estimée</span>
+                <span class="time-value">${calculation.duration.text}</span>
+            `;
+
+            priceBreakdown.innerHTML = `
+                <div class="price-line">
+                    <span class="price-label">Tarif de base (${calculation.config.name})</span>
+                    <span class="price-value">${calculation.baseFare} FCFA</span>
+                </div>
+                <div class="price-line">
+                    <span class="price-label">Distance (${calculation.distanceKm.toFixed(1)} km × ${calculation.config.perKmRate} FCFA/km)</span>
+                    <span class="price-value">${calculation.distanceCost} FCFA</span>
+                </div>
+                <div class="price-separator"></div>
+            `;
+
+            totalPriceElement.innerHTML = `
+                <span class="total-label">Prix total estimé</span>
+                <span class="total-amount">${calculation.totalPrice} FCFA</span>
+            `;
+            totalPriceElement.style.borderColor = calculation.config.color;
+
+            setTimeout(() => {
+                priceSection.classList.add('price-visible');
+            }, 100);
+
+            console.log(`💰 Prix calculé: ${calculation.totalPrice} FCFA (${calculation.config.name})`);
+        }
+
+        // Affichage du loading
+        function showPriceLoading() {
+            const priceSection = document.getElementById('price-calculation-section');
+            const distanceInfo = document.getElementById('distance-info');
+            const timeInfo = document.getElementById('time-info');
+            const priceBreakdown = document.getElementById('price-breakdown');
+            const totalPriceElement = document.getElementById('total-price');
+
+            priceSection.style.display = 'block';
+            priceSection.classList.remove('price-calculated', 'price-visible');
+            priceSection.classList.add('price-loading');
+
+            const loadingHTML = '<span class="loading"><i class="fas fa-spinner fa-spin"></i> Calcul en cours...</span>';
+            
+            distanceInfo.innerHTML = loadingHTML;
+            timeInfo.innerHTML = loadingHTML;
+            priceBreakdown.innerHTML = loadingHTML;
+            totalPriceElement.innerHTML = loadingHTML;
+        }
+
+        // Effacement de l'affichage
+        function clearPriceDisplay() {
+            const priceSection = document.getElementById('price-calculation-section');
+            if (priceSection) {
+                priceSection.style.display = 'none';
+                priceSection.classList.remove('price-calculated', 'price-visible', 'price-loading');
+            }
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🏁 Page de test chargée');
+            initializePriceCalculation();
+        });
+    </script>
+</body>
+</html>
