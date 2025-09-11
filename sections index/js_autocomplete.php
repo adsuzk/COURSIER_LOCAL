@@ -57,6 +57,7 @@
             }
             
             markerA = new google.maps.Marker({
+                clickable: false, // Désactive la fenêtre d'infos au clic
                 position: place.geometry.location,
                 map: map,
                 title: `Départ: ${place.formatted_address}`,
@@ -117,6 +118,7 @@
             }
             
             markerB = new google.maps.Marker({
+                clickable: false, // Désactive la fenêtre d'infos au clic
                 position: place.geometry.location,
                 map: map,
                 title: `Destination: ${place.formatted_address}`,
