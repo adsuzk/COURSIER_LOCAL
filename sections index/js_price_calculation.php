@@ -56,19 +56,50 @@ console.log('🔧 Module de calcul de prix chargé');
             }, function(response, status) {
                 console.log('📡 Réponse Google DistanceMatrix:', {status, response});
                 if (status !== 'OK') {
-                    console.error('❌ DistanceMatrixService status:', status);
+                    console.warn('⚠️ DistanceMatrixService status non OK, status:', status);
+                    // Fallback: afficher prix minimum et temps en placeholder
+                    let pr = 'normale';
+                    prios.forEach(r => { if (r.checked) pr = r.value; });
+                    const cfg = PRICING[pr];
+                    const fallbackCost = cfg.base;
+                    // Masquer distance et détails
+                    const distElem = document.getElementById('distance-info');
+                    if (distElem) distElem.style.display = 'none';
+                    const breakdownElem = document.getElementById('price-breakdown');
+                    if (breakdownElem) breakdownElem.style.display = 'none';
+                    // Afficher temps placeholder
+                    const timeElem = document.getElementById('time-info');
+                    if (timeElem) {
+                        timeElem.style.display = 'block';
+                        timeElem.innerHTML = `⏱️ -`;
+                    }
+                    // Afficher prix minimum
+                    const totalElem = document.getElementById('total-price');
+                    if (totalElem) {
+                        totalElem.style.display = 'block';
+                        totalElem.innerHTML = `💰 ${fallbackCost} FCFA`;
+                        totalElem.style.borderColor = cfg.color;
+                    }
+                    // Afficher section
                     section.style.display = 'block';
-                    section.classList.add('price-error');
-                    section.innerHTML = `<div class="error-message">Erreur DistanceMatrix: ${status}</div>`;
+                    section.classList.add('price-visible');
                     return;
                 }
                 const el = response.rows[0].elements[0];
                 console.log('📍 Element de réponse:', el);
                 if (el.status !== 'OK') {
-                    console.error('❌ DistanceMatrix element status:', el.status);
+                    console.warn('⚠️ DistanceMatrix élément status non OK, status:', el.status);
+                    // Fallback: afficher prix minimum et temps en placeholder
+                    let pr = 'normale';
+                    prios.forEach(r => { if (r.checked) pr = r.value; });
+                    const cfg = PRICING[pr];
+                    const fallbackCost = cfg.base;
+                    const timeElem = document.getElementById('time-info');
+                    if (timeElem) timeElem.innerHTML = `⏱️ -`;
+                    const totalElem = document.getElementById('total-price');
+                    if (totalElem) totalElem.innerHTML = `<span class="total-amount">${fallbackCost} FCFA</span>`;
                     section.style.display = 'block';
-                    section.classList.add('price-error');
-                    section.innerHTML = `<div class="error-message">Erreur itinéraire: ${el.status}</div>`;
+                    section.classList.add('price-visible');
                     return;
                 }
                 // Récupération
@@ -82,31 +113,14 @@ console.log('🔧 Module de calcul de prix chargé');
                 const cfg = PRICING[pr];
                 const cost = cfg.base + Math.ceil(kmVal * cfg.perKm);
                 console.log('💰 Prix calculé:', {priorite: pr, config: cfg, cout: cost});
-                // Mise à jour UI - affichage détaillé
-                const distElem = document.getElementById('distance-info');
-                if (distElem) distElem.innerHTML = `📏 ${distText}`;
-                const timeElem = document.getElementById('time-info');
-                if (timeElem) timeElem.innerHTML = `⏱️ ${durText}`;
-                const breakdownElem = document.getElementById('price-breakdown');
-                if (breakdownElem) breakdownElem.innerHTML = `
-                    <div class="price-line">
-                        <span class="description">Base (${cfg.name})</span>
-                        <span class="amount">${cfg.base} FCFA</span>
-                    </div>
-                    <div class="price-line">
-                        <span class="description">${kmVal.toFixed(1)} km × ${cfg.perKm} FCFA/km</span>
-                        <span class="amount">${Math.ceil(kmVal * cfg.perKm)} FCFA</span>
-                    </div>
-                    <div class="price-separator"></div>`;
-                const totalElem = document.getElementById('total-price');
-                if (totalElem) {
-                    totalElem.innerHTML = `💰 ${cost} FCFA`;
-                    totalElem.style.borderColor = cfg.color;
-                }
-                if (section) {
-                    section.style.display = 'block';
-                    section.classList.add('price-visible');
-                }
+                // Mise à jour UI : afficher uniquement durée et prix
+                const timeElem2 = document.getElementById('time-info');
+                if (timeElem2) timeElem2.innerHTML = `⏱️ ${durText}`;
+                const totalElem2 = document.getElementById('total-price');
+                if (totalElem2) totalElem2.innerHTML = `<span class="total-amount">${cost} FCFA</span>`;
+                // Afficher section
+                section.style.display = 'block';
+                section.classList.add('price-visible');
                 console.log('✅ Formulaire: prix mis à jour →', cost, 'FCFA');
                 // Afficher section
                 section.style.display = 'block';
