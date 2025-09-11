@@ -30,14 +30,23 @@ Ce document décrit la logique et le fonctionnement détaillé des principales f
 
 ## 4. Estimation du prix (Price Calculation)
 - Inclus via `js_price_calculation.php`.
-- Fonction `setupPriceCalc()` :
-  - Attache événements `input` et `blur` sur `departure`, `destination` et priorité.
-  - Appelle `calculate()` pour récupérer dist/time via Google DistanceMatrix.
-  - Affiche la section `.price-calculation-section` et met à jour `#distance-info`, `#time-info`, `#price-breakdown`, `#total-price`.
-
-## 5. Sélection du mode de paiement
-- Inclus dans `payment_methods.php`.
-- Icônes cliquables, input radio caché.
+ Fonction `setupPriceCalc()` :
+   - Recherche la disponibilité de `google.maps.DistanceMatrixService`, et retente après 1000 ms si non chargée.
+   - Attache les événements `input` et `blur` sur `#departure` et `#destination`, et `change` sur les radios priorité.
+   - À chaque appel de `calculate()` :
+     - Vide l’état précédent (`price-visible`, `price-error`).
+     - Si l’un des champs est vide, masque la section.
+     - Sinon, interroge Distance Matrix et, au retour :
+       - Parse `distance.text` et `duration.text`, calcule `kmVal`.
+       - Détermine la priorité choisie (`normale`, `urgente`, `express`).
+       - Applique la grille tarifaire, calcule `cost = base + ceil(kmVal * perKm)`.
+       - Met à jour :
+         - `#distance-info` → `📏 ${distance.text}`
+         - `#time-info`     → `⏱️ ${duration.text}`
+         - `#price-breakdown` : deux lignes (base + km × tarif)
+         - `#total-price` : `💰 ${cost} FCFA`, couleur `borderColor = cfg.color`
+       - Affiche la section (`style.display = 'block'`) et ajoute la classe `price-visible` pour l’animation.
+   - Exécution initiale dès DOM prêt pour gérer les formulaires préremplis.
 - Le champ `paymentMethod` détermine la suite du traitement.
 
 ## 6. Traitement du paiement (js_form_handling.js)
