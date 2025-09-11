@@ -56,11 +56,33 @@ console.log('🔧 Module de calcul de prix chargé');
             }, function(response, status) {
                 console.log('📡 Réponse Google DistanceMatrix:', {status, response});
                 if (status !== 'OK') {
-                    console.error('❌ DistanceMatrixService status:', status);
-                    // Afficher le message d'erreur et conserver la section visible
+                    console.warn('⚠️ DistanceMatrixService status non OK, status:', status);
+                    // Fallback universel pour échec du service : afficher prix minimum et temps placeholder
+                    let pr = 'normale';
+                    prios.forEach(r => { if (r.checked) pr = r.value; });
+                    const cfg = PRICING[pr];
+                    const fallbackCost = cfg.base;
+                    // Masquer distance et détails
+                    const distElem = document.getElementById('distance-info');
+                    if (distElem) distElem.style.display = 'none';
+                    const breakdownElem = document.getElementById('price-breakdown');
+                    if (breakdownElem) breakdownElem.style.display = 'none';
+                    // Afficher temps placeholder
+                    const timeElem = document.getElementById('time-info');
+                    if (timeElem) {
+                        timeElem.style.display = 'block';
+                        timeElem.innerHTML = `⏱️ -`;
+                    }
+                    // Afficher prix minimum
+                    const totalElem = document.getElementById('total-price');
+                    if (totalElem) {
+                        totalElem.style.display = 'block';
+                        totalElem.innerHTML = `💰 ${fallbackCost} FCFA`;
+                        totalElem.style.borderColor = cfg.color;
+                    }
+                    // Afficher section
                     section.style.display = 'block';
-                    section.classList.add('price-error');
-                    section.innerHTML = `<div class="error-message">Erreur DistanceMatrix: ${status}</div>`;
+                    section.classList.add('price-visible');
                     return;
                 }
                 const el = response.rows[0].elements[0];
