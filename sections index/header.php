@@ -207,6 +207,8 @@
     </style>
 </head>
 <body>
+    <!-- Modal Connexion Particulier -->
+    <script src="assets/js/connexion_modal.js"></script>
         <!-- Chargement du script du modal connexion Particulier -->
         <script src="assets/js/connexion_modal.js"></script>
     <!-- Navigation Header -->
@@ -243,7 +245,7 @@
                         </div>
                     <?php else: ?>
                         <div id="guestNav" class="auth-state">
-                            <a href="#" id="openConnexionLink" class="nav-login">Connexion Particulier</a>
+                            <a href="#" onclick="openConnexionModal(); return false;" class="nav-login">Connexion Particulier</a>
                             <a href="business.html" class="nav-login">Espace Business</a>
                         </div>
                     <?php endif; ?>
