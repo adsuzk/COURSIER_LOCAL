@@ -1,31 +1,25 @@
-// Simple modal loader for Connexion Particulier
-document.addEventListener('DOMContentLoaded', function() {
-  var openBtn = document.getElementById('openConnexionLink');
-  var modal = document.getElementById('connexionModal');
-  var closeBtn = document.getElementById('closeConnexionModal');
-  var container = document.getElementById('connexionModalBody');
-  if (!openBtn || !modal || !container) return;
-  // Show/hide helpers
-  function showModal() { modal.style.display = 'flex'; }
-  function hideModal() { modal.style.display = 'none'; container.innerHTML = ''; }
-  // Open modal on button click
-  openBtn.addEventListener('click', function(e) {
+// assets/js/connexion_modal.js
+// Minimal loader for the Connexion Particulier modal
+document.addEventListener('DOMContentLoaded', () => {
+  const openBtn = document.getElementById('openConnexionLink');
+  const modal = document.getElementById('connexionModal');
+  const closeBtn = document.getElementById('closeConnexionModal');
+  const body = document.getElementById('connexionModalBody');
+  if (!openBtn || !modal || !closeBtn || !body) return;
+  // Show modal with fetched login form
+  openBtn.addEventListener('click', e => {
     e.preventDefault();
     fetch(encodeURI('sections index/connexion.php'))
-      .then(function(res) { return res.text(); })
-      .then(function(html) {
-        container.innerHTML = html;
-        showModal();
+      .then(r => r.text())
+      .then(html => {
+        body.innerHTML = html;
+        modal.style.display = 'flex';
       })
-      .catch(function(err) {
-        console.error('Erreur chargement modal login:', err);
-      });
+      .catch(err => console.error('Erreur chargement modal login:', err));
   });
-  // Close modal on close button or outside click
-  closeBtn.addEventListener('click', hideModal);
-  window.addEventListener('click', function(e) {
-    if (e.target === modal) hideModal();
-  });
+  // Close modal
+  closeBtn.addEventListener('click', () => { modal.style.display = 'none'; body.innerHTML = ''; });
+  window.addEventListener('click', e => { if (e.target === modal) { modal.style.display = 'none'; body.innerHTML = ''; } });
 
   // --------------------------------
   // Mon Compte: onglets Profil/Commandes
