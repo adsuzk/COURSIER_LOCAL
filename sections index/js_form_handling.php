@@ -92,14 +92,11 @@
             }
         }
 
-        // Expose for inline onclick
-        window.processOrder = processOrder;
+    // Expose for invocation
+    window.processOrder = processOrder;
 
-        // Attach to submit button
-        const btn = document.querySelector('.submit-btn');
-        if (btn) btn.addEventListener('click', processOrder);
-
-        // Initialize price calculation if available
-        if (typeof setupPriceCalc === 'function') setupPriceCalc();
+    // Attach to submit button
+    const btn = document.querySelector('.submit-btn');
+    if (btn) btn.addEventListener('click', processOrder);
     });
     </script>
