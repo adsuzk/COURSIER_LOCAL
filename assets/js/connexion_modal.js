@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const modal            = document.getElementById('connexionModal');
   const body             = document.getElementById('connexionModalBody');
   const btnCloseModal    = document.getElementById('closeConnexionModal');
+  // Base path (e.g., /COURSIER_LOCAL)
+  const APP_BASE = '/' + window.location.pathname.split('/')[1];
 
   // Affiche/masque le modal
   function showModal() { modal.style.display = 'block'; }
@@ -25,8 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Chargement des partials PHP
   // --------------------------------
   function loadView(path) {
-    // Charger la vue en relatif au document
-    fetch(encodeURI(path))
+    // Construire l’URL absolue de la partial
+    const url = APP_BASE + '/' + path;
+    fetch(encodeURI(url))
       .then(r => r.text())
       .then(html => { body.innerHTML = html; showModal(); initPhoneFormatting(); })
       .catch(console.error);
