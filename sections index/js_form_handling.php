@@ -59,8 +59,6 @@
 
         // Handle order submission
         function processOrder(e) {
-            // Debug ROOT_PATH
-            console.log('ROOT_PATH:', typeof ROOT_PATH !== 'undefined' ? ROOT_PATH : '(undefined)');
             console.log('🛵 processOrder called, currentClient=', window.currentClient);
             e.preventDefault();
             // Enforce login: show modal if not connected
@@ -75,8 +73,8 @@
                 form.submit();
             } else {
                 const formData = new FormData(form);
-                    // Initiate payment via API (absolute path)
-                    fetch(`${ROOT_PATH}/api/initiate_order_payment.php`, {
+                // Initiate payment via API (absolute path)
+                fetch('/COURSIER_LOCAL/api/initiate_order_payment.php', {
                     method: 'POST',
                     body: formData
                 })
