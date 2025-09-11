@@ -488,9 +488,12 @@
                     <div class="map-container-sticky" id="mapContainerSticky">
                         <div id="map"></div>
                         <div class="map-info-overlay" style="display: none;">
-                    <!-- map-info-overlay removed: map price/time overlay is disabled by user request -->
-                <!-- End of disabled map-overlay -->
-                    </div>
+                            <div id="routeInfo" class="route-info" style="display: none;">
+                                <div class="distance-info">Distance: <span id="routeDistance">-</span></div>
+                                <div class="duration-info">Durée: <span id="routeDuration">-</span></div>
+                                <div class="price-info">Prix: <span id="routePrice">-</span></div>
+                            </div>
+                        </div>
                 </div>
             </div>
         </div>
