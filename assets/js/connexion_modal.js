@@ -25,9 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Chargement des partials PHP
   // --------------------------------
   function loadView(path) {
-  // Build full URL using BASE_URL set in header
-  const url = BASE_URL + '/' + encodeURI(path);
-  fetch(url)
+    // Charger la vue en relatif au document
+    fetch(encodeURI(path))
       .then(r => r.text())
       .then(html => { body.innerHTML = html; showModal(); initPhoneFormatting(); })
       .catch(console.error);
