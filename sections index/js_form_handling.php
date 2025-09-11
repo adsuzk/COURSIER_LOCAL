@@ -73,8 +73,10 @@
                 form.submit();
             } else {
                 const formData = new FormData(form);
-                // Initiate payment via API (relative path)
-                fetch('api/initiate_order_payment.php', {
+                // Initiate payment via API using ROOT_PATH for correct base path
+                const endpoint = `${ROOT_PATH}/api/initiate_order_payment.php`;
+                console.log('🛵 Initiating payment at', endpoint);
+                fetch(endpoint, {
                     method: 'POST',
                     body: formData
                 })
