@@ -85,9 +85,13 @@ console.log('🔧 Module de calcul de prix chargé');
                 const cost = cfg.base + Math.ceil(kmVal * cfg.perKm);
                 console.log('💰 Prix calculé:', {priorite: pr, config: cfg, cout: cost});
                 // Mise à jour UI - affichage détaillé
-                document.getElementById('distance-info').innerHTML   = `📏 ${distText}`;
-                document.getElementById('time-info').innerHTML       = `⏱️ ${durText}`;
-                document.getElementById('price-breakdown').innerHTML = `
+                // Update form price section if present
+                const distElem = document.getElementById('distance-info');
+                if (distElem) distElem.innerHTML = `📏 ${distText}`;
+                const timeElem = document.getElementById('time-info');
+                if (timeElem) timeElem.innerHTML = `⏱️ ${durText}`;
+                const breakdownElem = document.getElementById('price-breakdown');
+                if (breakdownElem) breakdownElem.innerHTML = `
                     <div class="price-line">
                         <span class="description">Base (${cfg.name})</span>
                         <span class="amount">${cfg.base} FCFA</span>
@@ -97,12 +101,22 @@ console.log('🔧 Module de calcul de prix chargé');
                         <span class="amount">${Math.ceil(kmVal * cfg.perKm)} FCFA</span>
                     </div>
                     <div class="price-separator"></div>`;
-                const tp = document.getElementById('total-price');
-                tp.innerHTML = `💰 ${cost} FCFA`;
-                tp.style.borderColor = cfg.color;
-                section.style.display = 'block';
-                // Show with animation
-                section.classList.add('price-visible');
+                const totalElem = document.getElementById('total-price');
+                if (totalElem) {
+                    totalElem.innerHTML = `💰 ${cost} FCFA`;
+                    totalElem.style.borderColor = cfg.color;
+                }
+                if (section) {
+                    section.style.display = 'block';
+                    section.classList.add('price-visible');
+                }
+                // Update map overlay if present
+                const rd = document.getElementById('routeDistance');
+                if (rd) rd.textContent = distText;
+                const rt = document.getElementById('routeDuration');
+                if (rt) rt.textContent = durText;
+                const rp = document.getElementById('routePrice');
+                if (rp) rp.textContent = cost;
                 console.log('✅ Prix mis à jour et section affichée:', {cost});
             });
         }
