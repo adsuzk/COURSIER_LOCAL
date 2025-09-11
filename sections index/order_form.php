@@ -406,8 +406,8 @@
                                 <div class="input-with-icon phone">
                                     <?php $sessionPhone = $_SESSION['client_telephone'] ?? ''; ?>
                                     <input type="tel" id="senderPhone" name="senderPhone"
-                                        placeholder="01 23 45 67"
-                                        maxlength="17"
+                                        placeholder="+225 xx xx xx xx xx"
+                                        maxlength="19"
                                         required
                                         <?php if (!empty($_SESSION['client_id']) && $sessionPhone): ?>
                                             value="<?= htmlspecialchars($sessionPhone) ?>" readonly
@@ -418,7 +418,7 @@
                             <div class="form-group">
                                 <label for="receiverPhone"><i class="fas fa-phone"></i> Téléphone Destinataire</label>
                                 <div class="input-with-icon phone">
-                                    <input type="tel" id="receiverPhone" name="receiverPhone" placeholder="01 23 45 67" maxlength="11" required>
+                                    <input type="tel" id="receiverPhone" name="receiverPhone" placeholder="+225 xx xx xx xx xx" maxlength="19" required>
                                 </div>
                             </div>
                         </div>
