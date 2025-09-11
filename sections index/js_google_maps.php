@@ -236,6 +236,9 @@
                 
                 markerA.addListener('dragend', function() {
                     updateAddressFromCoordinates(markerA.getPosition(), 'departure');
+                    // Déclencher le calcul de prix après géocodage
+                    const depInput = document.getElementById('departure');
+                    if (depInput) depInput.dispatchEvent(new Event('input'));
                     if (markerB) {
                         calculateRoute(markerA.getPosition(), markerB.getPosition());
                     }
@@ -274,6 +277,9 @@
                 
                 markerB.addListener('dragend', function() {
                     updateAddressFromCoordinates(markerB.getPosition(), 'destination');
+                    // Déclencher le calcul de prix après géocodage
+                    const destInput = document.getElementById('destination');
+                    if (destInput) destInput.dispatchEvent(new Event('input'));
                     if (markerA) {
                         calculateRoute(markerA.getPosition(), markerB.getPosition());
                     }
