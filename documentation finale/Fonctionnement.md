@@ -7,7 +7,7 @@ Ce document décrit la logique et le fonctionnement détaillé des principales f
 - Au clic, le script vérifie `window.currentClient` :
   - Si **non connecté**, ouvre le modal de connexion (`connexionModal`) et **arrête** le traitement.
   - Si **connecté**, continue la validation du formulaire.
-- Après connexion réussie, le numéro `senderPhone` est prérempli depuis la session et mis en lecture seule.
+- Au rendu du formulaire : si `$_SESSION['client_id']` existe, le champ `senderPhone` est prérempli avec la valeur de session (`$_SESSION['client_telephone']`) et mis en `readonly`. Sinon, le champ reste vide.
 
 ## 2. Formatage des numéros de téléphone
 - Fonction `fPhoneNumber(v)` :
