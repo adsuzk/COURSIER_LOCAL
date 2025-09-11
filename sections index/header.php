@@ -207,6 +207,10 @@
     </style>
 </head>
 <body>
+    <script>
+        // Base URL for API calls
+        const BASE_URL = "<?= rtrim(dirname($_SERVER['SCRIPT_NAME']), '/') ?>";
+    </script>
     <!-- Navigation Header -->
     <nav class="main-nav">
         <div class="nav-container">
