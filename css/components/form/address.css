@@ -1,0 +1,15 @@
+/* ========================================
+   FORM ADDRESS ROW & GROUPING
+======================================== */
+.address-row {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.form-group {
+    flex: 1;
+    min-width: 200px;
+}
