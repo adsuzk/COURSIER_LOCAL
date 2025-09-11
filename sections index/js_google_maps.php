@@ -210,6 +210,7 @@
                 if (markerA) markerA.setMap(null);
                 
                 markerA = new google.maps.Marker({
+                    clickable: false, // Désactiver fenêtre infobulle au clic
                     position: event.latLng,
                     map: map,
                     title: 'Départ (clic sur carte)',
@@ -247,6 +248,7 @@
                 if (markerB) markerB.setMap(null);
                 
                 markerB = new google.maps.Marker({
+                    clickable: false, // Désactiver fenêtre infobulle au clic
                     position: event.latLng,
                     map: map,
                     title: 'Destination (clic sur carte)',
