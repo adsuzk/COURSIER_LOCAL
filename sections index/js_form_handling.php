@@ -2,6 +2,8 @@
 // sections/js_form_handling.php - Fonctions de gestion des formulaires et validation
 ?>
     <script>
+    // Initialize currentClient flag from PHP session
+    window.currentClient = <?php echo !empty($_SESSION['client_id']) ? 'true' : 'false'; ?>;
     document.addEventListener('DOMContentLoaded', () => {
         const form = document.getElementById('orderForm');
 
