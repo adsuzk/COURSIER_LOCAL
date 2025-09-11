@@ -5,8 +5,28 @@
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         const form = document.getElementById('orderForm');
+        // Helper to format Ivorian phone numbers like sender
+        function fPhoneNumber(v) {
+            let d = v.replace(/\D/g, '');
+            if (d.startsWith('225')) d = d.slice(3);
+            // Ensure leading 0 if 8 digits
+            if (!d.startsWith('0') && d.length === 8) d = '0' + d;
+            // Insert space every 2 digits
+            return d.replace(/(\d{2})(?=\d)/g, '$1 ');
+        }
+        // Apply formatting to sender and receiver phones
+        const senderInput = document.getElementById('senderPhone');
+        if (senderInput) senderInput.addEventListener('input', e => e.target.value = fPhoneNumber(e.target.value));
+        const receiverInput = document.getElementById('receiverPhone');
+        if (receiverInput) receiverInput.addEventListener('input', e => e.target.value = fPhoneNumber(e.target.value));
         const btn = document.querySelector('.submit-btn');
         btn.addEventListener('click', (e) => {
+            // Only authenticated users can order
+            if (!window.currentClient) {
+                const loginModal = document.getElementById('connexionModal');
+                if (loginModal) loginModal.style.display = 'flex';
+                return;
+            }
             e.preventDefault();
             // Validate required fields
             const dep = document.getElementById('departure').value.trim();
