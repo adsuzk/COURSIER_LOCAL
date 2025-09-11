@@ -44,7 +44,12 @@ try {
     include __DIR__ . '/sections index/modals.php';
     // Google Maps scripts
     include __DIR__ . '/sections index/js_google_maps.php';
-    // Price calculation script (affiche montant de la course)
+    // Autocomplete et géolocalisation pour saisie adresses
+    include __DIR__ . '/sections index/js_autocomplete.php';
+    include __DIR__ . '/sections index/js_geolocation.php';
+    // Gestion du formulaire (inclut processOrder, etc.)
+    include __DIR__ . '/sections index/js_form_handling.php';
+    // Price calculation script (affiche estimation de prix)
     include __DIR__ . '/sections index/js_price_calculation.php';
     
 } catch (Exception $e) {
