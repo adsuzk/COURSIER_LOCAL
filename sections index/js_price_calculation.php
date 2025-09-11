@@ -101,12 +101,10 @@ console.log('🔧 Module de calcul de prix chargé');
                     if (breakdownElem) breakdownElem.style.display = 'none';
                     const timeElem = document.getElementById('time-info');
                     if (timeElem) {
-                        timeElem.style.display = 'block';
                         timeElem.innerHTML = `⏱️ -`;
                     }
                     const totalElem = document.getElementById('total-price');
                     if (totalElem) {
-                        totalElem.style.display = 'block';
                         totalElem.innerHTML = `💰 ${fallbackCost} FCFA`;
                         totalElem.style.borderColor = cfg.color;
                     }
@@ -131,16 +129,12 @@ console.log('🔧 Module de calcul de prix chargé');
                 if (distElem) distElem.style.display = 'none';
                 const breakdownElem = document.getElementById('price-breakdown');
                 if (breakdownElem) breakdownElem.style.display = 'none';
-                const timeElem = document.getElementById('time-info');
-                if (timeElem) {
-                    timeElem.style.display = 'block';
-                    timeElem.innerHTML = `⏱️ ${durText}`;
-                }
-                const totalElem = document.getElementById('total-price');
-                if (totalElem) {
-                    totalElem.style.display = 'block';
-                    totalElem.innerHTML = `💰 ${cost} FCFA`;
-                    totalElem.style.borderColor = cfg.color;
+                const timeElem2 = document.getElementById('time-info');
+                if (timeElem2) timeElem2.innerHTML = `⏱️ ${durText}`;
+                const totalElem2 = document.getElementById('total-price');
+                if (totalElem2) {
+                    totalElem2.innerHTML = `💰 ${cost} FCFA`;
+                    totalElem2.style.borderColor = cfg.color;
                 }
                 console.log('✅ Formulaire: prix mis à jour →', cost, 'FCFA');
                 // Afficher section
