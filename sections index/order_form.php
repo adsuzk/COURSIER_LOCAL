@@ -475,7 +475,7 @@
                                 • Utilisez votre GPS pour votre position actuelle
                             </small>
                         </div>
-                        <button type="button" class="submit-btn">
+                        <button type="button" class="submit-btn" onclick="processOrder()">
                             🛵 Commander maintenant
                         </button>
                     </form>
