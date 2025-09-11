@@ -144,14 +144,30 @@
     // Fonction de déconnexion
     function logout() {
         if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
-            currentUser = null;
-            isLoggedIn = false;
-            
-            localStorage.removeItem('currentUser');
-            localStorage.removeItem('isLoggedIn');
-            
-            updateUIAfterLogout();
-            showMessage('Vous avez été déconnecté', 'info');
+            // Appel API pour détruire la session côté serveur
+            fetch('/api/auth.php?action=logout', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'}
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    // Nettoyage local
+                    currentUser = null;
+                    isLoggedIn = false;
+                    localStorage.removeItem('currentUser');
+                    localStorage.removeItem('isLoggedIn');
+                    updateUIAfterLogout();
+                    showMessage('Vous avez été déconnecté', 'info');
+                    // Rechargement pour refléter la session PHP
+                    setTimeout(() => window.location.reload(), 500);
+                } else {
+                    showMessage('Erreur de déconnexion', 'error');
+                }
+            })
+            .catch(() => {
+                showMessage('Erreur réseau', 'error');
+            });
         }
     }
     
