@@ -73,8 +73,8 @@
                 form.submit();
             } else {
                 const formData = new FormData(form);
-                // Initiate payment via API (absolute path)
-                fetch('/COURSIER_LOCAL/api/initiate_order_payment.php', {
+                // Initiate payment via API (relative path)
+                fetch('api/initiate_order_payment.php', {
                     method: 'POST',
                     body: formData
                 })
