@@ -142,6 +142,7 @@ console.log('🔧 Module de calcul de prix chargé');
                     totalElem.innerHTML = `💰 ${cost} FCFA`;
                     totalElem.style.borderColor = cfg.color;
                 }
+                console.log('✅ Formulaire: prix mis à jour →', cost, 'FCFA');
                 // Afficher section
                 section.style.display = 'block';
                 section.classList.add('price-visible');
