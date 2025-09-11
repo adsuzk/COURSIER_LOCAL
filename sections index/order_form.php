@@ -409,8 +409,9 @@
                                         placeholder="+225 XX XX XX XX XX"
                                         maxlength="17"
                                         required
-                                        value="<?= htmlspecialchars($sessionPhone) ?>"
-                                        <?= $sessionPhone ? 'readonly' : '' ?>
+                                        <?php if (!empty($_SESSION['client_id']) && $sessionPhone): ?>
+                                            value="<?= htmlspecialchars($sessionPhone) ?>" readonly
+                                        <?php endif; ?>
                                     >
                                 </div>
                             </div>
