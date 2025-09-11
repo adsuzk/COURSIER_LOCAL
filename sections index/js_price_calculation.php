@@ -67,7 +67,31 @@ console.log('🔧 Module de calcul de prix chargé');
                 console.log('📍 Element de réponse:', el);
                 if (el.status !== 'OK') {
                     console.error('❌ DistanceMatrix element status:', el.status);
-                    // Afficher la section avec message d'erreur d'élément
+                    // Si pas de résultats, afficher uniquement estimation minimale
+                    if (el.status === 'ZERO_RESULTS') {
+                        // Priorité choisie
+                        let pr = 'normale';
+                        prios.forEach(r => { if (r.checked) pr = r.value; });
+                        const cfg = PRICING[pr];
+                        const fallbackCost = cfg.base;
+                        // Mettre à jour UI avec temps et prix estimatifs
+                        const distElem = document.getElementById('distance-info');
+                        if (distElem) distElem.innerHTML = `📏 -`;
+                        const timeElem = document.getElementById('time-info');
+                        if (timeElem) timeElem.innerHTML = `⏱️ -`;
+                        const breakdownElem = document.getElementById('price-breakdown');
+                        if (breakdownElem) breakdownElem.innerHTML = '';
+                        const totalElem = document.getElementById('total-price');
+                        if (totalElem) {
+                            totalElem.innerHTML = `💰 ${fallbackCost} FCFA`;
+                            totalElem.style.borderColor = cfg.color;
+                        }
+                        // Afficher section
+                        section.style.display = 'block';
+                        section.classList.add('price-visible');
+                        return;
+                    }
+                    // Autres erreurs, affichage d'erreur
                     section.style.display = 'block';
                     section.classList.add('price-error');
                     section.innerHTML = `<div class="error-message">Erreur itinéraire: ${el.status}</div>`;
