@@ -44,6 +44,15 @@ try {
     include __DIR__ . '/sections index/modals.php';
     // Authentification - inclure les scripts de login/logout
     include __DIR__ . '/sections index/js_authentication.php';
+    // Définir la racine de l’application pour JS
+    echo "<script>const ROOT_PATH = '" . rtrim(dirname(
+        
+        
+        
+        
+        
+        
+        $_SERVER['SCRIPT_NAME']), '/') . "';</script>";
     // Google Maps scripts
     include __DIR__ . '/sections index/js_google_maps.php';
     // JS modal Connexion Particulier
