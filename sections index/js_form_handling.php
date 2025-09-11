@@ -16,8 +16,7 @@
             d = d.slice(0, 10);
             // Split into pairs of 1 or 2 digits
             const parts = d.match(/\d{1,2}/g) || [];
-            if (parts.length === 0) return '';
-            // Build final string with country code and grouped digits
+            // Always show country code prefix and group every 2 digits
             return '+225 ' + parts.join(' ');
         }
 
