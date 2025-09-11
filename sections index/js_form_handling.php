@@ -7,21 +7,30 @@
     document.addEventListener('DOMContentLoaded', () => {
         const form = document.getElementById('orderForm');
 
-        // Format Ivorian phone number: remove non-digits, strip 225, pad leading 0, add spaces every 2 digits
+        // Format Ivorian phone number: show +225 format ONLY when exactly 10 digits are entered
         function formatPhone(v) {
-            // Normalize input: remove non-digits, strip leading country code, limit to 10 digits
-                // Remove non-digit characters
-                let d = v.replace(/\D/g, '');
-                // Strip leading country code if pasted
-                if (d.startsWith('225')) d = d.slice(3);
-                // Limit to maximum 10 digits
-                d = d.slice(0, 10);
-                // If no digits, return empty
-                if (!d) return '';
+            // Remove non-digit characters
+            let d = v.replace(/\D/g, '');
+            
+            // Strip leading country code if pasted
+            if (d.startsWith('225')) d = d.slice(3);
+            
+            // Limit to maximum 10 digits
+            d = d.slice(0, 10);
+            
+            // If no digits, return empty
+            if (!d) return '';
+            
+            // Return formatted phone ONLY if exactly 10 digits
+            if (d.length === 10) {
                 // Group digits in pairs: insert space after each 2 digits when another digit follows
                 const grouped = d.replace(/(\d{2})(?=\d)/g, '$1 ');
                 // Prefix with country code
                 return '+225 ' + grouped;
+            } else {
+                // For less than 10 digits, return just the digits without +225 prefix
+                return d;
+            }
         }
 
         // Validate phone number: supports +225, 225 or 0 prefix and 8-9 digits
