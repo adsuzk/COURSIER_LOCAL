@@ -14,9 +14,11 @@
             if (d.startsWith('225')) d = d.slice(3);
             // Limit to 10 local digits
             d = d.slice(0, 10);
-            // Split into pairs of 1 or 2 digits
+            // Split into groups of 1 or 2 digits
             const parts = d.match(/\d{1,2}/g) || [];
-            // Always show country code prefix and group every 2 digits
+            // If no digits, keep empty
+            if (parts.length === 0) return '';
+            // Build string: +225 plus grouped digits
             return '+225 ' + parts.join(' ');
         }
 
