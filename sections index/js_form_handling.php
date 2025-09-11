@@ -17,7 +17,9 @@
             d = d.slice(0, 10);
             // Split into pairs
             const parts = d.match(/\d{1,2}/g) || [];
-            // Build final string
+            // If no digits, return empty string
+            if (parts.length === 0) return '';
+            // Build final string with country code prefix
             return '+225 ' + parts.join(' ');
         }
 
