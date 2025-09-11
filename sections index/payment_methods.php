@@ -17,7 +17,7 @@
     cursor: pointer;
 }
 .payment-methods-section label img {
-    width: 24px;
+    width: 26px;
     opacity: 0.6;
     transition: opacity 0.3s, transform 0.3s;
 }
