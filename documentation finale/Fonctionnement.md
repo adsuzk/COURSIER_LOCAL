@@ -8,6 +8,7 @@ Ce document décrit la logique et le fonctionnement détaillé des principales f
   - Si **non connecté**, ouvre le modal de connexion (`connexionModal`) et **arrête** le traitement.
   - Si **connecté**, continue la validation du formulaire.
 - Au rendu du formulaire : si `$_SESSION['client_id']` existe, le champ `senderPhone` est prérempli avec la valeur de session (`$_SESSION['client_telephone']`) et mis en `readonly`. Sinon, le champ reste vide.
+  - Dans l’en-tête (`sections/index/header.php`) : si `$_SESSION['client_id']` existe, on affiche le nom du client (`$_SESSION['client_nom']`) et le lien “Déconnexion”, sinon on affiche “Connexion Particulier” et “Espace Business”.
 
 ## 2. Formatage des numéros de téléphone
 - Fonction `fPhoneNumber(v)` :
