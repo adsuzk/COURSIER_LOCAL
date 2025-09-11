@@ -1,25 +1,50 @@
 <?php
 // sections/js_form_handling.php - Fonctions de gestion des formulaires et validation
 ?>
+    <?php ?>
     <script>
-    // Fonctions de validation
-    function isValidEmail(email) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    }
-    
-    function isValidIvorianPhone(phone) {
-        // Formats acceptés : +225 XX XX XX XX XX, 225XXXXXXXXXX, 0XXXXXXXXX
-        const phoneRegex = /^(\+225|225|0)[0-9\s]{8,12}$/;
-        const cleanPhone = phone.replace(/\s/g, '');
-        return phoneRegex.test(cleanPhone) && cleanPhone.length >= 10;
-    }
-    
-    function formatIvorianPhone(phone) {
-                input.style.borderColor = '';
-                hideFieldError(input);
-            });
-            
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('orderForm');
+        const btn = document.querySelector('.submit-btn');
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Validate required fields
+            const dep = document.getElementById('departure').value.trim();
+            const dst = document.getElementById('destination').value.trim();
+            const ph = document.getElementById('senderPhone').value.trim();
+            const pr = document.querySelector('input[name="priority"]:checked');
+            if (!dep || !dst || !ph || !pr) {
+                alert('Veuillez remplir tous les champs avant de commander.');
+                return;
+            }
+            // Determine payment method
+            const pm = document.querySelector('input[name="paymentMethod"]:checked');
+            const method = pm ? pm.value : 'cash';
+            if (method !== 'cash') {
+                // Initiate CinetPay payment
+                const formData = new FormData(form);
+                fetch('/api/initiate_order_payment.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && data.payment_url) {
+                        showPaymentModal(data.payment_url);
+                    } else {
+                        alert('Erreur lors de l\'initialisation du paiement.');
+                    }
+                })
+                .catch(() => {
+                    alert('Impossible d\'initier le paiement.');
+                });
+            } else {
+                // Cash: normal form submit
+                form.submit();
+            }
+        });
+    });
+    </script>
             // Supprimer les marqueurs de la carte
             if (markerA) {
                 markerA.setMap(null);
