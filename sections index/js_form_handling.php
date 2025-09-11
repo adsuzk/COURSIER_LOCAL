@@ -74,7 +74,7 @@
             } else {
                 const formData = new FormData(form);
                     // Use absolute path for API endpoint
-                    fetch(`${ROOT_PATH}/api/initiate_order_payment.php`, {
+                    fetch('api/initiate_order_payment.php', {
                     method: 'POST',
                     body: formData
                 })
