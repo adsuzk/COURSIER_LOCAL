@@ -58,6 +58,7 @@
 
         // Handle order submission
         function processOrder(e) {
+            console.log('🛵 processOrder called, currentClient=', window.currentClient);
             e.preventDefault();
             // Enforce login: show modal if not connected
             if (!window.currentClient) {
