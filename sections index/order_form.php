@@ -1,7 +1,114 @@
 <?php
 // sections/order_form.php - Formulaire de commande complet
 ?>
-    <!-- Inline mobile CSS for services section removed to restore original layout -->
+    <!-- Fix mobile pour les cartes de service -->
+    <style>
+        /* Force l'affichage des cartes sur mobile */
+        @media (max-width: 768px) {
+            .services-section {
+                display: block !important;
+                visibility: visible !important;
+                padding: 40px 0 !important;
+            }
+            .services-container {
+                display: block !important;
+                padding: 0 15px !important;
+            }
+            .services-grid {
+                display: block !important;
+                width: 100% !important;
+                margin-top: 20px !important;
+            }
+            .service-card {
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                background: rgba(255, 255, 255, 0.1) !important;
+                border: 1px solid rgba(212,168,83,0.5) !important;
+                border-radius: 15px !important;
+                padding: 25px 15px !important;
+                margin: 15px 0 !important;
+                text-align: center !important;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+                backdrop-filter: blur(10px) !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            .service-icon {
+                display: block !important;
+                font-size: 2.5rem !important;
+                margin-bottom: 15px !important;
+                line-height: 1 !important;
+            }
+            .service-title {
+                display: block !important;
+                font-size: 1.1rem !important;
+                font-weight: 700 !important;
+                color: #D4A853 !important;
+                margin-bottom: 10px !important;
+                background: linear-gradient(135deg, #D4A853 0%, #F4E4B8 50%, #D4A853 100%) !important;
+                -webkit-background-clip: text !important;
+                -webkit-text-fill-color: transparent !important;
+                background-clip: text !important;
+            }
+            .service-description {
+                display: block !important;
+                color: rgba(255, 255, 255, 0.85) !important;
+                font-size: 0.9rem !important;
+                line-height: 1.5 !important;
+                margin: 0 !important;
+            }
+            .section-title {
+                font-size: 1.8rem !important;
+                text-align: center !important;
+                margin-bottom: 15px !important;
+                background: linear-gradient(135deg, #D4A853 0%, #F4E4B8 50%, #D4A853 100%) !important;
+                -webkit-background-clip: text !important;
+                -webkit-text-fill-color: transparent !important;
+                background-clip: text !important;
+            }
+            .section-subtitle {
+                font-size: 0.95rem !important;
+                text-align: center !important;
+                color: rgba(255, 255, 255, 0.8) !important;
+                margin-bottom: 25px !important;
+            }
+        }
+        /* Fix pour très petits écrans */
+        @media (max-width: 480px) {
+            .service-card {
+                padding: 20px 12px !important;
+                margin: 12px 0 !important;
+            }
+            .service-icon {
+                font-size: 2.2rem !important;
+            }
+            .service-title {
+                font-size: 1rem !important;
+            }
+            .service-description {
+                font-size: 0.85rem !important;
+            }
+        }
+        /* 📱 STYLES PHONE-ROW - SYSTÈME ORIGINAL CONFORME À LA CHARTE */
+        .phone-row {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+            width: 100%;
+        }
+        .phone-row .form-group {
+            flex: 1;
+            min-width: 0;
+        }
+        /* STYLES RESPONSIVES OPTIMISÉS */
+        @media (max-width: 768px) {
+            .phone-row {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
 
         /* ESTIMATION DE PRIX - CONFORME CHARTE SUZOSKY */
         .price-calculation-section {
