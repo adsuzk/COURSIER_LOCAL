@@ -149,62 +149,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     
-    <!-- 🔄 STYLES PARTAGÉS SYNCHRONISÉS - NE PAS MODIFIER MANUELLEMENT -->
-    <style>
-/* === STYLES PARTAGÉS SUZOSKY === */
-
-/* shared/config/colors.css */
-/* 🎨 COULEURS OFFICIELLES SUZOSKY - FICHIER PARTAGÉ */
-/* 🔒 VERROUILLÉ - NE PAS MODIFIER SANS AUTORISATION */
-
-:root {
-    /* Couleurs principales */
-    --primary-gold: #D4A853;
-    --primary-dark: #1A1A2E;
-    --secondary-blue: #16213E;
-    --accent-blue: #0F3460;
-    --accent-red: #E94560;
-    
-    /* Effets Glass Morphism */
-    --glass-bg: rgba(255,255,255,0.08);
-    --glass-border: rgba(255,255,255,0.2);
-    --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
-    
-    /* Gradients signatures */
-    --gradient-gold: linear-gradient(135deg, #D4A853 0%, #F4E4B8 50%, #D4A853 100%);
-    --gradient-dark: linear-gradient(135deg, #1A1A2E 0%, #16213E 100%);
-    --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
-    
-    /* Couleurs fonctionnelles */
-    --success-color: #28a745;
-    --error-color: #dc3545;
-    --warning-color: #ffc107;
-    --info-color: #17a2b8;
-    
-    /* Transparences */
-    --overlay-dark: rgba(26, 26, 46, 0.9);
-    --overlay-light: rgba(255, 255, 255, 0.1);
-}
-
-/* Adaptation automatique mode sombre */
-@media (prefers-color-scheme: dark) {
-    :root {
-        --glass-bg: rgba(0,0,0,0.1);
-        --glass-border: rgba(255,255,255,0.1);
-    }
-}
-
-/* Variables mobile */
-@media (max-width: 768px) {
-    :root {
-        --mobile-padding: 1rem;
-        --mobile-margin: 0.5rem;
-        --mobile-font-scale: 0.9;
-    }
-}
-
-/* === FIN STYLES PARTAGÉS === */
-    </style>
 </head>
 <body>
     <!-- Navigation Header -->
