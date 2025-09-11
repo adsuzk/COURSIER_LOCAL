@@ -146,7 +146,8 @@
         if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
             // Appel API pour détruire la session côté serveur
             fetch('api/auth.php?action=logout', {
-                method: 'POST'
+                method: 'POST',
+                credentials: 'same-origin'
             })
             .then(res => res.json())
             .then(data => {
