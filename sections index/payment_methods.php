@@ -1,41 +1,8 @@
 <?php
 // Simplified payment methods section
 ?>
-<style>
-/* Simplified Suzosky payment icons selector */
-.payment-methods-container {
-    margin: 20px 0;
-}
-.payment-methods-title {
-    text-align: center;
-    color: #fff;
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 15px;
-    font-family: 'Montserrat', sans-serif;
-}
-.payment-methods-section {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 12px;
-}
-.payment-methods-section input[type="radio"] {
-    display: none;
-}
-.payment-methods-section label {
-    cursor: pointer;
-}
-.payment-methods-section label img {
-    width: 26px;
-    opacity: 0.6;
-    transition: opacity 0.3s, transform 0.3s;
-}
-.payment-methods-section input[type="radio"]:checked + img {
-    opacity: 1;
-    transform: scale(1.2);
-}
-</style>
+<!-- Import payment methods CSS -->
+<link rel="stylesheet" href="css/components/form/payment-methods.css">
 
 <div class="payment-methods-container">
     <div class="payment-methods-title">
