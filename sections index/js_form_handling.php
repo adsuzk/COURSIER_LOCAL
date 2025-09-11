@@ -73,6 +73,18 @@
                 form.submit();
             } else {
                 const formData = new FormData(form);
+                
+                // Ajouter les données requises pour l'API de paiement
+                const orderNumber = 'SZK' + Date.now(); // Générer un numéro de commande temporaire
+                const priceElement = document.getElementById('total-price');
+                const priceText = priceElement ? priceElement.textContent : '';
+                const amount = priceText.match(/(\d+)/)?.[1] || '1500'; // Extraire le prix ou utiliser 1500 par défaut
+                
+                formData.append('order_number', orderNumber);
+                formData.append('amount', amount);
+                
+                console.log('🛵 Payment data:', {orderNumber, amount});
+                
                 // Initiate payment via API using ROOT_PATH for correct base path
                 const endpoint = `${ROOT_PATH}/api/initiate_order_payment.php`;
                 console.log('🛵 Initiating payment at', endpoint, \
