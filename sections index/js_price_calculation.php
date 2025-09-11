@@ -74,15 +74,19 @@ console.log('🔧 Module de calcul de prix chargé');
                         prios.forEach(r => { if (r.checked) pr = r.value; });
                         const cfg = PRICING[pr];
                         const fallbackCost = cfg.base;
-                        // Mettre à jour UI avec temps et prix estimatifs
+                        // Mettre à jour UI : masquer distance et détails, afficher temps et prix
                         const distElem = document.getElementById('distance-info');
-                        if (distElem) distElem.innerHTML = `📏 -`;
-                        const timeElem = document.getElementById('time-info');
-                        if (timeElem) timeElem.innerHTML = `⏱️ -`;
+                        if (distElem) distElem.style.display = 'none';
                         const breakdownElem = document.getElementById('price-breakdown');
-                        if (breakdownElem) breakdownElem.innerHTML = '';
+                        if (breakdownElem) breakdownElem.style.display = 'none';
+                        const timeElem = document.getElementById('time-info');
+                        if (timeElem) {
+                            timeElem.style.display = 'block';
+                            timeElem.innerHTML = `⏱️ -`;
+                        }
                         const totalElem = document.getElementById('total-price');
                         if (totalElem) {
+                            totalElem.style.display = 'block';
                             totalElem.innerHTML = `💰 ${fallbackCost} FCFA`;
                             totalElem.style.borderColor = cfg.color;
                         }
