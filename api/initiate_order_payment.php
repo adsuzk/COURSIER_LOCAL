@@ -20,10 +20,16 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $input = file_get_contents('php://input');
 $data = json_decode($input, true);
+
+// Si ce n'est pas du JSON valide, essayer avec $_POST (FormData)
 if (json_last_error() !== JSON_ERROR_NONE) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Données JSON invalides']);
-    exit;
+    if (!empty($_POST)) {
+        $data = $_POST;
+    } else {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Données invalides - ni JSON ni FormData']);
+        exit;
+    }
 }
 
  // Accept both snake_case and camelCase order number
