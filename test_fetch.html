@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Fetch API Payment</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { border: 1px solid #ccc; padding: 15px; margin: 10px 0; }
+        .result { background: #f5f5f5; padding: 10px; margin: 10px 0; }
+        .error { background: #ffebee; color: #c62828; }
+        .success { background: #e8f5e9; color: #2e7d32; }
+    </style>
+</head>
+<body>
+    <h1>Test Fetch API - Payment Endpoint</h1>
+    
+    <div class="test-section">
+        <h2>1. Vérification ROOT_PATH</h2>
+        <script>
+            const ROOT_PATH = '<?php echo rtrim(dirname($_SERVER['SCRIPT_NAME']), '/'); ?>';
+            document.write('<p>ROOT_PATH défini: <strong>' + ROOT_PATH + '</strong></p>');
+            document.write('<p>URL courante: <strong>' + window.location.href + '</strong></p>');
+            document.write('<p>Pathname: <strong>' + window.location.pathname + '</strong></p>');
+        </script>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Test avec FormData (comme dans l'application)</h2>
+        <button onclick="testWithFormData()">Tester avec FormData</button>
+        <div id="formdata-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Test avec JSON</h2>
+        <button onclick="testWithJSON()">Tester avec JSON</button>
+        <div id="json-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Test URLs alternatives</h2>
+        <button onclick="testAlternativeUrls()">Tester différentes URLs</button>
+        <div id="alternative-result" class="result"></div>
+    </div>
+
+    <script>
+        const ROOT_PATH = '<?php echo rtrim(dirname($_SERVER['SCRIPT_NAME']), '/'); ?>';
+        
+        function logResult(containerId, message, isError = false) {
+            const container = document.getElementById(containerId);
+            const div = document.createElement('div');
+            div.className = isError ? 'error' : 'success';
+            div.innerHTML = message;
+            container.appendChild(div);
+        }
+
+        async function testWithFormData() {
+            const container = document.getElementById('formdata-result');
+            container.innerHTML = '';
+            
+            const formData = new FormData();
+            formData.append('order_number', 'TEST' + Date.now());
+            formData.append('amount', '1500');
+            formData.append('senderPhone', '+225 01 02 03 04 05');
+            formData.append('email', 'test@example.com');
+            
+            const endpoint = `${ROOT_PATH}/api/initiate_order_payment.php`;
+            logResult('formdata-result', `🛵 Test endpoint: ${endpoint}`);
+            
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                logResult('formdata-result', `Status: ${response.status} ${response.statusText}`);
+                logResult('formdata-result', `Headers: ${response.headers.get('content-type')}`);
+                
+                const text = await response.text();
+                logResult('formdata-result', `Réponse brute: <pre>${text}</pre>`);
+                
+                // Essayer de parser en JSON
+                try {
+                    const json = JSON.parse(text);
+                    logResult('formdata-result', `JSON parsé: <pre>${JSON.stringify(json, null, 2)}</pre>`);
+                } catch (e) {
+                    logResult('formdata-result', `❌ Erreur parsing JSON: ${e.message}`, true);
+                }
+                
+            } catch (error) {
+                logResult('formdata-result', `❌ Erreur fetch: ${error.message}`, true);
+            }
+        }
+
+        async function testWithJSON() {
+            const container = document.getElementById('json-result');
+            container.innerHTML = '';
+            
+            const data = {
+                order_number: 'TEST' + Date.now(),
+                amount: 1500,
+                senderPhone: '+225 01 02 03 04 05',
+                email: 'test@example.com'
+            };
+            
+            const endpoint = `${ROOT_PATH}/api/initiate_order_payment.php`;
+            logResult('json-result', `🛵 Test endpoint: ${endpoint}`);
+            
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                logResult('json-result', `Status: ${response.status} ${response.statusText}`);
+                
+                const text = await response.text();
+                logResult('json-result', `Réponse brute: <pre>${text}</pre>`);
+                
+                try {
+                    const json = JSON.parse(text);
+                    logResult('json-result', `JSON parsé: <pre>${JSON.stringify(json, null, 2)}</pre>`);
+                } catch (e) {
+                    logResult('json-result', `❌ Erreur parsing JSON: ${e.message}`, true);
+                }
+                
+            } catch (error) {
+                logResult('json-result', `❌ Erreur fetch: ${error.message}`, true);
+            }
+        }
+
+        async function testAlternativeUrls() {
+            const container = document.getElementById('alternative-result');
+            container.innerHTML = '';
+            
+            const urls = [
+                'api/initiate_order_payment.php',
+                './api/initiate_order_payment.php',
+                '/api/initiate_order_payment.php',
+                `${ROOT_PATH}/api/initiate_order_payment.php`,
+                window.location.origin + '/api/initiate_order_payment.php',
+                window.location.origin + ROOT_PATH + '/api/initiate_order_payment.php'
+            ];
+            
+            for (const url of urls) {
+                try {
+                    logResult('alternative-result', `Test: ${url}`);
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        body: new FormData() // FormData vide pour tester
+                    });
+                    
+                    logResult('alternative-result', `✅ ${url} → Status: ${response.status}`);
+                    
+                } catch (error) {
+                    logResult('alternative-result', `❌ ${url} → Error: ${error.message}`, true);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
