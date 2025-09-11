@@ -245,7 +245,7 @@
                         </div>
                     <?php else: ?>
                         <div id="guestNav" class="auth-state">
-                            <a href="#" onclick="openConnexionModal(); return false;" class="nav-login">Connexion Particulier</a>
+                            <a href="#" id="openConnexionLink" onclick="openConnexionModal(); return false;" class="nav-login">Connexion Particulier</a>
                             <a href="business.html" class="nav-login">Espace Business</a>
                         </div>
                     <?php endif; ?>
