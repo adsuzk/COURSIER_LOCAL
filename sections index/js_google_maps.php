@@ -163,6 +163,7 @@
         directionsService = new google.maps.DirectionsService();
         directionsRenderer = new google.maps.DirectionsRenderer({
             draggable: true,
+            suppressInfoWindows: true, // Supprime les fenêtres d'information par défaut
             polylineOptions: {
                 strokeColor: "#d4a853",
                 strokeWeight: 4
