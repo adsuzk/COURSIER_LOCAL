@@ -40,6 +40,8 @@ try {
 
     // Sections du footer (divisées)
     include __DIR__ . '/sections index/footer_copyright.php';
+    // Google Maps scripts
+    include __DIR__ . '/sections index/js_google_maps.php';
     
 } catch (Exception $e) {
     // Log des erreurs de chargement
