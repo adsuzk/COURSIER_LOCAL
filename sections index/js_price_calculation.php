@@ -95,22 +95,11 @@ console.log('🔧 Module de calcul de prix chargé');
                     const cfg = PRICING[pr];
                     const fallbackCost = cfg.base;
                     // Mettre à jour UI : masquer distance et détails, afficher temps et prix
-                    const distElem = document.getElementById('distance-info');
-                    if (distElem) distElem.style.display = 'none';
-                    const breakdownElem = document.getElementById('price-breakdown');
-                    if (breakdownElem) breakdownElem.style.display = 'none';
+                    // Afficher durée et prix minimaux clairement
                     const timeElem = document.getElementById('time-info');
-                    if (timeElem) {
-                        timeElem.innerHTML = `⏱️ -`;
-                    }
+                    if (timeElem) timeElem.innerHTML = `⏱️ -`;
                     const totalElem = document.getElementById('total-price');
-                    if (totalElem) {
-                        totalElem.innerHTML = `
-                            <span class="total-label">Prix :</span>
-                            <span class="total-amount">${fallbackCost} FCFA</span>
-                        `;
-                        totalElem.style.borderColor = cfg.color;
-                    }
+                    if (totalElem) totalElem.innerHTML = `<span class="total-amount">${fallbackCost} FCFA</span>`;
                     // Afficher section
                     section.style.display = 'block';
                     section.classList.add('price-visible');
@@ -128,20 +117,11 @@ console.log('🔧 Module de calcul de prix chargé');
                 const cost = cfg.base + Math.ceil(kmVal * cfg.perKm);
                 console.log('💰 Prix calculé:', {priorite: pr, config: cfg, cout: cost});
                 // Mise à jour UI : masquer distance et détails, afficher temps et prix uniquement
-                const distElem = document.getElementById('distance-info');
-                if (distElem) distElem.style.display = 'none';
-                const breakdownElem = document.getElementById('price-breakdown');
-                if (breakdownElem) breakdownElem.style.display = 'none';
+                // Afficher durée et prix calculé
                 const timeElem2 = document.getElementById('time-info');
                 if (timeElem2) timeElem2.innerHTML = `⏱️ ${durText}`;
                 const totalElem2 = document.getElementById('total-price');
-                if (totalElem2) {
-                    totalElem2.innerHTML = `
-                        <span class="total-label">Prix :</span>
-                        <span class="total-amount">${cost} FCFA</span>
-                    `;
-                    totalElem2.style.borderColor = cfg.color;
-                }
+                if (totalElem2) totalElem2.innerHTML = `<span class="total-amount">${cost} FCFA</span>`;
                 console.log('✅ Formulaire: prix mis à jour →', cost, 'FCFA');
                 // Afficher section
                 section.style.display = 'block';
