@@ -73,7 +73,7 @@
                 form.submit();
             } else {
                 const formData = new FormData(form);
-                fetch('/api/initiate_order_payment.php', {
+                    fetch(ROOT_PATH + '/api/initiate_order_payment.php', {
                     method: 'POST',
                     body: formData
                 })
