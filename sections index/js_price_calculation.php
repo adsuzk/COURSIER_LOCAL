@@ -112,32 +112,25 @@ console.log('🔧 Module de calcul de prix chargé');
                 const cfg = PRICING[pr];
                 const cost = cfg.base + Math.ceil(kmVal * cfg.perKm);
                 console.log('💰 Prix calculé:', {priorite: pr, config: cfg, cout: cost});
-                // Mise à jour UI - affichage détaillé
-                // Update form price section if present
+                // Mise à jour UI : masquer distance et détails, afficher temps et prix uniquement
                 const distElem = document.getElementById('distance-info');
-                if (distElem) distElem.innerHTML = `📏 ${distText}`;
-                const timeElem = document.getElementById('time-info');
-                if (timeElem) timeElem.innerHTML = `⏱️ ${durText}`;
+                if (distElem) distElem.style.display = 'none';
                 const breakdownElem = document.getElementById('price-breakdown');
-                if (breakdownElem) breakdownElem.innerHTML = `
-                    <div class="price-line">
-                        <span class="description">Base (${cfg.name})</span>
-                        <span class="amount">${cfg.base} FCFA</span>
-                    </div>
-                    <div class="price-line">
-                        <span class="description">${kmVal.toFixed(1)} km × ${cfg.perKm} FCFA/km</span>
-                        <span class="amount">${Math.ceil(kmVal * cfg.perKm)} FCFA</span>
-                    </div>
-                    <div class="price-separator"></div>`;
+                if (breakdownElem) breakdownElem.style.display = 'none';
+                const timeElem = document.getElementById('time-info');
+                if (timeElem) {
+                    timeElem.style.display = 'block';
+                    timeElem.innerHTML = `⏱️ ${durText}`;
+                }
                 const totalElem = document.getElementById('total-price');
                 if (totalElem) {
+                    totalElem.style.display = 'block';
                     totalElem.innerHTML = `💰 ${cost} FCFA`;
                     totalElem.style.borderColor = cfg.color;
                 }
-                if (section) {
-                    section.style.display = 'block';
-                    section.classList.add('price-visible');
-                }
+                // Afficher section
+                section.style.display = 'block';
+                section.classList.add('price-visible');
                 // Map overlay updates disabled by requirement
                 // console.log('✅ Prix mis à jour et section affichée:', {cost});
             });
