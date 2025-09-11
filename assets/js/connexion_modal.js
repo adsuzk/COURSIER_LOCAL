@@ -1,58 +1,50 @@
 // assets/js/connexion_modal.js
-// Minimal loader for the Connexion Particulier modal
+// Async modal loader for Connexion Particulier
 document.addEventListener('DOMContentLoaded', () => {
   const openBtn = document.getElementById('openConnexionLink');
   const modal = document.getElementById('connexionModal');
   const closeBtn = document.getElementById('closeConnexionModal');
   const body = document.getElementById('connexionModalBody');
   if (!openBtn || !modal || !closeBtn || !body) return;
-  // Show modal with fetched login form
-  openBtn.addEventListener('click', e => {
+
+  openBtn.addEventListener('click', async e => {
     e.preventDefault();
-    fetch(encodeURI('sections index/connexion.php'))
-      .then(r => r.text())
-      .then(html => {
-        body.innerHTML = html;
-        modal.style.display = 'flex';
-        // Bind login form submission
-        const loginForm = body.querySelector('#loginForm');
-        if (loginForm) {
-          loginForm.addEventListener('submit', async function(ev) {
-            ev.preventDefault();
-            const submitBtn = loginForm.querySelector('button[type="submit"]');
-            const origText = submitBtn.textContent;
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Connexion...';
-            const formData = new FormData(loginForm);
-            formData.append('action', 'login');
-            try {
-              const resp = await fetch(`${window.API_BASE}/auth.php`, {
-                method: 'POST',
-                credentials: 'same-origin',
-                body: formData
-              });
-              const data = await resp.json();
-              if (data.success) {
-                window.location.reload();
-              } else {
-                alert(data.error || 'Erreur de connexion');
-              }
-            } catch (err) {
-              console.error('Erreur connexion:', err);
-              alert('Erreur réseau');
-            } finally {
-              submitBtn.disabled = false;
-              submitBtn.textContent = origText;
-            }
-          });
-        }
-      })
-        })
-        .catch(err => console.error('Erreur chargement modal login:', err));
-      })
-      .catch(err => console.error('Erreur chargement modal login:', err));
+    try {
+      const res = await fetch(encodeURI('sections index/connexion.php'));
+      const html = await res.text();
+      body.innerHTML = html;
+      modal.style.display = 'flex';
+      const loginForm = body.querySelector('#loginForm');
+      if (loginForm) {
+        loginForm.addEventListener('submit', async ev => {
+          ev.preventDefault();
+          const btn = loginForm.querySelector('button[type="submit"]');
+          const orig = btn.innerHTML;
+          btn.disabled = true; btn.innerHTML = 'Connexion...';
+          const fd = new FormData(loginForm);
+          fd.append('action', 'login');
+          try {
+            const apiRes = await fetch('api/auth.php?action=login', {
+              method: 'POST',
+              credentials: 'same-origin',
+              body: fd
+            });
+            const data = await apiRes.json();
+            if (data.success) window.location.reload();
+            else alert(data.error || 'Erreur de connexion');
+          } catch (err) {
+            console.error('Login error:', err);
+            alert('Erreur réseau');
+          } finally {
+            btn.disabled = false; btn.innerHTML = orig;
+          }
+        });
+      }
+    } catch (err) {
+      console.error('Erreur chargement modal login:', err);
+    }
   });
-  // Close modal
+
   closeBtn.addEventListener('click', () => { modal.style.display = 'none'; body.innerHTML = ''; });
   window.addEventListener('click', e => { if (e.target === modal) { modal.style.display = 'none'; body.innerHTML = ''; } });
 
