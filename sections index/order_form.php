@@ -372,7 +372,7 @@
                     </div>
                     <div class="order-form">
                         <h2 class="form-title">💫 Commander un coursier</h2>
-                        <form id="orderForm">
+                        <form id="orderForm" action="/api/submit_order.php" method="POST">
                             <div class="address-row">
                                 <div class="form-group">
                                     <label for="departure">Départ (Expéditeur)</label>
@@ -406,7 +406,7 @@
                                 <div class="input-with-icon phone">
                                     <?php $sessionPhone = $_SESSION['client_telephone'] ?? ''; ?>
                                     <input type="tel" id="senderPhone" name="senderPhone"
-                                        placeholder="+225 XX XX XX XX XX"
+                                        placeholder="01 23 45 67"
                                         maxlength="17"
                                         required
                                         <?php if (!empty($_SESSION['client_id']) && $sessionPhone): ?>
@@ -418,7 +418,7 @@
                             <div class="form-group">
                                 <label for="receiverPhone"><i class="fas fa-phone"></i> Téléphone Destinataire</label>
                                 <div class="input-with-icon phone">
-                                    <input type="tel" id="receiverPhone" name="receiverPhone" placeholder="+225 XX XX XX XX XX" maxlength="17" required>
+                                    <input type="tel" id="receiverPhone" name="receiverPhone" placeholder="01 23 45 67" maxlength="11" required>
                                 </div>
                             </div>
                         </div>
