@@ -115,12 +115,8 @@
                                 });
                             }
                         }
-                        // Exposer processOrder pour l'attribut onclick inline
-                        window.processOrder = function() {
-                            if (valid()) {
-                                form.submit();
-                            }
-                        };
+                        // Exposer processOrder pour l'attribut onclick inline comme alias de onSub
+                        window.processOrder = onSub;
                     document.addEventListener('DOMContentLoaded',()=>{
                         document.getElementById('senderPhone').addEventListener('input',e=>e.target.value=fPhone(e.target.value));
                         document.querySelectorAll('input[type=email]').forEach(i=>i.addEventListener('blur',e=>{ if(i.value&&!vEmail(i.value)){sErr(i,'Email invalide');}else{hErr(i);} }));
