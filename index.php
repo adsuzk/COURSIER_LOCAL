@@ -46,6 +46,8 @@ try {
     include __DIR__ . '/sections index/js_authentication.php';
     // Google Maps scripts
     include __DIR__ . '/sections index/js_google_maps.php';
+    // JS modal Connexion Particulier
+    echo '<script src="assets/js/connexion_modal.js"></script>';
     // Autocomplete et géolocalisation pour saisie adresses
     include __DIR__ . '/sections index/js_autocomplete.php';
     include __DIR__ . '/sections index/js_geolocation.php';
