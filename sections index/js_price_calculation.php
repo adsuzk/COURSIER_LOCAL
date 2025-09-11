@@ -45,6 +45,9 @@ console.log('🔧 Module de calcul de prix chargé');
                 return;
             }
             console.log('🚀 Appel Google DistanceMatrix...');
+            // Reset previous error/visibility state
+            section.classList.remove('price-error');
+            section.classList.remove('price-visible');
             service.getDistanceMatrix({
                 origins: [o],
                 destinations: [d],
