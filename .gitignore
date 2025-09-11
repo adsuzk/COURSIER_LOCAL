@@ -13,3 +13,8 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# GitHub Configuration (contains tokens)
+configure_github.ps1
+.github_token
+*.token
