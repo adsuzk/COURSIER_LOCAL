@@ -115,7 +115,7 @@
                     body: formData
                 })
                 .then(res => res.json())
-                .then data => {
+                    .then(data => {
                     if (data.success && data.payment_url) {
                         showPaymentModal(data.payment_url);
                     } else {
