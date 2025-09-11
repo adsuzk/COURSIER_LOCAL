@@ -16,11 +16,12 @@ Ce document décrit la logique et le fonctionnement détaillé des principales f
     - Sur `submit` du formulaire (`#loginForm`), il POSTe `action=login` à `/COURSIER_LOCAL/api/auth.php?action=login`, et en cas de `data.success`, recharge la page pour appliquer la session PHP.
 
 ## 2. Formatage des numéros de téléphone
-- Fonction `fPhoneNumber(v)` :
-  - Supprime tous les caractères non numériques.
-  - Retire l’indicatif `225` si présent.
-  - Ajoute un `0` devant si 8 chiffres.
-  - Insère des espaces toutes les 2 digits.
+ - Fonction `formatPhone(v)` :
+   - Supprime tous les caractères non numériques.
+   - Retire l’indicatif `225` si présent.
+   - Limite la saisie à 10 chiffres locaux.
+   - Insère des espaces toutes les 2 chiffres.
+   - Préfixe la valeur par `+225 `.
 - Appliqué aux champs `senderPhone` et `receiverPhone` pour cohérence.
 
 ## 3. Validation du formulaire
@@ -50,10 +51,10 @@ Ce document décrit la logique et le fonctionnement détaillé des principales f
 - Le champ `paymentMethod` détermine la suite du traitement.
 
 ## 6. Traitement du paiement (js_form_handling.js)
-- Au clic sur Commander, si **mode ≠ cash** :
-  - Récupère toutes les données du formulaire via `FormData`.
-  - Appelle `/api/initiate_order_payment.php` en POST.
-  - Si succès, ouvre le modal CinetPay avec URL de paiement.
+ - Au clic sur Commander, si **mode ≠ cash** :
+   - Récupère toutes les données du formulaire via `FormData`, y compris `order_number` et `amount`.
+   - Appelle `/api/initiate_order_payment.php` en POST.
+   - Si succès, ouvre le modal CinetPay avec l’URL de paiement.
 - Si **mode = cash** :
   - Soumet directement le formulaire à `/api/submit_order.php`.
 
