@@ -73,7 +73,8 @@
                 form.submit();
             } else {
                 const formData = new FormData(form);
-                    fetch(ROOT_PATH + '/api/initiate_order_payment.php', {
+                    // Use relative path for API endpoint to avoid 404
+                    fetch('api/initiate_order_payment.php', {
                     method: 'POST',
                     body: formData
                 })
