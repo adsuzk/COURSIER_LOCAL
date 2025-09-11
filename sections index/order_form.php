@@ -44,11 +44,11 @@
                         
                         <!-- Inclusion de la gestion des modes de paiement -->
                         <?php include __DIR__ . '/payment_methods.php'; ?>
-                        <div class="map-controls" style="display:flex; gap:10px; margin:10px 0;">
-                            <button type="button" onclick="clearRoute()" style="background:rgba(212,168,83,0.2); color:#D4A853; border:1px solid #D4A853; padding:8px 16px; border-radius:8px; cursor:pointer;">
+                        <div class="form-map-controls">
+                            <button type="button" onclick="clearRoute()" class="clear-route">
                                 🔄 Réafficher marqueurs
                             </button>
-                            <button type="button" onclick="clearMarkers()" style="background:rgba(233,69,96,0.2); color:#E94560; border:1px solid #E94560; padding:8px 16px; border-radius:8px; cursor:pointer;">
+                            <button type="button" onclick="clearMarkers()" class="clear-markers">
                                 🗑️ Effacer tout
                             </button>
                         </div>
