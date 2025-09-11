@@ -83,7 +83,38 @@
                         if(!pr){ok=false;msg.push('Priorité requise');}
                         if(!ok)alert(msg.join("\n")); return ok;
                     }
-                        function onSub(e){ e.preventDefault(); if(valid())form.submit(); }
+                        function onSub(e){
+                            e.preventDefault();
+                            if (!valid()) return;
+                            // Determine payment method
+                            const methodEl = document.querySelector('input[name="paymentMethod"]:checked');
+                            const paymentMethod = methodEl ? methodEl.value : 'cash';
+                            if (paymentMethod === 'cash') {
+                                // Cash: submit form normally
+                                form.submit();
+                            } else {
+                                // Non-cash: initiate CinetPay modal
+                                // Collect form data
+                                const formData = new FormData(form);
+                                fetch('/api/initiate_order_payment.php', {
+                                    method: 'POST',
+                                    body: formData
+                                })
+                                .then(res => res.json())
+                                .then(data => {
+                                    if (data.success && data.payment_url) {
+                                        // Show embedded CinetPay modal
+                                        showPaymentModal(data.payment_url);
+                                    } else {
+                                        alert('Erreur lors de l\'initialisation du paiement.');
+                                    }
+                                })
+                                .catch(err => {
+                                    console.error('Paiement init error:', err);
+                                    alert('Impossible d\'initier le paiement.');
+                                });
+                            }
+                        }
                         // Exposer processOrder pour l'attribut onclick inline
                         window.processOrder = function() {
                             if (valid()) {
