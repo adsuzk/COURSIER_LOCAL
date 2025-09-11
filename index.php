@@ -44,6 +44,8 @@ try {
     include __DIR__ . '/sections index/modals.php';
     // Google Maps scripts
     include __DIR__ . '/sections index/js_google_maps.php';
+    // Price calculation script (affiche montant de la course)
+    include __DIR__ . '/sections index/js_price_calculation.php';
     
 } catch (Exception $e) {
     // Log des erreurs de chargement
