@@ -47,6 +47,9 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         }
       })
+        })
+        .catch(err => console.error('Erreur chargement modal login:', err));
+      })
       .catch(err => console.error('Erreur chargement modal login:', err));
   });
   // Close modal
