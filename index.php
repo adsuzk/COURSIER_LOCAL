@@ -40,6 +40,8 @@ try {
 
     // Sections du footer (divisées)
     include __DIR__ . '/sections index/footer_copyright.php';
+    // Modals (connexion & payment)
+    include __DIR__ . '/sections index/modals.php';
     // Google Maps scripts
     include __DIR__ . '/sections index/js_google_maps.php';
     
