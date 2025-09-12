@@ -294,7 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function logout() {
     // Appel à l'API pour fermer la session
-    fetch('api/auth.php', {
+  fetch('/COURSIER_LOCAL/api/auth.php?action=logout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: 'action=logout'

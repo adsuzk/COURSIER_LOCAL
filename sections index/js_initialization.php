@@ -9,6 +9,21 @@
     window.clearMarkers = window.clearMarkers || function(){};
     window.calculateRoute = window.calculateRoute || function(){};
     window.updateAddressFromCoordinates = window.updateAddressFromCoordinates || function(pos, field){};
+// Helper: Debounce function to limit function calls
+function debounce(func, wait, immediate) {
+    let timeout;
+    return function() {
+        const context = this, args = arguments;
+        const later = function() {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+        };
+        const callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+    };
+}
     // Variables globales pour l'application
     const APP_VERSION = '2.1.0'; // Version de l'application Suzosky Coursier
     const APP_BUILD = '20250905'; // Build date
@@ -208,16 +223,7 @@
             }
         }
         
-        // Enregistrer le Service Worker si supporté
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js')
-                .then(registration => {
-                    console.log('⚙️ Service Worker enregistré');
-                })
-                .catch(error => {
-                    console.log('❌ Erreur Service Worker:', error);
-                });
-        }
+        // Service Worker registration removed to avoid 404
     }
     
     // Système de notifications

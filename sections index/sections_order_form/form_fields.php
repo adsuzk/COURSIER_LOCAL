@@ -30,7 +30,7 @@
         <label for="senderPhone"><i class="fas fa-phone"></i> Téléphone Expéditeur</label>
         <div class="input-with-icon phone">
             <?php $sessionPhone = $_SESSION['client_telephone'] ?? ''; ?>
-            <input type="tel" id="senderPhone" name="senderPhone"
+        <input type="tel" id="senderPhone" name="client_telephone"
                    placeholder="+225 XX XX XX XX XX"
                    maxlength="17"
                    required

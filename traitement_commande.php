@@ -12,6 +12,10 @@ if ($_POST['action'] ?? '' === 'nouvelle_commande') {
         $client_nom = trim($_POST['client_nom'] ?? '');
         $client_prenoms = trim($_POST['client_prenoms'] ?? '');
         $client_telephone = trim($_POST['client_telephone'] ?? '');
+        // If client session exists, enforce session telephone
+        if (!empty($_SESSION['client_telephone'])) {
+            $client_telephone = $_SESSION['client_telephone'];
+        }
         $ville = trim($_POST['ville'] ?? '');
         $commune = trim($_POST['commune'] ?? '');
         $adresse_complete = trim($_POST['adresse_complete'] ?? '');

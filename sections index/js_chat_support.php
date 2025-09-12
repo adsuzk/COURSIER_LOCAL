@@ -222,6 +222,11 @@
     
     // Configurer les événements du chat
     function setupChatEvents() {
+        const chatToggle = document.getElementById('chatToggle');
+        if (chatToggle) {
+            chatToggle.addEventListener('click', toggleChat);
+        }
+        
         const chatInput = document.getElementById('chatInput');
         const sendButton = document.getElementById('sendChatMessage');
         

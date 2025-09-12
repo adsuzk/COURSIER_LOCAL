@@ -351,12 +351,5 @@
             }
         }, 3000);
     });
-    // Dynamically load Google Maps API
-    (function loadGoogleMapsApi() {
-        const script = document.createElement('script');
-        script.async = true;
-        script.defer = true;
-        script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAGKC21fGmY-k6i0dcY8MpBExa5IqqBXbE&libraries=places&callback=initMap';
-        document.head.appendChild(script);
-    })();
+    // Google Maps API loaded once via header include (load_map_once.php)
     </script>

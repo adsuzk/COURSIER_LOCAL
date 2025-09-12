@@ -289,7 +289,7 @@
                     </div>
                     <div class="order-form">
                         <h2 class="form-title">💫 Commander un coursier</h2>
-                        <form id="orderForm" action="submit_order.php" method="post" onsubmit="processOrder(); return false;">
+                        <form id="orderForm">
                             <div class="address-row">
                                 <div class="form-group">
                                     <label for="departure">Départ (Expéditeur)</label>
@@ -445,7 +445,7 @@
                                 • Utilisez votre GPS pour votre position actuelle
                             </small>
                         </div>
-                        <button type="submit" class="submit-btn">
+                        <button type="button" class="submit-btn" onclick="processOrder()">
                             🛵 Commander maintenant
                         </button>
                     </form>

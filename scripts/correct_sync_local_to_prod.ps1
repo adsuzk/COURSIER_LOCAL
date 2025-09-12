@@ -88,6 +88,53 @@ Write-Host "Cible (PROD): $prodPath" -ForegroundColor Magenta
 Write-Host ""
 
 Sync-LocalToProd -SourceDir $localPath -TargetDir $prodPath
+Write-Host "`n=== Ajustements post-synchronisation pour prod ===" -ForegroundColor Yellow
+# Renommer dossier avec espace pour compatibilité serveur
+$oldSections = Join-Path $prodPath 'sections index'
+$newSections = Join-Path $prodPath 'sections_index'
+# Renommer ou supprimer ancien dossier avec espace pour compatibilité serveur
+if (Test-Path $oldSections) {
+    if (Test-Path $newSections) {
+        Write-Host "Suppression de l'ancien dossier 'sections index' (sections_index existe déjà)" -ForegroundColor Yellow
+        Remove-Item -Path $oldSections -Recurse -Force
+    } else {
+        Write-Host "Renommage: 'sections index' -> 'sections_index'" -ForegroundColor Cyan
+        Rename-Item -Path $oldSections -NewName 'sections_index'
+    }
+}
+# Mettre à jour les chemins d'inclusion dans index.php
+$indexFile = Join-Path $prodPath 'index.php'
+if (Test-Path $indexFile) {
+    (Get-Content $indexFile) |
+        ForEach-Object { $_ -replace 'sections index/', 'sections_index/' } |
+        Set-Content $indexFile
+    Write-Host "Mise à jour des includes dans index.php" -ForegroundColor Cyan
+}
+
+# Adapter les chemins JS dans connexion_modal.js pour prod
+$jsFile = Join-Path $prodPath 'assets\js\connexion_modal.js'
+if (Test-Path $jsFile) {
+        (Get-Content $jsFile) |
+            ForEach-Object { $_ -replace '/COURSIER_LOCAL/sections index/', 'sections_index/' } |
+            ForEach-Object { $_ -replace '/COURSIER_LOCAL/api/', 'api/' } |
+            Set-Content $jsFile
+        Write-Host "Adaptation des chemins dans connexion_modal.js" -ForegroundColor Cyan
+}
+
+        # Ajouter <base> dynamic pour chemins relatifs
+        $headerFile = Join-Path $newSections 'header.php'
+        if (Test-Path $headerFile) {
+                (Get-Content $headerFile) |
+                    ForEach-Object {
+                        if ($_ -match '<head>') {
+                                $_
+                                '<?php echo "<base href=\"" . rtrim(dirname($_SERVER["SCRIPT_NAME"]), "/") . "/\">"; ?>'
+                        } else {
+                                $_
+                        }
+                    } | Set-Content $headerFile
+                Write-Host "Ajout de <base> dans header.php" -ForegroundColor Cyan
+        }
 
 Write-Host ""
 Write-Host "✅ SYNCHRONISATION TERMINÉE - coursier_prod mis à jour avec COURSIER_LOCAL" -ForegroundColor Green
