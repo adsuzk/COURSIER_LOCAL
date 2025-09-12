@@ -120,6 +120,14 @@ if (Test-Path $jsFile) {
             Set-Content $jsFile
         Write-Host "Adaptation des chemins dans connexion_modal.js" -ForegroundColor Cyan
 }
+        # Adapter les chemins fetch déconnexion et API dans js_authentication.php
+        $authJsFile = Join-Path $newSections 'js_authentication.php'
+        if (Test-Path $authJsFile) {
+            (Get-Content $authJsFile) |
+                ForEach-Object { $_ -replace '/COURSIER_LOCAL/api/', 'api/' } |
+                Set-Content $authJsFile
+            Write-Host "Adaptation des chemins dans js_authentication.php" -ForegroundColor Cyan
+        }
 
         # Ajouter <base> dynamic pour chemins relatifs
         $headerFile = Join-Path $newSections 'header.php'
