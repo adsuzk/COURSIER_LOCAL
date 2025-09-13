@@ -351,8 +351,11 @@
                                 <label for="express" class="priority-label">🚀 Express<br><small>15min</small></label>
                             </div>
                         </div>
-                        <div class="price-estimate" id="estimatedPrice" style="display:none;">
-                            💰 Calcul du prix en cours...
+                        <div class="price-estimate" id="price-calculation-section" style="display:none;">
+                            <div class="distance-info" id="distance-info">Distance: -</div>
+                            <div class="time-info" id="time-info">⏱️ -</div>
+                            <div class="price-breakdown" id="price-breakdown" style="display:none;"></div>
+                            <div class="total-price" id="total-price">💰 - FCFA</div>
                         </div>
                         
                         <!-- Sélection mode de paiement -->
