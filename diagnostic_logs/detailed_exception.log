@@ -1,0 +1,495 @@
+{
+    "system": {
+        "timestamp": "2025-09-13 00:58:00.000000",
+        "microtime": 1757717880.579712,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "EXCEPTION",
+        "level": "CRITICAL",
+        "pid": 16844,
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/140.0.0.0 Safari\/537.36 Edg\/140.0.0.0",
+        "ip_address": "::1",
+        "request_uri": "\/COURSIER_LOCAL\/",
+        "request_method": "GET",
+        "session_id": "85019583d4q5mleu4reoh0285e",
+        "execution_time": 1.2011,
+        "file": "advanced_logger.php",
+        "line": 388,
+        "function": "logCritical",
+        "class": ""
+    },
+    "message": "Exception non gérée: syntax error, unexpected token \",\"",
+    "context": {
+        "exception_class": "ParseError",
+        "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\sections index\\map.php",
+        "line": 4,
+        "trace": "#0 {main}"
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 330,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 388,
+            "function": "logCritical"
+        },
+        {
+            "function": "{closure}"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-13 00:58:17.000000",
+        "microtime": 1757717897.491805,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "EXCEPTION",
+        "level": "CRITICAL",
+        "pid": 16844,
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/140.0.0.0 Safari\/537.36 Edg\/140.0.0.0",
+        "ip_address": "::1",
+        "request_uri": "\/COURSIER_LOCAL\/",
+        "request_method": "GET",
+        "session_id": "85019583d4q5mleu4reoh0285e",
+        "execution_time": 0.4464,
+        "file": "advanced_logger.php",
+        "line": 388,
+        "function": "logCritical",
+        "class": ""
+    },
+    "message": "Exception non gérée: syntax error, unexpected token \",\"",
+    "context": {
+        "exception_class": "ParseError",
+        "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\sections index\\map.php",
+        "line": 4,
+        "trace": "#0 {main}"
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 330,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 388,
+            "function": "logCritical"
+        },
+        {
+            "function": "{closure}"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-13 01:57:04.000000",
+        "microtime": 1757721424.036778,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "EXCEPTION",
+        "level": "CRITICAL",
+        "pid": 16844,
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/140.0.0.0 Safari\/537.36 Edg\/140.0.0.0",
+        "ip_address": "::1",
+        "request_uri": "\/COURSIER_LOCAL\/",
+        "request_method": "GET",
+        "session_id": "85019583d4q5mleu4reoh0285e",
+        "execution_time": 0.4333,
+        "file": "advanced_logger.php",
+        "line": 388,
+        "function": "logCritical",
+        "class": ""
+    },
+    "message": "Exception non gérée: syntax error, unexpected token \",\"",
+    "context": {
+        "exception_class": "ParseError",
+        "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\sections index\\map.php",
+        "line": 4,
+        "trace": "#0 {main}"
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 330,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 388,
+            "function": "logCritical"
+        },
+        {
+            "function": "{closure}"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-13 01:58:57.000000",
+        "microtime": 1757721537.858438,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "EXCEPTION",
+        "level": "CRITICAL",
+        "pid": 16844,
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/140.0.0.0 Safari\/537.36 Edg\/140.0.0.0",
+        "ip_address": "::1",
+        "request_uri": "\/COURSIER_LOCAL\/",
+        "request_method": "GET",
+        "session_id": "85019583d4q5mleu4reoh0285e",
+        "execution_time": 0.3539,
+        "file": "advanced_logger.php",
+        "line": 388,
+        "function": "logCritical",
+        "class": ""
+    },
+    "message": "Exception non gérée: syntax error, unexpected token \",\"",
+    "context": {
+        "exception_class": "ParseError",
+        "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\sections index\\map.php",
+        "line": 4,
+        "trace": "#0 {main}"
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 330,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 388,
+            "function": "logCritical"
+        },
+        {
+            "function": "{closure}"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-13 02:00:36.000000",
+        "microtime": 1757721636.773226,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "EXCEPTION",
+        "level": "CRITICAL",
+        "pid": 16844,
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/140.0.0.0 Safari\/537.36 Edg\/140.0.0.0",
+        "ip_address": "::1",
+        "request_uri": "\/COURSIER_LOCAL\/",
+        "request_method": "GET",
+        "session_id": "85019583d4q5mleu4reoh0285e",
+        "execution_time": 0.3397,
+        "file": "advanced_logger.php",
+        "line": 388,
+        "function": "logCritical",
+        "class": ""
+    },
+    "message": "Exception non gérée: syntax error, unexpected token \",\"",
+    "context": {
+        "exception_class": "ParseError",
+        "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\sections index\\map.php",
+        "line": 4,
+        "trace": "#0 {main}"
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 330,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 388,
+            "function": "logCritical"
+        },
+        {
+            "function": "{closure}"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-13 02:36:23.000000",
+        "microtime": 1757723783.745275,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "EXCEPTION",
+        "level": "CRITICAL",
+        "pid": 12676,
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/140.0.0.0 Safari\/537.36 Edg\/140.0.0.0",
+        "ip_address": "::1",
+        "request_uri": "\/COURSIER_LOCAL\/",
+        "request_method": "GET",
+        "session_id": "vqn4auld6csfsud3r5fek3tai8",
+        "execution_time": 2.1889,
+        "file": "advanced_logger.php",
+        "line": 388,
+        "function": "logCritical",
+        "class": ""
+    },
+    "message": "Exception non gérée: syntax error, unexpected token \",\"",
+    "context": {
+        "exception_class": "ParseError",
+        "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\sections index\\map.php",
+        "line": 4,
+        "trace": "#0 {main}"
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 330,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 388,
+            "function": "logCritical"
+        },
+        {
+            "function": "{closure}"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-13 02:37:43.000000",
+        "microtime": 1757723863.491765,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "EXCEPTION",
+        "level": "CRITICAL",
+        "pid": 12676,
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/140.0.0.0 Safari\/537.36 Edg\/140.0.0.0",
+        "ip_address": "::1",
+        "request_uri": "\/COURSIER_LOCAL\/",
+        "request_method": "GET",
+        "session_id": "vqn4auld6csfsud3r5fek3tai8",
+        "execution_time": 1.5263,
+        "file": "advanced_logger.php",
+        "line": 388,
+        "function": "logCritical",
+        "class": ""
+    },
+    "message": "Exception non gérée: syntax error, unexpected token \",\"",
+    "context": {
+        "exception_class": "ParseError",
+        "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\sections index\\map.php",
+        "line": 4,
+        "trace": "#0 {main}"
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 330,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 388,
+            "function": "logCritical"
+        },
+        {
+            "function": "{closure}"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-13 02:43:14.000000",
+        "microtime": 1757724194.207355,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "EXCEPTION",
+        "level": "CRITICAL",
+        "pid": 12676,
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/140.0.0.0 Safari\/537.36 Edg\/140.0.0.0",
+        "ip_address": "::1",
+        "request_uri": "\/COURSIER_LOCAL\/",
+        "request_method": "GET",
+        "session_id": "vqn4auld6csfsud3r5fek3tai8",
+        "execution_time": 0.3699,
+        "file": "advanced_logger.php",
+        "line": 388,
+        "function": "logCritical",
+        "class": ""
+    },
+    "message": "Exception non gérée: syntax error, unexpected token \",\"",
+    "context": {
+        "exception_class": "ParseError",
+        "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\sections index\\map.php",
+        "line": 4,
+        "trace": "#0 C:\\xampp\\htdocs\\COURSIER_LOCAL\\index.php(3): include()\n#1 {main}"
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 330,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 388,
+            "function": "logCritical"
+        },
+        {
+            "function": "{closure}"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-13 02:43:29.000000",
+        "microtime": 1757724209.920579,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "EXCEPTION",
+        "level": "CRITICAL",
+        "pid": 12676,
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/140.0.0.0 Safari\/537.36 Edg\/140.0.0.0",
+        "ip_address": "::1",
+        "request_uri": "\/COURSIER_LOCAL\/",
+        "request_method": "GET",
+        "session_id": "vqn4auld6csfsud3r5fek3tai8",
+        "execution_time": 0.37,
+        "file": "advanced_logger.php",
+        "line": 388,
+        "function": "logCritical",
+        "class": ""
+    },
+    "message": "Exception non gérée: syntax error, unexpected token \",\"",
+    "context": {
+        "exception_class": "ParseError",
+        "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\sections index\\map.php",
+        "line": 4,
+        "trace": "#0 C:\\xampp\\htdocs\\COURSIER_LOCAL\\index.php(3): include()\n#1 {main}"
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 330,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 388,
+            "function": "logCritical"
+        },
+        {
+            "function": "{closure}"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-13 02:43:53.000000",
+        "microtime": 1757724233.654336,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "EXCEPTION",
+        "level": "CRITICAL",
+        "pid": 12676,
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/140.0.0.0 Safari\/537.36 Edg\/140.0.0.0",
+        "ip_address": "::1",
+        "request_uri": "\/COURSIER_LOCAL\/",
+        "request_method": "GET",
+        "session_id": "vqn4auld6csfsud3r5fek3tai8",
+        "execution_time": 0.3964,
+        "file": "advanced_logger.php",
+        "line": 388,
+        "function": "logCritical",
+        "class": ""
+    },
+    "message": "Exception non gérée: syntax error, unexpected token \",\"",
+    "context": {
+        "exception_class": "ParseError",
+        "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\sections index\\map.php",
+        "line": 4,
+        "trace": "#0 C:\\xampp\\htdocs\\COURSIER_LOCAL\\index.php(3): include()\n#1 {main}"
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 330,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 388,
+            "function": "logCritical"
+        },
+        {
+            "function": "{closure}"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-13 02:47:16.000000",
+        "microtime": 1757724436.122085,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "EXCEPTION",
+        "level": "CRITICAL",
+        "pid": 12676,
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/140.0.0.0 Safari\/537.36 Edg\/140.0.0.0",
+        "ip_address": "::1",
+        "request_uri": "\/COURSIER_LOCAL\/",
+        "request_method": "GET",
+        "session_id": "vqn4auld6csfsud3r5fek3tai8",
+        "execution_time": 0.3563,
+        "file": "advanced_logger.php",
+        "line": 388,
+        "function": "logCritical",
+        "class": ""
+    },
+    "message": "Exception non gérée: syntax error, unexpected token \",\"",
+    "context": {
+        "exception_class": "ParseError",
+        "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\sections index\\map.php",
+        "line": 4,
+        "trace": "#0 C:\\xampp\\htdocs\\COURSIER_LOCAL\\index.php(3): include()\n#1 {main}"
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 330,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 388,
+            "function": "logCritical"
+        },
+        {
+            "function": "{closure}"
+        }
+    ]
+}
