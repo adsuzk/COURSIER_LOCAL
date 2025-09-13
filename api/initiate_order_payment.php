@@ -1,5 +1,6 @@
 <?php
 // Using local integration class to avoid missing vendor SDK
+require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../cinetpay/cinetpay_integration.php';
 require_once __DIR__ . '/../logger.php';
 header('Content-Type: application/json');

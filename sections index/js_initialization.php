@@ -2,6 +2,9 @@
 // sections/js_initialization.php - Initialisation générale et fonctions utilitaires
 ?>
     <script>
+    // CONFIGURATION GLOBALE
+    window.ROOT_PATH = '/COURSIER_LOCAL';  // Chemin racine pour les appels API
+    
     // STUBS pour éviter les erreurs JS legacy
     window.isLoggedIn = window.isLoggedIn || false;
     window.logError = window.logError || function(){};

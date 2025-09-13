@@ -40,3 +40,10 @@
 [2025-09-04 22:18:25] Connexion DB réussie
 [2025-09-04 22:18:25] Table clients vérifiée/créée avec succès
 [2025-09-04 22:18:25] Execution INSERT réussie
+[2025-09-13 06:39:37] Initiation paiement pour order_number: ORDER_68c4f589241e7_TEST
+[2025-09-13 07:07:36] Initiation paiement pour order_number: TEST123
+[2025-09-13 07:07:38] Paiement initié URL: https://checkout.cinetpay.com/payment/705f717b707c627f5465633e3ee657989f516f7a29a3f93acdcce9f66bb6c0306f5727261e9d8743d4bd12157c4b8397c0a1e097e0d703
+[2025-09-13 07:09:01] Initiation paiement pour order_number: SZK1757740141456
+[2025-09-13 07:09:02] Paiement initié URL: https://checkout.cinetpay.com/payment/2d409c8ac4e41e239f7b76e4c19d80490f3915702ddef87fdea28616bd6e5f2e38f33dac44e65cec24a1d4a99b35f5c5ddfc3465cb73a0
+[2025-09-13 07:13:40] Initiation paiement pour order_number: SZK1757740420728
+[2025-09-13 07:13:41] Paiement initié URL: https://checkout.cinetpay.com/payment/8f87ae1c2b9fa1035796aadcb8914a73341ad36ef958554703499ecdd126b375f0e4f952583fd229d4a21f50b494b11746699fda305696

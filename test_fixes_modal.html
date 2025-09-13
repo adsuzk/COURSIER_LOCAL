@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Test Fixes Modal CinetPay</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background: #f0f8ff; }
+        .fix-box { background: white; padding: 20px; margin: 15px 0; border-radius: 10px; border-left: 5px solid #28a745; }
+        .error-box { border-left-color: #dc3545; background: #fff5f5; }
+        .success-box { border-left-color: #28a745; background: #f0fff4; }
+        .warning-box { border-left-color: #ffc107; background: #fffbf0; }
+        button { padding: 12px 25px; margin: 8px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; }
+        .btn-test { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <h1>🚀 Test Corrections Modal CinetPay</h1>
+    
+    <div class="fix-box success-box">
+        <h2>✅ Corrections Appliquées :</h2>
+        <ul>
+            <li><strong>ROOT_PATH défini</strong> : `/COURSIER_LOCAL` pour les appels API</li>
+            <li><strong>displayTripInfo corrigé</strong> : Protection contre les éléments null</li>
+            <li><strong>Champs obligatoires</strong> : Seuls départ/arrivée requis</li>
+        </ul>
+    </div>
+    
+    <div class="fix-box">
+        <h2>🧪 Tests de Validation :</h2>
+        
+        <button class="btn-test" onclick="testRootPath()">1️⃣ Test ROOT_PATH</button>
+        <button class="btn-test" onclick="testModalFunction()">2️⃣ Test Modal Function</button>
+        <button class="btn-test" onclick="testAPICall()">3️⃣ Test API Call</button>
+        <button class="btn-success" onclick="testFullFlow()">🎯 Test Complet</button>
+        
+        <div id="test-results" style="margin-top: 20px;"></div>
+    </div>
+    
+    <div class="fix-box warning-box">
+        <h2>📝 Instructions Test Manuel :</h2>
+        <ol>
+            <li><strong>Aller sur</strong> : <a href="index.php" target="_blank">Page principale</a></li>
+            <li><strong>Remplir SEULEMENT</strong> :
+                <ul>
+                    <li>Départ : "Cocody, Abidjan"</li>
+                    <li>Arrivée : "Plateau, Abidjan"</li>
+                </ul>
+            </li>
+            <li><strong>Vérifier</strong> : Les modes de paiement s'affichent</li>
+            <li><strong>Sélectionner</strong> : Un mode autre qu'espèces</li>
+            <li><strong>Cliquer</strong> : "🛵 Commander maintenant"</li>
+            <li><strong>Résultat attendu</strong> : Modal CinetPay s'ouvre ! 🎉</li>
+        </ol>
+    </div>
+
+    <script>
+        function testRootPath() {
+            const results = document.getElementById('test-results');
+            let html = '<h3>🧪 Test ROOT_PATH :</h3>';
+            
+            if (typeof window.ROOT_PATH !== 'undefined') {
+                html += `<p class="success-box">✅ ROOT_PATH défini : <code>${window.ROOT_PATH}</code></p>`;
+            } else {
+                html += '<p class="error-box">❌ ROOT_PATH non défini</p>';
+            }
+            
+            results.innerHTML = html;
+        }
+        
+        function testModalFunction() {
+            const results = document.getElementById('test-results');
+            let html = '<h3>🧪 Test Fonction Modal :</h3>';
+            
+            if (typeof window.showPaymentModal === 'function') {
+                html += '<p class="success-box">✅ showPaymentModal existe</p>';
+                
+                // Test éléments DOM
+                const modal = document.getElementById('paymentModal');
+                const iframe = document.getElementById('paymentIframe');
+                
+                html += modal ? '<p class="success-box">✅ paymentModal DOM existe</p>' : '<p class="error-box">❌ paymentModal DOM manquant</p>';
+                html += iframe ? '<p class="success-box">✅ paymentIframe DOM existe</p>' : '<p class="error-box">❌ paymentIframe DOM manquant</p>';
+                
+            } else {
+                html += '<p class="error-box">❌ showPaymentModal introuvable</p>';
+            }
+            
+            results.innerHTML = html;
+        }
+        
+        function testAPICall() {
+            const results = document.getElementById('test-results');
+            results.innerHTML = '<h3>🧪 Test API Call :</h3><p>⏳ Test en cours...</p>';
+            
+            const testData = new FormData();
+            testData.append('order_number', 'TEST_' + Date.now());
+            testData.append('amount', '1500');
+            
+            const apiUrl = '/COURSIER_LOCAL/api/initiate_order_payment.php';
+            
+            fetch(apiUrl, {
+                method: 'POST',
+                body: testData
+            })
+            .then(response => response.text())
+            .then(text => {
+                let html = '<h3>🧪 Test API Call :</h3>';
+                html += '<p class="success-box">✅ API accessible</p>';
+                html += '<p><strong>URL testée :</strong> <code>' + apiUrl + '</code></p>';
+                html += '<details><summary>Voir réponse API</summary><pre>' + text + '</pre></details>';
+                
+                try {
+                    const data = JSON.parse(text);
+                    if (data.success && data.payment_url) {
+                        html += '<p class="success-box">✅ API retourne une URL de paiement</p>';
+                    } else {
+                        html += '<p class="warning-box">⚠️ API ne retourne pas d\'URL (normal en test)</p>';
+                    }
+                } catch (e) {
+                    html += '<p class="warning-box">⚠️ Réponse non-JSON (peut être normal)</p>';
+                }
+                
+                results.innerHTML = html;
+            })
+            .catch(error => {
+                results.innerHTML = '<h3>🧪 Test API Call :</h3><p class="error-box">❌ Erreur API : ' + error.message + '</p>';
+            });
+        }
+        
+        function testFullFlow() {
+            const results = document.getElementById('test-results');
+            results.innerHTML = '<h3>🎯 Test Complet Flow :</h3><p>⏳ Simulation en cours...</p>';
+            
+            // Simuler le processOrder complet
+            const testData = new FormData();
+            testData.append('departure', 'Cocody, Abidjan');
+            testData.append('destination', 'Plateau, Abidjan');
+            testData.append('order_number', 'SZK' + Date.now());
+            testData.append('amount', '1500');
+            
+            const apiUrl = '/COURSIER_LOCAL/api/initiate_order_payment.php';
+            
+            fetch(apiUrl, {
+                method: 'POST',
+                body: testData
+            })
+            .then(res => res.json())
+            .then(data => {
+                let html = '<h3>🎯 Test Complet Flow :</h3>';
+                
+                if (data.success && data.payment_url) {
+                    html += '<p class="success-box">✅ API OK - URL de paiement reçue</p>';
+                    html += '<p><strong>URL :</strong> <code>' + data.payment_url + '</code></p>';
+                    
+                    // Test ouverture modal
+                    if (typeof window.showPaymentModal === 'function') {
+                        html += '<p class="success-box">✅ Tentative ouverture modal...</p>';
+                        
+                        try {
+                            window.showPaymentModal(data.payment_url);
+                            html += '<p class="success-box">🎉 Modal CinetPay ouvert avec succès !</p>';
+                            
+                            // Fermer après 5 secondes
+                            setTimeout(() => {
+                                if (typeof window.closePaymentModal === 'function') {
+                                    window.closePaymentModal();
+                                }
+                            }, 5000);
+                            
+                        } catch (e) {
+                            html += '<p class="error-box">❌ Erreur ouverture modal : ' + e.message + '</p>';
+                        }
+                        
+                    } else {
+                        html += '<p class="error-box">❌ Fonction showPaymentModal manquante</p>';
+                    }
+                    
+                } else {
+                    html += '<p class="error-box">❌ API n\'a pas retourné d\'URL de paiement</p>';
+                    html += '<p><strong>Réponse :</strong> <code>' + JSON.stringify(data) + '</code></p>';
+                }
+                
+                results.innerHTML = html;
+            })
+            .catch(error => {
+                results.innerHTML = '<h3>🎯 Test Complet Flow :</h3><p class="error-box">❌ Erreur : ' + error.message + '</p>';
+            });
+        }
+        
+        // Test automatique au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                testRootPath();
+            }, 1000);
+        });
+    </script>
+    
+    <!-- Inclure les modaux pour le test -->
+    <?php include 'sections index/modals.php'; ?>
+</body>
+</html>

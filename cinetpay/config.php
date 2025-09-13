@@ -80,7 +80,9 @@ if (CINETPAY_ENV === 'TEST') {
 /**
  * Fonction pour récupérer la configuration CinetPay
  * @return array Configuration complète
+ * NOTE: Cette fonction est commentée car elle existe déjà dans config.php
  */
+/*
 function getCinetPayConfig() {
     return [
         'api_key' => CINETPAY_API_KEY,
@@ -99,6 +101,7 @@ function getCinetPayConfig() {
         'max_amount' => CINETPAY_MAX_AMOUNT
     ];
 }
+*/
 
 /**
  * Validation de la configuration CinetPay

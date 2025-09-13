@@ -256,44 +256,50 @@
     async function displayTripInfo() {
         const departure = document.getElementById('departure').value.trim();
         const destination = document.getElementById('destination').value.trim();
-        const senderPhone = document.getElementById('senderPhone').value.trim();
-        const receiverPhone = document.getElementById('receiverPhone').value.trim();
         
-        // Vérifier si les champs obligatoires sont remplis
-        if (!departure || !destination || !senderPhone || !receiverPhone) {
-            document.getElementById('estimatedPrice').style.display = 'none';
-            document.getElementById('paymentMethods').style.display = 'none';
+        // SEULS DÉPART ET DESTINATION SONT OBLIGATOIRES
+        if (!departure || !destination) {
+            const estimatedPrice = document.getElementById('estimatedPrice');
+            const paymentMethods = document.getElementById('paymentMethods');
+            
+            if (estimatedPrice) estimatedPrice.style.display = 'none';
+            if (paymentMethods) paymentMethods.style.display = 'none';
             return;
         }
         
         console.log('📋 Tous les champs obligatoires remplis, affichage des modes de paiement');
         
-        // Afficher les sections
-        document.getElementById('paymentMethods').style.display = 'block';
+        // Afficher les sections (avec vérification null)
+        const paymentMethods = document.getElementById('paymentMethods');
+        if (paymentMethods) {
+            paymentMethods.style.display = 'block';
+        }
         
         // Calcul temps et distance
         const tripData = await calculateDynamicDeliveryTime(departure, destination);
         
         // Récupération priorité sélectionnée
-        const urgency = document.querySelector('input[name="priority"]:checked').value;
+        const urgency = document.querySelector('input[name="priority"]:checked')?.value || 'normale';
         
         // Calcul prix
         const priceData = calculateDynamicPrice(tripData, urgency);
         
-        // Mise à jour prix
+        // Mise à jour prix (avec vérification null)
         const priceElement = document.getElementById('estimatedPrice');
-        priceElement.style.display = 'block';
-        priceElement.innerHTML = `
-            <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(212,168,83,0.1); border: 1px solid #D4A853; border-radius: 12px; padding: 16px; margin: 10px 0;">
-                <div>
-                    <span style="font-size: 1.1rem; font-weight: 600; color: #D4A853;">Prix estimé:</span>
-                    <span style="font-size: 1.4rem; font-weight: 900; color: #D4A853; margin-left: 8px;">${priceData.totalPrice.toLocaleString()} ${priceData.currency}</span>
+        if (priceElement) {
+            priceElement.style.display = 'block';
+            priceElement.innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(212,168,83,0.1); border: 1px solid #D4A853; border-radius: 12px; padding: 16px; margin: 10px 0;">
+                    <div>
+                        <span style="font-size: 1.1rem; font-weight: 600; color: #D4A853;">Prix estimé:</span>
+                        <span style="font-size: 1.4rem; font-weight: 900; color: #D4A853; margin-left: 8px;">${priceData.totalPrice.toLocaleString()} ${priceData.currency}</span>
+                    </div>
+                    <div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">
+                        Distance: ${priceData.totalDistance.toFixed(1)}km
+                    </div>
                 </div>
-                <div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">
-                    Distance: ${priceData.totalDistance.toFixed(1)}km
-                </div>
-            </div>
-        `;
+            `;
+        }
         
         // Sauvegarder pour usage ultérieur
         window.currentTripData = tripData;
@@ -301,4 +307,85 @@
         
         console.log('📊 Informations trajet mises à jour:', { tripData, priceData });
     }
+
+    // FONCTION MANQUANTE : Vérification des champs et affichage des modes de paiement
+    function checkFormCompleteness() {
+        console.log('🔍 checkFormCompleteness() appelée');
+        
+        const departure = document.getElementById('departure').value.trim();
+        const destination = document.getElementById('destination').value.trim();
+        
+        console.log('📋 États des champs obligatoires:', { departure, destination });
+        
+        // SEULS DÉPART ET ARRIVÉE SONT OBLIGATOIRES pour afficher les modes de paiement
+        if (!departure || !destination) {
+            console.log('⚠️ Départ ou arrivée manquant, masquage des modes de paiement');
+            document.getElementById('paymentMethods').style.display = 'none';
+            document.getElementById('estimatedPrice').style.display = 'none';
+            return;
+        }
+        
+        console.log('✅ Départ et arrivée remplis, affichage des modes de paiement');
+        
+        // Afficher les modes de paiement
+        const paymentMethods = document.getElementById('paymentMethods');
+        if (paymentMethods) {
+            paymentMethods.style.display = 'block';
+            console.log('💳 Section modes de paiement affichée');
+        } else {
+            console.error('❌ Element paymentMethods introuvable !');
+        }
+        
+        // Déclencher le calcul de prix si possible
+        if (typeof displayTripInfo === 'function') {
+            displayTripInfo();
+        }
+    }
+
+    // AJOUTER LES ÉVÉNEMENTS POUR DÉCLENCHER L'AFFICHAGE DES MODES DE PAIEMENT
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('🔧 Initialisation des événements pour modes de paiement');
+        
+        // Fonction qui vérifie les champs et affiche les modes de paiement
+        function triggerFormCheck() {
+            console.log('🔍 Vérification des champs du formulaire...');
+            // Petite temporisation pour permettre à l'utilisateur de terminer sa saisie
+            setTimeout(() => {
+                checkFormCompleteness();
+            }, 300);
+        }
+        
+        // Écouteurs sur les champs obligatoires
+        const departureField = document.getElementById('departure');
+        const destinationField = document.getElementById('destination');
+        const senderPhoneField = document.getElementById('senderPhone');
+        const receiverPhoneField = document.getElementById('receiverPhone');
+        
+        // Ajouter les événements sur tous les champs obligatoires
+        if (departureField) {
+            departureField.addEventListener('input', triggerFormCheck);
+            departureField.addEventListener('change', triggerFormCheck);
+            console.log('✓ Événements ajoutés sur le champ départ');
+        }
+        
+        if (destinationField) {
+            destinationField.addEventListener('input', triggerFormCheck);
+            destinationField.addEventListener('change', triggerFormCheck);
+            console.log('✓ Événements ajoutés sur le champ arrivée');
+        }
+        
+        if (senderPhoneField) {
+            senderPhoneField.addEventListener('input', triggerFormCheck);
+            senderPhoneField.addEventListener('change', triggerFormCheck);
+            console.log('✓ Événements ajoutés sur le téléphone expéditeur');
+        }
+        
+        if (receiverPhoneField) {
+            receiverPhoneField.addEventListener('input', triggerFormCheck);
+            receiverPhoneField.addEventListener('change', triggerFormCheck);
+            console.log('✓ Événements ajoutés sur le téléphone destinataire');
+        }
+        
+        console.log('🎯 Tous les événements de vérification du formulaire sont configurés');
+    });
     </script>

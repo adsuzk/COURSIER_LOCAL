@@ -17,8 +17,8 @@
         lang: 'fr'
     };
     
-    // Afficher le modal de paiement
-    function showPaymentModal(orderData) {
+    // Afficher le modal de paiement (RENOMMÉ pour éviter conflit avec modals.php)
+    function showPaymentModalOld(orderData) {
         currentOrderData = orderData;
         
         // Calculer le prix final

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Modes de Paiement</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Affichage Modes de Paiement</h1>
+        
+        <div class="test-form">
+            <h2>Remplissez tous les champs pour voir les modes de paiement :</h2>
+            
+            <div class="form-group">
+                <label for="departure">📍 Départ :</label>
+                <input type="text" id="departure" placeholder="Ex: Cocody, Abidjan">
+            </div>
+            
+            <div class="form-group">
+                <label for="destination">🎯 Arrivée :</label>
+                <input type="text" id="destination" placeholder="Ex: Plateau, Abidjan">
+            </div>
+            
+            <div class="form-group">
+                <label for="senderPhone">📱 Téléphone expéditeur :</label>
+                <input type="tel" id="senderPhone" placeholder="Ex: 0123456789">
+            </div>
+            
+            <div class="form-group">
+                <label for="receiverPhone">📞 Téléphone destinataire :</label>
+                <input type="tel" id="receiverPhone" placeholder="Ex: 0987654321">
+            </div>
+            
+            <div id="status" style="margin: 20px 0; padding: 15px; background: #f0f8ff; border-radius: 8px; border-left: 4px solid #4CAF50;">
+                <h3>Status : En attente des données...</h3>
+                <ul id="statusList">
+                    <li>🔴 Départ : Non rempli</li>
+                    <li>🔴 Arrivée : Non rempli</li>
+                    <li>🔴 Téléphone expéditeur : Non rempli</li>
+                    <li>🔴 Téléphone destinataire : Non rempli</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section modes de paiement -->
+        <div class="payment-methods-container" id="paymentMethods" style="display:none; margin-top: 30px; padding: 20px; background: #e8f5e8; border-radius: 12px; border: 2px solid #4CAF50;">
+            <h3 class="payment-title">💳 Choisissez votre mode de paiement</h3>
+            <p style="color: #2E7D32; font-weight: bold;">✅ Tous les champs obligatoires sont remplis !</p>
+            
+            <!-- Liste des modes de paiement -->
+            <div class="payment-options" style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 15px;">
+                <div class="payment-option" style="padding: 10px; border: 1px solid #ddd; border-radius: 8px; cursor: pointer;">
+                    <input type="radio" name="paymentMethod" value="cash" id="cash" checked>
+                    <label for="cash">💵 Espèces</label>
+                </div>
+                
+                <div class="payment-option" style="padding: 10px; border: 1px solid #ddd; border-radius: 8px; cursor: pointer;">
+                    <input type="radio" name="paymentMethod" value="orange_money" id="orange_money">
+                    <label for="orange_money">🟠 Orange Money</label>
+                </div>
+                
+                <div class="payment-option" style="padding: 10px; border: 1px solid #ddd; border-radius: 8px; cursor: pointer;">
+                    <input type="radio" name="paymentMethod" value="mtn_money" id="mtn_money">
+                    <label for="mtn_money">🟡 MTN Money</label>
+                </div>
+                
+                <div class="payment-option" style="padding: 10px; border: 1px solid #ddd; border-radius: 8px; cursor: pointer;">
+                    <input type="radio" name="paymentMethod" value="card" id="card">
+                    <label for="card">💳 Carte bancaire</label>
+                </div>
+            </div>
+        </div>
+        
+        <div id="estimatedPrice" style="display:none; margin-top: 20px;"></div>
+    </div>
+
+    <!-- Inclure la logique de vérification -->
+    <?php include 'sections index/js_route_calculation.php'; ?>
+
+    <script>
+        // Fonction simple pour la démo (sans calcul réel de prix)
+        async function calculateDynamicDeliveryTime(departure, destination) {
+            return {
+                distance: 5.5,
+                duration: '15 min'
+            };
+        }
+
+        function calculateDynamicPrice(tripData, urgency = 'normale') {
+            return {
+                totalPrice: 1500,
+                currency: 'FCFA',
+                totalDistance: 5.5
+            };
+        }
+
+        // Mise à jour du status en temps réel
+        function updateStatus() {
+            const departure = document.getElementById('departure').value.trim();
+            const destination = document.getElementById('destination').value.trim();
+            const senderPhone = document.getElementById('senderPhone').value.trim();
+            const receiverPhone = document.getElementById('receiverPhone').value.trim();
+            
+            const statusList = document.getElementById('statusList');
+            statusList.innerHTML = `
+                <li>${departure ? '✅' : '🔴'} Départ : ${departure ? 'Rempli' : 'Non rempli'}</li>
+                <li>${destination ? '✅' : '🔴'} Arrivée : ${destination ? 'Rempli' : 'Non rempli'}</li>
+                <li>${senderPhone ? '✅' : '🔴'} Téléphone expéditeur : ${senderPhone ? 'Rempli' : 'Non rempli'}</li>
+                <li>${receiverPhone ? '✅' : '🔴'} Téléphone destinataire : ${receiverPhone ? 'Rempli' : 'Non rempli'}</li>
+            `;
+        }
+
+        // Écouteurs pour la démo
+        document.addEventListener('DOMContentLoaded', function() {
+            ['departure', 'destination', 'senderPhone', 'receiverPhone'].forEach(id => {
+                const field = document.getElementById(id);
+                if (field) {
+                    field.addEventListener('input', updateStatus);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

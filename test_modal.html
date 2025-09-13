@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Modal CinetPay</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 TEST MODAL CINETPAY</h1>
+        
+        <div class="test-section">
+            <h2>Test Direct du Modal</h2>
+            <button id="test-modal-btn" class="btn btn-primary" style="padding: 15px 30px; font-size: 18px;">
+                🚀 TESTER LE MODAL CINETPAY
+            </button>
+            
+            <div class="test-results" style="margin-top: 20px;">
+                <h3>Résultats :</h3>
+                <div id="test-results" style="background: #f5f5f5; padding: 15px; border-radius: 5px; font-family: monospace;"></div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>Test API de Paiement</h2>
+            <button id="test-api-btn" class="btn btn-success" style="padding: 15px 30px; font-size: 18px;">
+                🔗 TESTER L'API PAIEMENT
+            </button>
+            
+            <div id="api-results" style="margin-top: 20px; background: #f0f8ff; padding: 15px; border-radius: 5px; font-family: monospace;"></div>
+        </div>
+    </div>
+
+    <?php include 'sections index/modals.php'; ?>
+
+    <script>
+        // Test du modal direct
+        document.getElementById('test-modal-btn').addEventListener('click', function() {
+            const results = document.getElementById('test-results');
+            results.innerHTML = '⏳ Test en cours...\n';
+            
+            try {
+                // Test si la fonction existe
+                if (typeof showPaymentModal === 'function') {
+                    results.innerHTML += '✓ Fonction showPaymentModal trouvée\n';
+                    
+                    // Test avec des données factices
+                    const testData = {
+                        order_number: 'TEST_' + Date.now(),
+                        amount: 1500,
+                        payment_url: 'https://secure.cinetpay.com/payment/test'
+                    };
+                    
+                    results.innerHTML += '✓ Tentative d\'ouverture du modal...\n';
+                    showPaymentModal(testData.payment_url);
+                    results.innerHTML += '✓ Modal appelé avec succès !\n';
+                    
+                } else {
+                    results.innerHTML += '❌ Fonction showPaymentModal introuvable\n';
+                }
+            } catch (error) {
+                results.innerHTML += '❌ Erreur: ' + error.message + '\n';
+            }
+        });
+
+        // Test de l'API
+        document.getElementById('test-api-btn').addEventListener('click', function() {
+            const results = document.getElementById('api-results');
+            results.innerHTML = '⏳ Test API en cours...\n';
+            
+            const testData = {
+                order_number: 'TEST_' + Date.now(),
+                amount: 1500,
+                phone: '0123456789',
+                email: 'test@example.com'
+            };
+            
+            fetch('/COURSIER_LOCAL/api/initiate_order_payment.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(testData)
+            })
+            .then(response => response.text())
+            .then(text => {
+                results.innerHTML += '📨 Réponse brute:\n' + text + '\n\n';
+                
+                try {
+                    const data = JSON.parse(text);
+                    if (data.success) {
+                        results.innerHTML += '✅ API Success!\n';
+                        if (data.payment_url) {
+                            results.innerHTML += '🔗 URL généré: ' + data.payment_url + '\n';
+                            results.innerHTML += '🎯 Test modal avec URL réel...\n';
+                            showPaymentModal(data.payment_url);
+                        }
+                    } else {
+                        results.innerHTML += '❌ Erreur API: ' + data.message + '\n';
+                    }
+                } catch (e) {
+                    results.innerHTML += '⚠️ Réponse non-JSON\n';
+                }
+            })
+            .catch(error => {
+                results.innerHTML += '❌ Erreur réseau: ' + error.message + '\n';
+            });
+        });
+    </script>
+</body>
+</html>

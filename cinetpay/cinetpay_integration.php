@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . '/config.php';
-require_once __DIR__ . '/logger.php';
 /**
  * SYSTÈME D'INTÉGRATION CINETPAY - SUZOSKY COURSIER V2.1
  * =====================================================

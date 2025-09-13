@@ -62,11 +62,18 @@
             const pr = document.querySelector('input[name="priority"]:checked');
             let errors = [];
 
+            // SEULS DÉPART, DESTINATION ET PRIORITÉ SONT OBLIGATOIRES
             if (!dep.value.trim()) errors.push('Départ requis');
             if (!dst.value.trim()) errors.push('Destination requise');
-            if (!phS.value.trim() || !validatePhone(phS.value)) errors.push('Téléphone Expéditeur invalide');
-            if (!phR.value.trim() || !validatePhone(phR.value)) errors.push('Téléphone Destinataire invalide');
             if (!pr) errors.push('Priorité requise');
+            
+            // TÉLÉPHONES OPTIONNELS - Valider seulement s'ils sont remplis
+            if (phS.value.trim() && !validatePhone(phS.value)) {
+                errors.push('Téléphone Expéditeur invalide (si rempli)');
+            }
+            if (phR.value.trim() && !validatePhone(phR.value)) {
+                errors.push('Téléphone Destinataire invalide (si rempli)');
+            }
 
             if (errors.length) {
                 alert(errors.join('\n'));
@@ -113,9 +120,19 @@
                 .then(res => res.json())
                     .then(data => {
                     if (data.success && data.payment_url) {
-                        showPaymentModal(data.payment_url);
+                        console.log('✅ Paiement initié avec succès, URL:', data.payment_url);
+                        
+                        // Vérifier que showPaymentModal existe avant de l'appeler
+                        if (typeof window.showPaymentModal === 'function') {
+                            window.showPaymentModal(data.payment_url);
+                        } else {
+                            console.error('❌ showPaymentModal non disponible');
+                            // Fallback: ouvrir dans une nouvelle fenêtre
+                            window.open(data.payment_url, '_blank', 'width=800,height=600');
+                        }
                     } else {
-                        alert('Erreur lors de l\'initialisation du paiement.');
+                        console.error('❌ Erreur API paiement:', data);
+                        alert('Erreur lors de l\'initialisation du paiement: ' + (data.message || 'Erreur inconnue'));
                     }
                 })
                 .catch(err => {
