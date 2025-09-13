@@ -12,6 +12,8 @@
     window.clearMarkers = window.clearMarkers || function(){};
     window.calculateRoute = window.calculateRoute || function(){};
     window.updateAddressFromCoordinates = window.updateAddressFromCoordinates || function(pos, field){};
+    
+    console.log('📋 js_initialization.php chargé');
 // Helper: Debounce function to limit function calls
 function debounce(func, wait, immediate) {
     let timeout;
@@ -425,6 +427,22 @@ function debounce(func, wait, immediate) {
             img.src = src;
         });
     }
+    
+    console.log('📋 js_initialization.php chargé');
+    
+    // DIAGNOSTIC FINAL: Vérifier que toutes les fonctions sont disponibles
+    setTimeout(() => {
+        console.log('🔧 DIAGNOSTIC FINAL - État des fonctions modales:');
+        console.log('  - typeof window.showPaymentModal:', typeof window.showPaymentModal);
+        console.log('  - typeof window.closePaymentModal:', typeof window.closePaymentModal);
+        console.log('  - typeof window.processOrder:', typeof window.processOrder);
+        
+        if (typeof window.showPaymentModal !== 'function') {
+            console.error('❌ PROBLÈME: showPaymentModal non disponible après chargement complet');
+        } else {
+            console.log('✅ showPaymentModal disponible pour utilisation');
+        }
+    }, 500);
     
     console.log('📋 js_initialization.php chargé');
     </script>

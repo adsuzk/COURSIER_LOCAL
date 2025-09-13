@@ -4,6 +4,14 @@
     <script>
     // Initialize currentClient flag from PHP session
     window.currentClient = <?php echo !empty($_SESSION['client_id']) ? 'true' : 'false'; ?>;
+    
+    // Diagnostic: vérifier les fonctions modales au chargement
+    console.log('🔧 js_form_handling.php chargé');
+    console.log('🔧 État des fonctions modales au chargement:', {
+        'typeof showPaymentModal': typeof window.showPaymentModal,
+        'typeof closePaymentModal': typeof window.closePaymentModal
+    });
+    
     document.addEventListener('DOMContentLoaded', () => {
         const form = document.getElementById('orderForm');
 
@@ -122,14 +130,27 @@
                     if (data.success && data.payment_url) {
                         console.log('✅ Paiement initié avec succès, URL:', data.payment_url);
                         
-                        // Vérifier que showPaymentModal existe avant de l'appeler
-                        if (typeof window.showPaymentModal === 'function') {
-                            window.showPaymentModal(data.payment_url);
-                        } else {
-                            console.error('❌ showPaymentModal non disponible');
-                            // Fallback: ouvrir dans une nouvelle fenêtre
-                            window.open(data.payment_url, '_blank', 'width=800,height=600');
+                        // Fonction pour attendre que showPaymentModal soit disponible
+                        function waitForModalAndOpen(url, maxRetries = 10, delay = 100) {
+                            if (typeof window.showPaymentModal === 'function') {
+                                console.log('✅ showPaymentModal trouvée, ouverture du modal');
+                                window.showPaymentModal(url);
+                                return true;
+                            } else if (maxRetries > 0) {
+                                console.log(`⏳ Attente showPaymentModal... ${maxRetries} tentatives restantes`);
+                                setTimeout(() => waitForModalAndOpen(url, maxRetries - 1, delay), delay);
+                                return false;
+                            } else {
+                                console.error('❌ showPaymentModal non disponible après toutes les tentatives');
+                                console.log('🔧 Fallback: ouverture dans nouvelle fenêtre');
+                                window.open(url, '_blank', 'width=800,height=600,resizable=yes,scrollbars=yes');
+                                return false;
+                            }
                         }
+                        
+                        // Essayer d'ouvrir le modal avec retry
+                        waitForModalAndOpen(data.payment_url);
+                        
                     } else {
                         console.error('❌ Erreur API paiement:', data);
                         alert('Erreur lors de l\'initialisation du paiement: ' + (data.message || 'Erreur inconnue'));
