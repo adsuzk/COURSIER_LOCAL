@@ -243,25 +243,31 @@ $pdo = getDBConnection();
         }
 
         .status-badge {
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 0.9em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
         .status-online {
-            background: var(--success);
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
 
         .status-offline {
-            background: var(--danger);
+            background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
             color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
 
         .status-warning {
-            background: var(--warning);
-            color: var(--dark);
+            background: linear-gradient(135deg, var(--primary-gold) 0%, #ffc107 100%);
+            color: var(--primary-dark);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
 
         .refresh-btn {
