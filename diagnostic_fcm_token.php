@@ -70,20 +70,25 @@ if (count($tokens) > 0) {
 
 // 3. Vérifier les logs de notifications FCM
 echo "3. LOGS NOTIFICATIONS FCM :\n";
-$stmt = $pdo->prepare("SELECT 
-    id,
-    notification_type,
-    title,
-    message,
-    success,
-    fcm_response_code,
-    created_at
-FROM notifications_log_fcm 
-WHERE coursier_id = ? 
-ORDER BY created_at DESC 
-LIMIT 5");
-$stmt->execute([$coursier_id]);
-$logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+try {
+    $stmt = $pdo->prepare("SELECT 
+        id,
+        notification_type,
+        title,
+        message,
+        success,
+        fcm_response_code,
+        created_at
+    FROM notifications_log_fcm 
+    WHERE coursier_id = ? 
+    ORDER BY created_at DESC 
+    LIMIT 5");
+    $stmt->execute([$coursier_id]);
+    $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+    echo "⚠️ Table notifications_log_fcm n'existe pas encore\n";
+    $logs = [];
+}
 
 if (count($logs) > 0) {
     echo "✅ " . count($logs) . " log(s) de notifications récent(s) :\n";
