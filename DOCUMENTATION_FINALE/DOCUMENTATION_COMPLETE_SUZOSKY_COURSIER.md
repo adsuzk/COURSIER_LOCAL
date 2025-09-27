@@ -512,6 +512,22 @@ object SuzoskyColors {
 
 # 6. APIS ET INTÉGRATIONS
 
+## ⚠️ ARCHITECTURE ENDPOINTS - IMPORTANT
+
+### Distinction Web vs Mobile
+
+**🌐 INTERFACE WEB** (navigateur) :
+- `coursier.php` - Dashboard web pour coursiers
+- `/api/auth.php` - Authentification email/password
+- Utilise sessions PHP et formulaires HTML
+
+**📱 APPLICATION MOBILE** (Android) :
+- `/api/agent_auth.php` - Authentification matricule/password 
+- `/api/orders.php` - Gestion commandes
+- Format JSON exclusivement, pas de sessions PHP
+
+⛔ **ERREUR FRÉQUENTE** : Ne pas confondre `coursier.php` (web) avec les APIs mobiles dans `/api/`
+
 ## 🔌 Endpoints REST
 
 ### Authentification Mobile
