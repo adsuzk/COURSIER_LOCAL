@@ -692,8 +692,8 @@ $assetRoute = function (string $path) {
                 document.getElementById('todayEarnings').textContent = formatCurrency(stats.gains_jour ?? 0);
                 const totalOrders = stats.total_commandes ?? 0;
                 document.getElementById('totalOrders').textContent = totalOrders.toString();
-                const averageRating = Number(stats.note_moyenne ?? 0);
-                document.getElementById('averageRating').textContent = averageRating.toFixed(1);
+                const averageRatingRaw = Number(stats.note_moyenne ?? 0);
+                document.getElementById('averageRating').textContent = Number.isFinite(averageRatingRaw) ? averageRatingRaw.toFixed(1) : '0.0';
 
                 // Mettre à jour le profil
                 document.getElementById('coursierName').textContent = data.data.nom || '-';
