@@ -715,6 +715,7 @@ $assetRoute = function (string $path) {
                 document.getElementById('coursierPhone').textContent = data.data.telephone || '-';
                 const statusText = data.data.statut_connexion ? `${data.data.statut || '-' } (${data.data.statut_connexion})` : (data.data.statut || '-');
                 document.getElementById('coursierStatus').textContent = statusText;
+                document.getElementById('coursierMatricule').textContent = data.data.matricule || '-';
                 document.getElementById('workZone').textContent = data.data.zone_travail || 'Non définie';
                 updateStatusIndicator(statusText, !!data.data.disponible);
                 const profileWallet = document.getElementById('profileWallet');
