@@ -14,6 +14,7 @@ import org.json.JSONObject
 import java.io.File
 
 object UpdateUtils {
+    private const val LOCAL_SEGMENT = "/COURSIER_LOCAL"
     private fun resolveBaseUrl(): String {
         val useProd = try { com.suzosky.coursier.BuildConfig.USE_PROD_SERVER } catch (_: Throwable) { true }
         if (useProd) {
@@ -26,10 +27,15 @@ object UpdateUtils {
         val host = try { com.suzosky.coursier.BuildConfig.DEBUG_LOCAL_HOST } catch (_: Throwable) { "" }
         if (host.isNotBlank()) {
             val normalized = if (host.startsWith("http")) host else "http://$host"
-            return if (normalized.endsWith("/coursier_prod")) normalized.trimEnd('/') else "$normalized/coursier_prod"
+            return normalizeLocalBase(normalized)
         }
 
-        return "http://10.0.2.2/coursier_prod"
+        return "http://10.0.2.2$LOCAL_SEGMENT"
+    }
+
+    private fun normalizeLocalBase(base: String): String {
+        val trimmed = base.trimEnd('/')
+        return if (trimmed.endsWith(LOCAL_SEGMENT, ignoreCase = true)) trimmed else "$trimmed$LOCAL_SEGMENT"
     }
 
     private fun updateUrl(): String = "${resolveBaseUrl()}/api/check_update.php"
