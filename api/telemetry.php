@@ -361,13 +361,6 @@ try {
                 'message' => 'Crash reported and analyzed',
                 'auto_analysis' => $autoAnalysis
             ]);
-                    (int)($data['app_version_code'] ?? 1),
-                    $data['android_version'] ?? null,
-                    $data['device_model'] ?? null,
-                    $data['crash_type'] ?? 'EXCEPTION',
-                    $data['exception_class'] ?? null,
-                    $data['exception_message'] ?? null,
-                    $data['stack_trace'] ?? null,
                     $data['screen_name'] ?? null,
                     $data['user_action'] ?? null,
                     isset($data['memory_usage']) ? (int)$data['memory_usage'] : null,
