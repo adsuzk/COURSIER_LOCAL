@@ -137,7 +137,7 @@ $remainingTests = Get-ChildItem -Path $baseDir -Name "*.php" | Where-Object {
     $_ -like "*post_deploy*"
 }
 
-if ($remainingTests.Count -gt 0) {
+if ($remainingTests -and $remainingTests.Count -gt 0) {
     Write-Host "⚠️  Fichiers potentiellement de test restants à la racine:" -ForegroundColor Yellow
     foreach ($file in $remainingTests) {
         Write-Host "   - $file" -ForegroundColor Yellow
