@@ -1420,3 +1420,24 @@ Stack Trace: [
     }
 ]
 =====================================
+🚨 ALERTE ERREUR CRITIQUE 🚨
+Timestamp: 2025-09-27 22:52:38.000000
+Interface: GENERAL
+Message: GET_COURSIER_INFO_ERROR
+Fichier: get_coursier_info.php:337
+Contexte: "SQLSTATE[42S22]: Column not found: 1054 Unknown column 'c.date_inscription' in 'field list'"
+Stack Trace: [
+    {
+        "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+        "line": 318,
+        "function": "log",
+        "class": "AdvancedLogger",
+        "type": "->"
+    },
+    {
+        "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\api\\get_coursier_info.php",
+        "line": 337,
+        "function": "logError"
+    }
+]
+=====================================
