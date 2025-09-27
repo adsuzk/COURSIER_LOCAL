@@ -893,7 +893,7 @@ function renderHeader() {
                 padding: var(--space-6) 0;
                 flex: 1;
                 overflow-y: auto;
-                max-height: calc(100vh - 300px);
+                height: calc(100vh - 280px);
                 scrollbar-width: thin;
                 scrollbar-color: var(--primary-gold) transparent;
             }
