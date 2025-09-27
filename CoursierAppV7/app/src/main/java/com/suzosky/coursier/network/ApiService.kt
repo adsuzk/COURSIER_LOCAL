@@ -31,7 +31,7 @@ object ApiService {
     private const val LOCAL_SEGMENT = "/COURSIER_LOCAL"
     // Local dev: emulator loopback. For physical device, we will prefer LAN host from BuildConfig.DEBUG_LOCAL_HOST if provided.
     private const val EMULATOR_LOCAL_BASE = "http://10.0.2.2$LOCAL_SEGMENT"
-    private const val PROD_BASE = "https://coursier.conciergerie-privee-suzosky.com"
+    private const val DEFAULT_PROD_BASE = "https://coursier.conciergerie-privee-suzosky.com$LOCAL_SEGMENT"
 
     private fun isDebug(): Boolean = BuildConfig.DEBUG
     private fun useProd(): Boolean = try { BuildConfig.USE_PROD_SERVER } catch (_: Throwable) { true }
@@ -63,8 +63,13 @@ object ApiService {
     }
 
     // Resolve primary/secondary bases and execute with automatic fallback (local <-> prod)
+    private fun prodBase(): String {
+        val configured = try { BuildConfig.PROD_BASE } catch (_: Throwable) { null }
+        return (configured?.takeIf { it.isNotBlank() } ?: DEFAULT_PROD_BASE).trimEnd('/')
+    }
+
     private fun basePair(): Pair<String, String> =
-        if (useProd()) Pair(PROD_BASE, debugLocalBase()) else Pair(debugLocalBase(), PROD_BASE)
+        if (useProd()) Pair(prodBase(), debugLocalBase()) else Pair(debugLocalBase(), prodBase())
 
     private fun enqueueInternal(
         urlBase: String,
@@ -346,18 +351,18 @@ object ApiService {
         )
     }
     private fun getInitRechargeUrl(): String =
-        if (useProd()) "$PROD_BASE/api/init_recharge.php" else "${'$'}{debugLocalBase()}/api/init_recharge.php"
+        if (useProd()) "${'$'}{prodBase()}/api/init_recharge.php" else "${'$'}{debugLocalBase()}/api/init_recharge.php"
 
     private fun getCoursierDataUrl(): String =
-        if (useProd()) "$PROD_BASE/api/get_coursier_data.php" else "${'$'}{debugLocalBase()}/api/get_coursier_data.php"
+        if (useProd()) "${'$'}{prodBase()}/api/get_coursier_data.php" else "${'$'}{debugLocalBase()}/api/get_coursier_data.php"
 
     // Deprecated: prefer buildApi(base, "update_order_status.php") with executeWithFallback
 
     private fun getProfileUrl(): String =
-        if (useProd()) "$PROD_BASE/api/profile.php" else "${'$'}{debugLocalBase()}/api/profile.php"
+        if (useProd()) "${'$'}{prodBase()}/api/profile.php" else "${'$'}{debugLocalBase()}/api/profile.php"
 
     private fun getAgentAuthUrl(): String =
-        if (useProd()) "$PROD_BASE/api/agent_auth.php" else "${'$'}{debugLocalBase()}/api/agent_auth.php"
+        if (useProd()) "${'$'}{prodBase()}/api/agent_auth.php" else "${'$'}{debugLocalBase()}/api/agent_auth.php"
 
     /**
      * Récupérer le profil du coursier (nom, prenoms, telephone, stats)
