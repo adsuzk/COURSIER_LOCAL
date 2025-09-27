@@ -44,6 +44,31 @@ if (file_exists(__DIR__ . '/diagnostic_logs/logging_hooks.php')) {
     ]);
 }
 
+// CONTRÔLE CRITIQUE DE SÉCURITÉ: Vérifier disponibilité des coursiers
+$coursiersDisponibles = false;
+$messageIndisponibilite = '';
+try {
+    if (file_exists(__DIR__ . '/fcm_token_security.php')) {
+        require_once __DIR__ . '/fcm_token_security.php';
+        $tokenSecurity = new FCMTokenSecurity();
+        
+        // Nettoyage automatique des tokens obsolètes
+        $tokenSecurity->enforceTokenSecurity();
+        
+        // Vérifier disponibilité pour nouvelles commandes
+        $disponibilite = $tokenSecurity->canAcceptNewOrders();
+        $coursiersDisponibles = $disponibilite['can_accept_orders'];
+        
+        if (!$coursiersDisponibles) {
+            $messageIndisponibilite = $tokenSecurity->getUnavailabilityMessage();
+        }
+    }
+} catch (Exception $e) {
+    // En cas d'erreur, permettre les commandes par sécurité mais loguer
+    error_log('[SECURITY] Erreur vérification disponibilité coursiers: ' . $e->getMessage());
+    $coursiersDisponibles = true;
+}
+
 // Enregistrement du heartbeat pour le frontend public
 try {
     require_once __DIR__ . '/config.php';
@@ -54,6 +79,7 @@ try {
         'host' => $_SERVER['HTTP_HOST'] ?? null,
         'session_active' => session_id() !== '' ? 1 : 0,
         'user_agent_hash' => isset($_SERVER['HTTP_USER_AGENT']) ? substr(sha1($_SERVER['HTTP_USER_AGENT']), 0, 12) : null,
+        'coursiers_disponibles' => $coursiersDisponibles ? 1 : 0,
     ];
 
     SystemSync::record('frontend_index', 'ok', $metrics);
