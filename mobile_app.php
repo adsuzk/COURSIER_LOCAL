@@ -679,7 +679,9 @@ $assetRoute = function (string $path) {
                 const stats = data.data.statistiques || {};
 
                 const walletValue = data.data.solde_wallet ?? 0;
-                const walletSource = data.data.solde_wallet_source ? `Source: ${data.data.solde_wallet_source}` : 'Solde synchronisé';
+                const walletSource = data.data.solde_wallet_source
+                    ? `Source: ${String(data.data.solde_wallet_source).replace(/_/g, ' ')}`
+                    : 'Solde synchronisé';
                 const walletBalanceEl = document.getElementById('walletBalance');
                 if (walletBalanceEl) walletBalanceEl.textContent = formatCurrency(walletValue);
                 const walletSourceEl = document.getElementById('walletSourceLabel');
