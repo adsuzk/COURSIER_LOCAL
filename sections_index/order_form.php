@@ -717,6 +717,8 @@ if ($sessionSenderPhoneRaw !== '') {
                             <div id="client-timeline-messages" class="client-timeline-messages"></div>
                         </div>
                     </form>
+                    
+                    <?php endif; // Fin du contrôle de disponibilité des coursiers ?>
                 </div>
                 </div>
                 
