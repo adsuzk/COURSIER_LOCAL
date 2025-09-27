@@ -359,7 +359,7 @@ try {
                 'message' => 'Crash reported and analyzed',
                 'auto_analysis' => $autoAnalysis
             ]);
-            } else {
+        } else {
                 // Nouveau crash
                 $stmt = $pdo->prepare("
                     INSERT INTO app_crashes (
