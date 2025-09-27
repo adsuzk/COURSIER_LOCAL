@@ -49,19 +49,38 @@ try {
     echo "\n📦 2. CRÉATION COMMANDE TEST\n";
     
     $commandeData = [
+        'order_number' => 'TEST_' . uniqid(),
+        'code_commande' => 'TC' . date('ymdHi'),
+        'client_type' => 'particulier',
         'client_nom' => 'TEST CLIENT',
         'client_telephone' => '+225 07 12 34 56 78',
         'adresse_depart' => 'Cocody Riviera 2, Abidjan',
         'adresse_arrivee' => 'Plateau Immeuble CCIA, Abidjan',
-        'description' => 'Test automatique - Livraison documents urgents',
-        'prix_commande' => 2500,
+        'adresse_retrait' => 'Cocody Riviera 2, Abidjan',
+        'adresse_livraison' => 'Plateau Immeuble CCIA, Abidjan',
+        'description_colis' => 'Test automatique - Livraison documents urgents',
+        'prix_total' => 2500,
+        'prix_base' => 2000,
+        'frais_supplementaires' => 500,
         'statut' => 'en_attente',
+        'priorite' => 'normale',
+        'mode_paiement' => 'especes',
+        'statut_paiement' => 'attente',
         'created_at' => date('Y-m-d H:i:s')
     ];
     
     $stmt = $pdo->prepare("
-        INSERT INTO commandes (client_nom, client_telephone, adresse_depart, adresse_arrivee, description, prix_commande, statut, created_at) 
-        VALUES (:client_nom, :client_telephone, :adresse_depart, :adresse_arrivee, :description, :prix_commande, :statut, :created_at)
+        INSERT INTO commandes (
+            order_number, code_commande, client_type, client_nom, client_telephone, 
+            adresse_depart, adresse_arrivee, adresse_retrait, adresse_livraison, 
+            description_colis, prix_total, prix_base, frais_supplementaires, 
+            statut, priorite, mode_paiement, statut_paiement, created_at
+        ) VALUES (
+            :order_number, :code_commande, :client_type, :client_nom, :client_telephone,
+            :adresse_depart, :adresse_arrivee, :adresse_retrait, :adresse_livraison,
+            :description_colis, :prix_total, :prix_base, :frais_supplementaires,
+            :statut, :priorite, :mode_paiement, :statut_paiement, :created_at
+        )
     ");
     
     if ($stmt->execute($commandeData)) {
