@@ -701,6 +701,7 @@ $assetRoute = function (string $path) {
                 const statusText = data.data.statut_connexion ? `${data.data.statut || '-' } (${data.data.statut_connexion})` : (data.data.statut || '-');
                 document.getElementById('coursierStatus').textContent = statusText;
                 document.getElementById('workZone').textContent = data.data.zone_travail || 'Non définie';
+                updateStatusIndicator(statusText, !!data.data.disponible);
                 const profileWallet = document.getElementById('profileWallet');
                 if (profileWallet) profileWallet.textContent = formatCurrency(walletValue);
                 const profileWalletSource = document.getElementById('profileWalletSource');
