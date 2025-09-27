@@ -46,7 +46,6 @@ function fcm_send_with_log($tokens, $title, $body, $data = [], $coursier_id = nu
     }
     $logTable = 'notifications_log_fcm';
     // Préparer une fonction de journalisation tolérante au schéma existant
-    $logTable = 'notifications_log_fcm';
     $logOnce = function($status, $tokensUsed = null, $respCode = null, $respText = null) use ($pdo, $logTable, $coursier_id, $commande_id, $title, $body) {
         try {
             // Récupérer les colonnes existantes
@@ -108,9 +107,7 @@ function fcm_send_with_log($tokens, $title, $body, $data = [], $coursier_id = nu
         } catch (Throwable $e) { /* ne pas bloquer l'envoi si le log échoue */ }
     };
     // Permettre de forcer le mode legacy (variable d'env ou fichier drapeau)
-    $forceLegacy = getenv('FCM_FORCE_LEGACY');
-    if ($forceLegacy === false) {
-        $logOnce($success ? 'sent' : 'failed', $tokens, $code, is_string($resp) ? $resp : json_encode($resp));
+    $forceLegacyFlag = (getenv('FCM_FORCE_LEGACY') === '1' || file_exists(__DIR__ . '/../../data/force_legacy_fcm'));
 
     $saPath = getenv('FIREBASE_SERVICE_ACCOUNT_FILE');
     if (!$saPath) {
@@ -127,20 +124,19 @@ function fcm_send_with_log($tokens, $title, $body, $data = [], $coursier_id = nu
         }
     }
 
-    if ($forceLegacy !== '1' && $saPath && file_exists($saPath)) {
+    if (!$forceLegacyFlag && $saPath && file_exists($saPath)) {
         // HTTP v1 path
         $result = fcm_v1_send($tokens, $title, $body, $data, $saPath);
         $success = $result['success'] ?? false;
         $code = $result['code'] ?? null;
         $resp = $result['result'] ?? ($result['error'] ?? null);
 
-        if ($pdo && $coursier_id) {
-            $stmt = $pdo->prepare("INSERT INTO {$logTable} (coursier_id, commande_id, notification_type, title, message, fcm_tokens_used, fcm_response_code, fcm_response, success) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$coursier_id, $commande_id, "new_order", $title, $body, json_encode($tokens), $code, is_string($resp) ? $resp : json_encode($resp), (int) $success]);
-        }
+        // Journalisation unifiée et tolérante
+        $logOnce($success ? 'sent' : 'failed', $tokens, $code, is_string($resp) ? $resp : json_encode($resp));
 
         if ($pdo && isset($result['result']) && is_array($result['result'])) {
-            fcm_cleanup_unregistered_tokens($pdo, $result['result'], $coursier_id, $order_id);
+            // Nettoyer les tokens UNREGISTERED
+            fcm_cleanup_unregistered_tokens($pdo, $result['result'], $coursier_id, $commande_id);
         }
 
         return $result + [ 'method' => 'http_v1' ];
@@ -149,10 +145,8 @@ function fcm_send_with_log($tokens, $title, $body, $data = [], $coursier_id = nu
     // Legacy fallback
     $serverKey = getenv("FCM_SERVER_KEY");
     if (!$serverKey) {
-        if ($pdo && $coursier_id) {
-            $stmt = $pdo->prepare("INSERT INTO {$logTable} (coursier_id, commande_id, notification_type, title, message, success, fcm_response) VALUES (?, ?, ?, ?, ?, FALSE, ?)");
-            $stmt->execute([$coursier_id, $commande_id, "new_order", $title, $body, "FCM_SERVER_KEY manquante et aucun compte service détecté"]);
-        }
+        // Pas de méthode d'envoi disponible
+        $logOnce('failed', $tokens, null, "FCM_SERVER_KEY manquante et aucun compte service détecté");
         return ["success" => false, "error" => "Aucun moyen FCM configuré (ni HTTP v1, ni legacy).", 'method' => 'none'];
     }
 
@@ -185,18 +179,13 @@ function fcm_send_with_log($tokens, $title, $body, $data = [], $coursier_id = nu
     if ($result === false) {
         $error = curl_error($ch);
         curl_close($ch);
-        if ($pdo && $coursier_id) {
-            $stmt = $pdo->prepare("INSERT INTO {$logTable} (coursier_id, commande_id, notification_type, title, message, fcm_tokens_used, success, fcm_response) VALUES (?, ?, ?, ?, ?, ?, FALSE, ?)");
-            $stmt->execute([$coursier_id, $commande_id, "new_order", $title, $body, json_encode($tokens), $error]);
-        }
+        $logOnce('failed', $tokens, null, $error);
         return ["success" => false, "error" => $error, 'method' => 'legacy'];
     }
     curl_close($ch);
     $success = $httpCode >= 200 && $httpCode < 300;
-    if ($pdo && $coursier_id) {
-        $stmt = $pdo->prepare("INSERT INTO {$logTable} (coursier_id, commande_id, notification_type, title, message, fcm_tokens_used, fcm_response_code, fcm_response, success) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$coursier_id, $commande_id, "new_order", $title, $body, json_encode($tokens), $httpCode, $result, (int) $success]);
-    }
+    // Journaliser le résultat final (héritage)
+    $logOnce($success ? 'sent' : 'failed', $tokens, $httpCode, $result);
     return ["success" => $success, "code" => $httpCode, "result" => $result, 'method' => 'legacy'];
 }
 
