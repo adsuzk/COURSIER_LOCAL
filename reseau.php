@@ -597,35 +597,32 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
             </div>
         </div>
 
-        <!-- Section Interfaces d'administration -->
-        <div class="section">
-            <div class="section-header">
-                <div class="section-icon">
-                    <i class="fas fa-tachometer-alt"></i>
-                </div>
-                <div>
-                    <h2 class="section-title">🎛️ Interfaces d'administration (<?= count($discoveredComponents['admin_sections']) ?>)</h2>
-                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">
-                        Les différentes pages d'administration pour gérer votre plateforme
-                    </p>
-                </div>
-            </div>
+        <!-- Interfaces d'Administration -->
+        <div class="section-card">
+            <h2 class="section-title">
+                <i class="fas fa-tachometer-alt"></i>
+                Interfaces d'Administration (<?= count($discoveredComponents['admin_sections']) ?>)
+            </h2>
+            <p class="section-description">
+                Toutes les pages d'administration disponibles pour gérer votre plateforme de livraison.
+            </p>
             
-            <div class="items-grid">
+            <div class="api-grid">
                 <?php foreach ($discoveredComponents['admin_sections'] as $section): ?>
-                    <div class="item">
-                        <div class="item-header">
-                            <span class="item-name"><?= htmlspecialchars($section['name']) ?></span>
-                            <span class="item-status status-online">DISPONIBLE</span>
-                        </div>
-                        <div class="item-description">
+                    <div class="api-item">
+                        <div class="api-name"><?= htmlspecialchars($section['name']) ?></div>
+                        <div class="api-description">
                             <?= htmlspecialchars($section['description']) ?>
                         </div>
-                        <?php if (isset($section['url'])): ?>
-                            <div class="item-details">
-                                🔗 <a href="<?= $section['url'] ?>" target="_blank" style="color: var(--primary);">Ouvrir l'interface</a>
-                            </div>
-                        <?php endif; ?>
+                        <div class="api-status">
+                            <?php if (isset($section['url'])): ?>
+                                <a href="<?= $section['url'] ?>" target="_blank" class="status-badge status-online">
+                                    ACCÉDER
+                                </a>
+                            <?php else: ?>
+                                <span class="status-badge status-online">DISPONIBLE</span>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 <?php endforeach; ?>
             </div>
