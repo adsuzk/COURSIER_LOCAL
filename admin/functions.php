@@ -10,6 +10,7 @@ if (!function_exists('checkAdminAuth')) {
     }
 }
 
+if (!function_exists('renderLoginForm')) {
 function renderLoginForm($error = '') {
     ?>
     <!DOCTYPE html>
@@ -444,6 +445,7 @@ function renderLoginForm($error = '') {
     </html>
     <?php
     exit;
+}
 }
 
 function renderHeader() {
