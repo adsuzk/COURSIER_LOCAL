@@ -15,11 +15,8 @@ if (!function_exists('dbMaintenanceLog')) {
         }
 
         try {
-            $logDir = dirname(__DIR__) . '/diagnostic_logs';
-            if (!is_dir($logDir)) {
-                @mkdir($logDir, 0775, true);
-            }
-            @file_put_contents($logDir . '/db_maintenance.log', date('c') . ' ' . $line . PHP_EOL, FILE_APPEND);
+            // Temporairement désactivé pour éviter les timeouts
+            // @file_put_contents($logDir . '/db_maintenance.log', date('c') . ' ' . $line . PHP_EOL, FILE_APPEND);
         } catch (Throwable $e) {
             // Ignorer les erreurs de journalisation
         }
