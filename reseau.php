@@ -155,49 +155,32 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
                 0 20px 50px rgba(0,0,0,0.5);
         }
 
-        .stat-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 0.75rem;
-        }
-
         .stat-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            color: white;
-        }
-        
-        .stat-icon.success { background: var(--success); }
-        .stat-icon.info { background: var(--info); }
-        .stat-icon.warning { background: var(--warning); }
-        .stat-icon.primary { background: var(--primary); }
-
-        .stat-title {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            margin: 0;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--primary-gold);
         }
 
         .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin: 0.5rem 0;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-gold);
+            margin-bottom: 10px;
+        }
+
+        .stat-title {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
         }
 
         .stat-description {
-            color: var(--text-secondary);
             font-size: 0.85rem;
+            opacity: 0.7;
             line-height: 1.4;
+            margin-top: 10px;
         }
 
         .section {
