@@ -773,9 +773,6 @@ $pdo = getDBConnection();
 
         <?php
         // === SERVICES SYSTÈME ===
-
-        <?php
-        // === SERVICES SYSTÈME ===
         
         // Test FCM Manager
         $fcmStatus = 'online';
