@@ -18,7 +18,7 @@ echo Appuyez sur ENTREE pour demarrer...
 pause > nul
 
 cd /d "C:\xampp\htdocs\COURSIER_LOCAL"
-powershell -ExecutionPolicy Bypass -File "scripts\START_PROTECTION_UNIFIED.ps1"
+powershell -ExecutionPolicy Bypass -File "scripts\START_PROTECTION_SIMPLE.ps1"
 
 echo.
 echo Protection arretee. Appuyez sur une touche pour fermer.
