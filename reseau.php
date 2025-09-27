@@ -560,53 +560,77 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
             </div>
         </div>
 
-        <!-- Résumé de la Découverte Automatique -->
-        <div class="api-section">
-            <h2 class="section-title">
-                <i class="fas fa-radar"></i>
-                Découverte Automatique du Réseau
-            </h2>
-            <p style="color: var(--primary-dark); opacity: 0.8; margin-bottom: 20px;">
-                <i class="fas fa-magic"></i> 
-                Scanner intelligent qui détecte automatiquement tous les composants du système.
-                Idéal pour les non-développeurs pour comprendre l'architecture complète.
-            </p>
+        <!-- Section APIs - Fonctionnalités de votre système -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-plug"></i>
+                </div>
+                <div>
+                    <h2 class="section-title">🔌 Fonctionnalités de votre système (<?= count($discoveredComponents['apis']) ?>)</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">
+                        Les "APIs" sont les fonctionnalités que votre système peut faire : authentification, gestion des commandes, paiements, etc.
+                    </p>
+                </div>
+            </div>
             
-            <div class="status-grid">
-                <div class="status-card success">
-                    <div class="card-header">
-                        <i class="fas fa-plug card-icon"></i>
-                        <div class="card-title">APIs Découvertes</div>
-                    </div>
-                    <div class="card-value"><?= count($discoveredComponents['apis']) ?></div>
-                    <div class="card-description">Endpoints détectés automatiquement</div>
-                </div>
-
-                <div class="status-card success">
-                    <div class="card-header">
-                        <i class="fas fa-tachometer-alt card-icon"></i>
-                        <div class="card-title">Sections Admin</div>
-                    </div>
-                    <div class="card-value"><?= count($discoveredComponents['admin_sections']) ?></div>
-                    <div class="card-description">Interfaces d'administration</div>
-                </div>
-
-                <div class="status-card success">
-                    <div class="card-header">
-                        <i class="fas fa-database card-icon"></i>
-                        <div class="card-title">Tables BDD</div>
-                    </div>
-                    <div class="card-value"><?= count($discoveredComponents['database_tables']) ?></div>
-                    <div class="card-description">Tables base de données</div>
-                </div>
-
-                <div class="status-card success">
-                    <div class="card-header">
-                        <i class="fas fa-tools card-icon"></i>
-                        <div class="card-title">Outils Monitoring</div>
-                    </div>
-                    <div class="card-value"><?= count($discoveredComponents['monitoring']) ?></div>
-                    <div class="card-description">Scripts de diagnostic</div>
+            <button class="toggle-btn" onclick="toggleSection('apis')">
+                📋 Voir toutes les fonctionnalités
+            </button>
+            
+            <div id="apis" class="collapsible-content hidden">
+                <div class="items-grid">
+                    <?php 
+                    // Grouper les APIs par catégorie pour plus de clarté
+                    $categories = [
+                        'Authentification' => [],
+                        'Gestion des commandes' => [],
+                        'Coursiers' => [],
+                        'Paiements' => [],
+                        'Notifications' => [],
+                        'Autres' => []
+                    ];
+                    
+                    foreach ($discoveredComponents['apis'] as $api) {
+                        $name = strtolower($api['name']);
+                        if (strpos($name, 'auth') !== false || strpos($name, 'login') !== false) {
+                            $categories['Authentification'][] = $api;
+                        } elseif (strpos($name, 'order') !== false || strpos($name, 'command') !== false) {
+                            $categories['Gestion des commandes'][] = $api;
+                        } elseif (strpos($name, 'coursier') !== false || strpos($name, 'courier') !== false) {
+                            $categories['Coursiers'][] = $api;
+                        } elseif (strpos($name, 'pay') !== false || strpos($name, 'recharge') !== false) {
+                            $categories['Paiements'][] = $api;
+                        } elseif (strpos($name, 'notif') !== false || strpos($name, 'fcm') !== false) {
+                            $categories['Notifications'][] = $api;
+                        } else {
+                            $categories['Autres'][] = $api;
+                        }
+                    }
+                    
+                    foreach ($categories as $categoryName => $apis):
+                        if (empty($apis)) continue;
+                    ?>
+                        <h4 style="color: var(--suzosky-gold); margin: 1.5rem 0 1rem 0; font-size: 1.1rem;">
+                            📂 <?= $categoryName ?> (<?= count($apis) ?>)
+                        </h4>
+                        <?php foreach ($apis as $api): ?>
+                            <div class="item">
+                                <div class="item-header">
+                                    <span class="item-name">
+                                        <?= htmlspecialchars(str_replace('.php', '', $api['name'])) ?>
+                                    </span>
+                                    <span class="item-status status-online">ACTIF</span>
+                                </div>
+                                <div class="item-description">
+                                    <?= htmlspecialchars($api['description']) ?>
+                                </div>
+                                <div class="item-details">
+                                    📁 Fichier: <?= htmlspecialchars($api['file']) ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endforeach; ?>
                 </div>
             </div>
         </div>
