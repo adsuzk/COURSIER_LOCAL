@@ -347,9 +347,12 @@ fun SuzoskyCoursierApp() {
         var loading by remember { mutableStateOf(true) }
         var error by remember { mutableStateOf<String?>(null) }
 
-    // Paiement natif: URL + dialogue de suivi (Custom Tab + polling)
+    // Paiement CinetPay intégré
     var paymentUrl by remember { mutableStateOf<String?>(null) }
-    var showNativePayment by remember { mutableStateOf(false) }
+    var showPaymentDialog by remember { mutableStateOf(false) }
+    var pendingRechargeAmount by remember { mutableStateOf<Double?>(null) }
+    var isInitiatingPayment by remember { mutableStateOf(false) }
+    var isPollingBalance by remember { mutableStateOf(false) }
 
         // Charger les VRAIES données au login
         LaunchedEffect(isLoggedIn, coursierId) {
