@@ -519,57 +519,49 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
         $tokensActifs = $stmt->fetchColumn();
         ?>
 
-        <!-- État général du système -->
+        <!-- Statistiques en temps réel -->
         <div class="stats-grid">
-            <div class="stat-card <?= $nombreCoursiers > 0 ? 'success' : 'warning' ?>">
-                <div class="stat-header">
-                    <h3 class="stat-title">Coursiers en ligne</h3>
-                    <div class="stat-icon success">
-                        <i class="fas fa-users"></i>
-                    </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
                 </div>
                 <div class="stat-value"><?= $nombreCoursiers ?></div>
+                <div class="stat-title">Coursiers Connectés</div>
                 <div class="stat-description">
-                    Nombre de livreurs actuellement connectés et disponibles pour prendre des commandes
+                    Livreurs actifs en temps réel
                 </div>
             </div>
 
-            <div class="stat-card info">
-                <div class="stat-header">
-                    <h3 class="stat-title">APIs découvertes</h3>
-                    <div class="stat-icon info">
-                        <i class="fas fa-plug"></i>
-                    </div>
-                </div>
-                <div class="stat-value"><?= count($discoveredComponents['apis']) ?></div>
-                <div class="stat-description">
-                    Points d'entrée automatiquement détectés dans votre système
-                </div>
-            </div>
-
-            <div class="stat-card <?= $commandesActives > 0 ? 'success' : 'warning' ?>">
-                <div class="stat-header">
-                    <h3 class="stat-title">Commandes actives</h3>
-                    <div class="stat-icon success">
-                        <i class="fas fa-shipping-fast"></i>
-                    </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-shipping-fast"></i>
                 </div>
                 <div class="stat-value"><?= $commandesActives ?></div>
+                <div class="stat-title">Commandes Actives</div>
                 <div class="stat-description">
-                    Livraisons en cours de traitement dans votre système
+                    En cours de traitement
                 </div>
             </div>
 
-            <div class="stat-card primary">
-                <div class="stat-header">
-                    <h3 class="stat-title">Tables de données</h3>
-                    <div class="stat-icon primary">
-                        <i class="fas fa-database"></i>
-                    </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-plug"></i>
+                </div>
+                <div class="stat-value"><?= count($discoveredComponents['apis']) ?></div>
+                <div class="stat-title">APIs Découvertes</div>
+                <div class="stat-description">
+                    Fonctionnalités détectées
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-database"></i>
                 </div>
                 <div class="stat-value"><?= count($discoveredComponents['database_tables']) ?></div>
+                <div class="stat-title">Tables BDD</div>
                 <div class="stat-description">
-                    Tables de votre base de données automatiquement analysées
+                    Structures de données
                 </div>
             </div>
         </div>
