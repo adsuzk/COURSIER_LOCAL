@@ -104,77 +104,83 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
             margin: 0 auto;
         }
 
-        .status-grid {
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
         }
 
-        .status-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-            border: 2px solid var(--primary-gold);
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
+        .stat-card {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
-        .status-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 45px rgba(212, 168, 83, 0.4);
+        .stat-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
         }
 
-        .status-card.success { 
-            border-color: var(--success);
-            box-shadow: 0 15px 35px rgba(40, 167, 69, 0.2);
+        .stat-card.success {
+            border-left: 4px solid var(--success);
         }
-        .status-card.warning { 
-            border-color: var(--warning);
-            box-shadow: 0 15px 35px rgba(255, 193, 7, 0.2);
+        .stat-card.info {
+            border-left: 4px solid var(--info);
         }
-        .status-card.danger { 
-            border-color: var(--danger);
-            box-shadow: 0 15px 35px rgba(220, 53, 69, 0.2);
+        .stat-card.warning {
+            border-left: 4px solid var(--warning);
+        }
+        .stat-card.primary {
+            border-left: 4px solid var(--primary);
         }
 
-        .card-header {
+        .stat-header {
             display: flex;
             align-items: center;
-            margin-bottom: 20px;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
         }
 
-        .card-icon {
-            font-size: 2.5em;
-            margin-right: 20px;
-            color: var(--primary-gold);
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+        
+        .stat-icon.success { background: var(--success); }
+        .stat-icon.info { background: var(--info); }
+        .stat-icon.warning { background: var(--warning); }
+        .stat-icon.primary { background: var(--primary); }
+
+        .stat-title {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
         }
 
-        .card-title {
-            font-size: 1.4em;
+        .stat-value {
+            font-size: 2rem;
             font-weight: 700;
-            color: var(--primary-dark);
+            color: var(--text-primary);
+            margin: 0.5rem 0;
         }
 
-        .card-value {
-            font-size: 3em;
-            font-weight: 800;
-            background: var(--gradient-gold);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        .card-description {
-            color: var(--primary-dark);
-            text-align: center;
-            font-size: 1em;
-            font-weight: 500;
-            opacity: 0.8;
+        .stat-description {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            line-height: 1.4;
         }
 
         .api-section {
