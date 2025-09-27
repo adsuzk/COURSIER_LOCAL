@@ -608,6 +608,19 @@ $assetRoute = function (string $path) {
         }) + ' F';
     }
 
+    function humanizeWalletSource(source) {
+        if (!source) return null;
+        const map = {
+            'agents_suzosky': 'Fichier agents Suzosky',
+            'coursier_accounts.solde_disponible': 'Compte rechargement (solde disponible)',
+            'coursier_accounts.solde_total': 'Compte rechargement (solde total)',
+            'comptes_coursiers.solde': 'Comptes coursiers (legacy)',
+            'clients_particuliers.balance': 'Balance clients (legacy)',
+            'default_zero': 'Solde initialisé'
+        };
+        return map[source] ?? source.replace(/_/g, ' ');
+    }
+
     // Gestion des écrans
     function showScreen(screenId) {
         // Masquer tous les écrans
