@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page non trouvée | Suzosky Coursier Abidjan</title>
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="description" content="Page non trouvée. Retourner à l'accueil Suzosky Coursier pour commander votre livraison express à Abidjan.">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #1A1A2E 0%, #16213E 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .error-container {
+            max-width: 600px;
+            padding: 40px 20px;
+        }
+        
+        .error-code {
+            font-size: 8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #D4A853 0%, #F4E4B8 50%, #D4A853 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+        
+        .error-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #D4A853;
+        }
+        
+        .error-message {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            color: rgba(255,255,255,0.8);
+            line-height: 1.6;
+        }
+        
+        .home-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #D4A853 0%, #F4E4B8 50%, #D4A853 100%);
+            color: #1A1A2E;
+            padding: 15px 30px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s ease;
+        }
+        
+        .home-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .suggestions {
+            margin-top: 40px;
+            text-align: left;
+        }
+        
+        .suggestions h3 {
+            color: #D4A853;
+            margin-bottom: 15px;
+        }
+        
+        .suggestions ul {
+            list-style: none;
+        }
+        
+        .suggestions li {
+            margin: 8px 0;
+        }
+        
+        .suggestions a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+        }
+        
+        .suggestions a:hover {
+            color: #D4A853;
+        }
+        
+        @media (max-width: 768px) {
+            .error-code {
+                font-size: 5rem;
+            }
+            
+            .error-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-code">404</div>
+        <h1 class="error-title">Oups ! Page introuvable</h1>
+        <p class="error-message">
+            La page que vous recherchez n'existe pas ou a été déplacée.<br>
+            Pas de souci, retournez à l'accueil pour commander votre coursier !
+        </p>
+        
+    <a href="index.php" class="home-btn">🏠 Retour à l'accueil</a>
+        
+        <div class="suggestions">
+            <h3>Pages populaires :</h3>
+            <ul>
+                <li>🚴 <a href="index.php">Commander un coursier</a></li>
+                <li>💼 <a href="business.php">Espace Business</a></li>
+                <li>👥 <a href="recrutement.php">Devenir coursier</a></li>
+                <li>📞 <a href="index.php#contact">Nous contacter</a></li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        // Redirection automatique après 10 secondes
+        setTimeout(() => {
+            window.location.href = '/';
+        }, 10000);
+        
+        // Tracking 404
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'page_404', {
+                event_category: 'erreur',
+                event_label: window.location.pathname
+            });
+        }
+    </script>
+</body>
+</html>

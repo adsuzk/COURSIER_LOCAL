@@ -1,0 +1,16 @@
+2025-09-25 20:05:11 [API-INFO] Requête reçue: POST action=particulier_reset_password role= id=te*********om ip=::1
+2025-09-25 20:05:11 [API-INFO] POST keys: login
+2025-09-25 20:05:11 [API-INFO] EMAIL SIMULÉ - Reset password pour test@test.com : http://localhost/coursier_prod/api/sections_index/reset_password.php?token=e3b6314756245f2a7541f82496d39439
+2025-09-25 20:06:02 [API-INFO] Requête reçue: POST action=particulier_reset_password role= id=te*********om ip=::1
+2025-09-25 20:06:02 [API-INFO] POST keys: login
+2025-09-25 20:06:02 [API-INFO] EMAIL SIMULÉ - Reset password pour test@test.com : http://localhost/coursier_prod/sections_index/reset_password.php?token=51a63e4b3b73b02e08354ebf74fd37d3
+2025-09-25 20:06:29 [API-INFO] Requête reçue: POST action=particulier_do_reset_password role= id= ip=::1
+2025-09-25 20:06:29 [API-INFO] POST keys: confirmPassword,token,password(masked)
+2025-09-25 20:12:10 [API-INFO] Requête reçue: POST action=particulier_reset_password role= id=te*********om ip=::1
+2025-09-25 20:12:10 [API-INFO] POST keys: login
+2025-09-25 20:12:10 [API-INFO] EMAIL SIMULÉ - Reset password pour test@test.com : http://localhost/coursier_prod/sections_index/reset_password.php?token=93a06117864fcaf7dbd8c06cbf945545
+2025-09-25 20:13:14 [API-INFO] Requête reçue: POST action=particulier_reset_password role= id=ya**************om ip=::1
+2025-09-25 20:13:14 [API-INFO] POST keys: login
+2025-09-25 20:13:14 [API-INFO] EMAIL SIMULÉ - Reset password pour yapadone@gmail.com : http://localhost/coursier_prod/sections_index/reset_password.php?token=facbf88077535471afd1fd4c7f9ab06d
+2025-09-25 20:13:31 [API-INFO] Requête reçue: POST action=particulier_do_reset_password role= id= ip=::1
+2025-09-25 20:13:31 [API-INFO] POST keys: confirmPassword,token,password(masked)

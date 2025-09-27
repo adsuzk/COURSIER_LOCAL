@@ -1,0 +1,922 @@
+﻿
+[2025-09-04 21:18:35] 🚀 DÉBUT submit_order.php - 2025-09-04 21:18:35
+[2025-09-04 21:18:35] ✅ Méthode POST validée, traitement en cours...
+[2025-09-04 21:19:05] 🚀 DÉBUT submit_order.php - 2025-09-04 21:19:05
+[2025-09-04 21:19:05] ✅ Méthode POST validée, traitement en cours...
+[2025-09-04 21:19:05] ✅ Données POST form utilisées
+[2025-09-04 21:19:05] CLIENT_ID_CHECK: clientIdMain=14, tentative de vérification...
+[2025-09-04 21:19:05] Exception submit_order: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'coursier_prod.clients' doesn't exist - Trace: #0 C:\xampp\htdocs\coursier_prod\api\submit_order.php(214): PDO->prepare('SELECT id FROM ...')
+#1 C:\xampp\htdocs\coursier_prod\test_http500.php(34): include('C:\\xampp\\htdocs...')
+#2 {main}
+[2025-09-04 21:24:50] 🚀 DÉBUT submit_order.php - 2025-09-04 21:24:50
+[2025-09-04 21:24:50] ✅ Méthode POST validée, traitement en cours...
+[2025-09-04 21:24:50] ✅ Données POST form utilisées
+[2025-09-04 21:25:26] 🚀 DÉBUT submit_order.php - 2025-09-04 21:25:26
+[2025-09-04 21:25:26] ✅ Méthode POST validée, traitement en cours...
+[2025-09-04 21:25:26] ✅ Données POST form utilisées
+[2025-09-04 21:25:26] CLIENT_ID_CHECK: clientIdMain=15, tentative de vérification...
+[2025-09-04 21:25:26] Exception submit_order: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'coursier_prod.clients' doesn't exist - Trace: #0 C:\xampp\htdocs\coursier_prod\api\submit_order.php(214): PDO->prepare('SELECT id FROM ...')
+#1 C:\xampp\htdocs\coursier_prod\test_api_direct.php(30): include('C:\\xampp\\htdocs...')
+#2 {main}
+[2025-09-04 22:03:46] 🚀 DÉBUT submit_order.php - 2025-09-04 22:03:46
+[2025-09-04 22:03:46] ✅ Méthode POST validée, traitement en cours...
+[2025-09-04 22:03:46] ✅ Données JSON décodées avec succès
+[2025-09-04 22:03:46] CLIENT_ID_CHECK: clientIdMain=1, tentative de vérification...
+[2025-09-04 22:03:46] CLIENT_ID_CHECK: ✅ Client ID 1 trouvé, utilisation confirmée
+[2025-09-04 22:03:46] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-04 22:07:19] 🚀 DÉBUT submit_order.php - 2025-09-04 22:07:19
+[2025-09-04 22:07:19] ✅ Méthode POST validée, traitement en cours...
+[2025-09-04 22:07:19] ✅ Données JSON décodées avec succès
+[2025-09-04 22:07:19] CLIENT_ID_CHECK: clientIdMain=1, tentative de vérification...
+[2025-09-04 22:07:19] CLIENT_ID_CHECK: ✅ Client ID 1 trouvé, utilisation confirmée
+[2025-09-04 22:07:19] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-04 22:13:44] 🚀 DÉBUT submit_order.php - 2025-09-04 22:13:44
+[2025-09-04 22:13:44] ✅ Méthode POST validée, traitement en cours...
+[2025-09-04 22:13:44] ✅ Données JSON décodées avec succès
+[2025-09-04 22:13:44] CLIENT_ID_CHECK: clientIdMain=1, tentative de vérification...
+[2025-09-04 22:13:44] CLIENT_ID_CHECK: ✅ Client ID 1 trouvé, utilisation confirmée
+[2025-09-04 22:13:44] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-04 22:16:27] 🚀 DÉBUT submit_order.php - 2025-09-04 22:16:27
+[2025-09-04 22:16:27] ✅ Méthode POST validée, traitement en cours...
+[2025-09-04 22:16:27] ✅ Données JSON décodées avec succès
+[2025-09-04 22:16:27] CLIENT_ID_CHECK: clientIdMain=1, tentative de vérification...
+[2025-09-04 22:16:27] CLIENT_ID_CHECK: ✅ Client ID 1 trouvé, utilisation confirmée
+[2025-09-04 22:16:27] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-04 22:18:25] 🚀 DÉBUT submit_order.php - 2025-09-04 22:18:25
+[2025-09-04 22:18:25] ✅ Méthode POST validée, traitement en cours...
+[2025-09-04 22:18:25] ✅ Données JSON décodées avec succès
+[2025-09-04 22:18:25] CLIENT_ID_CHECK: clientIdMain=1, tentative de vérification...
+[2025-09-04 22:18:25] CLIENT_ID_CHECK: ✅ Client ID 1 trouvé, utilisation confirmée
+[2025-09-04 22:18:25] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-13 06:39:12] Missing payment data in initiate_order_payment.php: {"adresse_depart":"Test Depart Abidjan","adresse_arrivee":"Test Arrivee Cocody","nom_expediteur":"John","prenoms_expediteur":"Doe","telephone_expediteur":"0123456789","nom_destinataire":"Jane","prenoms_destinataire":"Smith","telephone_destinataire":"0987654321","description_colis":"Test package important","prix_estime":"1500","mode_paiement":"card"}
+[2025-09-20 07:12:49] 🚀 DÉBUT submit_order.php - 2025-09-20 07:12:49
+[2025-09-20 07:12:49] ✅ Méthode POST validée, traitement en cours...
+[2025-09-20 07:12:49] ✅ Données JSON décodées avec succès
+[2025-09-20 07:12:49] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-20 07:12:49] CLIENT_ID_CHECK: clientIdMain=5, tentative de vérification...
+[2025-09-20 07:12:49] CLIENT_ID_CHECK: ✅ Client ID 5 trouvé, utilisation confirmée
+[2025-09-20 07:12:49] CLIENT_ID_FINAL: Utilisation client_id=5 pour l'INSERT
+[2025-09-22 03:10:02] 🚀 DÉBUT submit_order.php - 2025-09-22 03:10:02
+[2025-09-22 03:10:02] ✅ Méthode POST validée, traitement en cours...
+[2025-09-22 03:10:02] ⚠️ JSON invalide, tentative lecture POST form...
+[2025-09-22 03:10:02] ✅ Données POST form utilisées
+[2025-09-22 03:10:03] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-22 03:10:03] CLIENT_ID_CHECK: clientIdMain=7, tentative de vérification...
+[2025-09-22 03:10:03] CLIENT_ID_CHECK: ✅ Client ID 7 trouvé, utilisation confirmée
+[2025-09-22 03:10:03] CLIENT_ID_FINAL: Utilisation client_id=7 pour l'INSERT
+[2025-09-22 03:10:03] CLIENT_ID_ROUTE: FK vers clients_particuliers, utilisation senderId=7
+[2025-09-22 03:10:03] Exception submit_order: file_get_contents(http://localhost/coursier_prod/api/api/assign_nearest_coursier.php): Failed to open stream: HTTP request failed! HTTP/1.1 500 Internal Server Error
+ - Trace: #0 [internal function]: {closure}(2, 'file_get_conten...', 'C:\\xampp\\htdocs...', 409)
+#1 C:\xampp\htdocs\coursier_prod\api\submit_order.php(409): file_get_contents('http://localhos...', false, Resource id #27)
+#2 {main}
+[2025-09-22 03:23:36] 🚀 DÉBUT submit_order.php - 2025-09-22 03:23:36
+[2025-09-22 03:23:36] ✅ Méthode POST validée, traitement en cours...
+[2025-09-22 03:23:36] ✅ Données JSON décodées avec succès
+[2025-09-22 03:23:36] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-22 03:23:36] CLIENT_ID_CHECK: clientIdMain=9, tentative de vérification...
+[2025-09-22 03:23:36] CLIENT_ID_CHECK: ✅ Client ID 9 trouvé, utilisation confirmée
+[2025-09-22 03:23:36] CLIENT_ID_FINAL: Utilisation client_id=9 pour l'INSERT
+[2025-09-22 03:23:36] CLIENT_ID_ROUTE: FK vers clients_particuliers, utilisation senderId=9
+[2025-09-22 03:23:36] Exception submit_order: file_get_contents(http://localhost/coursier_prod/api/api/assign_nearest_coursier.php): Failed to open stream: HTTP request failed! HTTP/1.1 500 Internal Server Error
+ - Trace: #0 [internal function]: {closure}(2, 'file_get_conten...', 'C:\\xampp\\htdocs...', 409)
+#1 C:\xampp\htdocs\coursier_prod\api\submit_order.php(409): file_get_contents('http://localhos...', false, Resource id #26)
+#2 {main}
+[2025-09-22 03:25:10] 🚀 DÉBUT submit_order.php - 2025-09-22 03:25:10
+[2025-09-22 03:25:10] ✅ Méthode POST validée, traitement en cours...
+[2025-09-22 03:25:10] ✅ Données JSON décodées avec succès
+[2025-09-22 03:25:10] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-22 03:25:10] CLIENT_ID_CHECK: clientIdMain=9, tentative de vérification...
+[2025-09-22 03:25:10] CLIENT_ID_CHECK: ✅ Client ID 9 trouvé, utilisation confirmée
+[2025-09-22 03:25:10] CLIENT_ID_FINAL: Utilisation client_id=9 pour l'INSERT
+[2025-09-22 03:25:10] CLIENT_ID_ROUTE: FK vers clients_particuliers, utilisation senderId=9
+[2025-09-22 03:25:10] Exception submit_order: file_get_contents(http://localhost/coursier_prod/api/assign_nearest_coursier.php): Failed to open stream: HTTP request failed! HTTP/1.1 500 Internal Server Error
+ - Trace: #0 [internal function]: {closure}(2, 'file_get_conten...', 'C:\\xampp\\htdocs...', 409)
+#1 C:\xampp\htdocs\coursier_prod\api\submit_order.php(409): file_get_contents('http://localhos...', false, Resource id #26)
+#2 {main}
+[2025-09-22 03:25:49] 🚀 DÉBUT submit_order.php - 2025-09-22 03:25:49
+[2025-09-22 03:25:49] ✅ Méthode POST validée, traitement en cours...
+[2025-09-22 03:25:49] ✅ Données JSON décodées avec succès
+[2025-09-22 03:25:49] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-22 03:25:49] CLIENT_ID_CHECK: clientIdMain=9, tentative de vérification...
+[2025-09-22 03:25:49] CLIENT_ID_CHECK: ✅ Client ID 9 trouvé, utilisation confirmée
+[2025-09-22 03:25:49] CLIENT_ID_FINAL: Utilisation client_id=9 pour l'INSERT
+[2025-09-22 03:25:49] CLIENT_ID_ROUTE: FK vers clients_particuliers, utilisation senderId=9
+[2025-09-22 03:25:49] Exception submit_order: file_get_contents(http://localhost/coursier_prod/api/assign_nearest_coursier.php): Failed to open stream: HTTP request failed! HTTP/1.1 500 Internal Server Error
+ - Trace: #0 [internal function]: {closure}(2, 'file_get_conten...', 'C:\\xampp\\htdocs...', 409)
+#1 C:\xampp\htdocs\coursier_prod\api\submit_order.php(409): file_get_contents('http://localhos...', false, Resource id #26)
+#2 {main}
+[2025-09-22 03:26:42] 🚀 DÉBUT submit_order.php - 2025-09-22 03:26:42
+[2025-09-22 03:26:42] ✅ Méthode POST validée, traitement en cours...
+[2025-09-22 03:26:42] ✅ Données JSON décodées avec succès
+[2025-09-22 03:26:42] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-22 03:26:43] CLIENT_ID_CHECK: clientIdMain=9, tentative de vérification...
+[2025-09-22 03:26:43] CLIENT_ID_CHECK: ✅ Client ID 9 trouvé, utilisation confirmée
+[2025-09-22 03:26:43] CLIENT_ID_FINAL: Utilisation client_id=9 pour l'INSERT
+[2025-09-22 03:26:43] CLIENT_ID_ROUTE: FK vers clients_particuliers, utilisation senderId=9
+[2025-09-22 03:26:43] Attribution skipped: missing coordinates or order_id
+[2025-09-23 10:50:10] 🚀 DÉBUT submit_order.php - 2025-09-23 10:50:10
+[2025-09-23 10:50:10] ✅ Méthode POST validée, traitement en cours...
+[2025-09-23 10:50:10] ✅ Données JSON décodées avec succès
+[2025-09-23 10:50:10] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-23 10:50:10] CLIENT_ID_CHECK: clientIdMain=17, tentative de vérification...
+[2025-09-23 10:50:10] CLIENT_ID_CHECK: ❌ Client ID 17 introuvable, fallback vers ID=1
+[2025-09-23 10:50:10] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-23 10:50:10] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-23 10:50:10] Attribution error: SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`coursier_prod`.`commandes`, CONSTRAINT `commandes_ibfk_1` FOREIGN KEY (`coursier_id`) REFERENCES `coursiers` (`id`) ON DELETE SET NULL)
+[2025-09-23 10:53:39] 🚀 DÉBUT submit_order.php - 2025-09-23 10:53:39
+[2025-09-23 10:53:39] ✅ Méthode POST validée, traitement en cours...
+[2025-09-23 10:53:39] ✅ Données JSON décodées avec succès
+[2025-09-23 10:53:39] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-23 10:53:39] CLIENT_ID_CHECK: clientIdMain=17, tentative de vérification...
+[2025-09-23 10:53:39] CLIENT_ID_CHECK: ❌ Client ID 17 introuvable, fallback vers ID=1
+[2025-09-23 10:53:39] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-23 10:53:39] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-23 10:53:39] Attribution locale: commande 85 -> test2 (ID 6)
+[2025-09-23 10:53:39] GET_COURSIER_ORDERS_ERROR - Coursier 6: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'coursier_prod.gains_coursiers' doesn't exist
+[2025-09-23 10:54:10] GET_COURSIER_ORDERS_ERROR - Coursier 6: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'coursier_prod.gains_coursiers' doesn't exist
+[2025-09-23 11:02:40] GET_COURSIER_ORDERS_ERROR - Coursier 6: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'coursier_prod.gains_coursiers' doesn't exist
+[2025-09-23 11:04:32] GET_COURSIER_ORDERS_ERROR - Coursier 6: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'coursier_prod.gains_coursiers' doesn't exist
+[2025-09-23 11:09:44] GET_COURSIER_ORDERS_ERROR - Coursier 6: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'coursier_prod.gains_coursiers' doesn't exist
+[2025-09-23 11:13:52] GET_COURSIER_ORDERS_ERROR - Coursier 6: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'coursier_prod.gains_coursiers' doesn't exist
+[2025-09-23 11:58:18] 🚀 DÉBUT submit_order.php - 2025-09-23 11:58:18
+[2025-09-23 11:58:18] ✅ Méthode POST validée, traitement en cours...
+[2025-09-23 11:58:18] ✅ Données JSON décodées avec succès
+[2025-09-23 11:58:18] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-23 11:58:19] CLIENT_ID_CHECK: clientIdMain=21, tentative de vérification...
+[2025-09-23 11:58:19] CLIENT_ID_CHECK: ❌ Client ID 21 introuvable, fallback vers ID=1
+[2025-09-23 11:58:19] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-23 11:58:19] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-23 11:58:19] Attribution locale: commande 86 -> test2 (ID 6)
+[2025-09-23 12:00:38] 🚀 DÉBUT submit_order.php - 2025-09-23 12:00:38
+[2025-09-23 12:00:38] ✅ Méthode POST validée, traitement en cours...
+[2025-09-23 12:00:38] ✅ Données JSON décodées avec succès
+[2025-09-23 12:00:38] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-23 12:00:38] CLIENT_ID_CHECK: clientIdMain=21, tentative de vérification...
+[2025-09-23 12:00:38] CLIENT_ID_CHECK: ❌ Client ID 21 introuvable, fallback vers ID=1
+[2025-09-23 12:00:38] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-23 12:00:38] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-23 12:00:39] Attribution locale: commande 87 -> test2 (ID 6)
+[2025-09-23 12:02:10] 🚀 DÉBUT submit_order.php - 2025-09-23 12:02:10
+[2025-09-23 12:02:10] ✅ Méthode POST validée, traitement en cours...
+[2025-09-23 12:02:10] ✅ Données JSON décodées avec succès
+[2025-09-23 12:02:10] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-23 12:02:10] CLIENT_ID_CHECK: clientIdMain=21, tentative de vérification...
+[2025-09-23 12:02:10] CLIENT_ID_CHECK: ❌ Client ID 21 introuvable, fallback vers ID=1
+[2025-09-23 12:02:10] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-23 12:02:10] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-23 12:02:10] Attribution locale: commande 88 -> test2 (ID 6)
+[2025-09-23 12:03:40] 🚀 DÉBUT submit_order.php - 2025-09-23 12:03:40
+[2025-09-23 12:03:40] ✅ Méthode POST validée, traitement en cours...
+[2025-09-23 12:03:40] ✅ Données JSON décodées avec succès
+[2025-09-23 12:03:40] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-23 12:03:40] CLIENT_ID_CHECK: clientIdMain=21, tentative de vérification...
+[2025-09-23 12:03:40] CLIENT_ID_CHECK: ❌ Client ID 21 introuvable, fallback vers ID=1
+[2025-09-23 12:03:40] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-23 12:03:40] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-23 12:03:40] Attribution locale: commande 89 -> test2 (ID 6)
+[2025-09-23 12:07:29] 🚀 DÉBUT submit_order.php - 2025-09-23 12:07:29
+[2025-09-23 12:07:29] ✅ Méthode POST validée, traitement en cours...
+[2025-09-23 12:07:29] ✅ Données JSON décodées avec succès
+[2025-09-23 12:07:29] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-23 12:07:29] CLIENT_ID_CHECK: clientIdMain=21, tentative de vérification...
+[2025-09-23 12:07:29] CLIENT_ID_CHECK: ❌ Client ID 21 introuvable, fallback vers ID=1
+[2025-09-23 12:07:29] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-23 12:07:29] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-23 12:07:29] Attribution locale: commande 90 -> test2 (ID 6)
+[2025-09-23 12:08:07] 🚀 DÉBUT submit_order.php - 2025-09-23 12:08:07
+[2025-09-23 12:08:07] ✅ Méthode POST validée, traitement en cours...
+[2025-09-23 12:08:07] ✅ Données JSON décodées avec succès
+[2025-09-23 12:08:07] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-23 12:08:07] CLIENT_ID_CHECK: clientIdMain=21, tentative de vérification...
+[2025-09-23 12:08:07] CLIENT_ID_CHECK: ❌ Client ID 21 introuvable, fallback vers ID=1
+[2025-09-23 12:08:07] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-23 12:08:07] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-23 12:08:07] Attribution locale: commande 91 -> test2 (ID 6)
+[2025-09-23 12:09:55] 🚀 DÉBUT submit_order.php - 2025-09-23 12:09:55
+[2025-09-23 12:09:55] ✅ Méthode POST validée, traitement en cours...
+[2025-09-23 12:09:55] ✅ Données JSON décodées avec succès
+[2025-09-23 12:09:55] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-23 12:09:55] CLIENT_ID_CHECK: clientIdMain=21, tentative de vérification...
+[2025-09-23 12:09:55] CLIENT_ID_CHECK: ❌ Client ID 21 introuvable, fallback vers ID=1
+[2025-09-23 12:09:55] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-23 12:09:55] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-23 12:09:55] Attribution locale: commande 92 -> test2 (ID 6)
+[2025-09-23 12:15:29] 🚀 DÉBUT submit_order.php - 2025-09-23 12:15:29
+[2025-09-23 12:15:29] ✅ Méthode POST validée, traitement en cours...
+[2025-09-23 12:15:29] ✅ Données JSON décodées avec succès
+[2025-09-23 12:15:29] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-23 12:15:29] CLIENT_ID_CHECK: clientIdMain=21, tentative de vérification...
+[2025-09-23 12:15:29] CLIENT_ID_CHECK: ❌ Client ID 21 introuvable, fallback vers ID=1
+[2025-09-23 12:15:29] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-23 12:15:29] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-23 12:15:29] Attribution locale: commande 93 -> test2 (ID 6)
+[2025-09-23 12:20:59] 🚀 DÉBUT submit_order.php - 2025-09-23 12:20:59
+[2025-09-23 12:20:59] ✅ Méthode POST validée, traitement en cours...
+[2025-09-23 12:20:59] ✅ Données JSON décodées avec succès
+[2025-09-23 12:20:59] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-23 12:20:59] CLIENT_ID_CHECK: clientIdMain=37, tentative de vérification...
+[2025-09-23 12:20:59] CLIENT_ID_CHECK: ❌ Client ID 37 introuvable, fallback vers ID=1
+[2025-09-23 12:20:59] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-23 12:20:59] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-23 12:20:59] Attribution locale: commande 94 -> test2 (ID 6)
+[2025-09-23 12:27:55] 🚀 DÉBUT submit_order.php - 2025-09-23 12:27:55
+[2025-09-23 12:27:55] ✅ Méthode POST validée, traitement en cours...
+[2025-09-23 12:27:55] ✅ Données JSON décodées avec succès
+[2025-09-23 12:27:55] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-23 12:27:56] CLIENT_ID_CHECK: clientIdMain=39, tentative de vérification...
+[2025-09-23 12:27:56] CLIENT_ID_CHECK: ❌ Client ID 39 introuvable, fallback vers ID=1
+[2025-09-23 12:27:56] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-23 12:27:56] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-23 12:27:56] Attribution locale: commande 95 -> test2 (ID 6)
+[2025-09-23 12:34:23] 🚀 DÉBUT submit_order.php - 2025-09-23 12:34:23
+[2025-09-23 12:34:23] ✅ Méthode POST validée, traitement en cours...
+[2025-09-23 12:34:23] ✅ Données JSON décodées avec succès
+[2025-09-23 12:34:23] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-23 12:34:24] CLIENT_ID_CHECK: clientIdMain=39, tentative de vérification...
+[2025-09-23 12:34:24] CLIENT_ID_CHECK: ❌ Client ID 39 introuvable, fallback vers ID=1
+[2025-09-23 12:34:24] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-23 12:34:24] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-23 12:34:24] Attribution locale: commande 96 -> test2 (ID 6)
+[2025-09-23 13:03:22] 🚀 DÉBUT submit_order.php - 2025-09-23 13:03:22
+[2025-09-23 13:03:22] ✅ Méthode POST validée, traitement en cours...
+[2025-09-23 13:03:22] ✅ Données JSON décodées avec succès
+[2025-09-23 13:03:22] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-23 13:03:23] CLIENT_ID_CHECK: clientIdMain=39, tentative de vérification...
+[2025-09-23 13:03:23] CLIENT_ID_CHECK: ❌ Client ID 39 introuvable, fallback vers ID=1
+[2025-09-23 13:03:23] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-23 13:03:23] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-23 13:03:23] Attribution locale: commande 97 -> test2 (ID 6)
+[2025-09-24 02:58:10] 🚀 DÉBUT submit_order.php - 2025-09-24 02:58:10
+[2025-09-24 02:58:10] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 02:58:10] ✅ Données JSON décodées avec succès
+[2025-09-24 02:58:10] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 02:58:10] SECURITY_SENDER_PHONE_OVERRIDE_ATTEMPT: POST=+225 00 00 00 00 00 SESSION=+22500 00 00 00 00
+[2025-09-24 02:58:10] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 02:58:10] CLIENT_ID_CHECK: ❌ Client ID 45 introuvable, fallback vers ID=1
+[2025-09-24 02:58:10] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 02:58:10] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 02:58:10] Attribution locale: commande 98 -> test2 (ID 6)
+[2025-09-24 02:58:10] MIRROR_CC_OK commande_id=98 -> commandes_classiques (rowCount=1)
+[2025-09-24 02:58:20] 🚀 DÉBUT submit_order.php - 2025-09-24 02:58:20
+[2025-09-24 02:58:20] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 02:58:20] ✅ Données JSON décodées avec succès
+[2025-09-24 02:58:20] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 02:58:20] SECURITY_SENDER_PHONE_OVERRIDE_ATTEMPT: POST=+225 00 00 00 00 00 SESSION=+22500 00 00 00 00
+[2025-09-24 02:58:20] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 02:58:20] CLIENT_ID_CHECK: ❌ Client ID 45 introuvable, fallback vers ID=1
+[2025-09-24 02:58:20] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 02:58:20] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 02:58:20] Attribution locale: commande 99 -> test2 (ID 6)
+[2025-09-24 02:58:20] MIRROR_CC_OK commande_id=99 -> commandes_classiques (rowCount=1)
+[2025-09-24 03:07:50] 🚀 DÉBUT submit_order.php - 2025-09-24 03:07:50
+[2025-09-24 03:07:50] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 03:07:50] ✅ Données JSON décodées avec succès
+[2025-09-24 03:07:50] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 03:07:50] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 03:07:50] CLIENT_ID_CHECK: ❌ Client ID 45 introuvable, fallback vers ID=1
+[2025-09-24 03:07:50] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 03:07:50] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 03:07:50] Attribution locale: commande 100 -> test2 (ID 6)
+[2025-09-24 03:07:50] MIRROR_CC_OK commande_id=100 -> commandes_classiques (rowCount=1)
+[2025-09-24 03:26:27] 🚀 DÉBUT submit_order.php - 2025-09-24 03:26:27
+[2025-09-24 03:26:27] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 03:26:27] ✅ Données JSON décodées avec succès
+[2025-09-24 03:26:27] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 03:26:27] SECURITY_SENDER_PHONE_OVERRIDE_ATTEMPT: POST=+225 00 00 00 00 00 SESSION=+22500 00 00 00 00
+[2025-09-24 03:26:27] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 03:26:27] CLIENT_ID_CHECK: ❌ Client ID 45 introuvable, fallback vers ID=1
+[2025-09-24 03:26:27] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 03:26:27] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 03:26:27] Attribution locale: commande 104 -> test2 (ID 6)
+[2025-09-24 03:26:27] MIRROR_CC_OK commande_id=104 -> commandes_classiques (rowCount=1)
+[2025-09-24 04:03:20] 🚀 DÉBUT submit_order.php - 2025-09-24 04:03:20
+[2025-09-24 04:03:20] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 04:03:20] ✅ Données JSON décodées avec succès
+[2025-09-24 04:03:20] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 04:03:20] SECURITY_SENDER_PHONE_OVERRIDE_ATTEMPT: POST=+225 00 00 00 00 00 SESSION=+22500 00 00 00 00
+[2025-09-24 04:03:20] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 04:03:20] CLIENT_ID_CHECK: ❌ Client ID 45 introuvable, fallback vers ID=1
+[2025-09-24 04:03:20] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 04:03:20] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 04:03:20] Attribution locale: commande 105 -> test2 (ID 6)
+[2025-09-24 04:03:20] MIRROR_CC_OK commande_id=105 -> commandes_classiques (rowCount=1)
+[2025-09-24 04:04:48] 🚀 DÉBUT submit_order.php - 2025-09-24 04:04:48
+[2025-09-24 04:04:48] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 04:04:48] ✅ Données JSON décodées avec succès
+[2025-09-24 04:04:48] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 04:04:48] SECURITY_SENDER_PHONE_OVERRIDE_ATTEMPT: POST=+225 00 00 00 00 00 SESSION=+22500 00 00 00 00
+[2025-09-24 04:04:48] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 04:04:48] CLIENT_ID_CHECK: ❌ Client ID 45 introuvable, fallback vers ID=1
+[2025-09-24 04:04:48] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 04:04:48] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 04:04:48] Attribution locale: commande 106 -> test2 (ID 6)
+[2025-09-24 04:04:48] MIRROR_CC_OK commande_id=106 -> commandes_classiques (rowCount=1)
+[2025-09-24 04:14:10] 🚀 DÉBUT submit_order.php - 2025-09-24 04:14:10
+[2025-09-24 04:14:10] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 04:14:10] ⚠️ JSON invalide, tentative lecture POST form...
+[2025-09-24 04:14:10] ✅ Données POST form utilisées
+[2025-09-24 04:14:10] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 04:14:10] SECURITY_SENDER_PHONE_MISSING: aucune valeur session client_telephone, refus commande
+[2025-09-24 04:16:29] 🚀 DÉBUT submit_order.php - 2025-09-24 04:16:29
+[2025-09-24 04:16:29] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 04:16:29] ⚠️ JSON invalide, tentative lecture POST form...
+[2025-09-24 04:16:29] ✅ Données POST form utilisées
+[2025-09-24 04:16:29] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 04:16:29] 🚨 EXCEPTION CRITIQUE: Le champ departure est requis
+[2025-09-24 04:16:29] 📁 Fichier: C:\xampp\htdocs\COURSIER_LOCAL\api\submit_order.php ligne 97
+[2025-09-24 04:16:29] 📋 Stack trace: #0 {main}
+[2025-09-24 04:16:50] 🚀 DÉBUT submit_order.php - 2025-09-24 04:16:50
+[2025-09-24 04:16:50] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 04:16:50] ⚠️ JSON invalide, tentative lecture POST form...
+[2025-09-24 04:16:50] ✅ Données POST form utilisées
+[2025-09-24 04:16:50] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 04:16:50] SECURITY_SENDER_PHONE_MISSING: aucune valeur session client_telephone, refus commande
+[2025-09-24 04:17:23] 🚀 DÉBUT submit_order.php - 2025-09-24 04:17:23
+[2025-09-24 04:17:23] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 04:17:23] ⚠️ JSON invalide, tentative lecture POST form...
+[2025-09-24 04:17:23] ✅ Données POST form utilisées
+[2025-09-24 04:17:23] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 04:17:23] SECURITY_SENDER_PHONE_MISSING: aucune valeur session client_telephone, refus commande
+[2025-09-24 04:17:48] 🚀 DÉBUT submit_order.php - 2025-09-24 04:17:48
+[2025-09-24 04:17:48] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 04:17:48] ✅ Données POST form utilisées
+[2025-09-24 04:17:48] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 04:17:48] CLIENT_ID_CHECK: clientIdMain=57, tentative de vérification...
+[2025-09-24 04:17:48] CLIENT_ID_CHECK: ❌ Client ID 57 introuvable, fallback vers ID=1
+[2025-09-24 04:17:48] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 04:17:48] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 04:17:48] Attribution locale: commande 107 -> test2 (ID 6)
+[2025-09-24 04:17:48] MIRROR_CC_OK commande_id=107 -> commandes_classiques (rowCount=1)
+[2025-09-24 04:32:46] 🚀 DÉBUT submit_order.php - 2025-09-24 04:32:46
+[2025-09-24 04:32:46] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 04:32:46] ✅ Données JSON décodées avec succès
+[2025-09-24 04:32:46] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 04:32:46] SECURITY_SENDER_PHONE_OVERRIDE_ATTEMPT: POST=+225 00 00 00 00 00 SESSION=+22500 00 00 00 00
+[2025-09-24 04:32:46] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 04:32:46] CLIENT_ID_CHECK: ❌ Client ID 45 introuvable, fallback vers ID=1
+[2025-09-24 04:32:46] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 04:32:46] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 04:32:46] Attribution locale: commande 108 -> test2 (ID 6)
+[2025-09-24 04:32:46] Erreur FCM: Function openssl_free_key() is deprecated
+[2025-09-24 04:32:46] MIRROR_CC_OK commande_id=108 -> commandes_classiques (rowCount=1)
+[2025-09-24 04:34:06] 🚀 DÉBUT submit_order.php - 2025-09-24 04:34:06
+[2025-09-24 04:34:06] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 04:34:06] ✅ Données JSON décodées avec succès
+[2025-09-24 04:34:06] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 04:34:06] SECURITY_SENDER_PHONE_OVERRIDE_ATTEMPT: POST=+225 00 00 00 00 00 SESSION=+22500 00 00 00 00
+[2025-09-24 04:34:06] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 04:34:06] CLIENT_ID_CHECK: ❌ Client ID 45 introuvable, fallback vers ID=1
+[2025-09-24 04:34:06] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 04:34:06] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 04:34:06] Attribution locale: commande 109 -> test2 (ID 6)
+[2025-09-24 04:34:06] Erreur FCM: Function openssl_free_key() is deprecated
+[2025-09-24 04:34:06] MIRROR_CC_OK commande_id=109 -> commandes_classiques (rowCount=1)
+[2025-09-24 04:47:23] 🚀 DÉBUT submit_order.php - 2025-09-24 04:47:23
+[2025-09-24 04:47:23] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 04:47:23] ✅ Données JSON décodées avec succès
+[2025-09-24 04:47:23] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 04:47:23] SECURITY_SENDER_PHONE_OVERRIDE_ATTEMPT: POST=+225 00 00 00 00 00 SESSION=+22500 00 00 00 00
+[2025-09-24 04:47:23] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 04:47:23] CLIENT_ID_CHECK: ❌ Client ID 45 introuvable, fallback vers ID=1
+[2025-09-24 04:47:23] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 04:47:23] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 04:47:23] Attribution locale: commande 112 -> test2 (ID 6)
+[2025-09-24 04:47:23] Erreur FCM: Function openssl_free_key() is deprecated
+[2025-09-24 04:47:23] MIRROR_CC_OK commande_id=112 -> commandes_classiques (rowCount=1)
+[2025-09-24 04:48:26] 🚀 DÉBUT submit_order.php - 2025-09-24 04:48:26
+[2025-09-24 04:48:26] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 04:48:26] ✅ Données JSON décodées avec succès
+[2025-09-24 04:48:26] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 04:48:26] SECURITY_SENDER_PHONE_OVERRIDE_ATTEMPT: POST=+225 00 00 00 00 00 SESSION=+22500 00 00 00 00
+[2025-09-24 04:48:27] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 04:48:27] CLIENT_ID_CHECK: ❌ Client ID 45 introuvable, fallback vers ID=1
+[2025-09-24 04:48:27] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 04:48:27] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 04:48:27] Attribution locale: commande 113 -> test2 (ID 6)
+[2025-09-24 04:48:27] Erreur FCM: Function openssl_free_key() is deprecated
+[2025-09-24 04:48:27] MIRROR_CC_OK commande_id=113 -> commandes_classiques (rowCount=1)
+[2025-09-24 05:09:15] 🚀 DÉBUT submit_order.php - 2025-09-24 05:09:15
+[2025-09-24 05:09:15] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 05:09:15] ✅ Données JSON décodées avec succès
+[2025-09-24 05:09:15] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 05:09:15] SECURITY_SENDER_PHONE_OVERRIDE_ATTEMPT: POST=+225 00 00 00 00 00 SESSION=+22500 00 00 00 00
+[2025-09-24 05:09:16] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 05:09:16] CLIENT_ID_CHECK: ❌ Client ID 45 introuvable, fallback vers ID=1
+[2025-09-24 05:09:16] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 05:09:16] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 05:09:16] Attribution locale: commande 114 -> test2 (ID 6)
+[2025-09-24 05:09:16] Erreur FCM: Function openssl_free_key() is deprecated
+[2025-09-24 05:09:16] MIRROR_CC_OK commande_id=114 -> commandes_classiques (rowCount=1)
+[2025-09-24 05:28:50] 🚀 DÉBUT submit_order.php - 2025-09-24 05:28:50
+[2025-09-24 05:28:50] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 05:28:50] ✅ Données JSON décodées avec succès
+[2025-09-24 05:28:50] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 05:28:50] SECURITY_SENDER_PHONE_OVERRIDE_ATTEMPT: POST=+225 00 00 00 00 00 SESSION=+22500 00 00 00 00
+[2025-09-24 05:28:50] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 05:28:50] CLIENT_ID_CHECK: ❌ Client ID 45 introuvable, fallback vers ID=1
+[2025-09-24 05:28:50] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 05:28:50] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 05:28:50] Attribution locale: commande 116 -> test2 (ID 6)
+[2025-09-24 05:28:50] Erreur FCM: Function openssl_free_key() is deprecated
+[2025-09-24 05:28:50] MIRROR_CC_OK commande_id=116 -> commandes_classiques (rowCount=1)
+[2025-09-24 05:45:13] 🚀 DÉBUT submit_order.php - 2025-09-24 05:45:13
+[2025-09-24 05:45:13] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 05:45:13] ✅ Données JSON décodées avec succès
+[2025-09-24 05:45:13] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 05:45:13] SECURITY_SENDER_PHONE_OVERRIDE_ATTEMPT: POST=+225 00 00 00 00 00 SESSION=+22500 00 00 00 00
+[2025-09-24 05:45:13] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 05:45:13] CLIENT_ID_CHECK: ❌ Client ID 45 introuvable, fallback vers ID=1
+[2025-09-24 05:45:13] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 05:45:13] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 05:45:13] Attribution locale: commande 117 -> test2 (ID 6)
+[2025-09-24 05:45:13] Erreur FCM: Function openssl_free_key() is deprecated
+[2025-09-24 05:45:13] MIRROR_CC_OK commande_id=117 -> commandes_classiques (rowCount=1)
+[2025-09-24 08:16:35] 🚀 DÉBUT submit_order.php - 2025-09-24 08:16:35
+[2025-09-24 08:16:36] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 08:16:36] ✅ Données JSON décodées avec succès
+[2025-09-24 08:16:36] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 08:16:36] SECURITY_SENDER_PHONE_OVERRIDE_ATTEMPT: POST=+225 00 00 00 00 00 SESSION=+22500 00 00 00 00
+[2025-09-24 08:16:36] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 08:16:36] CLIENT_ID_CHECK: ❌ Client ID 45 introuvable, fallback vers ID=1
+[2025-09-24 08:16:36] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 08:16:36] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 08:16:36] Attribution locale: commande 118 -> test2 (ID 6)
+[2025-09-24 08:16:36] Erreur FCM: Function openssl_free_key() is deprecated
+[2025-09-24 08:16:36] MIRROR_CC_OK commande_id=118 -> commandes_classiques (rowCount=1)
+[2025-09-24 08:29:39] 🚀 DÉBUT submit_order.php - 2025-09-24 08:29:39
+[2025-09-24 08:29:39] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 08:29:39] ✅ Données JSON décodées avec succès
+[2025-09-24 08:29:39] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 08:29:39] SECURITY_SENDER_PHONE_OVERRIDE_ATTEMPT: POST=+225 00 00 00 00 00 SESSION=+22500 00 00 00 00
+[2025-09-24 08:29:39] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 08:29:39] CLIENT_ID_CHECK: ❌ Client ID 45 introuvable, fallback vers ID=1
+[2025-09-24 08:29:39] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 08:29:39] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 08:29:39] Attribution locale: commande 119 -> test2 (ID 6)
+[2025-09-24 08:29:39] Erreur FCM: Function openssl_free_key() is deprecated
+[2025-09-24 08:29:40] MIRROR_CC_OK commande_id=119 -> commandes_classiques (rowCount=1)
+[2025-09-24 08:56:44] 🚀 DÉBUT submit_order.php - 2025-09-24 08:56:44
+[2025-09-24 08:56:44] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 08:56:44] ✅ Données JSON décodées avec succès
+[2025-09-24 08:56:44] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 08:56:44] SECURITY_SENDER_PHONE_OVERRIDE_ATTEMPT: POST=+225 00 00 00 00 00 SESSION=+22500 00 00 00 00
+[2025-09-24 08:56:44] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 08:56:44] CLIENT_ID_CHECK: ❌ Client ID 45 introuvable, fallback vers ID=1
+[2025-09-24 08:56:44] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 08:56:44] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 08:56:44] Attribution locale: commande 124 -> test2 (ID 6)
+[2025-09-24 08:56:45] Erreur FCM: Function openssl_free_key() is deprecated
+[2025-09-24 08:56:45] MIRROR_CC_OK commande_id=124 -> commandes_classiques (rowCount=1)
+[2025-09-24 09:57:32] 🚀 DÉBUT submit_order.php - 2025-09-24 09:57:32
+[2025-09-24 09:57:33] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 09:57:33] ✅ Données JSON décodées avec succès
+[2025-09-24 09:57:33] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 09:57:33] SECURITY_SENDER_PHONE_OVERRIDE_ATTEMPT: POST=+225 00 00 00 00 00 SESSION=+22500 00 00 00 00
+[2025-09-24 09:57:35] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 09:57:35] CLIENT_ID_CHECK: ❌ Client ID 45 introuvable, fallback vers ID=1
+[2025-09-24 09:57:35] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 09:57:35] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 09:57:35] Attribution locale: commande 125 -> test2 (ID 6)
+[2025-09-24 09:57:36] Erreur FCM: Function openssl_free_key() is deprecated
+[2025-09-24 09:57:36] MIRROR_CC_OK commande_id=125 -> commandes_classiques (rowCount=1)
+[2025-09-24 10:11:54] 🚀 DÉBUT submit_order.php - 2025-09-24 10:11:54
+[2025-09-24 10:11:54] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 10:11:54] ✅ Données JSON décodées avec succès
+[2025-09-24 10:11:54] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 10:11:54] SECURITY_SENDER_PHONE_OVERRIDE_ATTEMPT: POST=+225 00 00 00 00 00 SESSION=+22500 00 00 00 00
+[2025-09-24 10:11:54] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 10:11:54] CLIENT_ID_CHECK: ❌ Client ID 45 introuvable, fallback vers ID=1
+[2025-09-24 10:11:54] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 10:11:54] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 10:11:55] Attribution locale: coursier test2 introuvable
+[2025-09-24 10:11:55] MIRROR_CC_OK commande_id=126 -> commandes_classiques (rowCount=1)
+[2025-09-24 10:34:27] 🚀 DÉBUT submit_order.php - 2025-09-24 10:34:27
+[2025-09-24 10:34:27] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 10:34:27] ✅ Données JSON décodées avec succès
+[2025-09-24 10:34:27] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 10:34:27] SECURITY_SENDER_PHONE_OVERRIDE_ATTEMPT: POST=+225 00 00 00 00 00 SESSION=+22500 00 00 00 00
+[2025-09-24 10:34:27] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 10:34:27] CLIENT_ID_CHECK: ❌ Client ID 45 introuvable, fallback vers ID=1
+[2025-09-24 10:34:27] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 10:34:28] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 10:34:28] Attribution locale: coursier test2 introuvable
+[2025-09-24 10:34:28] MIRROR_CC_OK commande_id=127 -> commandes_classiques (rowCount=1)
+[2025-09-24 10:51:47] 🚀 DÉBUT submit_order.php - 2025-09-24 10:51:47
+[2025-09-24 10:51:47] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 10:51:47] ✅ Données JSON décodées avec succès
+[2025-09-24 10:51:48] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 10:51:48] SECURITY_SENDER_PHONE_OVERRIDE_ATTEMPT: POST=+225 00 00 00 00 00 SESSION=+22500 00 00 00 00
+[2025-09-24 10:51:48] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 10:51:48] CLIENT_ID_CHECK: ❌ Client ID 45 introuvable, fallback vers ID=1
+[2025-09-24 10:51:48] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 10:51:48] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 10:51:48] Attribution locale: utilisation agent CM20250001 (KAKOU) - ID 7
+[2025-09-24 10:51:48] Attribution error: SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`coursier_prod`.`commandes`, CONSTRAINT `commandes_ibfk_1` FOREIGN KEY (`coursier_id`) REFERENCES `coursiers` (`id`) ON DELETE SET NULL)
+[2025-09-24 10:51:48] MIRROR_CC_OK commande_id=128 -> commandes_classiques (rowCount=1)
+[2025-09-24 11:04:47] 🚀 DÉBUT submit_order.php - 2025-09-24 11:04:47
+[2025-09-24 11:04:47] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 11:04:47] ✅ Données JSON décodées avec succès
+[2025-09-24 11:04:47] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 11:04:47] SECURITY_SENDER_PHONE_OVERRIDE_ATTEMPT: POST=+225 00 00 00 00 00 SESSION=+22500 00 00 00 00
+[2025-09-24 11:04:47] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 11:04:47] CLIENT_ID_CHECK: ❌ Client ID 45 introuvable, fallback vers ID=1
+[2025-09-24 11:04:47] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 11:04:47] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 11:04:47] Attribution locale: utilisation agent CM20250001 (KAKOU) - ID 7
+[2025-09-24 11:04:47] Attribution error: SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`coursier_prod`.`commandes`, CONSTRAINT `commandes_ibfk_1` FOREIGN KEY (`coursier_id`) REFERENCES `coursiers` (`id`) ON DELETE SET NULL)
+[2025-09-24 11:04:47] MIRROR_CC_OK commande_id=129 -> commandes_classiques (rowCount=1)
+[2025-09-24 11:16:08] TEST_DIRECT_ASSIGN: Connexion DB OK
+[2025-09-24 11:16:08] TEST_DIRECT_ASSIGN: Commande 130 créée (code=TEST1758705368)
+[2025-09-24 11:16:08] TEST_DIRECT_ASSIGN: Coursiers disponibles=0
+[2025-09-24 11:16:08] TEST_DIRECT_ASSIGN: Aucun coursier disponible
+[2025-09-24 11:31:20] TEST_DIRECT_ASSIGN: Connexion DB OK
+[2025-09-24 11:31:20] TEST_DIRECT_ASSIGN: Commande 131 créée (code=TEST1758706280)
+[2025-09-24 11:31:20] TEST_DIRECT_ASSIGN: Coursiers disponibles=0
+[2025-09-24 11:31:20] TEST_DIRECT_ASSIGN: Aucun coursier disponible
+[2025-09-24 11:31:58] TEST_DIRECT_ASSIGN: Connexion DB OK
+[2025-09-24 11:31:58] TEST_DIRECT_ASSIGN: Commande 132 créée (code=TEST1758706318)
+[2025-09-24 11:31:58] TEST_DIRECT_ASSIGN: Coursiers disponibles=0
+[2025-09-24 11:31:58] TEST_DIRECT_ASSIGN: Aucun coursier disponible
+[2025-09-24 11:35:43] TEST_DIRECT_ASSIGN: Connexion DB OK
+[2025-09-24 11:35:43] TEST_DIRECT_ASSIGN: Commande 133 créée (code=TEST1758706543)
+[2025-09-24 11:35:43] TEST_DIRECT_ASSIGN: Aucun coursier avec position récente, fallback agents_suzosky (1 candidats)
+[2025-09-24 11:35:43] TEST_DIRECT_ASSIGN: Coursiers disponibles=1
+[2025-09-24 11:35:43] TEST_DIRECT_ASSIGN bridge order=133 agent=7: CoursierBridge(agent=7): Création/mise à jour effectuée dans coursiers.
+[2025-09-24 11:35:44] TEST_DIRECT_ASSIGN: Commande 133 attribuée à agent 7 / coursier 7
+[2025-09-24 11:35:44] TEST_DIRECT_ASSIGN: Token trouvé pour agent 7 / coursier 7 (maj=2025-09-24 09:33:21, preview=dYszqJqqQrGufu_jUnxi3H:APA91bE...)
+[2025-09-24 11:35:45] TEST_DIRECT_ASSIGN: Envoi FCM OK pour commande 133 (method=http_v1)
+[2025-09-24 11:40:28] 🚀 DÉBUT submit_order.php - 2025-09-24 11:40:28
+[2025-09-24 11:40:28] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 11:40:28] ✅ Données POST form utilisées
+[2025-09-24 11:40:28] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 11:40:28] CLIENT_ID_CHECK: clientIdMain=57, tentative de vérification...
+[2025-09-24 11:40:28] CLIENT_ID_CHECK: ❌ Client ID 57 introuvable, fallback vers ID=1
+[2025-09-24 11:40:28] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 11:40:28] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 11:40:28] Attribution locale: utilisation agent CM20250001 (KAKOU) - ID 7
+[2025-09-24 11:40:28] Attribution locale bridge (agent=7): CoursierBridge(agent=7): Enregistrement coursiers déjà présent (match ID).
+[2025-09-24 11:40:28] Attribution locale: commande 134 -> CM20250001 (agent=7, coursier=7)
+[2025-09-24 11:40:28] LOCAL_FCM(order=134 agent=7 agentMat=CM20250001 coursier=7) Colonnes device_tokens: id,coursier_id,token,token_hash,updated_at,agent_id
+[2025-09-24 11:40:28] LOCAL_FCM(order=134 agent=7 agentMat=CM20250001 coursier=7) Token trouvé updated_at=2025-09-24 09:33:21 preview=dYszqJqqQrGufu_jUnxi3H:APA91bE...
+[2025-09-24 11:40:28] LOCAL_FCM(order=134 agent=7 agentMat=CM20250001 coursier=7) Envoi FCM payload={"type":"new_order","order_id":"134","_data_only":true}
+[2025-09-24 11:40:28] Erreur envoi FCM local: Function openssl_free_key() is deprecated
+[2025-09-24 11:40:28] MIRROR_CC_OK commande_id=134 -> commandes_classiques (rowCount=1)
+[2025-09-24 11:52:56] 🚀 DÉBUT submit_order.php - 2025-09-24 11:52:56
+[2025-09-24 11:52:56] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 11:52:56] ✅ Données JSON décodées avec succès
+[2025-09-24 11:52:56] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 11:52:56] SECURITY_SENDER_PHONE_OVERRIDE_ATTEMPT: POST=+225 00 00 00 00 00 SESSION=+22500 00 00 00 00
+[2025-09-24 11:52:57] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 11:52:57] CLIENT_ID_CHECK: ❌ Client ID 45 introuvable, fallback vers ID=1
+[2025-09-24 11:52:57] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 11:52:57] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 11:52:57] Attribution locale: utilisation agent CM20250001 (KAKOU) - ID 7
+[2025-09-24 11:52:57] Attribution locale bridge (agent=7): CoursierBridge(agent=7): Enregistrement coursiers déjà présent (match ID).
+[2025-09-24 11:52:57] Attribution locale: commande 135 -> CM20250001 (agent=7, coursier=7)
+[2025-09-24 11:52:57] LOCAL_FCM(order=135 agent=7 agentMat=CM20250001 coursier=7) Colonnes device_tokens: id,coursier_id,token,token_hash,updated_at,agent_id
+[2025-09-24 11:52:57] LOCAL_FCM(order=135 agent=7 agentMat=CM20250001 coursier=7) Token trouvé updated_at=2025-09-24 09:33:21 preview=dYszqJqqQrGufu_jUnxi3H:APA91bE...
+[2025-09-24 11:52:57] LOCAL_FCM(order=135 agent=7 agentMat=CM20250001 coursier=7) Envoi FCM payload={"type":"new_order","order_id":"135","_data_only":true}
+[2025-09-24 11:52:57] Erreur envoi FCM local: Function openssl_free_key() is deprecated
+[2025-09-24 11:52:57] MIRROR_CC_OK commande_id=135 -> commandes_classiques (rowCount=1)
+[2025-09-24 11:53:41] 🚀 DÉBUT submit_order.php - 2025-09-24 11:53:41
+[2025-09-24 11:53:42] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 11:53:42] ✅ Données JSON décodées avec succès
+[2025-09-24 11:53:42] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 11:53:42] SECURITY_SENDER_PHONE_OVERRIDE_ATTEMPT: POST=+225 00 00 00 00 00 SESSION=+22500 00 00 00 00
+[2025-09-24 11:53:42] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 11:53:42] CLIENT_ID_CHECK: ❌ Client ID 45 introuvable, fallback vers ID=1
+[2025-09-24 11:53:42] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 11:53:42] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 11:53:42] Attribution locale: utilisation agent CM20250001 (KAKOU) - ID 7
+[2025-09-24 11:53:42] Attribution locale bridge (agent=7): CoursierBridge(agent=7): Enregistrement coursiers déjà présent (match ID).
+[2025-09-24 11:53:42] Attribution locale: commande 136 -> CM20250001 (agent=7, coursier=7)
+[2025-09-24 11:53:42] LOCAL_FCM(order=136 agent=7 agentMat=CM20250001 coursier=7) Colonnes device_tokens: id,coursier_id,token,token_hash,updated_at,agent_id
+[2025-09-24 11:53:42] LOCAL_FCM(order=136 agent=7 agentMat=CM20250001 coursier=7) Token trouvé updated_at=2025-09-24 09:33:21 preview=dYszqJqqQrGufu_jUnxi3H:APA91bE...
+[2025-09-24 11:53:42] LOCAL_FCM(order=136 agent=7 agentMat=CM20250001 coursier=7) Envoi FCM payload={"type":"new_order","order_id":"136","_data_only":true}
+[2025-09-24 11:53:42] Erreur envoi FCM local: Function openssl_free_key() is deprecated
+[2025-09-24 11:53:42] MIRROR_CC_OK commande_id=136 -> commandes_classiques (rowCount=1)
+[2025-09-24 18:21:50] 🚀 DÉBUT submit_order.php - 2025-09-24 18:21:50
+[2025-09-24 18:21:50] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 18:21:50] ✅ Données JSON décodées avec succès
+[2025-09-24 18:21:50] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 18:21:50] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 18:21:50] CLIENT_ID_CHECK: ❌ Client ID 45 introuvable, fallback vers ID=1
+[2025-09-24 18:21:50] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 18:21:50] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 18:21:50] Attribution locale: utilisation agent CM20250001 (KAKOU) - ID 7
+[2025-09-24 18:21:50] Attribution locale bridge (agent=7): CoursierBridge(agent=7): Enregistrement coursiers déjà présent (match ID).
+[2025-09-24 18:21:50] Attribution locale: commande 138 -> CM20250001 (agent=7, coursier=7)
+[2025-09-24 18:21:50] LOCAL_FCM(order=138 agent=7 agentMat=CM20250001 coursier=7) Colonnes device_tokens: id,coursier_id,token,token_hash,updated_at,agent_id
+[2025-09-24 18:21:50] LOCAL_FCM(order=138 agent=7 agentMat=CM20250001 coursier=7) Token trouvé updated_at=2025-09-24 15:37:31 preview=dYszqJqqQrGufu_jUnxi3H:APA91bG...
+[2025-09-24 18:21:50] LOCAL_FCM(order=138 agent=7 agentMat=CM20250001 coursier=7) Envoi FCM payload={"type":"new_order","order_id":"138","_data_only":true}
+[2025-09-24 18:21:50] Erreur envoi FCM local: Function openssl_free_key() is deprecated
+[2025-09-24 18:21:50] MIRROR_CC_OK commande_id=138 -> commandes_classiques (rowCount=1)
+[2025-09-24 18:21:52] 🚀 DÉBUT submit_order.php - 2025-09-24 18:21:52
+[2025-09-24 18:21:52] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 18:21:52] ✅ Données JSON décodées avec succès
+[2025-09-24 18:21:52] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 18:21:52] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 18:21:52] CLIENT_ID_CHECK: ❌ Client ID 45 introuvable, fallback vers ID=1
+[2025-09-24 18:21:52] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 18:21:52] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 18:21:52] Attribution locale: utilisation agent CM20250001 (KAKOU) - ID 7
+[2025-09-24 18:21:52] Attribution locale bridge (agent=7): CoursierBridge(agent=7): Enregistrement coursiers déjà présent (match ID).
+[2025-09-24 18:21:52] Attribution locale: commande 139 -> CM20250001 (agent=7, coursier=7)
+[2025-09-24 18:21:52] LOCAL_FCM(order=139 agent=7 agentMat=CM20250001 coursier=7) Colonnes device_tokens: id,coursier_id,token,token_hash,updated_at,agent_id
+[2025-09-24 18:21:52] LOCAL_FCM(order=139 agent=7 agentMat=CM20250001 coursier=7) Token trouvé updated_at=2025-09-24 15:37:31 preview=dYszqJqqQrGufu_jUnxi3H:APA91bG...
+[2025-09-24 18:21:52] LOCAL_FCM(order=139 agent=7 agentMat=CM20250001 coursier=7) Envoi FCM payload={"type":"new_order","order_id":"139","_data_only":true}
+[2025-09-24 18:21:52] Erreur envoi FCM local: Function openssl_free_key() is deprecated
+[2025-09-24 18:21:52] MIRROR_CC_OK commande_id=139 -> commandes_classiques (rowCount=1)
+[2025-09-24 18:21:53] 🚀 DÉBUT submit_order.php - 2025-09-24 18:21:53
+[2025-09-24 18:21:53] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 18:21:53] ✅ Données JSON décodées avec succès
+[2025-09-24 18:21:53] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 18:21:53] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 18:21:53] CLIENT_ID_CHECK: ❌ Client ID 45 introuvable, fallback vers ID=1
+[2025-09-24 18:21:53] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 18:21:53] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 18:21:53] Attribution locale: utilisation agent CM20250001 (KAKOU) - ID 7
+[2025-09-24 18:21:53] Attribution locale bridge (agent=7): CoursierBridge(agent=7): Enregistrement coursiers déjà présent (match ID).
+[2025-09-24 18:21:53] Attribution locale: commande 140 -> CM20250001 (agent=7, coursier=7)
+[2025-09-24 18:21:53] LOCAL_FCM(order=140 agent=7 agentMat=CM20250001 coursier=7) Colonnes device_tokens: id,coursier_id,token,token_hash,updated_at,agent_id
+[2025-09-24 18:21:53] LOCAL_FCM(order=140 agent=7 agentMat=CM20250001 coursier=7) Token trouvé updated_at=2025-09-24 15:37:31 preview=dYszqJqqQrGufu_jUnxi3H:APA91bG...
+[2025-09-24 18:21:53] LOCAL_FCM(order=140 agent=7 agentMat=CM20250001 coursier=7) Envoi FCM payload={"type":"new_order","order_id":"140","_data_only":true}
+[2025-09-24 18:21:53] Erreur envoi FCM local: Function openssl_free_key() is deprecated
+[2025-09-24 18:21:53] MIRROR_CC_OK commande_id=140 -> commandes_classiques (rowCount=1)
+[2025-09-24 18:21:56] 🚀 DÉBUT submit_order.php - 2025-09-24 18:21:56
+[2025-09-24 18:21:56] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 18:21:56] ✅ Données JSON décodées avec succès
+[2025-09-24 18:21:56] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 18:21:56] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 18:21:56] CLIENT_ID_CHECK: ❌ Client ID 45 introuvable, fallback vers ID=1
+[2025-09-24 18:21:56] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 18:21:56] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 18:21:56] Attribution locale: utilisation agent CM20250001 (KAKOU) - ID 7
+[2025-09-24 18:21:56] Attribution locale bridge (agent=7): CoursierBridge(agent=7): Enregistrement coursiers déjà présent (match ID).
+[2025-09-24 18:21:56] Attribution locale: commande 141 -> CM20250001 (agent=7, coursier=7)
+[2025-09-24 18:21:56] LOCAL_FCM(order=141 agent=7 agentMat=CM20250001 coursier=7) Colonnes device_tokens: id,coursier_id,token,token_hash,updated_at,agent_id
+[2025-09-24 18:21:56] LOCAL_FCM(order=141 agent=7 agentMat=CM20250001 coursier=7) Token trouvé updated_at=2025-09-24 15:37:31 preview=dYszqJqqQrGufu_jUnxi3H:APA91bG...
+[2025-09-24 18:21:56] LOCAL_FCM(order=141 agent=7 agentMat=CM20250001 coursier=7) Envoi FCM payload={"type":"new_order","order_id":"141","_data_only":true}
+[2025-09-24 18:21:56] Erreur envoi FCM local: Function openssl_free_key() is deprecated
+[2025-09-24 18:21:56] MIRROR_CC_OK commande_id=141 -> commandes_classiques (rowCount=1)
+[2025-09-24 18:24:33] 🚀 DÉBUT submit_order.php - 2025-09-24 18:24:33
+[2025-09-24 18:24:33] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 18:24:33] ✅ Données JSON décodées avec succès
+[2025-09-24 18:24:33] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 18:24:33] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 18:24:33] CLIENT_ID_CHECK: ❌ Client ID 45 introuvable, fallback vers ID=1
+[2025-09-24 18:24:33] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 18:24:33] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 18:24:33] Attribution locale: utilisation agent CM20250001 (KAKOU) - ID 7
+[2025-09-24 18:24:33] Attribution locale bridge (agent=7): CoursierBridge(agent=7): Enregistrement coursiers déjà présent (match ID).
+[2025-09-24 18:24:33] Attribution locale: commande 142 -> CM20250001 (agent=7, coursier=7)
+[2025-09-24 18:24:33] LOCAL_FCM(order=142 agent=7 agentMat=CM20250001 coursier=7) Colonnes device_tokens: id,coursier_id,token,token_hash,updated_at,agent_id
+[2025-09-24 18:24:33] LOCAL_FCM(order=142 agent=7 agentMat=CM20250001 coursier=7) Token trouvé updated_at=2025-09-24 15:37:31 preview=dYszqJqqQrGufu_jUnxi3H:APA91bG...
+[2025-09-24 18:24:33] LOCAL_FCM(order=142 agent=7 agentMat=CM20250001 coursier=7) Envoi FCM payload={"type":"new_order","order_id":"142","_data_only":true}
+[2025-09-24 18:24:33] Erreur envoi FCM local: Function openssl_free_key() is deprecated
+[2025-09-24 18:24:33] MIRROR_CC_OK commande_id=142 -> commandes_classiques (rowCount=1)
+[2025-09-24 18:59:32] 🚀 DÉBUT submit_order.php - 2025-09-24 18:59:32
+[2025-09-24 18:59:32] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 18:59:32] ✅ Données POST form utilisées
+[2025-09-24 18:59:32] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 18:59:32] CLIENT_ID_CHECK: clientIdMain=105, tentative de vérification...
+[2025-09-24 18:59:32] CLIENT_ID_CHECK: ❌ Client ID 105 introuvable, fallback vers ID=1
+[2025-09-24 18:59:32] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 18:59:32] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 18:59:32] Attribution locale: utilisation agent CM20250001 (KAKOU) - ID 7
+[2025-09-24 18:59:32] Attribution locale bridge (agent=7): CoursierBridge(agent=7): Enregistrement coursiers déjà présent (match ID).
+[2025-09-24 18:59:32] Attribution locale: commande 143 -> CM20250001 (agent=7, coursier=7)
+[2025-09-24 18:59:32] LOCAL_FCM(order=143 agent=7 agentMat=CM20250001 coursier=7) Colonnes device_tokens: id,coursier_id,token,token_hash,updated_at,agent_id
+[2025-09-24 18:59:32] LOCAL_FCM(order=143 agent=7 agentMat=CM20250001 coursier=7) Token trouvé updated_at=2025-09-24 15:37:31 preview=dYszqJqqQrGufu_jUnxi3H:APA91bG...
+[2025-09-24 18:59:32] LOCAL_FCM(order=143 agent=7 agentMat=CM20250001 coursier=7) Envoi FCM payload={"type":"new_order","order_id":"143","agent_id":"7","_data_only":true}
+[2025-09-24 18:59:32] Erreur envoi FCM local: Function openssl_free_key() is deprecated
+[2025-09-24 18:59:32] MIRROR_CC_OK commande_id=143 -> commandes_classiques (rowCount=1)
+[2025-09-24 19:01:05] 🚀 DÉBUT submit_order.php - 2025-09-24 19:01:05
+[2025-09-24 19:01:05] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 19:01:05] ✅ Données POST form utilisées
+[2025-09-24 19:01:05] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 19:01:05] CLIENT_ID_CHECK: clientIdMain=105, tentative de vérification...
+[2025-09-24 19:01:05] CLIENT_ID_CHECK: ❌ Client ID 105 introuvable, fallback vers ID=1
+[2025-09-24 19:01:05] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 19:01:05] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 19:01:05] Attribution locale: utilisation agent CM20250001 (KAKOU) - ID 7
+[2025-09-24 19:01:05] Attribution locale bridge (agent=7): CoursierBridge(agent=7): Enregistrement coursiers déjà présent (match ID).
+[2025-09-24 19:01:05] Attribution locale: commande 144 -> CM20250001 (agent=7, coursier=7)
+[2025-09-24 19:01:05] LOCAL_FCM(order=144 agent=7 agentMat=CM20250001 coursier=7) Colonnes device_tokens: id,coursier_id,token,token_hash,updated_at,agent_id
+[2025-09-24 19:01:05] LOCAL_FCM(order=144 agent=7 agentMat=CM20250001 coursier=7) Token trouvé updated_at=2025-09-24 15:37:31 preview=dYszqJqqQrGufu_jUnxi3H:APA91bG...
+[2025-09-24 19:01:05] LOCAL_FCM(order=144 agent=7 agentMat=CM20250001 coursier=7) Envoi FCM payload={"type":"new_order","order_id":"144","agent_id":"7","_data_only":true}
+[2025-09-24 19:01:05] Erreur envoi FCM local: Function openssl_pkey_free() is deprecated
+[2025-09-24 19:01:05] MIRROR_CC_OK commande_id=144 -> commandes_classiques (rowCount=1)
+[2025-09-24 19:01:27] 🚀 DÉBUT submit_order.php - 2025-09-24 19:01:27
+[2025-09-24 19:01:27] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 19:01:27] ✅ Données POST form utilisées
+[2025-09-24 19:01:27] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 19:01:28] CLIENT_ID_CHECK: clientIdMain=105, tentative de vérification...
+[2025-09-24 19:01:28] CLIENT_ID_CHECK: ❌ Client ID 105 introuvable, fallback vers ID=1
+[2025-09-24 19:01:28] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 19:01:28] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 19:01:28] Attribution locale: utilisation agent CM20250001 (KAKOU) - ID 7
+[2025-09-24 19:01:28] Attribution locale bridge (agent=7): CoursierBridge(agent=7): Enregistrement coursiers déjà présent (match ID).
+[2025-09-24 19:01:28] Attribution locale: commande 145 -> CM20250001 (agent=7, coursier=7)
+[2025-09-24 19:01:28] LOCAL_FCM(order=145 agent=7 agentMat=CM20250001 coursier=7) Colonnes device_tokens: id,coursier_id,token,token_hash,updated_at,agent_id
+[2025-09-24 19:01:28] LOCAL_FCM(order=145 agent=7 agentMat=CM20250001 coursier=7) Token trouvé updated_at=2025-09-24 15:37:31 preview=dYszqJqqQrGufu_jUnxi3H:APA91bG...
+[2025-09-24 19:01:28] LOCAL_FCM(order=145 agent=7 agentMat=CM20250001 coursier=7) Envoi FCM payload={"type":"new_order","order_id":"145","agent_id":"7","_data_only":true}
+[2025-09-24 19:01:29] LOCAL_FCM(order=145 agent=7 agentMat=CM20250001 coursier=7) Notification envoyée resultat={"success":true,"code":null,"result":[{"token":"dYszqJqqQrGu\u2026","code":200,"result":"{\n  \"name\": \"projects\/coursier-suzosky\/messages\/0:1758733290256577%32abbbc232abbbc2\"\n}\n"}],"method":"http_v1"}
+[2025-09-24 19:01:29] MIRROR_CC_OK commande_id=145 -> commandes_classiques (rowCount=1)
+[2025-09-24 19:20:53] 🚀 DÉBUT submit_order.php - 2025-09-24 19:20:53
+[2025-09-24 19:20:53] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 19:20:53] ✅ Données POST form utilisées
+[2025-09-24 19:20:53] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 19:20:53] CLIENT_ID_CHECK: clientIdMain=105, tentative de vérification...
+[2025-09-24 19:20:53] CLIENT_ID_CHECK: ❌ Client ID 105 introuvable, fallback vers ID=1
+[2025-09-24 19:20:54] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 19:20:54] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 19:20:54] Attribution locale: utilisation agent CM20250001 (KAKOU) - ID 7
+[2025-09-24 19:20:54] Attribution locale bridge (agent=7): CoursierBridge(agent=7): Enregistrement coursiers déjà présent (match ID).
+[2025-09-24 19:20:54] Attribution locale: commande 146 -> CM20250001 (agent=7, coursier=7)
+[2025-09-24 19:20:54] LOCAL_FCM(order=146 agent=7 agentMat=CM20250001 coursier=7) Colonnes device_tokens: id,coursier_id,token,token_hash,updated_at,agent_id
+[2025-09-24 19:20:54] LOCAL_FCM(order=146 agent=7 agentMat=CM20250001 coursier=7) Token trouvé updated_at=2025-09-24 17:18:31 preview=dYszqJqqQrGufu_jUnxi3H:APA91bG...
+[2025-09-24 19:20:54] LOCAL_FCM(order=146 agent=7 agentMat=CM20250001 coursier=7) Envoi FCM payload={"type":"new_order","order_id":"146","agent_id":"7","_data_only":true}
+[2025-09-24 19:20:56] LOCAL_FCM(order=146 agent=7 agentMat=CM20250001 coursier=7) Notification envoyée resultat={"success":true,"code":null,"result":[{"token":"dYszqJqqQrGu\u2026","code":200,"result":"{\n  \"name\": \"projects\/coursier-suzosky\/messages\/0:1758734457247738%32abbbc232abbbc2\"\n}\n"}],"method":"http_v1"}
+[2025-09-24 19:20:57] MIRROR_CC_OK commande_id=146 -> commandes_classiques (rowCount=1)
+[2025-09-24 19:28:15] 🚀 DÉBUT submit_order.php - 2025-09-24 19:28:15
+[2025-09-24 19:28:15] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 19:28:15] ✅ Données JSON décodées avec succès
+[2025-09-24 19:28:15] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 19:28:15] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 19:28:15] CLIENT_ID_CHECK: ❌ Client ID 45 introuvable, fallback vers ID=1
+[2025-09-24 19:28:15] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 19:28:15] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 19:28:15] Attribution locale: utilisation agent CM20250001 (KAKOU) - ID 7
+[2025-09-24 19:28:15] Attribution locale bridge (agent=7): CoursierBridge(agent=7): Enregistrement coursiers déjà présent (match ID).
+[2025-09-24 19:28:15] Attribution locale: commande 147 -> CM20250001 (agent=7, coursier=7)
+[2025-09-24 19:28:15] LOCAL_FCM(order=147 agent=7 agentMat=CM20250001 coursier=7) Colonnes device_tokens: id,coursier_id,token,token_hash,updated_at,agent_id
+[2025-09-24 19:28:15] LOCAL_FCM(order=147 agent=7 agentMat=CM20250001 coursier=7) Token trouvé updated_at=2025-09-24 17:22:06 preview=dYszqJqqQrGufu_jUnxi3H:APA91bH...
+[2025-09-24 19:28:15] LOCAL_FCM(order=147 agent=7 agentMat=CM20250001 coursier=7) Envoi FCM payload={"type":"new_order","order_id":"147","agent_id":"7","_data_only":true}
+[2025-09-24 19:28:18] LOCAL_FCM(order=147 agent=7 agentMat=CM20250001 coursier=7) Notification envoyée resultat={"success":true,"code":null,"result":[{"token":"dYszqJqqQrGu\u2026","code":200,"result":"{\n  \"name\": \"projects\/coursier-suzosky\/messages\/0:1758734899832213%32abbbc232abbbc2\"\n}\n"}],"method":"http_v1"}
+[2025-09-24 19:28:19] MIRROR_CC_OK commande_id=147 -> commandes_classiques (rowCount=1)
+[2025-09-24 19:59:44] 🚀 DÉBUT submit_order.php - 2025-09-24 19:59:44
+[2025-09-24 19:59:44] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 19:59:44] ✅ Données JSON décodées avec succès
+[2025-09-24 19:59:44] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-24 19:59:44] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 19:59:44] CLIENT_ID_CHECK: ❌ Client ID 45 introuvable, fallback vers ID=1
+[2025-09-24 19:59:44] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-24 19:59:44] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-24 19:59:44] Attribution locale: utilisation agent CM20250001 (KAKOU) - ID 7
+[2025-09-24 19:59:44] Attribution locale bridge (agent=7): CoursierBridge(agent=7): Enregistrement coursiers déjà présent (match ID).
+[2025-09-24 19:59:44] Attribution locale: commande 148 -> CM20250001 (agent=7, coursier=7)
+[2025-09-24 19:59:44] LOCAL_FCM(order=148 agent=7 agentMat=CM20250001 coursier=7) Colonnes device_tokens: id,coursier_id,token,token_hash,updated_at,agent_id
+[2025-09-24 19:59:44] LOCAL_FCM(order=148 agent=7 agentMat=CM20250001 coursier=7) Token trouvé updated_at=2025-09-24 17:58:32 preview=dYszqJqqQrGufu_jUnxi3H:APA91bH...
+[2025-09-24 19:59:44] LOCAL_FCM(order=148 agent=7 agentMat=CM20250001 coursier=7) Envoi FCM payload={"type":"new_order","order_id":"148","agent_id":"7","_data_only":true}
+[2025-09-24 19:59:47] LOCAL_FCM(order=148 agent=7 agentMat=CM20250001 coursier=7) Notification envoyée resultat={"success":true,"code":null,"result":[{"token":"dYszqJqqQrGu\u2026","code":200,"result":"{\n  \"name\": \"projects\/coursier-suzosky\/messages\/0:1758736788637806%32abbbc232abbbc2\"\n}\n"}],"method":"http_v1"}
+[2025-09-24 19:59:47] MIRROR_CC_OK commande_id=148 -> commandes_classiques (rowCount=1)
+[2025-09-24 20:51:13] 🚀 DÉBUT submit_order.php - 2025-09-24 20:51:13
+[2025-09-24 20:51:13] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 20:51:13] ✅ Données JSON décodées avec succès
+[2025-09-24 20:51:13] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 20:51:13] CLIENT_ID_CHECK: ✅ Client ID 45 trouvé, utilisation confirmée
+[2025-09-24 20:51:13] CLIENT_ID_FINAL: Utilisation client_id=45 pour l'INSERT
+[2025-09-24 20:51:13] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=45
+[2025-09-24 20:51:14] Attribution locale: utilisation agent CM20250001 (KAKOU) - ID 7
+[2025-09-24 20:51:14] Attribution locale bridge (agent=7): CoursierBridge(agent=7): Enregistrement coursiers déjà présent (match ID).
+[2025-09-24 20:51:14] Attribution locale: commande 149 -> CM20250001 (agent=7, coursier=7)
+[2025-09-24 20:51:14] LOCAL_FCM(order=149 agent=7 agentMat=CM20250001 coursier=7) Colonnes device_tokens: id,coursier_id,token,token_hash,updated_at,agent_id
+[2025-09-24 20:51:14] LOCAL_FCM(order=149 agent=7 agentMat=CM20250001 coursier=7) Token trouvé updated_at=2025-09-24 18:50:51 preview=dYszqJqqQrGufu_jUnxi3H:APA91bE...
+[2025-09-24 20:51:14] LOCAL_FCM(order=149 agent=7 agentMat=CM20250001 coursier=7) Envoi FCM payload={"type":"new_order","order_id":"149","agent_id":"7","_data_only":true}
+[2025-09-24 20:51:16] LOCAL_FCM(order=149 agent=7 agentMat=CM20250001 coursier=7) Notification envoyée resultat={"success":true,"code":null,"result":[{"token":"dYszqJqqQrGu\u2026","code":200,"result":"{\n  \"name\": \"projects\/coursier-suzosky\/messages\/0:1758739877702901%32abbbc232abbbc2\"\n}\n"}],"method":"http_v1"}
+[2025-09-24 20:51:16] MIRROR_CC_OK commande_id=149 -> commandes_classiques (rowCount=1)
+[2025-09-24 21:26:01] 🚀 DÉBUT submit_order.php - 2025-09-24 21:26:01
+[2025-09-24 21:26:01] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 21:26:01] ✅ Données JSON décodées avec succès
+[2025-09-24 21:26:01] DB Error: Undefined variable $price
+[2025-09-24 21:26:01] 🚨 EXCEPTION CRITIQUE: Undefined variable $price
+[2025-09-24 21:26:01] 📁 Fichier: C:\xampp\htdocs\COURSIER_LOCAL\api\submit_order.php ligne 290
+[2025-09-24 21:26:01] 📋 Stack trace: #0 C:\xampp\htdocs\COURSIER_LOCAL\api\submit_order.php(290): {closure}(2, 'Undefined varia...', 'C:\\xampp\\htdocs...', 290)
+#1 {main}
+[2025-09-24 21:26:20] 🚀 DÉBUT submit_order.php - 2025-09-24 21:26:20
+[2025-09-24 21:26:20] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 21:26:20] ⚠️ JSON invalide, tentative lecture POST form...
+[2025-09-24 21:26:20] ✅ Données POST form utilisées
+[2025-09-24 21:26:20] DB Error: Undefined variable $price
+[2025-09-24 21:26:20] 🚨 EXCEPTION CRITIQUE: Undefined variable $price
+[2025-09-24 21:26:20] 📁 Fichier: C:\xampp\htdocs\COURSIER_LOCAL\api\submit_order.php ligne 290
+[2025-09-24 21:26:20] 📋 Stack trace: #0 C:\xampp\htdocs\COURSIER_LOCAL\api\submit_order.php(290): {closure}(2, 'Undefined varia...', 'C:\\xampp\\htdocs...', 290)
+#1 {main}
+[2025-09-24 21:29:12] 🚀 DÉBUT submit_order.php - 2025-09-24 21:29:12
+[2025-09-24 21:29:12] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 21:29:12] ✅ Données JSON décodées avec succès
+[2025-09-24 21:29:12] PRICING_FALLBACK_APPLIED: distance=11.343 (km=11.343), priority=normale, price recalculé=4937
+[2025-09-24 21:29:12] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 21:29:12] CLIENT_ID_CHECK: ✅ Client ID 45 trouvé, utilisation confirmée
+[2025-09-24 21:29:12] CLIENT_ID_FINAL: Utilisation client_id=45 pour l'INSERT
+[2025-09-24 21:29:12] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=45
+[2025-09-24 21:29:12] Attribution locale: utilisation agent CM20250001 (KAKOU) - ID 7
+[2025-09-24 21:29:12] Attribution locale bridge (agent=7): CoursierBridge(agent=7): Enregistrement coursiers déjà présent (match ID).
+[2025-09-24 21:29:12] Attribution locale: commande 150 -> CM20250001 (agent=7, coursier=7)
+[2025-09-24 21:29:12] LOCAL_FCM(order=150 agent=7 agentMat=CM20250001 coursier=7) Colonnes device_tokens: id,coursier_id,token,token_hash,updated_at,agent_id
+[2025-09-24 21:29:12] LOCAL_FCM(order=150 agent=7 agentMat=CM20250001 coursier=7) Token trouvé updated_at=2025-09-24 19:25:48 preview=dYszqJqqQrGufu_jUnxi3H:APA91bF...
+[2025-09-24 21:29:12] LOCAL_FCM(order=150 agent=7 agentMat=CM20250001 coursier=7) Envoi FCM payload={"type":"new_order","order_id":"150","agent_id":"7","_data_only":true}
+[2025-09-24 21:29:15] LOCAL_FCM(order=150 agent=7 agentMat=CM20250001 coursier=7) Notification envoyée resultat={"success":true,"code":null,"result":[{"token":"dYszqJqqQrGu\u2026","code":200,"result":"{\n  \"name\": \"projects\/coursier-suzosky\/messages\/0:1758742156723867%32abbbc232abbbc2\"\n}\n"}],"method":"http_v1"}
+[2025-09-24 21:29:15] MIRROR_CC_OK commande_id=150 -> commandes_classiques (affected=1, upsert)
+[2025-09-24 23:39:18] 🚀 DÉBUT submit_order.php - 2025-09-24 23:39:18
+[2025-09-24 23:39:18] ✅ Méthode POST validée, traitement en cours...
+[2025-09-24 23:39:18] ✅ Données JSON décodées avec succès
+[2025-09-24 23:39:18] PRICING_FALLBACK_APPLIED: distance=9.744 (km=9.744), priority=normale, price recalculé=4298
+[2025-09-24 23:39:18] CLIENT_ID_CHECK: clientIdMain=45, tentative de vérification...
+[2025-09-24 23:39:18] CLIENT_ID_CHECK: ✅ Client ID 45 trouvé, utilisation confirmée
+[2025-09-24 23:39:18] CLIENT_ID_FINAL: Utilisation client_id=45 pour l'INSERT
+[2025-09-24 23:39:18] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=45
+[2025-09-24 23:39:18] Attribution locale: utilisation agent CM20250001 (KAKOU) - ID 7
+[2025-09-24 23:39:18] Attribution locale bridge (agent=7): CoursierBridge(agent=7): Enregistrement coursiers déjà présent (match ID).
+[2025-09-24 23:39:18] Attribution locale: commande 151 -> CM20250001 (agent=7, coursier=7)
+[2025-09-24 23:39:18] LOCAL_FCM(order=151 agent=7 agentMat=CM20250001 coursier=7) Colonnes device_tokens: id,coursier_id,token,token_hash,updated_at,agent_id
+[2025-09-24 23:39:18] LOCAL_FCM(order=151 agent=7 agentMat=CM20250001 coursier=7) Token trouvé updated_at=2025-09-24 21:37:28 preview=dYszqJqqQrGufu_jUnxi3H:APA91bG...
+[2025-09-24 23:39:18] LOCAL_FCM(order=151 agent=7 agentMat=CM20250001 coursier=7) Envoi FCM payload={"type":"new_order","order_id":"151","agent_id":"7","_data_only":true}
+[2025-09-24 23:39:21] LOCAL_FCM(order=151 agent=7 agentMat=CM20250001 coursier=7) Notification envoyée resultat={"success":true,"code":null,"result":[{"token":"dYszqJqqQrGu\u2026","code":200,"result":"{\n  \"name\": \"projects\/coursier-suzosky\/messages\/0:1758749962510648%32abbbc232abbbc2\"\n}\n"}],"method":"http_v1"}
+[2025-09-24 23:39:21] MIRROR_CC_OK commande_id=151 -> commandes_classiques (affected=1, upsert)
+[2025-09-26 20:00:05] 🚀 DÉBUT submit_order.php - 2025-09-26 20:00:05
+[2025-09-26 20:00:05] ✅ Méthode POST validée, traitement en cours...
+[2025-09-26 20:00:05] ✅ Données JSON décodées avec succès
+[2025-09-26 20:00:05] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-26 20:00:05] CLIENT_ID_CHECK: clientIdMain=123, tentative de vérification...
+[2025-09-26 20:00:05] CLIENT_ID_CHECK: ❌ Client ID 123 introuvable, fallback vers ID=1
+[2025-09-26 20:00:05] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-26 20:00:05] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-26 20:00:05] SQL Error: SQLSTATE[HY000]: General error: 1364 Field 'client_telephone' doesn't have a default value
+[2025-09-26 20:00:05] Exception submit_order: SQLSTATE[HY000]: General error: 1364 Field 'client_telephone' doesn't have a default value - Trace: #0 C:\xampp\htdocs\coursier_prod\api\submit_order.php(457): PDOStatement->execute(Array)
+#1 {main}
+[2025-09-26 20:01:58] 🚀 DÉBUT submit_order.php - 2025-09-26 20:01:58
+[2025-09-26 20:01:58] ✅ Méthode POST validée, traitement en cours...
+[2025-09-26 20:01:58] ✅ Données JSON décodées avec succès
+[2025-09-26 20:01:58] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-26 20:01:58] CLIENT_ID_CHECK: clientIdMain=123, tentative de vérification...
+[2025-09-26 20:01:58] CLIENT_ID_CHECK: ❌ Client ID 123 introuvable, fallback vers ID=1
+[2025-09-26 20:01:58] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-26 20:01:58] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-26 20:01:58] SQL Error: SQLSTATE[HY000]: General error: 1364 Field 'adresse_retrait' doesn't have a default value
+[2025-09-26 20:01:58] Exception submit_order: SQLSTATE[HY000]: General error: 1364 Field 'adresse_retrait' doesn't have a default value - Trace: #0 C:\xampp\htdocs\coursier_prod\api\submit_order.php(459): PDOStatement->execute(Array)
+#1 {main}
+[2025-09-26 20:05:53] 🚀 DÉBUT submit_order.php - 2025-09-26 20:05:53
+[2025-09-26 20:05:53] ✅ Méthode POST validée, traitement en cours...
+[2025-09-26 20:05:53] ✅ Données JSON décodées avec succès
+[2025-09-26 20:05:53] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-26 20:05:53] CLIENT_ID_CHECK: clientIdMain=123, tentative de vérification...
+[2025-09-26 20:05:53] CLIENT_ID_CHECK: ❌ Client ID 123 introuvable, fallback vers ID=1
+[2025-09-26 20:05:53] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-26 20:05:53] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-26 20:05:55] Attribution URL: http://localhost/api/assign_nearest_coursier.php
+[2025-09-26 20:05:55] Attribution HTTP headers: HTTP/1.1 404 Not Found | Date: Fri, 26 Sep 2025 18:05:55 GMT | Server: Apache/2.4.58 (Win64) OpenSSL/3.1.3 PHP/8.2.12 | Content-Length: 295 | Connection: close | Content-Type: text/html; charset=iso-8859-1
+[2025-09-26 20:05:55] Attribution result: <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL was not found on this server.</p>
+<hr>
+<address>Apache/2.4.58 (Win64) OpenSSL/3.1.3 PHP/8.2.12 Server at localhost Port 80</address>
+</body></html>
+
+[2025-09-26 20:05:55] Aucun coursier disponible, commande créée sans attribution
+[2025-09-26 20:07:03] 🚀 DÉBUT submit_order.php - 2025-09-26 20:07:03
+[2025-09-26 20:07:03] ✅ Méthode POST validée, traitement en cours...
+[2025-09-26 20:07:03] ⚠️ JSON invalide, tentative lecture POST form...
+[2025-09-26 20:07:03] ✅ Données POST form utilisées
+[2025-09-26 20:07:03] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-26 20:07:03] PRICING_FALLBACK_APPLIED: distance=8 km (km=8.000), priority=urgente, price recalculé=3120
+[2025-09-26 20:07:03] CLIENT_ID_CHECK: clientIdMain=129, tentative de vérification...
+[2025-09-26 20:07:03] CLIENT_ID_CHECK: ❌ Client ID 129 introuvable, fallback vers ID=1
+[2025-09-26 20:07:03] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-26 20:07:03] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-26 20:07:04] Attribution URL: http://localhost/api/assign_nearest_coursier.php
+[2025-09-26 20:07:04] Attribution HTTP headers: HTTP/1.1 404 Not Found | Date: Fri, 26 Sep 2025 18:07:04 GMT | Server: Apache/2.4.58 (Win64) OpenSSL/3.1.3 PHP/8.2.12 | Content-Length: 295 | Connection: close | Content-Type: text/html; charset=iso-8859-1
+[2025-09-26 20:07:04] Attribution result: <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL was not found on this server.</p>
+<hr>
+<address>Apache/2.4.58 (Win64) OpenSSL/3.1.3 PHP/8.2.12 Server at localhost Port 80</address>
+</body></html>
+
+[2025-09-26 20:07:04] Aucun coursier disponible, commande créée sans attribution
+[2025-09-26 20:16:08] 🚀 DÉBUT submit_order.php - 2025-09-26 20:16:08
+[2025-09-26 20:16:08] ✅ Méthode POST validée, traitement en cours...
+[2025-09-26 20:16:08] ✅ Données JSON décodées avec succès
+[2025-09-26 20:16:08] Erreur vérification/création table clients: SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 1
+[2025-09-26 20:16:08] CLIENT_ID_CHECK: clientIdMain=131, tentative de vérification...
+[2025-09-26 20:16:08] CLIENT_ID_CHECK: ❌ Client ID 131 introuvable, fallback vers ID=1
+[2025-09-26 20:16:08] CLIENT_ID_FINAL: Utilisation client_id=1 pour l'INSERT
+[2025-09-26 20:16:08] CLIENT_ID_ROUTE: FK vers clients, utilisation finalClientId=1
+[2025-09-26 20:16:09] Attribution URL: http://localhost/coursier_prod/api/assign_nearest_coursier.php
+[2025-09-26 20:16:44] Attribution HTTP headers: HTTP/1.1 200 OK | Date: Fri, 26 Sep 2025 18:16:09 GMT | Server: Apache/2.4.58 (Win64) OpenSSL/3.1.3 PHP/8.2.12 | X-Content-Type-Options: nosniff | X-Frame-Options: SAMEORIGIN | X-XSS-Protection: 1; mode=block | Access-Control-Allow-Origin: * | Access-Control-Allow-Methods: GET, POST, OPTIONS | Access-Control-Allow-Headers: Content-Type, Authorization | X-Powered-By: PHP/8.2.12 | X-Robots-Tag: index, follow, max-image-preview:large | Content-Length: 65 | Connection: close | Content-Type: application/json | Content-Language: fr-CI
+[2025-09-26 20:16:44] Attribution result: {"success":true,"coursier_id":7,"distance_km":0.9167035919607776}
+[2025-09-26 20:59:29] 🚀 DÉBUT submit_order.php - 2025-09-26 20:59:29
+[2025-09-26 20:59:29] ✅ Méthode POST validée, traitement en cours...
+[2025-09-26 20:59:29] ⚠️ JSON invalide, tentative lecture POST form...
+[2025-09-26 20:59:29] ❌ Aucune donnée reçue (ni JSON ni POST)
+[2025-09-26 20:59:45] 🚀 DÉBUT submit_order.php - 2025-09-26 20:59:45
+[2025-09-26 20:59:45] ✅ Méthode POST validée, traitement en cours...
+[2025-09-26 20:59:45] ⚠️ JSON invalide, tentative lecture POST form...
+[2025-09-26 20:59:45] ❌ Aucune donnée reçue (ni JSON ni POST)

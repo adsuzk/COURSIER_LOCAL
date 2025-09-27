@@ -1,0 +1,577 @@
+package com.suzosky.coursier
+
+import android.os.Bundle
+import android.widget.Toast
+import android.app.AlertDialog
+import android.content.Intent
+import android.net.Uri
+import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.edit
+import androidx.core.net.toUri
+import androidx.lifecycle.lifecycleScope
+import com.suzosky.coursier.data.models.*
+import com.suzosky.coursier.network.ApiService
+import com.suzosky.coursier.services.AutoUpdateService
+import com.suzosky.coursier.services.OrderRingService
+import com.suzosky.coursier.telemetry.TelemetrySDK
+import com.suzosky.coursier.telemetry.UpdateInfo
+import com.suzosky.coursier.ui.components.PaymentNativeDialog
+import com.suzosky.coursier.ui.screens.CoursierScreenNew
+import com.suzosky.coursier.ui.screens.LoginScreen
+import com.suzosky.coursier.ui.theme.SuzoskyTheme
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import com.google.firebase.messaging.FirebaseMessaging
+
+/**
+ * MainActivity - Point d'entrée de l'app Suzosky Coursier
+ * Interface 100% identique au design web coursier.php
+ * VERSION SÉCURISÉE avec gestion d'erreurs
+ */
+@AndroidEntryPoint
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        
+        try {
+            println("🚀 MainActivity.onCreate - Début de l'initialisation")
+            
+            // Configuration pour le mode edge-to-edge
+            enableEdgeToEdge()
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+            
+            println("✅ Configuration edge-to-edge réussie")
+            
+            // Initialiser la télémétrie
+            val telemetry = TelemetrySDK.initialize(
+                context = this,
+                baseUrl = "https://coursier.conciergerie-privee-suzosky.com",
+                apiKey = "suzosky_telemetry_2025"
+            )
+            
+            // Vérifier les mises à jour
+            lifecycleScope.launch {
+                try {
+                    val updateInfo = telemetry.checkForUpdates()
+                    if (updateInfo?.isMandatory == true) {
+                        // Gérer mise à jour obligatoire
+                        showUpdateDialog(updateInfo)
+                    }
+                } catch (e: Exception) {
+                    println("Erreur vérification mises à jour: ${e.message}")
+                }
+            }
+            
+            val prefs = getSharedPreferences("suzosky_prefs", MODE_PRIVATE)
+
+            // Demander les permissions essentielles : notifications + localisation
+            val permissionsToRequest = mutableListOf<String>()
+            
+            // Android 13+ : permission notifications
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                    permissionsToRequest.add(android.Manifest.permission.POST_NOTIFICATIONS)
+                }
+            }
+            
+            // Permissions de localisation (obligatoires pour les coursiers)
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(android.Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+            }
+            
+            // Demander toutes les permissions manquantes
+            if (permissionsToRequest.isNotEmpty()) {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                    requestPermissions(permissionsToRequest.toTypedArray(), 1001)
+                }
+            }
+            
+            // Démarrer le service de mise à jour automatique avec protection Android 14
+            val canStartService = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) == android.content.pm.PackageManager.PERMISSION_GRANTED
+            } else true
+            
+            if (canStartService) {
+                // Protection spéciale pour Android 14 (API 34)
+                if (android.os.Build.VERSION.SDK_INT >= 34) {
+                    // Android 14 : délai avant démarrage du service
+                    android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                        try { 
+                            AutoUpdateService.startService(this) 
+                            println("🔄 Service démarré avec délai (Android 14)")
+                        } catch (e: SecurityException) {
+                            println("❌ Service bloqué sur Android 14: ${e.message}")
+                        }
+                    }, 2000) // Délai de 2 secondes
+                } else {
+                    // Android 13 : démarrage normal
+                    try { 
+                        AutoUpdateService.startService(this) 
+                        println("🔄 Service démarré normalement (Android 13)")
+                    } catch (e: SecurityException) {
+                        println("❌ Service bloqué: ${e.message}")
+                    }
+                }
+            }
+            
+            println("🔄 Permissions et services configurés")
+            
+            setContent {
+                SuzoskyTheme {
+                    SuzoskyCoursierApp()
+                }
+            }
+            // Récupérer et enregistrer le token FCM dès le démarrage
+            try {
+                FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val token = task.result
+                        val existingId = prefs.getInt("coursier_id", -1)
+                        if (existingId > 0) {
+                            ApiService.registerDeviceToken(this, existingId, token)
+                        } else {
+                            Log.d("MainActivity", "registerDeviceToken skipped at startup: no coursier_id yet")
+                        }
+                    } else {
+                        Log.w("MainActivity", "FCM token fetch failed: ${'$'}{task.exception?.message}")
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("MainActivity", "registerDeviceToken startup error", e)
+            }
+            
+            println("✅ Application démarrée avec succès")
+            
+        } catch (e: Exception) {
+            println("❌ CRASH dans MainActivity.onCreate: ${e.message}")
+            e.printStackTrace()
+            
+            // Reporter le crash via télémétrie
+            TelemetrySDK.getInstance()?.reportCrash(
+                throwable = e,
+                screenName = "MainActivity",
+                userAction = "App startup"
+            )
+            
+            // Fallback - Interface d'erreur simple
+            setContent {
+                SuzoskyTheme {
+                    ErrorFallbackScreen(error = e.message ?: "Erreur inconnue")
+                }
+            }
+        }
+    }
+    // Callback de permission notifications (Android 13+)
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 1001) {
+            // Vérifier quelles permissions ont été accordées
+            val notificationGranted = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) == android.content.pm.PackageManager.PERMISSION_GRANTED
+            } else true
+            
+            val locationGranted = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == android.content.pm.PackageManager.PERMISSION_GRANTED ||
+                                 ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == android.content.pm.PackageManager.PERMISSION_GRANTED
+            
+            // Démarrer le service si les notifications sont accordées
+            if (notificationGranted) {
+                // Protection Android 14 : délai avant démarrage
+                if (android.os.Build.VERSION.SDK_INT >= 34) {
+                    android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                        try { 
+                            AutoUpdateService.startService(this) 
+                            println("🔄 Service démarré après permission (Android 14)")
+                        } catch (e: SecurityException) {
+                            println("❌ Service bloqué après permission: ${e.message}")
+                        }
+                    }, 2000)
+                } else {
+                    try { 
+                        AutoUpdateService.startService(this) 
+                        println("🔄 Service démarré après permission")
+                    } catch (e: SecurityException) {
+                        println("❌ Service bloqué après permission: ${e.message}")
+                    }
+                }
+            }
+            
+            // Informer l'utilisateur si la localisation n'est pas accordée
+            if (!locationGranted) {
+                android.widget.Toast.makeText(
+                    this, 
+                    "⚠️ La localisation est nécessaire pour recevoir des commandes", 
+                    android.widget.Toast.LENGTH_LONG
+                ).show()
+            } else {
+                android.widget.Toast.makeText(
+                    this, 
+                    "✅ Localisation activée - Vous pouvez recevoir des commandes", 
+                    android.widget.Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+}
+
+private fun MainActivity.showUpdateDialog(updateInfo: UpdateInfo) {
+    try {
+        val builder = AlertDialog.Builder(this)
+            .setTitle("Mise à jour disponible")
+            .setMessage(
+                buildString {
+                    append("Version: ")
+                    append(updateInfo.versionName)
+                    append("\n\n")
+                    if (!updateInfo.releaseNotes.isNullOrBlank()) {
+                        append(updateInfo.releaseNotes)
+                    } else {
+                        append("Une nouvelle version est disponible.")
+                    }
+                }
+            )
+            .setCancelable(!updateInfo.isMandatory)
+            .setPositiveButton("Mettre à jour") { dialog, _ ->
+                try {
+                    val intent = Intent(Intent.ACTION_VIEW, updateInfo.downloadUrl.toUri())
+                    startActivity(intent)
+                } catch (_: Exception) {
+                    Toast.makeText(this, "Impossible d'ouvrir le lien de mise à jour", Toast.LENGTH_LONG).show()
+                } finally {
+                    dialog.dismiss()
+                }
+            }
+
+        if (!updateInfo.isMandatory) {
+            builder.setNegativeButton("Plus tard") { dialog, _ -> dialog.dismiss() }
+        }
+
+        builder.show()
+    } catch (e: Exception) {
+        println("Erreur affichage mise à jour: ${e.message}")
+    }
+}
+
+@Composable
+fun ErrorFallbackScreen(error: String) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text("❌ Erreur d'initialisation")
+            Text("Détails: $error")
+            Text("Veuillez redémarrer l'application")
+        }
+    }
+}
+
+@Composable
+fun SuzoskyCoursierApp() {
+    val context = LocalContext.current
+    // Persist a simple login flag in SharedPreferences to stabilize navigation after login
+    val prefs = remember { context.getSharedPreferences("suzosky_prefs", android.content.Context.MODE_PRIVATE) }
+    
+    println("🔄 SuzoskyCoursierApp - Initialisation")
+    
+    // État global avec vraies données
+    var coursierNom by remember { mutableStateOf(prefs.getString("coursier_nom", "Coursier") ?: "Coursier") }
+    var coursierId by remember { mutableStateOf(prefs.getInt("coursier_id", -1).takeIf { it > 0 } ?: -1) }
+    var coursierStatut by remember { mutableStateOf("EN_LIGNE") }
+    var soldeReel by remember { mutableStateOf(0.0) }
+    var commandesReelles by remember { mutableStateOf<List<Commande>>(emptyList()) }
+    var gainsDuJour by remember { mutableStateOf(0.0) }
+    var totalCommandes by remember { mutableStateOf(0) }
+    var noteGlobale by remember { mutableStateOf(0.0) }
+    var coursierTelephone by remember { mutableStateOf("") }
+    var coursierEmail by remember { mutableStateOf("") }
+    var dateInscription by remember { mutableStateOf("") }
+    // Persist login UI state across recompositions/config changes + initialize from prefs
+    var isLoggedIn by rememberSaveable { mutableStateOf(prefs.getBoolean("isLoggedIn", false)) }
+    if (!isLoggedIn) {
+        println("🔐 Affichage LoginScreen")
+        LoginScreen(onLoginSuccess = {
+            println("✅ Login réussi")
+            try { prefs.edit { putBoolean("isLoggedIn", true) } } catch (_: Exception) {}
+            isLoggedIn = true
+            // Récupérer l'ID agent réel côté serveur
+            ApiService.checkCoursierSession { id, err ->
+                if ((id ?: 0) > 0) {
+                    coursierId = id!!
+                    try { prefs.edit { putInt("coursier_id", coursierId) } } catch (_: Exception) {}
+                    // Enregistrer token FCM avec l'ID réel
+                    try {
+                        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                val token = task.result
+                                ApiService.registerDeviceToken(context, coursierId, token)
+                            }
+                        }
+                    } catch (_: Exception) {}
+                } else {
+                    println("⚠️ check_session a échoué: ${'$'}err")
+                }
+            }
+        })
+    } else {
+        println("🏠 Affichage écran principal")
+
+        // États pour les commandes
+        var loading by remember { mutableStateOf(true) }
+        var error by remember { mutableStateOf<String?>(null) }
+
+    // Paiement natif: URL + dialogue de suivi (Custom Tab + polling)
+    var paymentUrl by remember { mutableStateOf<String?>(null) }
+    var showNativePayment by remember { mutableStateOf(false) }
+
+        // Charger les VRAIES données au login
+        LaunchedEffect(isLoggedIn, coursierId) {
+            if (!isLoggedIn) return@LaunchedEffect
+
+            if (coursierId <= 0) {
+                println("⚠️ coursierId invalide ou absent - vérification session côté serveur")
+                loading = true
+                ApiService.checkCoursierSession { id, err ->
+                    if ((id ?: 0) > 0) {
+                        coursierId = id!!
+                        try { prefs.edit { putInt("coursier_id", coursierId) } } catch (_: Exception) {}
+                    } else {
+                        loading = false
+                        error = err ?: "Session invalide"
+                        println("⚠️ Impossible de récupérer l'ID coursier: ${'$'}err")
+                    }
+                }
+                return@LaunchedEffect
+            }
+
+            println("🔄 Chargement des VRAIES données depuis l'API")
+            loading = true
+
+            ApiService.getCoursierData(coursierId) { data, err ->
+                if (data != null) {
+                    println("✅ Données réelles reçues")
+                    fun toDoubleSafe(v: Any?): Double = when (v) {
+                        null -> 0.0
+                        is Number -> v.toDouble()
+                        is String -> v.toDoubleOrNull() ?: 0.0
+                        else -> 0.0
+                    }
+                    fun toStringSafe(v: Any?): String = when (v) {
+                        null -> ""
+                        is String -> v
+                        else -> v.toString()
+                    }
+                    fun toIntFromDistanceKm(v: Any?): Int {
+                        val km = toDoubleSafe(v)
+                        return (km * 3.0).toInt()
+                    }
+
+                    // Charger le profil complet (nom, téléphone, stats)
+                    ApiService.getCoursierProfile(coursierId) { pData, pErr ->
+                        if (pData != null) {
+                            val nomComplet = toStringSafe(pData["nom_complet"]).ifBlank { coursierNom }
+                            if (nomComplet.isNotBlank()) {
+                                coursierNom = nomComplet
+                                try { prefs.edit { putString("coursier_nom", nomComplet) } } catch (_: Exception) {}
+                            }
+                            totalCommandes = ((pData["total_commandes"]) as? Int) ?: (toDoubleSafe(pData["total_commandes"]).toInt())
+                            noteGlobale = toDoubleSafe(pData["note_globale"]).let { if (it.isFinite()) it else 0.0 }
+                            coursierTelephone = toStringSafe(pData["telephone"])
+                            coursierEmail = toStringSafe(pData["email"]).ifBlank { coursierEmail }
+                            dateInscription = toStringSafe(pData["date_inscription"])
+                        }
+                    }
+
+                    soldeReel = toDoubleSafe(data["balance"]) 
+                        .let { if (it.isFinite()) it else 0.0 }
+                    gainsDuJour = toDoubleSafe(data["gains_du_jour"]) 
+                        .let { if (it.isFinite()) it else 0.0 }
+
+                    // Convertir les commandes
+                    @Suppress("UNCHECKED_CAST")
+                    val commandesData = data["commandes"] as? List<Map<String, Any>> ?: emptyList()
+                    commandesReelles = try {
+                        commandesData.map { cmdMap ->
+                            Commande(
+                                id = toStringSafe(cmdMap["id"]),
+                                clientNom = toStringSafe(cmdMap["clientNom"]),
+                                clientTelephone = toStringSafe(cmdMap["clientTelephone"]),
+                                adresseEnlevement = toStringSafe(cmdMap["adresseEnlevement"]),
+                                adresseLivraison = toStringSafe(cmdMap["adresseLivraison"]),
+                                distance = toDoubleSafe(cmdMap["distance"]).let { if (it.isFinite()) it else 0.0 },
+                                tempsEstime = toIntFromDistanceKm(cmdMap["distance"]),
+                                prixTotal = toDoubleSafe(cmdMap["prixLivraison"]).let { if (it.isFinite()) it else 0.0 },
+                                prixLivraison = toDoubleSafe(cmdMap["prixLivraison"]).let { if (it.isFinite()) it else 0.0 },
+                                // Ne pas forcer un statut test. Si vide, classer comme "inconnue" pour éviter faux positifs.
+                                statut = toStringSafe(cmdMap["statut"]).ifBlank { "inconnue" },
+                                // Éviter les labels de démo; utiliser les champs si présents, sinon vide
+                                dateCommande = toStringSafe(cmdMap["dateCommande"]),
+                                heureCommande = toStringSafe(cmdMap["heureCommande"]),
+                                description = toStringSafe(cmdMap["description"]),
+                                typeCommande = "Standard"
+                            )
+                        }
+                    } catch (e: Exception) {
+                        TelemetrySDK.getInstance()?.reportCrash(
+                            throwable = e,
+                            screenName = "MainActivity",
+                            userAction = "parse_commandes",
+                            additionalData = mapOf("payload_size" to commandesData.size)
+                        )
+                        println("❌ Erreur conversion commandes: ${e.message}")
+                        emptyList()
+                    }
+                    error = null
+                } else {
+                    println("❌ Erreur chargement données: $err")
+                    error = err
+                }
+                loading = false
+            }
+        }
+
+        // Surveillance de session: déconnexion automatique si SESSION_REVOKED / NO_SESSION
+        LaunchedEffect(isLoggedIn) {
+            if (isLoggedIn) {
+                while (isLoggedIn) {
+                    kotlinx.coroutines.delay(15000) // toutes les 15s
+                    ApiService.checkCoursierSession { id, err ->
+                        if (err != null) {
+                            val e = err.uppercase()
+                            if (e.contains("SESSION_REVOKED") || e.contains("NO_SESSION")) {
+                                try { prefs.edit { putBoolean("isLoggedIn", false) } } catch (_: Exception) {}
+                                isLoggedIn = false
+                                android.os.Handler(android.os.Looper.getMainLooper()).post {
+                                    Toast.makeText(context, "Session expirée: connexion depuis un autre appareil", Toast.LENGTH_LONG).show()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Scaffold(modifier = Modifier.fillMaxSize()) { paddingValues ->
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+            ) {
+                when {
+                    loading -> {
+                        println("⏳ État loading")
+                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                    error != null -> {
+                        println("❌ État erreur: $error")
+                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Text("Erreur: $error")
+                        }
+                    }
+                    else -> {
+                        println("✅ Affichage CoursierScreenNew avec VRAIES données")
+                        // VRAIES DONNÉES de l'API
+                        CoursierScreenNew(
+                            modifier = Modifier.fillMaxSize(),
+                            coursierId = coursierId,
+                            coursierNom = coursierNom,
+                            coursierStatut = coursierStatut,
+                            totalCommandes = totalCommandes,
+                            noteGlobale = noteGlobale,
+                            coursierTelephone = coursierTelephone,
+                            coursierEmail = coursierEmail,
+                            dateInscription = dateInscription,
+                            commandes = commandesReelles, // VRAIES commandes de l'API
+                            balance = soldeReel.toInt(), // VRAI solde de l'API
+                            gainsDuJour = gainsDuJour.toInt(), // VRAIS gains de l'API
+                            onStatutChange = { nouveauStatut -> coursierStatut = nouveauStatut },
+                            onCommandeAccept = {
+                                try { OrderRingService.stop(context) } catch (_: Exception) {}
+                                // TODO: Accept logic (API update)
+                            },
+                            onCommandeReject = {
+                                try { OrderRingService.stop(context) } catch (_: Exception) {}
+                                // TODO: Reject logic (API update)
+                            },
+                            onCommandeAttente = { /* TODO: Waiting logic */ },
+                            onNavigateToProfile = { /* TODO: Navigation */ },
+                            onNavigateToHistorique = { /* TODO: Navigation */ },
+                            onNavigateToGains = { /* TODO: Navigation */ },
+                            onLogout = {
+                                try { prefs.edit { putBoolean("isLoggedIn", false) } } catch (_: Exception) {}
+                                isLoggedIn = false
+                            },
+                            // Ouvrir le paiement via Custom Tab et surveiller la confirmation
+                            onRecharge = { amount ->
+                                if (amount > 0) {
+                                    ApiService.initRecharge(coursierId, amount.toDouble()) { url, error ->
+                                        if (url != null) {
+                                            paymentUrl = url
+                                            showNativePayment = true
+                                        } else {
+                                            Toast.makeText(context, "Erreur paiement : $error", Toast.LENGTH_LONG).show()
+                                        }
+                                    }
+                                } else {
+                                    Toast.makeText(context, "Montant invalide", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        )
+                        // Afficher le suivi natif (ouvre l'URL dans un Custom Tab et sonde l'API)
+                        if (showNativePayment && paymentUrl != null) {
+                            PaymentNativeDialog(
+                                context = context,
+                                paymentUrl = paymentUrl!!,
+                                coursierId = coursierId,
+                                initialBalance = soldeReel,
+                                onDismiss = {
+                                    showNativePayment = false
+                                    paymentUrl = null
+                                },
+                                onCompleted = { success, newBalance ->
+                                    if (success && newBalance != null) {
+                                        soldeReel = newBalance
+                                        Toast.makeText(context, "Recharge réussie! Nouveau solde: ${'$'}newBalance", Toast.LENGTH_LONG).show()
+                                    } else {
+                                        Toast.makeText(context, "Recharge non confirmée", Toast.LENGTH_LONG).show()
+                                    }
+                                    showNativePayment = false
+                                    paymentUrl = null
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+

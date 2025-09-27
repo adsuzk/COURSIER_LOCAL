@@ -1,0 +1,6 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">Coursier Suzosky</string>
+    <!-- Google API Keys provided by user -->
+    <string name="google_maps_key">AIzaSyAGKC21fGmY-k6i0dcY8MpBExa5IqqBXbE</string>
+    <string name="google_places_key" tools:ignore="Typos">AIzaSyBjUgj9KM0SNj847a_bIsf6chWp9L8Hr1A</string>
+</resources>

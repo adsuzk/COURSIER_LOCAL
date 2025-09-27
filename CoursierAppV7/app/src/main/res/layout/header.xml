@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <!-- Header content with logo, brand and burger menu -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/headerContent"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/secondary_blue">
+
+        <ImageView
+            android:id="@+id/logoIv"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/logo_suzosky"
+            android:contentDescription="@string/app_name"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginStart="16dp" />
+
+        <TextView
+            android:id="@+id/brandTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SUZOSKY"
+            android:textColor="@color/primary_gold"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/logoIv"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginStart="8dp" />
+
+        <ImageButton
+            android:id="@+id/burgerBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_menu"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginEnd="16dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Slide-in navigation menu -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navView"
+        android:layout_width="280dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@drawable/gradient_overlay"
+        app:menu="@menu/mobile_menu"
+        app:itemTextColor="@color/white"
+        app:itemIconTint="@color/white" />
+
+</androidx.drawerlayout.widget.DrawerLayout>

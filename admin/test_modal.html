@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Modal Agent</title>
+    <style>
+        :root {
+            --primary-gold: #D4A853;
+            --primary-dark: #1a1a1a;
+            --glass-bg: rgba(255,255,255,0.05);
+            --glass-border: rgba(255,255,255,0.1);
+            --gradient-gold: linear-gradient(135deg, #D4A853 0%, #F4E6B7 100%);
+        }
+        
+        body {
+            background: var(--primary-dark);
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        
+        .btn {
+            background: var(--gradient-gold);
+            color: var(--primary-dark);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        /* === MODAL === */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-content {
+            background: #222;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+            opacity: 0;
+            transform: translateY(-30px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .modal.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal.show .modal-content {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            color: var(--primary-gold);
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            background: #333;
+            border: 1px solid #555;
+            border-radius: 6px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Modal Agent</h1>
+    
+    <button onclick="showAddAgentModal()" class="btn">
+        <i class="fas fa-user-plus"></i> Nouvel Agent
+    </button>
+    
+    <!-- MODAL NOUVEL AGENT -->
+    <div id="addAgentModal" class="modal" style="display:none;">
+      <div class="modal-content">
+        <button onclick="closeAddAgentModal()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:#fff;font-size:1.5rem;cursor:pointer;">&times;</button>
+        <h2 style="color:var(--primary-gold);margin-bottom:1rem;">Nouvel Agent</h2>
+        <form>
+          <div class="form-group">
+            <label>Matricule (auto)</label>
+            <input type="text" id="matriculeField" readonly style="background:#333;color:#aaa;" />
+          </div>
+          <div class="form-group">
+            <label>Prénoms *</label>
+            <input type="text" name="prenoms" required />
+          </div>
+          <div class="form-group">
+            <label>Nom *</label>
+            <input type="text" name="nom" required />
+          </div>
+          <div style="text-align:right;margin-top:2rem;">
+            <button type="button" onclick="closeAddAgentModal()" style="background:#666;color:white;border:none;padding:10px 20px;border-radius:6px;margin-right:10px;cursor:pointer;">Annuler</button>
+            <button type="submit" class="btn">Test</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+    function showAddAgentModal() {
+        console.log('showAddAgentModal appelée');
+        const modal = document.getElementById('addAgentModal');
+        console.log('Modal element:', modal);
+        if (!modal) {
+            console.error('Modal non trouvé !');
+            return;
+        }
+        modal.style.display = 'flex';
+        setTimeout(() => {
+            modal.classList.add('show');
+            console.log('Classe show ajoutée');
+        }, 10);
+        // Générer un matricule automatiquement
+        const d = new Date();
+        const rand = Math.floor(Math.random()*9000+1000);
+        const matriculeField = document.getElementById('matriculeField');
+        if (matriculeField) {
+            matriculeField.value = `AG${d.getFullYear()}${('0'+(d.getMonth()+1)).slice(-2)}${('0'+d.getDate()).slice(-2)}-${rand}`;
+        }
+    }
+    
+    function closeAddAgentModal() {
+        console.log('closeAddAgentModal appelée');
+        const modal = document.getElementById('addAgentModal');
+        if (!modal) {
+            console.error('Modal non trouvé !');
+            return;
+        }
+        modal.classList.remove('show');
+        setTimeout(() => {
+            modal.style.display = 'none';
+            console.log('Modal caché');
+        }, 300);
+    }
+    </script>
+</body>
+</html>

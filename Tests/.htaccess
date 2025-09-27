@@ -1,0 +1,10 @@
+# .htaccess pour dossier /Tests/
+# Autoriser l'accès aux scripts de test
+
+# Autoriser tous les fichiers PHP de test
+<Files "*.php">
+    Require all granted
+</Files>
+
+# Désactiver les restrictions du .htaccess parent
+Require all granted

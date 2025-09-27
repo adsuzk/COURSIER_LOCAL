@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+	<!-- Do not allow cleartext globally; only explicitly whitelisted domains below -->
+	<base-config cleartextTrafficPermitted="false" />
+	<!-- Explicitly allow common local dev hosts in debug -->
+	<domain-config cleartextTrafficPermitted="true">
+		<domain includeSubdomains="true">192.168.1.25</domain>
+		<domain includeSubdomains="true">10.0.2.2</domain>
+		<domain includeSubdomains="true">localhost</domain>
+	</domain-config>
+</network-security-config>

@@ -1,0 +1,68 @@
+User-agent: *
+Allow: /
+
+# Priorités SEO
+Allow: /index.php
+Allow: /recrutement.php
+Allow: /business.php
+Allow: /coursier.php
+Allow: /admin.php
+Allow: /cgu.html
+
+# Assets autorisés
+Allow: /assets/
+Allow: /style.css
+Allow: /manifest.json
+
+# Interdire les fichiers sensibles
+Disallow: /config_db.php
+Disallow: /config_secure.php
+Disallow: /*.sql
+Disallow: /logs/
+Disallow: /uploads/
+Disallow: /FICHIERS_TEMPORAIRES/
+Disallow: /api/admin/
+Disallow: /*.log
+Disallow: /*.txt
+Disallow: /*.md
+Disallow: /CloneCoursierApp/
+Disallow: /SuzoskyCoursierAppV6/
+Disallow: /DOCUMENTATION_FINALE/
+Disallow: /downloads/
+
+# Performance - fichiers statiques
+Allow: /*.css
+Allow: /*.js
+Allow: /*.svg
+Allow: /*.png
+Allow: /*.jpg
+Allow: /*.jpeg
+Allow: /*.gif
+Allow: /*.webp
+Allow: /*.ico
+
+# Sitemaps
+# En local, le sitemap sera accessible via l'URL locale (ex: http://localhost/COURSIER_LOCAL/sitemap.xml)
+
+# Crawl-delay pour éviter la surcharge
+Crawl-delay: 1
+
+# Instructions spéciales pour Google
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+# Instructions pour Bing
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# Bloquer les bots indésirables
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /

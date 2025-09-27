@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Audit coursier_prod</title>
+<style>
+body{font-family:Arial, sans-serif;background:#f7f7f7;margin:0;padding:20px;color:#222}
+.container{max-width:1200px;margin:0 auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.08);padding:20px}
+h1{margin-top:0}
+pre{white-space:pre-wrap;word-wrap:break-word}
+.badge{display:inline-block;padding:4px 8px;border-radius:12px;background:#eee;margin-right:6px}
+.badge-ok{background:#e8f5e9;color:#2e7d32}
+.badge-warn{background:#fff8e1;color:#f57f17}
+.badge-err{background:#ffebee;color:#c62828}
+.code{font-family:Consolas, monospace;font-size:12px;background:#fafafa;border:1px solid #eee;border-radius:6px;padding:10px}
+.group{border:1px solid #ddd;border-radius:6px;padding:10px;margin:10px 0}
+.small{color:#777;font-size:12px}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Audit coursier_prod</h1>
+  <p class="small">Généré le 2025-09-27T03:47:24+02:00</p>
+  <h2>Statistiques</h2>
+  <ul>
+    <li>Total fichiers: <strong>820</strong></li>
+    <li>Taille totale: <strong>106,313.52 KB</strong></li>
+  </ul>
+  <h3>Par extension</h3>
+  <div class="code"><pre>{
+    &quot;gitignore&quot;: {
+        &quot;count&quot;: 6,
+        &quot;size&quot;: 1273
+    },
+    &quot;htaccess&quot;: {
+        &quot;count&quot;: 3,
+        &quot;size&quot;: 4666
+    },
+    &quot;json&quot;: {
+        &quot;count&quot;: 21,
+        &quot;size&quot;: 795227
+    },
+    &quot;html&quot;: {
+        &quot;count&quot;: 123,
+        &quot;size&quot;: 16949282
+    },
+    &quot;php&quot;: {
+        &quot;count&quot;: 257,
+        &quot;size&quot;: 2633637
+    },
+    &quot;css&quot;: {
+        &quot;count&quot;: 34,
+        &quot;size&quot;: 126298
+    },
+    &quot;js&quot;: {
+        &quot;count&quot;: 11,
+        &quot;size&quot;: 84516
+    },
+    &quot;apk&quot;: {
+        &quot;count&quot;: 3,
+        &quot;size&quot;: 56790859
+    },
+    &quot;log&quot;: {
+        &quot;count&quot;: 41,
+        &quot;size&quot;: 22738587
+    },
+    &quot;dm&quot;: {
+        &quot;count&quot;: 4,
+        &quot;size&quot;: 51454
+    },
+    &quot;svg&quot;: {
+        &quot;count&quot;: 14,
+        &quot;size&quot;: 15455
+    },
+    &quot;sql&quot;: {
+        &quot;count&quot;: 18,
+        &quot;size&quot;: 44824
+    },
+    &quot;lock&quot;: {
+        &quot;count&quot;: 1,
+        &quot;size&quot;: 52101
+    },
+    &quot;phar&quot;: {
+        &quot;count&quot;: 1,
+        &quot;size&quot;: 3125332
+    },
+    &quot;bat&quot;: {
+        &quot;count&quot;: 10,
+        &quot;size&quot;: 11998
+    },
+    &quot;txt&quot;: {
+        &quot;count&quot;: 11,
+        &quot;size&quot;: 254790
+    },
+    &quot;kts&quot;: {
+        &quot;count&quot;: 7,
+        &quot;size&quot;: 12953
+    },
+    &quot;pro&quot;: {
+        &quot;count&quot;: 2,
+        &quot;size&quot;: 1500
+    },
+    &quot;kt&quot;: {
+        &quot;count&quot;: 93,
+        &quot;size&quot;: 681693
+    },
+    &quot;xml&quot;: {
+        &quot;count&quot;: 50,
+        &quot;size&quot;: 60603
+    },
+    &quot;ttf&quot;: {
+        &quot;count&quot;: 7,
+        &quot;size&quot;: 3165496
+    },
+    &quot;webp&quot;: {
+        &quot;count&quot;: 20,
+        &quot;size&quot;: 66588
+    },
+    &quot;mp3&quot;: {
+        &quot;count&quot;: 1,
+        &quot;size&quot;: 406715
+    },
+    &quot;toml&quot;: {
+        &quot;count&quot;: 2,
+        &quot;size&quot;: 4881
+    },
+    &quot;jar&quot;: {
+        &quot;count&quot;: 2,
+        &quot;size&quot;: 118406
+    },
+    &quot;properties&quot;: {
+        &quot;count&quot;: 6,
+        &quot;size&quot;: 4758
+    },
+    &quot;&quot;: {
+        &quot;count&quot;: 5,
+        &quot;size&quot;: 13126
+    },
+    &quot;md&quot;: {
+        &quot;count&quot;: 61,
+        &quot;size&quot;: 630418
+    },
+    &quot;ps1&quot;: {
+        &quot;count&quot;: 4,
+        &quot;size&quot;: 6277
+    },
+    &quot;sh&quot;: {
+        &quot;count&quot;: 1,
+        &quot;size&quot;: 10736
+    },
+    &quot;ini&quot;: {
+        &quot;count&quot;: 1,
+        &quot;size&quot;: 593
+    }
+}</pre></div>
+
+  <h2>Doublons de fichiers (par hash)</h2>
+            <div class="group">
+        <div><strong>Hash:</strong> e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 <span class="badge badge-warn">10 fichiers</span></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\api\orders.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\assign_last_order.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierAppV7\build_output.txt</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\diagnostics_errors.log</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\DOCUMENTATION_FINALE\DOCUMENTATION_PROD\IMPLEMENTATION_FINALE.md</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\FORCE_PRODUCTION_DB</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\order_history.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\user_profile.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\Tests\cli_check_coursiers.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\tools\audit_output\quarantine_20250927_032924\C</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Hash:</strong> 5c3174b74edc6f2b9e0743594b8bd3c7f31e4f4405758cc9872b3fe1de1d28b4 <span class="badge badge-warn">2 fichiers</span></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierAppV7\app\.gitignore</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierSuzoskyApp Clt\app\.gitignore</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Hash:</strong> 56fd960cf225f6ca40f982b13a5dbb0d8bc3dfde13ff76422825c6070d0a1890 <span class="badge badge-warn">2 fichiers</span></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierAppV7\app\proguard-rules.pro</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierSuzoskyApp Clt\app\proguard-rules.pro</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Hash:</strong> f1948719ec97aaf9d344b05952959e6300f3a3bc4e1b320a31362bb90e5f74cd <span class="badge badge-warn">6 fichiers</span></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierAppV7\app\src\main\res\mipmap-anydpi-v26\ic_launcher_foreground.xml</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierAppV7\app\src\main\res\mipmap-hdpi\ic_launcher_foreground.xml</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierAppV7\app\src\main\res\mipmap-mdpi\ic_launcher_foreground.xml</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierAppV7\app\src\main\res\mipmap-xhdpi\ic_launcher_foreground.xml</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierAppV7\app\src\main\res\mipmap-xxhdpi\ic_launcher_foreground.xml</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierAppV7\app\src\main\res\mipmap-xxxhdpi\ic_launcher_foreground.xml</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Hash:</strong> dd00996198640ed28fbc09cdcd7a3807cf8707f3eb255b659634da3ca6a6ff01 <span class="badge badge-warn">2 fichiers</span></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierAppV7\app\src\main\res\mipmap-hdpi\ic_launcher.webp</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierSuzoskyApp Clt\app\src\main\res\mipmap-hdpi\ic_launcher.webp</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Hash:</strong> 1ed73f5341a69d3b41c7e02e126803f50cc8c3284adf4bbb737f0c93577aef07 <span class="badge badge-warn">2 fichiers</span></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierAppV7\app\src\main\res\mipmap-hdpi\ic_launcher_round.webp</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierSuzoskyApp Clt\app\src\main\res\mipmap-hdpi\ic_launcher_round.webp</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Hash:</strong> 5cb88dcce8bfca908222a6019d2a5aedbe28a7e25f3d9b18d655919fd7e30224 <span class="badge badge-warn">5 fichiers</span></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierAppV7\app\src\main\res\mipmap-hdpi\ic_launcher_round_foreground.xml</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierAppV7\app\src\main\res\mipmap-mdpi\ic_launcher_round_foreground.xml</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierAppV7\app\src\main\res\mipmap-xhdpi\ic_launcher_round_foreground.xml</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierAppV7\app\src\main\res\mipmap-xxhdpi\ic_launcher_round_foreground.xml</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierAppV7\app\src\main\res\mipmap-xxxhdpi\ic_launcher_round_foreground.xml</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Hash:</strong> 846219e6f72fe9a6c104ca8919cbee36a101e7d2ff8da9da67b689a5888f060d <span class="badge badge-warn">2 fichiers</span></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierAppV7\app\src\main\res\mipmap-mdpi\ic_launcher.webp</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierSuzoskyApp Clt\app\src\main\res\mipmap-mdpi\ic_launcher.webp</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Hash:</strong> 4e2c58b91de01130e6479e00cbbaaf6e77cd961dd2c8e303cf13cd077fa92632 <span class="badge badge-warn">2 fichiers</span></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierAppV7\app\src\main\res\mipmap-mdpi\ic_launcher_round.webp</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierSuzoskyApp Clt\app\src\main\res\mipmap-mdpi\ic_launcher_round.webp</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Hash:</strong> 398340dad816fc9a6338cb151a8cf1e45b926f9bfb70628b24c4bd2523cc94d4 <span class="badge badge-warn">2 fichiers</span></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierAppV7\app\src\main\res\mipmap-xhdpi\ic_launcher.webp</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierSuzoskyApp Clt\app\src\main\res\mipmap-xhdpi\ic_launcher.webp</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Hash:</strong> 91b490aef86574901137f0a252272e1f1add99c1ad709e0696ed68929b88d261 <span class="badge badge-warn">2 fichiers</span></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierAppV7\app\src\main\res\mipmap-xhdpi\ic_launcher_round.webp</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierSuzoskyApp Clt\app\src\main\res\mipmap-xhdpi\ic_launcher_round.webp</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Hash:</strong> 58ae87fa0c5b5d1562d27fd648d2c061553fe20e3ed570bde588162d01ea7a27 <span class="badge badge-warn">2 fichiers</span></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierAppV7\app\src\main\res\mipmap-xxhdpi\ic_launcher.webp</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierSuzoskyApp Clt\app\src\main\res\mipmap-xxhdpi\ic_launcher.webp</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Hash:</strong> 3009fad079f5772f30ecd767f98924367fbe0f81c30048d672d4fda2d5ca7d12 <span class="badge badge-warn">2 fichiers</span></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierAppV7\app\src\main\res\mipmap-xxhdpi\ic_launcher_round.webp</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierSuzoskyApp Clt\app\src\main\res\mipmap-xxhdpi\ic_launcher_round.webp</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Hash:</strong> f98fef5bc3bfe5b65692c40ad1cbae2bec4faf9f1b249c397626740db71b62d8 <span class="badge badge-warn">2 fichiers</span></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierAppV7\app\src\main\res\mipmap-xxxhdpi\ic_launcher.webp</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierSuzoskyApp Clt\app\src\main\res\mipmap-xxxhdpi\ic_launcher.webp</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Hash:</strong> 5faf033745c8c882c43bb1b372d4e4a5890caec63d9892a2e756c954108b85dc <span class="badge badge-warn">2 fichiers</span></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierAppV7\app\src\main\res\mipmap-xxxhdpi\ic_launcher_round.webp</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierSuzoskyApp Clt\app\src\main\res\mipmap-xxxhdpi\ic_launcher_round.webp</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Hash:</strong> accecfe9663494855346def1a0de839eb9ea5f21533385cd2ce9c1b4d156a28c <span class="badge badge-warn">2 fichiers</span></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierAppV7\build\reports\configuration-cache\3x6fg5valusbms305b7houwkn\f1nnziisz8ugj8vvh0huqam1k\configuration-cache-report.html</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierAppV7\build\reports\configuration-cache\7zsxf6mcf0sefyg75kakf3hpg\f1nnziisz8ugj8vvh0huqam1k\configuration-cache-report.html</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Hash:</strong> e996d452d2645e70c01c11143ca2d3742734a28da2bf61f25c82bdc288c9e637 <span class="badge badge-warn">2 fichiers</span></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierAppV7\gradle\wrapper\gradle-wrapper.jar</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierSuzoskyApp Clt\gradle\wrapper\gradle-wrapper.jar</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Hash:</strong> 88f7653499ef524126ea5018a99baf9cc3269e7e584d6205dfdd76db39f39cc0 <span class="badge badge-warn">2 fichiers</span></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierSuzoskyApp Clt\app\src\main\res\mipmap-anydpi-v26\ic_launcher.xml</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\CoursierSuzoskyApp Clt\app\src\main\res\mipmap-anydpi-v26\ic_launcher_round.xml</code></li>
+                  </ul>
+      </div>
+      
+  <h2>Doublons de fonctions PHP</h2>
+            <div class="group">
+        <div><strong>Fonction:</strong> showTestEmailModal <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function showTestEmailModal() { const email = prompt(&quot;Adresse email pour le test :&quot;, &quot;admin@conciergerie-privee-suzosky.com&quot;); if (email &amp;&amp; email.includes(&quot;@&quot;)) { const form = document.createElement(&quot;...</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\admin\emails.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\create_interface_files.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> getAgentsSchemaInfo <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function getAgentsSchemaInfo(PDO $pdo): array { static $cache = null; if ($cache !== null) { return $cache; }</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\admin_commandes_enhanced.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\api\tracking_realtime.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> initiateRecharge <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function initiateRecharge($coursierId, $amount, $currency = &#039;XOF&#039;, $description = &#039;Recharge compte coursier Suzosky&#039;) { try { $transactionId = &#039;SUZOSKY_&#039; . $coursierId . &#039;_&#039; . time() . &#039;_&#039; . rand(1000...</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\cinetpay\cinetpay_integration.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\cinetpay\cinetpay_integration_fixed.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> processSuccessfulPayment <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function processSuccessfulPayment($transaction, $amount) { try { $pdo = getDBConnection(); $pdo-&gt;beginTransaction(); $this-&gt;updateTransactionStatus($transaction[&#039;transaction_id&#039;], &#039;completed&#039;); $cours...</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\cinetpay\cinetpay_integration.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\cinetpay\cinetpay_integration_fixed.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> creditCourrierAccount <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function creditCourrierAccount($coursierId, $amount) { $pdo = getDBConnection(); $stmt = $pdo-&gt;prepare(&quot;UPDATE coursiers SET credit_balance = credit_balance + ? WHERE id = ?&quot;); if (!$stmt-&gt;execute([$a...</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\cinetpay\cinetpay_integration.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\cinetpay\cinetpay_integration_fixed.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> saveTransactionRecord <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function saveTransactionRecord($transactionId, $coursierId, $amount, $status) { $pdo = getDBConnection(); $stmt = $pdo-&gt;prepare(&quot;INSERT INTO payment_transactions (transaction_id, coursier_id, amount, ...</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\cinetpay\cinetpay_integration.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\cinetpay\cinetpay_integration_fixed.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> updateTransactionStatus <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function updateTransactionStatus($transactionId, $status) { $pdo = getDBConnection(); $stmt = $pdo-&gt;prepare(&quot;UPDATE payment_transactions SET status = ?, updated_at = NOW() WHERE transaction_id = ?&quot;); ...</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\cinetpay\cinetpay_integration.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\cinetpay\cinetpay_integration_fixed.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> getTransactionRecord <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function getTransactionRecord($transactionId) { $pdo = getDBConnection(); $stmt = $pdo-&gt;prepare(&quot;SELECT * FROM payment_transactions WHERE transaction_id = ?&quot;); $stmt-&gt;execute([$transactionId]); return...</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\cinetpay\cinetpay_integration.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\cinetpay\cinetpay_integration_fixed.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> logAccountHistory <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function logAccountHistory($coursierId, $amount, $type, $description) { $pdo = getDBConnection(); $stmt = $pdo-&gt;prepare(&quot;INSERT INTO account_history (coursier_id, amount, type, description, created_at...</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\cinetpay\cinetpay_integration.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\cinetpay\cinetpay_integration_fixed.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> verifyNotificationSignature <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function verifyNotificationSignature($data) { $signature = $data[&#039;signature&#039;] ?? &#039;&#039;; $computedSignature = hash(&#039;sha256&#039;, $data[&#039;cpm_site_id&#039;] . $data[&#039;cpm_trans_id&#039;] . $data[&#039;cpm_trans_date&#039;] . $data[...</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\cinetpay\cinetpay_integration.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\cinetpay\cinetpay_integration_fixed.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> sendRechargeNotification <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function sendRechargeNotification($coursierId, $amount) { $message = &quot;Votre compte a été crédité de {$amount}</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\cinetpay\cinetpay_integration.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\cinetpay\cinetpay_integration_fixed.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> calculateAvailableBalance <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function calculateAvailableBalance($deliveryEarnings, $creditBalance) { $availableFromDeliveries = $deliveryEarnings * 0.9; return $availableFromDeliveries + $creditBalance; }</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\cinetpay\cinetpay_integration.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\cinetpay\cinetpay_integration_fixed.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> deductDeliveryCost <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function deductDeliveryCost($coursierId, $amount) { try { $pdo = getDBConnection(); $pdo-&gt;beginTransaction(); $stmt = $pdo-&gt;prepare(&quot;SELECT delivery_earnings, credit_balance FROM coursiers WHERE id = ...</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\cinetpay\cinetpay_integration.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\cinetpay\cinetpay_integration_fixed.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> createPaymentTables <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function createPaymentTables() { try { $pdo = getDBConnection(); if ($pdo === null) { error_log(&quot;Erreur: Connexion PDO null dans createPaymentTables()&quot;); return false; }</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\cinetpay\cinetpay_integration.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\cinetpay\cinetpay_integration_fixed.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> formatBytes <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function formatBytes($bytes) { $units = [&#039;B&#039;, &#039;KB&#039;, &#039;MB&#039;, &#039;GB&#039;]; $bytes = max($bytes, 0); $pow = floor(($bytes ? log($bytes) : 0) / log(1024)); $pow = min($pow, count($units) - 1); $bytes /= pow(1024,...</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\diagnostic_logs\advanced_logger.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\diagnostic_logs\log_viewer.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> setupAutocomplete <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function setupAutocomplete() { console.log(&#039;Initialisation de l\&#039;autocomplétion...&#039;); try { if (typeof google === &#039;undefined&#039; || !google.maps || !google.maps.places) { console.error(&#039;Google Maps API ...</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\js_autocomplete.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\map.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> escapeHtml <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function escapeHtml(text) { const div = document.createElement(&#039;div&#039;); div.textContent = String(text ?? &#039;&#039;); return div.innerHTML; }</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\js_chat_support.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\js_chat_support_ai.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> fetchJSON <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function fetchJSON(url, options = {}) { const res = await fetch(url, { method: &#039;POST&#039;, headers: { &#039;Content-Type&#039;: &#039;application/json&#039; }</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\js_chat_support.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\js_chat_support_ai.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> updateNotificationBadge <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function updateNotificationBadge() { const badge = document.querySelector(&#039;.chat-toggle .chat-notification&#039;); if (!badge) return; if (unreadCount &gt; 0) { badge.style.display = &#039;flex&#039;; badge.textContent...</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\js_chat_support.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\js_chat_support_ai.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> scrollChatToBottom <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function scrollChatToBottom() { const container = document.getElementById(&#039;chatMessages&#039;); if (container) container.scrollTop = container.scrollHeight; }</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\js_chat_support.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\js_chat_support_ai.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> getAvailableTabs <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function getAvailableTabs() { return [&#039;particulier&#039;]; }</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\js_chat_support.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\js_chat_support_ai.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> getOrCreateGuestId <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function getOrCreateGuestId() { const key = &#039;chat_guest_id&#039;; let id = localStorage.getItem(key); if (!id) { id = String(Math.floor(Date.now() % 1000000000)); localStorage.setItem(key, id); }</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\js_chat_support.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\js_chat_support_ai.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> resolveClientIdForType <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function resolveClientIdForType(type) { try { if (window.isLoggedIn &amp;&amp; window.currentUser &amp;&amp; Number.isInteger(window.currentUser.id)) { return window.currentUser.id; }</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\js_chat_support.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\js_chat_support_ai.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> stopPolling <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function stopPolling(type) { if (pollingTimers[type]) { clearInterval(pollingTimers[type]); delete pollingTimers[type]; }</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\js_chat_support.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\js_chat_support_ai.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> getCurrentLocation <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function getCurrentLocation(targetField = &#039;departure&#039;) { if (!navigator.geolocation) { alert(&#039;La géolocalisation n\&#039;est pas supportée par ce navigateur&#039;); return; }</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\js_geolocation.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\map.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> showLocationLoading <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function showLocationLoading(marker) { const button = document.querySelector(`[onclick=&quot;getCurrentLocation(&#039;${marker === &#039;A&#039; ? &#039;departure&#039; : &#039;destination&#039;}</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\js_geolocation.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\map.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> hideLocationLoading <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function hideLocationLoading() { const buttons = document.querySelectorAll(&#039;[onclick*=&quot;getCurrentLocation&quot;]&#039;); buttons.forEach(btn =&gt; { if (btn.innerHTML.includes(&#039;Localisation&#039;)) { btn.innerHTML = bt...</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\js_geolocation.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\map.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> showMapError <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function showMapError(message = &#039;Erreur de chargement Google Maps&#039;) { const mapContainer = document.getElementById(&#039;map&#039;); if (mapContainer) { mapContainer.innerHTML = ` &lt;div style=&quot;display: flex; ali...</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\js_google_maps.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\map.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> calculateRoute <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function calculateRoute(origin, destination) { if (!origin || !destination) { console.log(&#039;Origine ou destination manquante&#039;); return; }</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\js_route_calculation.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\map.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> clearRoute <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function clearRoute() { directionsRenderer.setDirections({routes: []}</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\js_route_calculation.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\map.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> clearMarkers <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function clearMarkers() { if (markerA) { markerA.setMap(null); markerA = null; }</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\js_route_calculation.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\map.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> updateAddressFromCoordinates <span class="badge badge-warn">2 occurrences</span></div>
+        <div class="small">Aperçu: <code>function updateAddressFromCoordinates(position, fieldType) { if (!google || !google.maps || !google.maps.Geocoder) { console.error(&#039;Service Google Maps Geocoder non disponible&#039;); return; }</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\js_route_calculation.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\map.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> updateMapPosition <span class="badge badge-warn">3 occurrences</span></div>
+        <div class="small">Aperçu: <code>function updateMapPosition() { const heroRect = heroLeft.getBoundingClientRect(); const heroHeight = heroLeft.scrollHeight; const viewportHeight = window.innerHeight; const scrollProgress = Math.max(0...</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\order_form.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\order_form_broken.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\order_form_fixed.php</code></li>
+                  </ul>
+      </div>
+          <div class="group">
+        <div><strong>Fonction:</strong> requestTick <span class="badge badge-warn">3 occurrences</span></div>
+        <div class="small">Aperçu: <code>function requestTick() { if (!ticking) { requestAnimationFrame(updateMapPosition); ticking = true; setTimeout(() =&gt; { ticking = false; }</code></div>
+        <ul>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\order_form.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\order_form_broken.php</code></li>
+                      <li><code>C:\xampp\htdocs\coursier_prod\sections_index\order_form_fixed.php</code></li>
+                  </ul>
+      </div>
+      
+  <h2>Fichiers rapport</h2>
+  <ul>
+    <li>JSON: <code>C:\xampp\htdocs\coursier_prod\tools/audit_output/audit_report.json</code></li>
+    <li>HTML: <code>C:\xampp\htdocs\coursier_prod\tools/audit_output/audit_report.html</code></li>
+  </ul>
+</div>
+</body>
+</html>

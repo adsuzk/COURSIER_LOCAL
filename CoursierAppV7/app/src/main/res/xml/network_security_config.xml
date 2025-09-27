@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Configuration production - SSL sécurisé -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <!-- Certificats système standard -->
+            <certificates src="system"/>
+        </trust-anchors>
+    </base-config>
+    
+    <!-- Configuration pour serveur de production -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">coursier.conciergerie-privee-suzosky.com</domain>
+        <domain includeSubdomains="true">conciergerie-privee-suzosky.com</domain>
+        <trust-anchors>
+            <certificates src="system"/>
+        </trust-anchors>
+    </domain-config>
+    
+    <!-- Configuration CinetPay - HTTPS seulement -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">checkout.cinetpay.com</domain>
+        <domain includeSubdomains="true">api-checkout.cinetpay.com</domain>
+        <domain includeSubdomains="true">cinetpay.com</domain>
+        <trust-anchors>
+            <certificates src="system"/>
+        </trust-anchors>
+    </domain-config>
+</network-security-config>

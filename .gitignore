@@ -1,0 +1,42 @@
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# Android subprojects (nested) build/cache/IDE artifacts
+**/.gradle/
+**/build/
+**/app/build/
+**/.idea/
+**/.cxx/
+**/.externalNativeBuild/
+
+# GitHub Configuration (contains tokens)
+configure_github.ps1
+.github_token
+*.token
+.github/token.txt
+scripts/START_PROTECTION_FIXED.ps1
+scripts/SETUP_COURSIER_PROD_GITHUB.ps1
+
+# Local environment/DB override files (contain secrets)
+env_override.php
+FORCE_PRODUCTION_DB
+data/
+
+# Google Cloud Service Account files (contain secrets)
+coursier-suzosky-*.json
+
+# Git credentials
+Usersmanud.git-credentials

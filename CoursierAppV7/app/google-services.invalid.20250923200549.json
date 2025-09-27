@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "108120944863467136380",
+    "project_id": "coursier-suzosky",
+    "storage_bucket": "coursier-suzosky.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:108120944863467136380:android:coursier001",
+        "android_client_info": {
+          "package_name": "com.suzosky.coursier.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "108120944863467136380-coursiertemp001.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.suzosky.coursier.debug",
+            "certificate_hash": "fa56b8ac428d414ff71ebbfdbf84928968896ce70"
+          }
+        },
+        {
+          "client_id": "108120944863467136380-webcoursier001.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAA18w3qwQCd4thd3alnxTnCKyQjL5zIzE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "108120944863467136380-webcoursier001.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

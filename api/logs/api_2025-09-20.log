@@ -1,0 +1,5 @@
+2025-09-20 17:03:30 [API-INFO] Requête reçue: GET health (role=)
+2025-09-20 19:02:01 [API-INFO] Requête reçue: GET action=ping role= id= ip=127.0.0.1
+2025-09-20 19:02:55 [API-INFO] Requête reçue: GET action=health role= id= ip=127.0.0.1
+2025-09-20 19:19:42 [API-INFO] Requête reçue: GET action=check_session role= id= ip=127.0.0.1
+2025-09-20 19:19:42 [API-INFO] POST keys: 

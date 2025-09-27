@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Aliases pour corriger références globales -->
+    <style name="Form" />
+    <style name="Payment" />
+    <style name="Price" />
+    <!-- Form field styles -->
+    <style name="Form.Input">
+        <item name="android:layout_marginTop">12dp</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:background">@drawable/bg_glass</item>
+        <item name="android:textColorHint">@color/white</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="Form.TextArea" parent="Form.Input">
+        <item name="android:inputType">textMultiLine</item>
+        <item name="android:lines">3</item>
+    </style>
+    <style name="Form.RadioButton">
+        <item name="android:buttonTint">@color/primary_gold</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:layout_marginEnd">8dp</item>
+    </style>
+    <style name="Form.PriceSection">
+        <item name="android:background">@drawable/bg_glass</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <!-- Price display styles -->
+    <style name="Price.Text">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_marginTop">4dp</item>
+    </style>
+    <style name="Price.Total">
+        <item name="android:textColor">@color/primary_gold</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Payment button style -->
+    <style name="Payment.Button">
+        <item name="android:padding">14dp</item>
+        <item name="android:background">@drawable/bg_gold_button</item>
+        <item name="android:textColor">@color/primary_dark</item>
+        <item name="android:layout_marginTop">8dp</item>
+    </style>
+</resources>

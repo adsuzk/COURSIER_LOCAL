@@ -1,0 +1,22 @@
+Structure du projet Suzosky Coursier:
+
+api/
+  submit_order.php
+  initiate_order_payment.php
+  payment_notify.php
+  payment_return.php
+  get_client.php
+  submit_client.php
+  index.php
+
+admin/
+  ...
+
+// autres dossiers
+
+config.php
+cinetpay_integration.php
+diagnostic.php
+journal.php
+rapport_final_cinetpay.php
+validation_cinetpay.html

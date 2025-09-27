@@ -1,0 +1,8 @@
+/* FORM ROUTE ARROW */
+.route-arrow {
+    color: var(--primary-gold);
+    font-size: 1.5rem;
+    font-weight: 900;
+    margin: 0 8px;
+    text-shadow: 0 2px 8px rgba(212, 168, 83, 0.6);
+}

@@ -1,0 +1,43 @@
+# .htaccess pour éviter les redirections 301 qui font perdre les données POST
+RewriteEngine On
+
+# Empêcher les redirections automatiques des requêtes POST
+# Permettre les requêtes POST sans redirection
+DirectorySlash Off
+
+# Règles pour accepter les requêtes POST sans trailing slash
+RewriteCond %{REQUEST_METHOD} POST
+RewriteRule ^(.*)$ $1 [L]
+
+# Headers CORS pour les requêtes depuis l'application mobile
+Header always set Access-Control-Allow-Origin "*"
+Header always set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+Header always set Access-Control-Allow-Headers "Content-Type, Authorization"
+
+# Répondre aux requêtes OPTIONS (preflight CORS)
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ $1 [R=200,L]
+
+# === AUTORISATION EXPLICITE APIS CRITIQUES ===
+# Contourner les restrictions du .htaccess parent
+
+<Files "*.php">
+    Require all granted
+</Files>
+
+# APIs spécifiques pour FCM et timeline
+<Files "register_device_token.php">
+    Require all granted
+</Files>
+
+<Files "register_device_token_simple.php">
+    Require all granted
+</Files>
+
+<Files "timeline_sync.php">
+    Require all granted
+</Files>
+
+<Files "submit_order.php">
+    Require all granted
+</Files>

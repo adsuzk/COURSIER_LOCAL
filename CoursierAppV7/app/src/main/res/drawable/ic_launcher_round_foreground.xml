@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <!-- Fond doré (cercle) -->
+    <path
+        android:fillColor="#FFD700"
+        android:pathData="M50,0 a50,50 0 1,0 0.1,0 z"/>
+    <!-- Lettre S stylisée -->
+    <path
+        android:fillColor="#1A1A2E"
+        android:pathData="M65,60c0,8-7,13-15,13c-8,0-15-5-15-13h8c0,3,3,5,7,5c4,0,7-2,7-5c0-3-3-4-7-5c-8-2-15-4-15-13c0-8,7-13,15-13c8,0,15,5,15,13h-8c0-3-3-5-7-5c-4,0-7,2-7,5c0,3,3,4,7,5c8,2,15,4,15,13z"/>
+    <!-- Étoiles décoratives -->
+    <path android:fillColor="#1A1A2E" android:fillAlpha="0.6" android:pathData="M15,15 L18,12 L21,15 L18,18 Z"/>
+    <path android:fillColor="#1A1A2E" android:fillAlpha="0.6" android:pathData="M79,21 L82,18 L85,21 L82,24 Z"/>
+    <path android:fillColor="#1A1A2E" android:fillAlpha="0.6" android:pathData="M15,85 L18,82 L21,85 L18,88 Z"/>
+    <!-- Point de livraison stylisé -->
+    <path android:fillColor="#1A1A2E" android:fillAlpha="0.7" android:pathData="M82,82 m-3,0 a3,3 0 1,0 6,0 a3,3 0 1,0 -6,0"/>
+    <path android:fillColor="#FFFFFF" android:pathData="M82,82 m-1.5,0 a1.5,1.5 0 1,0 3,0 a1.5,1.5 0 1,0 -3,0"/>
+</vector>

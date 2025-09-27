@@ -1,0 +1,14 @@
+{
+    "require": {
+        "cboden/ratchet": "^0.4",
+        "react/event-loop": "^1.2",
+        "react/socket": "^1.6",
+        "cinetpay/cinetpay-php": "^1.0",
+        "phpmailer/phpmailer": "^6.10"
+    },
+    "autoload": {
+        "psr-4": {
+            "Szosky\\": "src/"
+        }
+    }
+}

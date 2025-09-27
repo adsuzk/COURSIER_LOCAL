@@ -1,0 +1,38 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Assemble Debug",
+			"type": "shell",
+			"command": "gradlew.bat",
+			"args": [
+				":app:assembleDebug"
+			],
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Assemble Debug",
+			"type": "shell",
+			"command": "./gradlew.bat assembleDebug",
+			"isBackground": false,
+			"problemMatcher": [
+				"$gradle"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Assemble Debug (Gradle)",
+			"type": "shell",
+			"command": "c:\\xampp\\htdocs\\coursier_prod\\CoursierAppV7\\gradlew.bat",
+			"args": [
+				"assembleDebug"
+			],
+			"problemMatcher": [
+				"$gradle-lang"
+			]
+		}
+	]
+}

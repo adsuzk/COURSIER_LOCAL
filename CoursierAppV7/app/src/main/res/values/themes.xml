@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.SuzoskyCoursier" parent="Theme.Material3.Light.NoActionBar">
+        <!-- Couleurs de marque Material3 -->
+        <item name="colorPrimary">@color/primary_gold</item>
+        <item name="colorOnPrimary">@color/primary_dark</item>
+        <item name="colorSecondary">@color/secondary_blue</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSurface">@color/secondary_blue</item>
+        <item name="colorOnSurface">@color/white</item>
+        <item name="android:statusBarColor">@color/primary_dark</item>
+        <item name="android:navigationBarColor">@color/secondary_blue</item>
+    </style>
+</resources>

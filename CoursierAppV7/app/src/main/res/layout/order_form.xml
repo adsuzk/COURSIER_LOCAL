@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Point de départ -->
+        <EditText
+            android:id="@+id/etDeparture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="📍 Point de départ"
+            style="@style/Form.Input" />
+
+        <!-- Destination -->
+        <EditText
+            android:id="@+id/etDestination"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="📍 Destination"
+            android:layout_marginTop="12dp"
+            style="@style/Form.Input" />
+
+        <!-- Description du colis -->
+        <EditText
+            android:id="@+id/etPackageDesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Description du colis"
+            android:inputType="textMultiLine"
+            android:lines="2"
+            android:layout_marginTop="12dp"
+            style="@style/Form.TextArea" />
+
+        <!-- Options de priorité -->
+        <RadioGroup
+            android:id="@+id/rgPriority"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp">
+
+            <RadioButton
+                android:id="@+id/rbNormal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🚶 Normal"
+                style="@style/Form.RadioButton" />
+
+            <RadioButton
+                android:id="@+id/rbUrgent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⚡ Urgent"
+                android:layout_marginStart="8dp"
+                style="@style/Form.RadioButton" />
+
+            <RadioButton
+                android:id="@+id/rbExpress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🚀 Express"
+                android:layout_marginStart="8dp"
+                style="@style/Form.RadioButton" />
+        </RadioGroup>
+
+        <!-- Section estimation de prix -->
+        <LinearLayout
+            android:id="@+id/priceSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_marginTop="16dp"
+            style="@style/Form.PriceSection">
+
+            <TextView
+                android:id="@+id/tvDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Distance: - km"
+                style="@style/Price.Text" />
+
+            <TextView
+                android:id="@+id/tvDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⏱️ -"
+                android:layout_marginTop="4dp"
+                style="@style/Price.Text" />
+
+            <TextView
+                android:id="@+id/tvTotalPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="💰 - FCFA"
+                android:layout_marginTop="8dp"
+                style="@style/Price.Total" />
+        </LinearLayout>
+
+        <!-- Méthodes de paiement -->
+        <LinearLayout
+            android:id="@+id/paymentMethods"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_marginTop="20dp">
+
+            <Button
+                android:id="@+id/btnCash"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Espèces à la livraison"
+                style="@style/Payment.Button" />
+
+            <Button
+                android:id="@+id/btnOrangeMoney"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Orange Money"
+                android:layout_marginTop="8dp"
+                style="@style/Payment.Button" />
+
+            <!-- Autres méthodes analogues -->
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

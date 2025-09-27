@@ -1,0 +1,5 @@
+# diagnostics_env_config.txt
+
+# Server PHP & environment settings excerpts
+# php.ini location: /etc/php/7.4/apache2/php.ini
+

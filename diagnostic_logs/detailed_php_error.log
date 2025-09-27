@@ -1,0 +1,135 @@
+{
+    "system": {
+        "timestamp": "2025-09-20 19:19:04.000000",
+        "microtime": 1758388744.367908,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "PHP_ERROR",
+        "level": "ERROR",
+        "pid": 15716,
+        "user_agent": "CLI",
+        "ip_address": "127.0.0.1",
+        "request_uri": "CLI",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 168.6029,
+        "file": "advanced_logger.php",
+        "line": 376,
+        "function": "logError",
+        "class": ""
+    },
+    "message": "Erreur PHP: Cannot modify header information - headers already sent by (output started at C:\\xampp\\htdocs\\coursier_prod\\billing_system.php:446)",
+    "context": {
+        "severity": 2,
+        "file": "C:\\xampp\\htdocs\\coursier_prod\\coursier.php",
+        "line": 394,
+        "error_type": "WARNING"
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 318,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 376,
+            "function": "logError"
+        },
+        {
+            "function": "{closure}"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-20 19:19:04.000000",
+        "microtime": 1758388744.404484,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "PHP_ERROR",
+        "level": "ERROR",
+        "pid": 15716,
+        "user_agent": "CLI",
+        "ip_address": "127.0.0.1",
+        "request_uri": "CLI",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 168.6395,
+        "file": "advanced_logger.php",
+        "line": 376,
+        "function": "logError",
+        "class": ""
+    },
+    "message": "Erreur PHP: Cannot modify header information - headers already sent by (output started at C:\\xampp\\htdocs\\coursier_prod\\billing_system.php:446)",
+    "context": {
+        "severity": 2,
+        "file": "C:\\xampp\\htdocs\\coursier_prod\\coursier.php",
+        "line": 395,
+        "error_type": "WARNING"
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 318,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 376,
+            "function": "logError"
+        },
+        {
+            "function": "{closure}"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-26 22:29:46.000000",
+        "microtime": 1758918586.678156,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "PHP_ERROR",
+        "level": "ERROR",
+        "pid": 13516,
+        "user_agent": "CLI",
+        "ip_address": "::1",
+        "request_uri": "\/coursier_prod\/api\/submit_order.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 88.9628,
+        "file": "advanced_logger.php",
+        "line": 376,
+        "function": "logError",
+        "class": ""
+    },
+    "message": "Erreur PHP: file_get_contents(http:\/\/localhost\/coursier_prod\/api\/assign_nearest_coursier.php): Failed to open stream: HTTP request failed!",
+    "context": {
+        "severity": 2,
+        "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\submit_order.php",
+        "line": 555,
+        "error_type": "WARNING"
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 318,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 376,
+            "function": "logError"
+        },
+        {
+            "function": "{closure}"
+        }
+    ]
+}

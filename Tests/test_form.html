@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Formulaire Commande</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h1>Test Formulaire Commande</h1>
+    
+    <form id="testForm">
+        <input type="text" id="departure" value="Test Départ" placeholder="Adresse départ">
+        <input type="text" id="destination" value="Test Destination" placeholder="Adresse destination">
+        <input type="tel" id="senderPhone" value="+225 07 07 07 07 07" placeholder="Téléphone expéditeur">
+        <input type="tel" id="receiverPhone" value="+225 08 08 08 08 08" placeholder="Téléphone destinataire">
+        
+        <select id="priority">
+            <option value="normale">Normal</option>
+            <option value="urgente">Urgent</option>
+            <option value="express">Express</option>
+        </select>
+        
+        <select id="paymentMethod">
+            <option value="cash">Espèces</option>
+            <option value="mobile_money">Mobile Money</option>
+        </select>
+        
+        <button type="submit">Commander</button>
+    </form>
+    
+    <div id="result"></div>
+    
+    <script>
+    document.getElementById('testForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = {
+            departure: document.getElementById('departure').value,
+            destination: document.getElementById('destination').value,
+            senderPhone: document.getElementById('senderPhone').value,
+            receiverPhone: document.getElementById('receiverPhone').value,
+            priority: document.getElementById('priority').value,
+            paymentMethod: document.getElementById('paymentMethod').value,
+            departure_lat: 5.3364,
+            departure_lng: -4.0267,
+            destination_lat: 5.3500,
+            destination_lng: -4.0100,
+            packageDescription: 'Test depuis formulaire'
+        };
+        
+        console.log('Envoi des données:', formData);
+        
+        try {
+            const response = await fetch('/coursier_prod/api/submit_order.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            console.log('Statut HTTP:', response.status);
+            
+            const responseText = await response.text();
+            console.log('Réponse brute:', responseText);
+            
+            let json = null;
+            try {
+                json = JSON.parse(responseText);
+                console.log('JSON parsé:', json);
+            } catch (parseError) {
+                console.error('Erreur parsing JSON:', parseError);
+            }
+            
+            const resultDiv = document.getElementById('result');
+            if (response.ok && json && json.success) {
+                resultDiv.innerHTML = `<div style="color: green;">
+                    <h3>✅ Commande créée avec succès!</h3>
+                    <p>Numéro: ${json.data.order_number}</p>
+                    <p>Prix: ${json.data.price} FCFA</p>
+                    ${json.data.coursier_id ? `<p>Coursier assigné: ${json.data.coursier_id}</p>` : ''}
+                </div>`;
+            } else {
+                resultDiv.innerHTML = `<div style="color: red;">
+                    <h3>❌ Erreur</h3>
+                    <p>Status: ${response.status}</p>
+                    <p>Message: ${json?.message || responseText}</p>
+                </div>`;
+            }
+        } catch (error) {
+            console.error('Erreur réseau:', error);
+            document.getElementById('result').innerHTML = `<div style="color: red;">
+                <h3>❌ Erreur réseau</h3>
+                <p>${error.message}</p>
+            </div>`;
+        }
+    });
+    </script>
+</body>
+</html>

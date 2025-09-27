@@ -1,0 +1,145 @@
+# 📱 Application Android Suzosky Coursier
+
+Version native Android (Jetpack Compose) reproduisant fidèlement l'interface web `coursier.php`.
+
+---
+## 🎯 Objectifs
+- Parité visuelle et fonctionnelle avec l'interface web existante
+- Architecture claire et extensible (écran Login → Dashboard → Carte)
+- Design system unifié (tokens + composants)
+- Préparation intégration API (commandes, statut, paiements)
+
+---
+## 🧩 Architecture
+```
+CoursierAppV7/
+  app/
+    src/main/java/com/suzosky/coursier/
+      MainActivity.kt              <- Navigation & racine thème
+      ui/theme/                    <- Tokens couleur, typographie, dimensions
+      ui/components/               <- Composants réutilisables (Glass, Buttons, Chips...)
+      ui/screens/                  <- LoginScreen, CoursierScreen, MapScreen
+      utils/TarificationSuzosky.kt <- Calculs distance / gains (parité logique)
+```
+
+### Écrans
+- `LoginScreen` : Connexion + Inscription (upload pièces) avec esthétique gradient + verre
+- `CoursierScreen` : Header (statut + solde), mini-carte, stats, liste commandes
+- `MapScreen` : Affichage itinéraire + tarification dynamique
+
+---
+## 🎨 Design System
+### Couleurs principales (extraits)
+| Token | Rôle |
+|-------|------|
+| `PrimaryGold` | Accent principal (brand) |
+| `PrimaryDark` | Fond sombre principal |
+| `GlassBg` | Panneaux translucides |
+| `AccentBlue / AccentRed` | Statuts / actions |
+
+Gradients définis : `GradientGoldBrush`, `GradientDarkGoldBrush`, succès / warning / danger.
+
+### Typographie
+Police : Montserrat (poids variés). Styles centralisés dans `Type.kt` / `SuzoskyTextStyles`.
+
+### Dimensions
+Espacements & rayons dans `Dimens.kt` (ex: `space16`, `radius16`, `radius24`).
+
+---
+## 🧱 Composants Clés
+| Composant | Description |
+|-----------|-------------|
+| `GlassContainer` | Conteneur translucide + ombre interne |
+| `GradientButton` | Bouton pill gradient gold |
+| `StatusChip` | Sélecteur EN_LIGNE / HORS_LIGNE animé |
+| `CommandeCard` | Carte d'une commande + actions contextualisées |
+| `SuzoskyButton` | Variantes (Primary, Success, Warning, Danger, Secondary, Ghost) |
+| `MiniMapPreview` | Carte Google mini intégrée Dashboard |
+
+---
+## 🔄 Flux Navigation
+`MainActivity` -> NavHost :
+- `login`
+- `coursier`
+- `map`
+
+Callbacks :
+- `onOpenMap` → navigation vers `map`
+- `onRecharge` → stub incrément solde (à remplacer API / paiement réel)
+
+---
+## 🧮 Tarification / Gains
+`TarificationSuzosky` fournit :
+- Distance formatée
+- Durée estimée
+- Tarif final (FCFA)
+- Attente (surcoût)
+
+---
+## 🗺️ Mini‑Carte
+`MiniMapPreview` : GoogleMap centrée Abidjan (zoom 11) + overlay gradient léger.
+
+---
+## 🔌 Intégrations prévues (prochaines étapes)
+1. Appels API réels pour commandes (remplacer mock dans `MainActivity`).
+2. Endpoint statut coursier (EN_LIGNE/HORS_LIGNE).
+3. Recharge solde (intégration CinetPay ou passerelle interne).
+4. Détails commande (dialog / bottom sheet).
+5. Tracking temps réel (WebSocket ou polling léger).
+
+---
+## 🧪 QA Visuelle
+Ajustements effectués :
+- Alpha overlay mini-carte 0.25
+- Ombre interne GlassContainer
+- Animation statut chips (opacity tween)
+- Uniformisation tailles Tab 14sp
+
+À surveiller : densité liste sur petits écrans, dark mode auto, accessibilité (contrast ratios).
+
+---
+## 🛠️ Construction & Lancement
+Ouvrir projet dans Android Studio Flamingo+.
+Synchroniser Gradle puis lancer sur émulateur API 24+.
+
+---
+## 📁 Mapping Web → Mobile
+| Web | Mobile |
+|-----|--------|
+| `coursier.php` header | `DashboardHeader` |
+| Tableau commandes | `LazyColumn` + `CommandeCard` |
+| Boutons statut | `StatusChip` |
+| Formulaire login | `LoginScreen` |
+| Carte (plein écran) | `MapScreen` |
+
+---
+## ♿ Accessibilité (en prévision)
+- Ajouter `contentDescription` manquants (icônes secondaires)
+- Support tailles dynamiques (fontScale)
+- Mode clair (générer palette LightColors)
+
+---
+## ⚠️ Limitations actuelles
+- Statut persistant non stocké (mémoire volatile)
+- Pas encore de cache commandes
+- Pas d’état offline / retry réseau
+- Éviter les noms de fichiers Kotlin avec accents (ex: `Améliorée`) car certains environnements Windows + daemon Kotlin provoquent des erreurs de chemin; fichier renommé en `CommandeCardAmelioree.kt`.
+
+---
+## 🚀 Personnalisation rapide
+1. Changer brand : modifier `PrimaryGold` / gradient dans `Color.kt`.
+2. Ajuster arrondis : éditer `Dimens.kt`.
+3. Ajouter variante bouton : étendre `SuzoskyButtonStyle`.
+
+---
+## 📄 Licence / Droits
+Code interne propriété Suzosky (non publié open-source). Usage restreint.
+
+---
+## ✍️ Auteurs
+Refonte Android native assistée par génération automatisée (2025).
+
+---
+## 🔁 Miroir Documentation
+Copie synchronisée aussi dans `DOCUMENTATION_FINALE/README_ANDROID.md`.
+

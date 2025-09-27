@@ -1,0 +1,52 @@
+/* HERO SECTION LAYOUT */
+.hero-content-wrapper {
+    position: relative;
+    z-index: 2;
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 100px 24px 40px;
+}
+.hero-text {
+    margin-bottom: 24px;
+}
+.hero-title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.2;
+}
+.hero-accent {
+    background: var(--gradient-gold);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.hero-subtitle {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.4;
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 768px) {
+    .hero-content-wrapper {
+        padding: 70px 16px 40px;
+    }
+    
+    .hero-left {
+        min-width: auto;
+    }
+    
+    .hero-title {
+        font-size: 2.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-content-wrapper {
+        flex-direction: column;
+    }
+}

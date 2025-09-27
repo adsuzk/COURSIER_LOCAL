@@ -1,0 +1,1242 @@
+{
+    "system": {
+        "timestamp": "2025-09-26 22:30:43.000000",
+        "microtime": 1758918643.726524,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "FCM",
+        "level": "INFO",
+        "pid": 13516,
+        "user_agent": "CLI",
+        "ip_address": "::1",
+        "request_uri": "\/coursier_prod\/api\/assign_nearest_coursier.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 116.9798,
+        "file": "fcm_enhanced.php",
+        "line": 320,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "FCM token supprimé après réponse UNREGISTERED",
+    "context": {
+        "token_prefix": "dYszqJqqQrGu…",
+        "coursier_id": 7,
+        "order_id": 155
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 320,
+            "function": "logInfo"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 81,
+            "function": "fcm_cleanup_unregistered_tokens"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-26 22:30:43.000000",
+        "microtime": 1758918643.786437,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "FCM",
+        "level": "INFO",
+        "pid": 13516,
+        "user_agent": "CLI",
+        "ip_address": "::1",
+        "request_uri": "\/coursier_prod\/api\/assign_nearest_coursier.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 117.0397,
+        "file": "fcm_enhanced.php",
+        "line": 320,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "FCM token supprimé après réponse UNREGISTERED",
+    "context": {
+        "token_prefix": "dYszqJqqQrGu…",
+        "coursier_id": 7,
+        "order_id": 155
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 320,
+            "function": "logInfo"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 81,
+            "function": "fcm_cleanup_unregistered_tokens"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-26 22:30:43.000000",
+        "microtime": 1758918643.864514,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "FCM",
+        "level": "INFO",
+        "pid": 13516,
+        "user_agent": "CLI",
+        "ip_address": "::1",
+        "request_uri": "\/coursier_prod\/api\/assign_nearest_coursier.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 117.1178,
+        "file": "fcm_enhanced.php",
+        "line": 320,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "FCM token supprimé après réponse UNREGISTERED",
+    "context": {
+        "token_prefix": "dYszqJqqQrGu…",
+        "coursier_id": 7,
+        "order_id": 155
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 320,
+            "function": "logInfo"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 81,
+            "function": "fcm_cleanup_unregistered_tokens"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-26 22:30:43.000000",
+        "microtime": 1758918643.887017,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "FCM",
+        "level": "INFO",
+        "pid": 13516,
+        "user_agent": "CLI",
+        "ip_address": "::1",
+        "request_uri": "\/coursier_prod\/api\/assign_nearest_coursier.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 117.1403,
+        "file": "fcm_enhanced.php",
+        "line": 320,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "FCM token supprimé après réponse UNREGISTERED",
+    "context": {
+        "token_prefix": "dYszqJqqQrGu…",
+        "coursier_id": 7,
+        "order_id": 155
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 320,
+            "function": "logInfo"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 81,
+            "function": "fcm_cleanup_unregistered_tokens"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-26 22:30:43.000000",
+        "microtime": 1758918643.904993,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "FCM",
+        "level": "INFO",
+        "pid": 13516,
+        "user_agent": "CLI",
+        "ip_address": "::1",
+        "request_uri": "\/coursier_prod\/api\/assign_nearest_coursier.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 117.1583,
+        "file": "fcm_enhanced.php",
+        "line": 320,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "FCM token supprimé après réponse UNREGISTERED",
+    "context": {
+        "token_prefix": "dYszqJqqQrGu…",
+        "coursier_id": 7,
+        "order_id": 155
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 320,
+            "function": "logInfo"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 81,
+            "function": "fcm_cleanup_unregistered_tokens"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-26 22:30:44.000000",
+        "microtime": 1758918644.036395,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "FCM",
+        "level": "INFO",
+        "pid": 13516,
+        "user_agent": "CLI",
+        "ip_address": "::1",
+        "request_uri": "\/coursier_prod\/api\/assign_nearest_coursier.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 117.2897,
+        "file": "fcm_enhanced.php",
+        "line": 320,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "FCM token supprimé après réponse UNREGISTERED",
+    "context": {
+        "token_prefix": "dYszqJqqQrGu…",
+        "coursier_id": 7,
+        "order_id": 155
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 320,
+            "function": "logInfo"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 81,
+            "function": "fcm_cleanup_unregistered_tokens"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-26 22:30:44.000000",
+        "microtime": 1758918644.059605,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "FCM",
+        "level": "INFO",
+        "pid": 13516,
+        "user_agent": "CLI",
+        "ip_address": "::1",
+        "request_uri": "\/coursier_prod\/api\/assign_nearest_coursier.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 117.3129,
+        "file": "fcm_enhanced.php",
+        "line": 320,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "FCM token supprimé après réponse UNREGISTERED",
+    "context": {
+        "token_prefix": "dYszqJqqQrGu…",
+        "coursier_id": 7,
+        "order_id": 155
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 320,
+            "function": "logInfo"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 81,
+            "function": "fcm_cleanup_unregistered_tokens"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-26 22:30:44.000000",
+        "microtime": 1758918644.080103,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "FCM",
+        "level": "INFO",
+        "pid": 13516,
+        "user_agent": "CLI",
+        "ip_address": "::1",
+        "request_uri": "\/coursier_prod\/api\/assign_nearest_coursier.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 117.3334,
+        "file": "fcm_enhanced.php",
+        "line": 320,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "FCM token supprimé après réponse UNREGISTERED",
+    "context": {
+        "token_prefix": "dYszqJqqQrGu…",
+        "coursier_id": 7,
+        "order_id": 155
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 320,
+            "function": "logInfo"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 81,
+            "function": "fcm_cleanup_unregistered_tokens"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-26 22:30:44.000000",
+        "microtime": 1758918644.206384,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "FCM",
+        "level": "INFO",
+        "pid": 13516,
+        "user_agent": "CLI",
+        "ip_address": "::1",
+        "request_uri": "\/coursier_prod\/api\/assign_nearest_coursier.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 117.4597,
+        "file": "fcm_enhanced.php",
+        "line": 320,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "FCM token supprimé après réponse UNREGISTERED",
+    "context": {
+        "token_prefix": "dYszqJqqQrGu…",
+        "coursier_id": 7,
+        "order_id": 155
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 320,
+            "function": "logInfo"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 81,
+            "function": "fcm_cleanup_unregistered_tokens"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-26 22:30:44.000000",
+        "microtime": 1758918644.226756,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "FCM",
+        "level": "INFO",
+        "pid": 13516,
+        "user_agent": "CLI",
+        "ip_address": "::1",
+        "request_uri": "\/coursier_prod\/api\/assign_nearest_coursier.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 117.48,
+        "file": "fcm_enhanced.php",
+        "line": 320,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "FCM token supprimé après réponse UNREGISTERED",
+    "context": {
+        "token_prefix": "dYszqJqqQrGu…",
+        "coursier_id": 7,
+        "order_id": 155
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 320,
+            "function": "logInfo"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 81,
+            "function": "fcm_cleanup_unregistered_tokens"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-26 22:30:44.000000",
+        "microtime": 1758918644.251578,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "FCM",
+        "level": "INFO",
+        "pid": 13516,
+        "user_agent": "CLI",
+        "ip_address": "::1",
+        "request_uri": "\/coursier_prod\/api\/assign_nearest_coursier.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 117.5048,
+        "file": "fcm_enhanced.php",
+        "line": 320,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "FCM token supprimé après réponse UNREGISTERED",
+    "context": {
+        "token_prefix": "dYszqJqqQrGu…",
+        "coursier_id": 7,
+        "order_id": 155
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 320,
+            "function": "logInfo"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 81,
+            "function": "fcm_cleanup_unregistered_tokens"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-26 22:30:44.000000",
+        "microtime": 1758918644.425642,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "FCM",
+        "level": "INFO",
+        "pid": 13516,
+        "user_agent": "CLI",
+        "ip_address": "::1",
+        "request_uri": "\/coursier_prod\/api\/assign_nearest_coursier.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 117.679,
+        "file": "fcm_enhanced.php",
+        "line": 320,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "FCM token supprimé après réponse UNREGISTERED",
+    "context": {
+        "token_prefix": "dYszqJqqQrGu…",
+        "coursier_id": 7,
+        "order_id": 155
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 320,
+            "function": "logInfo"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 81,
+            "function": "fcm_cleanup_unregistered_tokens"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-26 22:30:44.000000",
+        "microtime": 1758918644.447854,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "FCM",
+        "level": "INFO",
+        "pid": 13516,
+        "user_agent": "CLI",
+        "ip_address": "::1",
+        "request_uri": "\/coursier_prod\/api\/assign_nearest_coursier.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 117.7011,
+        "file": "fcm_enhanced.php",
+        "line": 320,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "FCM token supprimé après réponse UNREGISTERED",
+    "context": {
+        "token_prefix": "dYszqJqqQrGu…",
+        "coursier_id": 7,
+        "order_id": 155
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 320,
+            "function": "logInfo"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 81,
+            "function": "fcm_cleanup_unregistered_tokens"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-26 22:30:44.000000",
+        "microtime": 1758918644.556722,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "FCM",
+        "level": "INFO",
+        "pid": 13516,
+        "user_agent": "CLI",
+        "ip_address": "::1",
+        "request_uri": "\/coursier_prod\/api\/assign_nearest_coursier.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 117.81,
+        "file": "fcm_enhanced.php",
+        "line": 320,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "FCM token supprimé après réponse UNREGISTERED",
+    "context": {
+        "token_prefix": "dYszqJqqQrGu…",
+        "coursier_id": 7,
+        "order_id": 155
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 320,
+            "function": "logInfo"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 81,
+            "function": "fcm_cleanup_unregistered_tokens"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-26 22:30:44.000000",
+        "microtime": 1758918644.580838,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "FCM",
+        "level": "INFO",
+        "pid": 13516,
+        "user_agent": "CLI",
+        "ip_address": "::1",
+        "request_uri": "\/coursier_prod\/api\/assign_nearest_coursier.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 117.8341,
+        "file": "fcm_enhanced.php",
+        "line": 320,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "FCM token supprimé après réponse UNREGISTERED",
+    "context": {
+        "token_prefix": "dYszqJqqQrGu…",
+        "coursier_id": 7,
+        "order_id": 155
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 320,
+            "function": "logInfo"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 81,
+            "function": "fcm_cleanup_unregistered_tokens"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-26 22:30:44.000000",
+        "microtime": 1758918644.603733,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "FCM",
+        "level": "INFO",
+        "pid": 13516,
+        "user_agent": "CLI",
+        "ip_address": "::1",
+        "request_uri": "\/coursier_prod\/api\/assign_nearest_coursier.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 117.857,
+        "file": "fcm_enhanced.php",
+        "line": 320,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "FCM token supprimé après réponse UNREGISTERED",
+    "context": {
+        "token_prefix": "dYszqJqqQrGu…",
+        "coursier_id": 7,
+        "order_id": 155
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 320,
+            "function": "logInfo"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 81,
+            "function": "fcm_cleanup_unregistered_tokens"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-26 22:30:44.000000",
+        "microtime": 1758918644.69527,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "FCM",
+        "level": "INFO",
+        "pid": 13516,
+        "user_agent": "CLI",
+        "ip_address": "::1",
+        "request_uri": "\/coursier_prod\/api\/assign_nearest_coursier.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 117.9485,
+        "file": "fcm_enhanced.php",
+        "line": 320,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "FCM token supprimé après réponse UNREGISTERED",
+    "context": {
+        "token_prefix": "dYszqJqqQrGu…",
+        "coursier_id": 7,
+        "order_id": 155
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 320,
+            "function": "logInfo"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 81,
+            "function": "fcm_cleanup_unregistered_tokens"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-26 22:30:44.000000",
+        "microtime": 1758918644.715512,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "FCM",
+        "level": "INFO",
+        "pid": 13516,
+        "user_agent": "CLI",
+        "ip_address": "::1",
+        "request_uri": "\/coursier_prod\/api\/assign_nearest_coursier.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 117.9688,
+        "file": "fcm_enhanced.php",
+        "line": 320,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "FCM token supprimé après réponse UNREGISTERED",
+    "context": {
+        "token_prefix": "dYszqJqqQrGu…",
+        "coursier_id": 7,
+        "order_id": 155
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 320,
+            "function": "logInfo"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 81,
+            "function": "fcm_cleanup_unregistered_tokens"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-26 22:30:44.000000",
+        "microtime": 1758918644.795768,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "FCM",
+        "level": "INFO",
+        "pid": 13516,
+        "user_agent": "CLI",
+        "ip_address": "::1",
+        "request_uri": "\/coursier_prod\/api\/assign_nearest_coursier.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 118.049,
+        "file": "fcm_enhanced.php",
+        "line": 320,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "FCM token supprimé après réponse UNREGISTERED",
+    "context": {
+        "token_prefix": "dYszqJqqQrGu…",
+        "coursier_id": 7,
+        "order_id": 155
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 320,
+            "function": "logInfo"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 81,
+            "function": "fcm_cleanup_unregistered_tokens"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-26 22:30:44.000000",
+        "microtime": 1758918644.831332,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "FCM",
+        "level": "INFO",
+        "pid": 13516,
+        "user_agent": "CLI",
+        "ip_address": "::1",
+        "request_uri": "\/coursier_prod\/api\/assign_nearest_coursier.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 118.0846,
+        "file": "fcm_enhanced.php",
+        "line": 320,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "FCM token supprimé après réponse UNREGISTERED",
+    "context": {
+        "token_prefix": "dYszqJqqQrGu…",
+        "coursier_id": 7,
+        "order_id": 155
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 320,
+            "function": "logInfo"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 81,
+            "function": "fcm_cleanup_unregistered_tokens"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-26 22:30:44.000000",
+        "microtime": 1758918644.857701,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "FCM",
+        "level": "INFO",
+        "pid": 13516,
+        "user_agent": "CLI",
+        "ip_address": "::1",
+        "request_uri": "\/coursier_prod\/api\/assign_nearest_coursier.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 118.111,
+        "file": "fcm_enhanced.php",
+        "line": 320,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "FCM token supprimé après réponse UNREGISTERED",
+    "context": {
+        "token_prefix": "dYszqJqqQrGu…",
+        "coursier_id": 7,
+        "order_id": 155
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 320,
+            "function": "logInfo"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 81,
+            "function": "fcm_cleanup_unregistered_tokens"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-26 22:30:44.000000",
+        "microtime": 1758918644.949439,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "FCM",
+        "level": "INFO",
+        "pid": 13516,
+        "user_agent": "CLI",
+        "ip_address": "::1",
+        "request_uri": "\/coursier_prod\/api\/assign_nearest_coursier.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 118.2027,
+        "file": "fcm_enhanced.php",
+        "line": 320,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "FCM token supprimé après réponse UNREGISTERED",
+    "context": {
+        "token_prefix": "dYszqJqqQrGu…",
+        "coursier_id": 7,
+        "order_id": 155
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 320,
+            "function": "logInfo"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 81,
+            "function": "fcm_cleanup_unregistered_tokens"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-26 22:30:44.000000",
+        "microtime": 1758918644.99322,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "FCM",
+        "level": "INFO",
+        "pid": 13516,
+        "user_agent": "CLI",
+        "ip_address": "::1",
+        "request_uri": "\/coursier_prod\/api\/assign_nearest_coursier.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 118.2465,
+        "file": "fcm_enhanced.php",
+        "line": 320,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "FCM token supprimé après réponse UNREGISTERED",
+    "context": {
+        "token_prefix": "dYszqJqqQrGu…",
+        "coursier_id": 7,
+        "order_id": 155
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 320,
+            "function": "logInfo"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 81,
+            "function": "fcm_cleanup_unregistered_tokens"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-26 22:30:45.000000",
+        "microtime": 1758918645.014561,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "FCM",
+        "level": "INFO",
+        "pid": 13516,
+        "user_agent": "CLI",
+        "ip_address": "::1",
+        "request_uri": "\/coursier_prod\/api\/assign_nearest_coursier.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 118.2678,
+        "file": "fcm_enhanced.php",
+        "line": 320,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "FCM token supprimé après réponse UNREGISTERED",
+    "context": {
+        "token_prefix": "dYszqJqqQrGu…",
+        "coursier_id": 7,
+        "order_id": 155
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 320,
+            "function": "logInfo"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 81,
+            "function": "fcm_cleanup_unregistered_tokens"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-26 22:30:45.000000",
+        "microtime": 1758918645.038158,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "FCM",
+        "level": "INFO",
+        "pid": 13516,
+        "user_agent": "CLI",
+        "ip_address": "::1",
+        "request_uri": "\/coursier_prod\/api\/assign_nearest_coursier.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 118.2914,
+        "file": "fcm_enhanced.php",
+        "line": 320,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "FCM token supprimé après réponse UNREGISTERED",
+    "context": {
+        "token_prefix": "dYszqJqqQrGu…",
+        "coursier_id": 7,
+        "order_id": 155
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 320,
+            "function": "logInfo"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 81,
+            "function": "fcm_cleanup_unregistered_tokens"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-26 22:30:45.000000",
+        "microtime": 1758918645.075084,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "FCM",
+        "level": "INFO",
+        "pid": 13516,
+        "user_agent": "CLI",
+        "ip_address": "::1",
+        "request_uri": "\/coursier_prod\/api\/assign_nearest_coursier.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 118.3284,
+        "file": "fcm_enhanced.php",
+        "line": 320,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "FCM token supprimé après réponse UNREGISTERED",
+    "context": {
+        "token_prefix": "dYszqJqqQrGu…",
+        "coursier_id": 7,
+        "order_id": 155
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 320,
+            "function": "logInfo"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 81,
+            "function": "fcm_cleanup_unregistered_tokens"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-26 22:30:45.000000",
+        "microtime": 1758918645.160608,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "FCM",
+        "level": "INFO",
+        "pid": 13516,
+        "user_agent": "CLI",
+        "ip_address": "::1",
+        "request_uri": "\/coursier_prod\/api\/assign_nearest_coursier.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 118.4139,
+        "file": "fcm_enhanced.php",
+        "line": 320,
+        "function": "logInfo",
+        "class": ""
+    },
+    "message": "FCM token supprimé après réponse UNREGISTERED",
+    "context": {
+        "token_prefix": "dYszqJqqQrGu…",
+        "coursier_id": 7,
+        "order_id": 155
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+            "line": 314,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 320,
+            "function": "logInfo"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\coursier_prod\\api\\lib\\fcm_enhanced.php",
+            "line": 81,
+            "function": "fcm_cleanup_unregistered_tokens"
+        }
+    ]
+}

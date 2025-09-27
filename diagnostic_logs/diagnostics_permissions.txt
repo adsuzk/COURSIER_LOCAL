@@ -1,0 +1,5 @@
+# diagnostics_permissions.txt
+
+# Server file and directory permissions (example)
+# Command: ls -la /var/www/coursier_prod
+

@@ -1,0 +1,53 @@
+/* ========================================
+   FORM & INPUT STYLES
+======================================== */
+
+.form-group input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary-gold);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 
+        inset 0 2px 8px rgba(0, 0, 0, 0.2),
+        0 0 0 3px rgba(212, 168, 83, 0.3);
+}
+
+.route-arrow {
+    color: var(--primary-gold);
+    font-size: 1.5rem;
+    font-weight: 900;
+    margin: 0 8px;
+    text-shadow: 0 2px 8px rgba(212, 168, 83, 0.6);
+}
+
+.phone-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.package-details {
+    margin-bottom: 24px;
+}
+
+.priority-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.priority-option {
+    position: relative;
+}
+
+.priority-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}

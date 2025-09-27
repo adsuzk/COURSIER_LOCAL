@@ -1,0 +1,641 @@
+{
+    "timestamp": "2025-09-27T03:47:24+02:00",
+    "root": "C:\\xampp\\htdocs\\coursier_prod",
+    "duplicates": {
+        "files_by_hash": [
+            {
+                "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "count": 10,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\api\\orders.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\assign_last_order.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierAppV7\\build_output.txt",
+                    "C:\\xampp\\htdocs\\coursier_prod\\diagnostics_errors.log",
+                    "C:\\xampp\\htdocs\\coursier_prod\\DOCUMENTATION_FINALE\\DOCUMENTATION_PROD\\IMPLEMENTATION_FINALE.md",
+                    "C:\\xampp\\htdocs\\coursier_prod\\FORCE_PRODUCTION_DB",
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\order_history.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\user_profile.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\Tests\\cli_check_coursiers.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\tools\\audit_output\\quarantine_20250927_032924\\C"
+                ]
+            },
+            {
+                "hash": "5c3174b74edc6f2b9e0743594b8bd3c7f31e4f4405758cc9872b3fe1de1d28b4",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierAppV7\\app\\.gitignore",
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierSuzoskyApp Clt\\app\\.gitignore"
+                ]
+            },
+            {
+                "hash": "56fd960cf225f6ca40f982b13a5dbb0d8bc3dfde13ff76422825c6070d0a1890",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierAppV7\\app\\proguard-rules.pro",
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierSuzoskyApp Clt\\app\\proguard-rules.pro"
+                ]
+            },
+            {
+                "hash": "f1948719ec97aaf9d344b05952959e6300f3a3bc4e1b320a31362bb90e5f74cd",
+                "count": 6,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierAppV7\\app\\src\\main\\res\\mipmap-anydpi-v26\\ic_launcher_foreground.xml",
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierAppV7\\app\\src\\main\\res\\mipmap-hdpi\\ic_launcher_foreground.xml",
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierAppV7\\app\\src\\main\\res\\mipmap-mdpi\\ic_launcher_foreground.xml",
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierAppV7\\app\\src\\main\\res\\mipmap-xhdpi\\ic_launcher_foreground.xml",
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierAppV7\\app\\src\\main\\res\\mipmap-xxhdpi\\ic_launcher_foreground.xml",
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierAppV7\\app\\src\\main\\res\\mipmap-xxxhdpi\\ic_launcher_foreground.xml"
+                ]
+            },
+            {
+                "hash": "dd00996198640ed28fbc09cdcd7a3807cf8707f3eb255b659634da3ca6a6ff01",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierAppV7\\app\\src\\main\\res\\mipmap-hdpi\\ic_launcher.webp",
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierSuzoskyApp Clt\\app\\src\\main\\res\\mipmap-hdpi\\ic_launcher.webp"
+                ]
+            },
+            {
+                "hash": "1ed73f5341a69d3b41c7e02e126803f50cc8c3284adf4bbb737f0c93577aef07",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierAppV7\\app\\src\\main\\res\\mipmap-hdpi\\ic_launcher_round.webp",
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierSuzoskyApp Clt\\app\\src\\main\\res\\mipmap-hdpi\\ic_launcher_round.webp"
+                ]
+            },
+            {
+                "hash": "5cb88dcce8bfca908222a6019d2a5aedbe28a7e25f3d9b18d655919fd7e30224",
+                "count": 5,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierAppV7\\app\\src\\main\\res\\mipmap-hdpi\\ic_launcher_round_foreground.xml",
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierAppV7\\app\\src\\main\\res\\mipmap-mdpi\\ic_launcher_round_foreground.xml",
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierAppV7\\app\\src\\main\\res\\mipmap-xhdpi\\ic_launcher_round_foreground.xml",
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierAppV7\\app\\src\\main\\res\\mipmap-xxhdpi\\ic_launcher_round_foreground.xml",
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierAppV7\\app\\src\\main\\res\\mipmap-xxxhdpi\\ic_launcher_round_foreground.xml"
+                ]
+            },
+            {
+                "hash": "846219e6f72fe9a6c104ca8919cbee36a101e7d2ff8da9da67b689a5888f060d",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierAppV7\\app\\src\\main\\res\\mipmap-mdpi\\ic_launcher.webp",
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierSuzoskyApp Clt\\app\\src\\main\\res\\mipmap-mdpi\\ic_launcher.webp"
+                ]
+            },
+            {
+                "hash": "4e2c58b91de01130e6479e00cbbaaf6e77cd961dd2c8e303cf13cd077fa92632",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierAppV7\\app\\src\\main\\res\\mipmap-mdpi\\ic_launcher_round.webp",
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierSuzoskyApp Clt\\app\\src\\main\\res\\mipmap-mdpi\\ic_launcher_round.webp"
+                ]
+            },
+            {
+                "hash": "398340dad816fc9a6338cb151a8cf1e45b926f9bfb70628b24c4bd2523cc94d4",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierAppV7\\app\\src\\main\\res\\mipmap-xhdpi\\ic_launcher.webp",
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierSuzoskyApp Clt\\app\\src\\main\\res\\mipmap-xhdpi\\ic_launcher.webp"
+                ]
+            },
+            {
+                "hash": "91b490aef86574901137f0a252272e1f1add99c1ad709e0696ed68929b88d261",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierAppV7\\app\\src\\main\\res\\mipmap-xhdpi\\ic_launcher_round.webp",
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierSuzoskyApp Clt\\app\\src\\main\\res\\mipmap-xhdpi\\ic_launcher_round.webp"
+                ]
+            },
+            {
+                "hash": "58ae87fa0c5b5d1562d27fd648d2c061553fe20e3ed570bde588162d01ea7a27",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierAppV7\\app\\src\\main\\res\\mipmap-xxhdpi\\ic_launcher.webp",
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierSuzoskyApp Clt\\app\\src\\main\\res\\mipmap-xxhdpi\\ic_launcher.webp"
+                ]
+            },
+            {
+                "hash": "3009fad079f5772f30ecd767f98924367fbe0f81c30048d672d4fda2d5ca7d12",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierAppV7\\app\\src\\main\\res\\mipmap-xxhdpi\\ic_launcher_round.webp",
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierSuzoskyApp Clt\\app\\src\\main\\res\\mipmap-xxhdpi\\ic_launcher_round.webp"
+                ]
+            },
+            {
+                "hash": "f98fef5bc3bfe5b65692c40ad1cbae2bec4faf9f1b249c397626740db71b62d8",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierAppV7\\app\\src\\main\\res\\mipmap-xxxhdpi\\ic_launcher.webp",
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierSuzoskyApp Clt\\app\\src\\main\\res\\mipmap-xxxhdpi\\ic_launcher.webp"
+                ]
+            },
+            {
+                "hash": "5faf033745c8c882c43bb1b372d4e4a5890caec63d9892a2e756c954108b85dc",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierAppV7\\app\\src\\main\\res\\mipmap-xxxhdpi\\ic_launcher_round.webp",
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierSuzoskyApp Clt\\app\\src\\main\\res\\mipmap-xxxhdpi\\ic_launcher_round.webp"
+                ]
+            },
+            {
+                "hash": "accecfe9663494855346def1a0de839eb9ea5f21533385cd2ce9c1b4d156a28c",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierAppV7\\build\\reports\\configuration-cache\\3x6fg5valusbms305b7houwkn\\f1nnziisz8ugj8vvh0huqam1k\\configuration-cache-report.html",
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierAppV7\\build\\reports\\configuration-cache\\7zsxf6mcf0sefyg75kakf3hpg\\f1nnziisz8ugj8vvh0huqam1k\\configuration-cache-report.html"
+                ]
+            },
+            {
+                "hash": "e996d452d2645e70c01c11143ca2d3742734a28da2bf61f25c82bdc288c9e637",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierAppV7\\gradle\\wrapper\\gradle-wrapper.jar",
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierSuzoskyApp Clt\\gradle\\wrapper\\gradle-wrapper.jar"
+                ]
+            },
+            {
+                "hash": "88f7653499ef524126ea5018a99baf9cc3269e7e584d6205dfdd76db39f39cc0",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierSuzoskyApp Clt\\app\\src\\main\\res\\mipmap-anydpi-v26\\ic_launcher.xml",
+                    "C:\\xampp\\htdocs\\coursier_prod\\CoursierSuzoskyApp Clt\\app\\src\\main\\res\\mipmap-anydpi-v26\\ic_launcher_round.xml"
+                ]
+            }
+        ],
+        "php_functions": [
+            {
+                "hash": "2d98e70c5178f68d0a58d91a0feb2444ef2ccb6dd390d59041245f2e3697ea3b",
+                "name": "showTestEmailModal",
+                "signature_preview": "function showTestEmailModal() { const email = prompt(\"Adresse email pour le test :\", \"admin@conciergerie-privee-suzosky.com\"); if (email && email.includes(\"@\")) { const form = document.createElement(\"...",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\admin\\emails.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\create_interface_files.php"
+                ]
+            },
+            {
+                "hash": "439aaa3e931d3bfce01739bc3dff2b192ff7add98973e52c8240b0f1beb5666e",
+                "name": "getAgentsSchemaInfo",
+                "signature_preview": "function getAgentsSchemaInfo(PDO $pdo): array { static $cache = null; if ($cache !== null) { return $cache; }",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\admin_commandes_enhanced.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\api\\tracking_realtime.php"
+                ]
+            },
+            {
+                "hash": "9c4becf3b58b3f1a397888a6e7f7a84d25b243853923691749df52545f97c649",
+                "name": "initiateRecharge",
+                "signature_preview": "function initiateRecharge($coursierId, $amount, $currency = 'XOF', $description = 'Recharge compte coursier Suzosky') { try { $transactionId = 'SUZOSKY_' . $coursierId . '_' . time() . '_' . rand(1000...",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\cinetpay\\cinetpay_integration.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\cinetpay\\cinetpay_integration_fixed.php"
+                ]
+            },
+            {
+                "hash": "069e34e041897462564176678e5a19f9729982cb03f85614063c1f5b8a18d407",
+                "name": "processSuccessfulPayment",
+                "signature_preview": "function processSuccessfulPayment($transaction, $amount) { try { $pdo = getDBConnection(); $pdo->beginTransaction(); $this->updateTransactionStatus($transaction['transaction_id'], 'completed'); $cours...",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\cinetpay\\cinetpay_integration.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\cinetpay\\cinetpay_integration_fixed.php"
+                ]
+            },
+            {
+                "hash": "99531651a2096525a7c10ecc3f5f11c6cc25dcd92c7557c5c48e76ab4a76d793",
+                "name": "creditCourrierAccount",
+                "signature_preview": "function creditCourrierAccount($coursierId, $amount) { $pdo = getDBConnection(); $stmt = $pdo->prepare(\"UPDATE coursiers SET credit_balance = credit_balance + ? WHERE id = ?\"); if (!$stmt->execute([$a...",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\cinetpay\\cinetpay_integration.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\cinetpay\\cinetpay_integration_fixed.php"
+                ]
+            },
+            {
+                "hash": "204538ba2d0ae549df98b2b9da4f4842134126418138588cfe7b4b8dd2fa5cf2",
+                "name": "saveTransactionRecord",
+                "signature_preview": "function saveTransactionRecord($transactionId, $coursierId, $amount, $status) { $pdo = getDBConnection(); $stmt = $pdo->prepare(\"INSERT INTO payment_transactions (transaction_id, coursier_id, amount, ...",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\cinetpay\\cinetpay_integration.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\cinetpay\\cinetpay_integration_fixed.php"
+                ]
+            },
+            {
+                "hash": "206f120c68056d06f54a86a60f7ac1d4eefda3a5596d366c267834deb997f67c",
+                "name": "updateTransactionStatus",
+                "signature_preview": "function updateTransactionStatus($transactionId, $status) { $pdo = getDBConnection(); $stmt = $pdo->prepare(\"UPDATE payment_transactions SET status = ?, updated_at = NOW() WHERE transaction_id = ?\"); ...",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\cinetpay\\cinetpay_integration.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\cinetpay\\cinetpay_integration_fixed.php"
+                ]
+            },
+            {
+                "hash": "c6f898bf320633b7dcb5469930d93f429b5ff00fb2d5df97a17d6d6ecee9d189",
+                "name": "getTransactionRecord",
+                "signature_preview": "function getTransactionRecord($transactionId) { $pdo = getDBConnection(); $stmt = $pdo->prepare(\"SELECT * FROM payment_transactions WHERE transaction_id = ?\"); $stmt->execute([$transactionId]); return...",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\cinetpay\\cinetpay_integration.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\cinetpay\\cinetpay_integration_fixed.php"
+                ]
+            },
+            {
+                "hash": "2edd009a4a168e8668153c2381188b900da2e94e9d268db2e632eb672289c2f5",
+                "name": "logAccountHistory",
+                "signature_preview": "function logAccountHistory($coursierId, $amount, $type, $description) { $pdo = getDBConnection(); $stmt = $pdo->prepare(\"INSERT INTO account_history (coursier_id, amount, type, description, created_at...",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\cinetpay\\cinetpay_integration.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\cinetpay\\cinetpay_integration_fixed.php"
+                ]
+            },
+            {
+                "hash": "a625ad3f2976354556fc7ff7f7cecc1923bf2c9e36e9fb012f9ae3d2043e7a3c",
+                "name": "verifyNotificationSignature",
+                "signature_preview": "function verifyNotificationSignature($data) { $signature = $data['signature'] ?? ''; $computedSignature = hash('sha256', $data['cpm_site_id'] . $data['cpm_trans_id'] . $data['cpm_trans_date'] . $data[...",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\cinetpay\\cinetpay_integration.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\cinetpay\\cinetpay_integration_fixed.php"
+                ]
+            },
+            {
+                "hash": "54f45443aa7aac1121a15748fbd22194658c06f3b2657bc7c66b5fd2b45ab8ae",
+                "name": "sendRechargeNotification",
+                "signature_preview": "function sendRechargeNotification($coursierId, $amount) { $message = \"Votre compte a été crédité de {$amount}",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\cinetpay\\cinetpay_integration.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\cinetpay\\cinetpay_integration_fixed.php"
+                ]
+            },
+            {
+                "hash": "2efee9ec176c3b48b743c8f457a9a2dde9285642d35cac91fbd53b70453d9db2",
+                "name": "calculateAvailableBalance",
+                "signature_preview": "function calculateAvailableBalance($deliveryEarnings, $creditBalance) { $availableFromDeliveries = $deliveryEarnings * 0.9; return $availableFromDeliveries + $creditBalance; }",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\cinetpay\\cinetpay_integration.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\cinetpay\\cinetpay_integration_fixed.php"
+                ]
+            },
+            {
+                "hash": "25ba190c9918b10ba5091dc912c747547777fb4cd2bedb96d76f11d03402537e",
+                "name": "deductDeliveryCost",
+                "signature_preview": "function deductDeliveryCost($coursierId, $amount) { try { $pdo = getDBConnection(); $pdo->beginTransaction(); $stmt = $pdo->prepare(\"SELECT delivery_earnings, credit_balance FROM coursiers WHERE id = ...",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\cinetpay\\cinetpay_integration.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\cinetpay\\cinetpay_integration_fixed.php"
+                ]
+            },
+            {
+                "hash": "6a27464b9cac24bc5026b68319ebe7d4f710123de95b48cf086399cf4f697373",
+                "name": "createPaymentTables",
+                "signature_preview": "function createPaymentTables() { try { $pdo = getDBConnection(); if ($pdo === null) { error_log(\"Erreur: Connexion PDO null dans createPaymentTables()\"); return false; }",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\cinetpay\\cinetpay_integration.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\cinetpay\\cinetpay_integration_fixed.php"
+                ]
+            },
+            {
+                "hash": "f47daca0e2bbb12b5d7370b7d9454c97f7ccf65d52285ce1b36f88e33529d829",
+                "name": "formatBytes",
+                "signature_preview": "function formatBytes($bytes) { $units = ['B', 'KB', 'MB', 'GB']; $bytes = max($bytes, 0); $pow = floor(($bytes ? log($bytes) : 0) / log(1024)); $pow = min($pow, count($units) - 1); $bytes /= pow(1024,...",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\advanced_logger.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\diagnostic_logs\\log_viewer.php"
+                ]
+            },
+            {
+                "hash": "786c1f394ceb02e50fc83d3131a530e2031fa587a1f543ec098afd42ebd5adbd",
+                "name": "setupAutocomplete",
+                "signature_preview": "function setupAutocomplete() { console.log('Initialisation de l\\'autocomplétion...'); try { if (typeof google === 'undefined' || !google.maps || !google.maps.places) { console.error('Google Maps API ...",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\js_autocomplete.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\map.php"
+                ]
+            },
+            {
+                "hash": "04b3a94c9193b0412c1c92b3b27217fc2923a6d9021d6bde3b88a2d4c9dcfe97",
+                "name": "escapeHtml",
+                "signature_preview": "function escapeHtml(text) { const div = document.createElement('div'); div.textContent = String(text ?? ''); return div.innerHTML; }",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\js_chat_support.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\js_chat_support_ai.php"
+                ]
+            },
+            {
+                "hash": "1522351103146757c5918e2e93dea1d54ad46f2869314d5c41580d204e6e0c71",
+                "name": "fetchJSON",
+                "signature_preview": "function fetchJSON(url, options = {}) { const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\js_chat_support.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\js_chat_support_ai.php"
+                ]
+            },
+            {
+                "hash": "77effb49fb8cc3894bb09d433611c29364c06fb4b0d70674c8c9b2efb0a6db74",
+                "name": "updateNotificationBadge",
+                "signature_preview": "function updateNotificationBadge() { const badge = document.querySelector('.chat-toggle .chat-notification'); if (!badge) return; if (unreadCount > 0) { badge.style.display = 'flex'; badge.textContent...",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\js_chat_support.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\js_chat_support_ai.php"
+                ]
+            },
+            {
+                "hash": "2484354a36042f6f2ee214ad2344967056734361dc2a119402fab803defa1669",
+                "name": "scrollChatToBottom",
+                "signature_preview": "function scrollChatToBottom() { const container = document.getElementById('chatMessages'); if (container) container.scrollTop = container.scrollHeight; }",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\js_chat_support.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\js_chat_support_ai.php"
+                ]
+            },
+            {
+                "hash": "bf66358b12a9d8201984aee15e2b9696e8fa09eb8959ace53f25cab97d13ae90",
+                "name": "getAvailableTabs",
+                "signature_preview": "function getAvailableTabs() { return ['particulier']; }",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\js_chat_support.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\js_chat_support_ai.php"
+                ]
+            },
+            {
+                "hash": "c29c1719c63c149d6d4e572b5a3b12306f1ab0fec90bf6fdad23e66802ea3d71",
+                "name": "getOrCreateGuestId",
+                "signature_preview": "function getOrCreateGuestId() { const key = 'chat_guest_id'; let id = localStorage.getItem(key); if (!id) { id = String(Math.floor(Date.now() % 1000000000)); localStorage.setItem(key, id); }",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\js_chat_support.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\js_chat_support_ai.php"
+                ]
+            },
+            {
+                "hash": "e20b4bac613c44ce42afeff1e846bc2b45fc5331ff141d12ba7a075bcf1c0baf",
+                "name": "resolveClientIdForType",
+                "signature_preview": "function resolveClientIdForType(type) { try { if (window.isLoggedIn && window.currentUser && Number.isInteger(window.currentUser.id)) { return window.currentUser.id; }",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\js_chat_support.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\js_chat_support_ai.php"
+                ]
+            },
+            {
+                "hash": "c136fd57d90bced565a525f5026b12978d1cd1e24df1ef17d95d7086fbb2ddbf",
+                "name": "stopPolling",
+                "signature_preview": "function stopPolling(type) { if (pollingTimers[type]) { clearInterval(pollingTimers[type]); delete pollingTimers[type]; }",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\js_chat_support.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\js_chat_support_ai.php"
+                ]
+            },
+            {
+                "hash": "153007aeba58b165bf519b8d8ea10f5fd95d62cae6075f5dcc55d2c40e43e6b5",
+                "name": "getCurrentLocation",
+                "signature_preview": "function getCurrentLocation(targetField = 'departure') { if (!navigator.geolocation) { alert('La géolocalisation n\\'est pas supportée par ce navigateur'); return; }",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\js_geolocation.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\map.php"
+                ]
+            },
+            {
+                "hash": "bcc9d041b5bc85438d009e5f1498c822000710a569192f7f2338b0535a53fe39",
+                "name": "showLocationLoading",
+                "signature_preview": "function showLocationLoading(marker) { const button = document.querySelector(`[onclick=\"getCurrentLocation('${marker === 'A' ? 'departure' : 'destination'}",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\js_geolocation.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\map.php"
+                ]
+            },
+            {
+                "hash": "73ae2f137332cdad3c25f1cf09f05fc821626d9a9808c5b480eda2bce0367bc1",
+                "name": "hideLocationLoading",
+                "signature_preview": "function hideLocationLoading() { const buttons = document.querySelectorAll('[onclick*=\"getCurrentLocation\"]'); buttons.forEach(btn => { if (btn.innerHTML.includes('Localisation')) { btn.innerHTML = bt...",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\js_geolocation.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\map.php"
+                ]
+            },
+            {
+                "hash": "15e41c5b74abfe6e45bff04bbe92038769458d3a05d28cd8371567b7f77d08fa",
+                "name": "showMapError",
+                "signature_preview": "function showMapError(message = 'Erreur de chargement Google Maps') { const mapContainer = document.getElementById('map'); if (mapContainer) { mapContainer.innerHTML = ` <div style=\"display: flex; ali...",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\js_google_maps.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\map.php"
+                ]
+            },
+            {
+                "hash": "0adb1d2fe56818b07cc61d3a8f160cbcc1b752df524ef79ebaeca8231c30a83e",
+                "name": "calculateRoute",
+                "signature_preview": "function calculateRoute(origin, destination) { if (!origin || !destination) { console.log('Origine ou destination manquante'); return; }",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\js_route_calculation.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\map.php"
+                ]
+            },
+            {
+                "hash": "f24841651e08869775a07bbc830ac1076684417aba7a7aad3b5d5d6bf6c49054",
+                "name": "clearRoute",
+                "signature_preview": "function clearRoute() { directionsRenderer.setDirections({routes: []}",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\js_route_calculation.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\map.php"
+                ]
+            },
+            {
+                "hash": "d1174c7b50cf5959f307f9a0d33a07b70e9b65607c3a0c7ce9845947d642e0a1",
+                "name": "clearMarkers",
+                "signature_preview": "function clearMarkers() { if (markerA) { markerA.setMap(null); markerA = null; }",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\js_route_calculation.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\map.php"
+                ]
+            },
+            {
+                "hash": "c97856b4be7a9b0d9722887e32ef7a5fb99ecece692603fc7ddf51da7ea45f44",
+                "name": "updateAddressFromCoordinates",
+                "signature_preview": "function updateAddressFromCoordinates(position, fieldType) { if (!google || !google.maps || !google.maps.Geocoder) { console.error('Service Google Maps Geocoder non disponible'); return; }",
+                "count": 2,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\js_route_calculation.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\map.php"
+                ]
+            },
+            {
+                "hash": "8f81e3ccfdd3ed41b7d89f5c4437f798de6d4dbe81af6447651c336b1ab02f51",
+                "name": "updateMapPosition",
+                "signature_preview": "function updateMapPosition() { const heroRect = heroLeft.getBoundingClientRect(); const heroHeight = heroLeft.scrollHeight; const viewportHeight = window.innerHeight; const scrollProgress = Math.max(0...",
+                "count": 3,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\order_form.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\order_form_broken.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\order_form_fixed.php"
+                ]
+            },
+            {
+                "hash": "db85c812280d6081a240e9cdb6c48a7c16a7b8d324efc16ef99ebbf21e147007",
+                "name": "requestTick",
+                "signature_preview": "function requestTick() { if (!ticking) { requestAnimationFrame(updateMapPosition); ticking = true; setTimeout(() => { ticking = false; }",
+                "count": 3,
+                "files": [
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\order_form.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\order_form_broken.php",
+                    "C:\\xampp\\htdocs\\coursier_prod\\sections_index\\order_form_fixed.php"
+                ]
+            }
+        ]
+    },
+    "stats": {
+        "total_files": 820,
+        "total_size": 108865042,
+        "by_ext": {
+            "gitignore": {
+                "count": 6,
+                "size": 1273
+            },
+            "htaccess": {
+                "count": 3,
+                "size": 4666
+            },
+            "json": {
+                "count": 21,
+                "size": 795227
+            },
+            "html": {
+                "count": 123,
+                "size": 16949282
+            },
+            "php": {
+                "count": 257,
+                "size": 2633637
+            },
+            "css": {
+                "count": 34,
+                "size": 126298
+            },
+            "js": {
+                "count": 11,
+                "size": 84516
+            },
+            "apk": {
+                "count": 3,
+                "size": 56790859
+            },
+            "log": {
+                "count": 41,
+                "size": 22738587
+            },
+            "dm": {
+                "count": 4,
+                "size": 51454
+            },
+            "svg": {
+                "count": 14,
+                "size": 15455
+            },
+            "sql": {
+                "count": 18,
+                "size": 44824
+            },
+            "lock": {
+                "count": 1,
+                "size": 52101
+            },
+            "phar": {
+                "count": 1,
+                "size": 3125332
+            },
+            "bat": {
+                "count": 10,
+                "size": 11998
+            },
+            "txt": {
+                "count": 11,
+                "size": 254790
+            },
+            "kts": {
+                "count": 7,
+                "size": 12953
+            },
+            "pro": {
+                "count": 2,
+                "size": 1500
+            },
+            "kt": {
+                "count": 93,
+                "size": 681693
+            },
+            "xml": {
+                "count": 50,
+                "size": 60603
+            },
+            "ttf": {
+                "count": 7,
+                "size": 3165496
+            },
+            "webp": {
+                "count": 20,
+                "size": 66588
+            },
+            "mp3": {
+                "count": 1,
+                "size": 406715
+            },
+            "toml": {
+                "count": 2,
+                "size": 4881
+            },
+            "jar": {
+                "count": 2,
+                "size": 118406
+            },
+            "properties": {
+                "count": 6,
+                "size": 4758
+            },
+            "": {
+                "count": 5,
+                "size": 13126
+            },
+            "md": {
+                "count": 61,
+                "size": 630418
+            },
+            "ps1": {
+                "count": 4,
+                "size": 6277
+            },
+            "sh": {
+                "count": 1,
+                "size": 10736
+            },
+            "ini": {
+                "count": 1,
+                "size": 593
+            }
+        }
+    }
+}

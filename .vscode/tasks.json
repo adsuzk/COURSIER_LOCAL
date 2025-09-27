@@ -1,0 +1,17 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "init-db-coursier",
+			"type": "shell",
+			"command": "C:/xampp/php/php.exe",
+			"args": [
+				"-d",
+				"display_errors=1",
+				"-f",
+				"${workspaceFolder}/setup_database.php"
+			],
+			"problemMatcher": []
+		}
+	]
+}
