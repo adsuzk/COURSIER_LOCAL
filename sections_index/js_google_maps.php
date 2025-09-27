@@ -74,10 +74,29 @@
             return;
         }
         
+        window.googleMapsInitialized = true;
+    };
+    
+    // Fonction appelée après le chargement précoce de l'API
+    window.initializeMapAfterLoad = function() {
+        console.log('⚡ Initialisation différée après chargement précoce de l\'API');
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            initMap();
+        } else {
+            document.addEventListener('DOMContentLoaded', initMap);
+        }
+        
         // Vérifier que l'élément map existe
         const mapElement = document.getElementById("map");
         if (!mapElement) {
-            console.error('Élément #map non trouvé dans le DOM');
+            console.warn('Élément #map non trouvé dans le DOM - initialisation différée');
+            // Réessayer après un court délai si l'élément n'est pas encore dans le DOM
+            setTimeout(() => {
+                const retryMapElement = document.getElementById("map");
+                if (retryMapElement) {
+                    initMap();
+                }
+            }, 1000);
             return;
         }
         

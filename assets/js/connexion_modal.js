@@ -81,7 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           } catch (err) {
             console.error('Login error:', err);
-            alert('Erreur réseau');
+            const message = err && err.message ? err.message : 'Veuillez réessayer plus tard';
+            alert('Erreur réseau : ' + message);
           } finally {
             btn.disabled = false; btn.innerHTML = orig;
           }

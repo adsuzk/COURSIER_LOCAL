@@ -1357,7 +1357,7 @@ if ($sessionSenderPhoneRaw !== '') {
             }
         });
 
-        const submitOrder = (payload) => fetch('/api/submit_order.php', {
+        const submitOrder = (payload) => fetch((window.ROOT_PATH || '') + '/api/submit_order.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
             body: JSON.stringify(payload)

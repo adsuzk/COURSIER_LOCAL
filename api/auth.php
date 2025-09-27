@@ -8,9 +8,27 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
+
+// Gestion fine du CORS pour éviter les erreurs "network" sur les requêtes authentifiées
+$originHeader = $_SERVER['HTTP_ORIGIN'] ?? null;
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$isHttps = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+$defaultOrigin = ($isHttps ? 'https' : 'http') . '://' . $host;
+
+// Autoriser uniquement les origines correspondant à l'hôte courant (localhost, prod, etc.)
+$allowedOrigin = $defaultOrigin;
+if ($originHeader) {
+    // On n'autorise l'origine que si elle cible le même hôte (évite ouverture CORS totale)
+    $originHost = parse_url($originHeader, PHP_URL_HOST) ?? '';
+    if (strcasecmp($originHost, $host) === 0) {
+        $allowedOrigin = $originHeader;
+    }
+}
+
+header('Access-Control-Allow-Origin: ' . $allowedOrigin);
+header('Access-Control-Allow-Credentials: true');
 header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Headers: Content-Type, X-Requested-With, Authorization');
 
 // Gestion des requêtes OPTIONS (CORS)
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {

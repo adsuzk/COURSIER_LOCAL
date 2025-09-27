@@ -228,8 +228,8 @@ function getAppBasePath(): string {
     if (isProductionEnvironment() && !in_array($host, ['localhost', '127.0.0.1'], true)) {
         return '/';
     }
-    // Local ou dev: base = dossier projet (ex: /coursier_prod/)
-    $projectBase = '/' . basename(str_replace('\\', '/', __DIR__)) . '/';
+    // Local ou dev: base = dossier projet (ex: /coursier_prod)
+    $projectBase = '/' . basename(str_replace('\\', '/', __DIR__));
     return $projectBase;
 }
 
@@ -240,7 +240,7 @@ function getAppBaseUrl(): string {
     $scheme = getRequestScheme();
     $host = getServerHost();
     $base = getAppBasePath();
-    return $scheme . '://' . $host . $base; // ex: http://localhost/coursier_prod/
+    return $scheme . '://' . $host . $base; // ex: http://localhost/coursier_prod
 }
 
 /**
@@ -260,8 +260,14 @@ function appUrl(string $path = ''): string {
 function routePath(string $path = ''): string {
     $base = getAppBasePath();
     $path = ltrim($path, '/');
-    if ($base === '/') return '/' . $path;
-    return $base . $path;
+    // If no specific path, return base without trailing slash
+    if ($path === '') {
+        return $base;
+    }
+    if ($base === '/') {
+        return '/' . $path;
+    }
+    return $base . '/' . $path;
 }
 /**
  * Génération d'un mot de passe aléatoire

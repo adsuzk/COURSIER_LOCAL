@@ -3,6 +3,8 @@
 
 // DÉTECTEUR D'ERREURS DE DÉPLOIEMENT - DOIT ÊTRE EN PREMIER
 require_once __DIR__ . '/diagnostic_logs/deployment_error_detector.php';
+// Charger la config pour helpers d'URL
+require_once __DIR__ . '/config.php';
 
 // Gestion du logout via paramètre GET pour contourner logout.php
 if (isset($_GET['logout'])) {
@@ -11,7 +13,7 @@ if (isset($_GET['logout'])) {
     $_SESSION = [];
     session_destroy();
     // Rediriger vers l'accueil sans le paramètre
-    header('Location: /COURSIER_LOCAL/');
+    header('Location: ' . routePath());
     exit;
 }
 
@@ -59,8 +61,9 @@ try {
     error_log('[SystemSync] frontend_index heartbeat failed: ' . $e->getMessage());
 }
 
+// Determine base URL without trailing slash
 $baseUrl = function_exists('getAppBaseUrl')
-    ? getAppBaseUrl()
+    ? rtrim(getAppBaseUrl(), '/')
     : ((function () {
         $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
         $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
@@ -72,7 +75,14 @@ $assetUrl = function ($path) use ($baseUrl) {
     $prefix = rtrim($baseUrl, '/');
     return $prefix . '/' . ltrim($path, '/');
 };
-$canonicalUrl = rtrim($baseUrl, '/') . '/';
+    $canonicalUrl = $baseUrl; // No trailing slash for homepage
+$mapsApiKey = getenv('GOOGLE_MAPS_API_KEY');
+if (!$mapsApiKey && defined('GOOGLE_MAPS_API_KEY')) {
+    $mapsApiKey = GOOGLE_MAPS_API_KEY;
+}
+if (!$mapsApiKey) {
+    $mapsApiKey = 'AIzaSyBjUgj9KM0SNj847a_bIsf6chWp9L8Hr1A';
+}
 $schemaData = [
     '@context' => 'https://schema.org',
     '@type' => 'LocalBusiness',
@@ -198,6 +208,19 @@ $schemaData = [
     <!-- 🎯 ROBOTS ET INDEXATION -->
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="googlebot" content="index, follow">
+    
+    <!-- 🗺️ GOOGLE MAPS API - CHARGEMENT PRIORITAIRE -->
+    <?php include __DIR__ . '/sections_index/js_google_maps.php'; ?>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=<?php echo htmlspecialchars($mapsApiKey, ENT_QUOTES); ?>&libraries=places,geometry&callback=initGoogleMapsEarly"></script>
+    <script>
+        window.initGoogleMapsEarly = function() {
+            console.log('✅ Google Maps API chargée en priorité');
+            window.googleMapsReady = true;
+            if (typeof window.initializeMapAfterLoad === 'function') {
+                window.initializeMapAfterLoad();
+            }
+        };
+    </script>
     <meta name="bingbot" content="index, follow">
     
     <!-- ⚡ PERFORMANCE ET VITESSE -->
@@ -302,7 +325,7 @@ try {
     
 
     // Sections JavaScript (divisées par fonctionnalité)
-    include __DIR__ . '/sections_index/js_google_maps.php';
+    // Google Maps déjà chargé en priorité dans le head
     include __DIR__ . '/sections_index/js_client_tracking.php';
     // JS de garde pour le formulaire commande (verrouillage numéro expéditeur)
     $orderGuardJs = (function_exists('routePath') ? routePath('assets/js/order_form_guard.js') : (rtrim(dirname($_SERVER['SCRIPT_NAME']) ?: '', '/') . '/assets/js/order_form_guard.js'));
@@ -350,5 +373,4 @@ $execution_time = microtime(true) - $interface_start_time;
 logPerformance('index_page_complete', $interface_start_time, microtime(true), 'INDEX');
 ?>
 </body>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjUgj9KM0SNj847a_bIsf6chWp9L8Hr1A&v=weekly&libraries=places&callback=initMap" async defer></script>
 </html>

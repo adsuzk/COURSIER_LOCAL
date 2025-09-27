@@ -145,7 +145,17 @@
         try {
             // Vérifier que Google Maps est chargé
             if (typeof google === 'undefined' || !google.maps || !google.maps.places) {
-                console.error('Google Maps API ou Places library non chargée');
+                console.warn('Google Maps API ou Places API non disponible - attente...');
+                // Attendre que Google Maps soit chargé
+                const checkGoogleMaps = () => {
+                    if (typeof google !== 'undefined' && google.maps && google.maps.places) {
+                        console.log('✅ Google Maps API maintenant disponible');
+                        setupAutocomplete();
+                    } else {
+                        setTimeout(checkGoogleMaps, 500);
+                    }
+                };
+                setTimeout(checkGoogleMaps, 500);
                 return;
             }
             
