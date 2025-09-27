@@ -33,7 +33,7 @@ import com.suzosky.coursier.services.AutoUpdateService
 import com.suzosky.coursier.services.OrderRingService
 import com.suzosky.coursier.telemetry.TelemetrySDK
 import com.suzosky.coursier.telemetry.UpdateInfo
-import com.suzosky.coursier.ui.components.PaymentNativeDialog
+import com.suzosky.coursier.ui.components.PaymentWebViewDialog
 import com.suzosky.coursier.ui.screens.CoursierScreenNew
 import com.suzosky.coursier.ui.screens.LoginScreen
 import com.suzosky.coursier.ui.theme.SuzoskyTheme
