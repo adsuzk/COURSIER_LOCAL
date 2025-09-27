@@ -209,16 +209,21 @@ FOREIGN KEY (coursier_id) REFERENCES agents_suzosky(id);
 
 > ℹ️ Ces contrôles sont orchestrés par `lib/coursier_presence.php`. Toute évolution doit passer par ce helper afin que **commandes** et **finances** restent parfaitement synchronisés.
 
-### 🔄 **Workflow complet :**
+### 🔄 **Workflow complet avec sécurité renforcée :**
 
 ```
 1. Client crée commande → statut: 'en_attente'
-2. Système trouve coursier disponible (conditions ci-dessus)
-3. Assignation → statut: 'assignee' + coursier_id
-4. Notification FCM → Coursier reçoit push
-5. Coursier ouvre app → Voit nouvelle commande
-6. Coursier accepte → statut: 'acceptee'
-7. Progression → 'en_route' → 'livre'
+2. ⚠️ VÉRIFICATION CRITIQUE: Au moins 1 coursier connecté ?
+   - SI NON → Refus + message commercial + statut: 'aucun_coursier_disponible'
+   - SI OUI → Continuer
+3. Système trouve coursier disponible (toutes conditions validées)
+4. Assignation → statut: 'assignee' + coursier_id + vérification token FCM actif
+5. Notification FCM → UNIQUEMENT si coursier toujours connecté
+6. Coursier ouvre app → Voit nouvelle commande
+7. Coursier accepte → statut: 'acceptee'
+8. Progression → 'en_route' → 'livre'
+
+⚠️ À TOUT MOMENT: Si coursier se déconnecte → Commande reassignée automatiquement
 ```
 
 ---
