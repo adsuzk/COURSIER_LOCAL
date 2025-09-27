@@ -396,4 +396,20 @@ class NetworkDiscovery {
         return 'Outil de monitoring';
     }
 }
+
+// Test si exécuté directement
+if (basename(__FILE__) == basename($_SERVER['SCRIPT_NAME'])) {
+    $discovery = new NetworkDiscovery();
+    $results = $discovery->discoverAllNetworkComponents();
+    
+    echo "\n" . str_repeat("=", 60) . "\n";
+    echo "📊 RÉSUMÉ DE LA DÉCOUVERTE:\n";
+    echo "   APIs: " . count($results['apis']) . "\n";
+    echo "   Sections Admin: " . count($results['admin_sections']) . "\n";
+    echo "   Tables BDD: " . count($results['database_tables']) . "\n";
+    echo "   Fichiers Système: " . count($results['files_system']) . "\n";
+    echo "   Services: " . count($results['services']) . "\n";
+    echo "   Outils Monitoring: " . count($results['monitoring']) . "\n";
+    echo "\n🎯 Découverte automatique terminée avec succès!\n";
+}
 ?>
