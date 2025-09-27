@@ -29,8 +29,8 @@ Si les tokens ne correspondent pas:
 - Si même IP → **Session maintenue** (reconnexion du même appareil)
 - Si IP différente → **Session révoquée** (autre appareil)
 
-#### Étape 3: Première connexion
-- Si aucun token en base → **Session valide** (première utilisation)
+#### Étape 3: Session expirée/inexistante
+- Si aucun token en base → **Session invalide** (connexion requise pour être disponible)
 
 ### 3. Surveillance côté application Android
 - Vérification toutes les **30 secondes** (moins agressive qu'avant)
