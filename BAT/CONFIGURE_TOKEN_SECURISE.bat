@@ -17,6 +17,10 @@ git config --global credential.helper "store --file=C:\Users\manud\.git-credenti
 git config --global url."https://adsuzk:%GITHUB_TOKEN%@github.com/".insteadOf "https://github.com/"
 
 echo.
+echo Note: Le token GitHub doit etre defini dans la variable GITHUB_TOKEN
+echo Utilisez: setx GITHUB_TOKEN "votre_token_ici"
+
+echo.
 echo ✓ Configuration terminee !
 echo.
 echo Les repositories configures :

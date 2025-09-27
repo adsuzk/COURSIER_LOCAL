@@ -1,5 +1,5 @@
 # SCRIPT DE PROTECTION AUTOMATIQUE SECURISE - SUZOSKY
-# Version sécurisée sans token exposé dans le code
+# Version securisee sans token expose dans le code
 
 Write-Host "=== PROTECTION AUTOMATIQUE SUZOSKY ===" -ForegroundColor Green
 Write-Host "Repository: https://github.com/adsuzk/COURSIER_LOCAL" -ForegroundColor Yellow
@@ -21,7 +21,7 @@ while ($true) {
     $scanCount++
     $timestamp = Get-Date -Format "HH:mm:ss"
     
-    # Vérifier les changements
+    # Verifier les changements
     $status = git status --porcelain
     if ($status) {
         Write-Host "[$timestamp] Sauvegarde changements..." -ForegroundColor Yellow
@@ -32,13 +32,13 @@ while ($true) {
         # Push avec gestion d'erreur
         $pushResult = git push 2>&1
         if ($LASTEXITCODE -eq 0) {
-            Write-Host "[$timestamp] ✓ Sauvegarde GitHub terminée" -ForegroundColor Green
+            Write-Host "[$timestamp] Sauvegarde GitHub terminee" -ForegroundColor Green
         } else {
-            Write-Host "[$timestamp] ✗ Erreur push GitHub" -ForegroundColor Red
+            Write-Host "[$timestamp] Erreur push GitHub" -ForegroundColor Red
             Write-Host $pushResult -ForegroundColor Red
         }
     } else {
-        Write-Host "[$timestamp] Aucun changement détecté (scan #$scanCount)" -ForegroundColor Gray
+        Write-Host "[$timestamp] Aucun changement detecte (scan #$scanCount)" -ForegroundColor Gray
     }
     
     Start-Sleep 5
