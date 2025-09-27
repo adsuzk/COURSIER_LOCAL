@@ -737,18 +737,17 @@ object ApiService {
         }
 
         try {
-            val formBody = FormBody.Builder()
-                .add("action", "login")
-                .add("identifier", identifier)
-                .add("password", password)
-                .add("ajax", "true") // Demander une réponse JSON côté serveur
-                .build()
+            val requestBody = JSONObject().apply {
+                put("action", "login")
+                put("identifier", identifier)
+                put("password", password)
+            }.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
 
             executeWithFallback(
                 buildRequest = { base ->
-                    val baseUrl = buildCoursierPhp(base)
+                    val baseUrl = buildApi(base, "agent_auth.php")
                     logIfUrlInvalid(baseUrl)
-                    Request.Builder().url(baseUrl).post(formBody).build()
+                    Request.Builder().url(baseUrl).post(requestBody).build()
                 },
                 onResponseMain = { response ->
                     try {
