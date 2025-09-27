@@ -293,23 +293,29 @@ function getCoursierStatusLight($coursier): array
     $isRecentActivity = $lastActivity > (time() - 300); // 5 minutes
     $status['conditions']['activity'] = $isRecentActivity;
     
-    // Déterminer la couleur du feu
+    // Déterminer la couleur du feu avec logique FCM
     if ($hasToken && $isOnline && $isRecentActivity) {
-        if ($hasSufficientBalance) {
-            $status['color'] = 'green';
-            $status['label'] = 'Disponible pour courses';
-        } else {
+        if (!$hasFCMToken) {
+            // En ligne mais sans FCM = PROBLÈME critique pour notifications
             $status['color'] = 'orange';
-            $status['label'] = 'Solde insuffisant';
+            $status['label'] = '⚠️ FCM manquant';
+        } elseif ($hasSufficientBalance) {
+            // Toutes conditions OK
+            $status['color'] = 'green';
+            $status['label'] = '✅ Opérationnel';
+        } else {
+            // FCM OK mais solde insuffisant
+            $status['color'] = 'orange';
+            $status['label'] = '💰 Solde faible';
         }
     } else {
         $status['color'] = 'red';
         if (!$hasToken) {
-            $status['label'] = 'Token app manquant';
+            $status['label'] = '📱 App déconnectée';
         } elseif (!$isOnline) {
-            $status['label'] = 'Hors ligne';
+            $status['label'] = '⚫ Hors ligne';
         } else {
-            $status['label'] = 'Inactif';
+            $status['label'] = '😴 Inactif';
         }
     }
     
