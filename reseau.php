@@ -1108,15 +1108,15 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
         </div>
 
         <!-- Pied de page -->
-        <div style="text-align: center; margin: 3rem 0; padding: 2rem; background: var(--surface); border-radius: 12px; border: 1px solid var(--border);">
-            <p style="color: var(--text-secondary); margin: 0;">
-                🕒 Dernière analyse: <?= date('d/m/Y à H:i:s') ?>
+        <div class="section-card" style="text-align: center; margin-top: 40px;">
+            <h3 style="color: var(--primary-gold); margin-bottom: 15px;">
+                <i class="fas fa-clock"></i> Mise à jour automatique
+            </h3>
+            <p style="opacity: 0.8; margin-bottom: 20px;">
+                Dernière analyse: <?= date('d/m/Y à H:i:s') ?>
             </p>
-            <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 0.5rem 0 0 0;">
-                Cette page se met à jour automatiquement pour vous montrer l'état en temps réel de votre système
-            </p>
-            <button class="toggle-btn" onclick="location.reload()" style="margin-top: 1rem;">
-                🔄 Actualiser maintenant
+            <button class="expand-btn" onclick="location.reload()">
+                <i class="fas fa-sync-alt"></i> Actualiser maintenant
             </button>
         </div>
     </div>
@@ -1125,35 +1125,37 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
         // Fonction pour afficher/masquer les sections
         function toggleSection(sectionId) {
             const section = document.getElementById(sectionId);
-            const isHidden = section.classList.contains('hidden');
+            const button = event.target;
             
-            if (isHidden) {
+            if (section.classList.contains('hidden')) {
                 section.classList.remove('hidden');
-                event.target.textContent = event.target.textContent.replace('Voir', 'Masquer');
+                button.innerHTML = button.innerHTML.replace('Voir', 'Masquer');
             } else {
                 section.classList.add('hidden');
-                event.target.textContent = event.target.textContent.replace('Masquer', 'Voir');
+                button.innerHTML = button.innerHTML.replace('Masquer', 'Voir');
             }
         }
 
-        // Auto-actualisation intelligente (toutes les 2 minutes)
+        // Auto-actualisation toutes les 3 minutes
         setTimeout(() => {
-            if (document.hidden === false) { // Seulement si la page est visible
+            if (!document.hidden) {
                 location.reload();
             }
-        }, 120000);
+        }, 180000);
 
-        // Messages d'aide au survol
+        // Animations au chargement
         document.addEventListener('DOMContentLoaded', function() {
-            // Ajouter des tooltips explicatifs
-            const items = document.querySelectorAll('.item');
-            items.forEach(item => {
-                item.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-2px)';
-                });
-                item.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0)';
-                });
+            // Animation progressive des cartes
+            const cards = document.querySelectorAll('.stat-card, .api-item');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
             });
         });
     </script>
