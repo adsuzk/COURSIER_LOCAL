@@ -231,7 +231,64 @@ $stmt = $pdo->prepare("SELECT solde_wallet FROM agents_suzosky WHERE id = ?");
 
 ---
 
-## 📱 **INTÉGRATION APP MOBILE**
+## � **DIAGNOSTIC SYNCHRONISATION MOBILE - RÉSOLUTION CRITIQUE**
+
+### 🚨 **Problème résolu (Sept 2025) : Solde 0 FCFA dans l'app mobile**
+
+#### **Symptômes observés :**
+- ✅ Admin recharge coursier avec succès (ex: +100 FCFA)
+- ✅ `agents_suzosky.solde_wallet` correctement mis à jour (5000 → 5100 FCFA)
+- ❌ App mobile affiche toujours **0 FCFA** dans "Mon Portefeuille"
+- ❌ Aucune synchronisation malgré le rechargement
+
+#### **Diagnostic ADB (Android Debug Bridge) :**
+```bash
+# 1. Identifier l'app
+adb devices
+adb shell "pm list packages | grep suzo"
+
+# 2. Capturer les requêtes réseau
+adb logcat --pid=$(adb shell pidof com.suzosky.coursier.debug) | grep "Making request"
+
+# Résultat : L'app utilise api/get_coursier_data.php (PAS get_wallet_balance.php)
+```
+
+#### **Cause racine identifiée :**
+L'API `api/get_coursier_data.php` utilisée par l'app mobile ne lisait **PAS** la table principale `agents_suzosky.solde_wallet` !
+
+**Code défaillant :**
+```php
+// ❌ L'API cherchait dans des tables obsolètes
+$stmt = $pdo->prepare("SELECT solde_disponible FROM coursier_accounts WHERE coursier_id = ?");
+// Résultat : balance = 0 car ces tables sont vides/obsolètes
+```
+
+**Correction appliquée :**
+```php
+// ✅ Priorité absolue à agents_suzosky (table principale selon documentation)
+$stmt = $pdo->prepare("SELECT solde_wallet FROM agents_suzosky WHERE id = ?");
+// Résultat : balance = 5100 FCFA (solde correct)
+```
+
+#### **Validation de la correction :**
+```bash
+# Test API avant correction
+curl "http://192.168.1.5/COURSIER_LOCAL/api/get_coursier_data.php?coursier_id=5"
+# {"success":true,"data":{"balance":0,...}}  ❌
+
+# Test API après correction  
+curl "http://192.168.1.5/COURSIER_LOCAL/api/get_coursier_data.php?coursier_id=5"
+# {"success":true,"data":{"balance":5100,...}}  ✅
+```
+
+#### **Impact de la correction :**
+- **✅ App mobile** : Affiche maintenant les soldes corrects
+- **✅ Synchronisation** : Temps réel après rechargement admin
+- **✅ Conformité** : API alignée sur la table principale `agents_suzosky`
+
+---
+
+## �📱 **INTÉGRATION APP MOBILE**
 
 ### 🔌 **APIs critiques :**
 
