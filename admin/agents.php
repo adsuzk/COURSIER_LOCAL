@@ -1910,12 +1910,13 @@ $newAgentsThisMonth = count(array_filter($agents, fn($a) => isset($a['created_at
         </thead>
         <tbody id="coursiersTableBody">
           <?php foreach ($coursiers as $agent): ?>
+          <?php $nomComplet = ($agent['prenoms'] ?? '') . ' ' . ($agent['nom'] ?? ''); ?>
           <tr>
             <td><?= htmlspecialchars($agent['id']) ?></td>
-            <td><?= htmlspecialchars($agent['matricule']) ?></td>
-            <td><?= htmlspecialchars(($agent['prenoms'] ?? '') . ' ' . ($agent['nom'] ?? '')) ?></td>
-            <td><?= htmlspecialchars($agent['telephone']) ?></td>
-            <td><?= htmlspecialchars($agent['type_poste']) ?></td>
+            <td title="<?= htmlspecialchars($agent['matricule']) ?>"><?= htmlspecialchars($agent['matricule']) ?></td>
+            <td title="<?= htmlspecialchars($nomComplet) ?>"><?= htmlspecialchars($nomComplet) ?></td>
+            <td title="<?= htmlspecialchars($agent['telephone']) ?>"><?= htmlspecialchars($agent['telephone']) ?></td>
+            <td title="<?= htmlspecialchars($agent['type_poste']) ?>"><?= htmlspecialchars($agent['type_poste']) ?></td>
             <td><?= date('d/m/Y', strtotime($agent['created_at'])) ?></td>
             <td>
               <a href="?section=agents&view_agent=<?= $agent['id'] ?>" class="btn-sm btn-edit">
