@@ -230,19 +230,44 @@ if ($testFilesInRoot.Count -gt 0) {
 Write-Host ""
 Write-Host "⚙️ CONFIGURATION PRODUCTION AUTOMATIQUE..." -ForegroundColor Yellow
 
-# Configuration config.php pour la production
+# Configuration config.php pour la production LWS
 $configPath = Join-Path $targetDir "config.php"
 if (Test-Path $configPath) {
-    Write-Host "   🔧 Configuration de config.php pour la production..." -ForegroundColor Cyan
+    Write-Host "   🔧 Configuration de config.php pour serveur LWS..." -ForegroundColor Cyan
     
-    # TODO: Ajouter ici la configuration avec vos accès de production
-    # $configContent = Get-Content $configPath -Raw
-    # Configuration base de données production à ajouter
+    $configContent = Get-Content $configPath -Raw
     
-    Write-Host "   ✅ Config.php configuré pour la production" -ForegroundColor Green
+    # Remplacement des paramètres de base de données pour LWS
+    $configContent = $configContent -replace "define\('DB_HOST',\s*'[^']*'\);", "define('DB_HOST', '185.98.131.214');"
+    $configContent = $configContent -replace "define\('DB_NAME',\s*'[^']*'\);", "define('DB_NAME', 'conci2547642_1m4twb');"
+    $configContent = $configContent -replace "define\('DB_USER',\s*'[^']*'\);", "define('DB_USER', 'conci2547642_1m4twb');"
+    $configContent = $configContent -replace "define\('DB_PASS',\s*'[^']*'\);", "define('DB_PASS', 'wN1!_TT!yHsK6Y6');"
+    
+    # Alternative pour les variables $db_ si elles existent
+    $configContent = $configContent -replace '\$db_host\s*=\s*[''"][^''"]*[''"];', '$db_host = "185.98.131.214";'
+    $configContent = $configContent -replace '\$db_name\s*=\s*[''"][^''"]*[''"];', '$db_name = "conci2547642_1m4twb";'
+    $configContent = $configContent -replace '\$db_user\s*=\s*[''"][^''"]*[''"];', '$db_user = "conci2547642_1m4twb";'
+    $configContent = $configContent -replace '\$db_pass\s*=\s*[''"][^''"]*[''"];', '$db_pass = "wN1!_TT!yHsK6Y6";'
+    
+    # Désactiver les modes de développement/debug
+    $configContent = $configContent -replace "define\('DEBUG_MODE',\s*true\);", "define('DEBUG_MODE', false);"
+    $configContent = $configContent -replace "define\('DEV_MODE',\s*true\);", "define('DEV_MODE', false);"
+    $configContent = $configContent -replace "ini_set\('display_errors',\s*1\);", "ini_set('display_errors', 0);"
+    
+    # Sauvegarder la configuration modifiée
+    Set-Content -Path $configPath -Value $configContent -Encoding UTF8
+    
+    Write-Host "   ✅ Config.php configuré pour LWS (185.98.131.214)" -ForegroundColor Green
+    Write-Host "   ✅ Base de données: conci2547642_1m4twb" -ForegroundColor Green
+    Write-Host "   ✅ Mode debug désactivé" -ForegroundColor Green
 } else {
     Write-Host "   ⚠️ config.php non trouvé" -ForegroundColor Yellow
 }
+
+# Créer un fichier de production pour marquer l'environnement
+$prodMarker = Join-Path $targetDir "ENVIRONMENT_PRODUCTION"
+Set-Content -Path $prodMarker -Value "PRODUCTION LWS - $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
+Write-Host "   ✅ Marqueur d'environnement production créé" -ForegroundColor Green
 
 # Vérification de la documentation consolidée
 $docFile = Join-Path $targetDir "DOCUMENTATION_FINALE\DOCUMENTATION_COMPLETE_SUZOSKY_COURSIER.md"
