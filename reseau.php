@@ -803,6 +803,7 @@ $pdo = getDBConnection();
                 <?php endforeach; ?>
             </div>
         </div>
+        <?php endif; ?>
 
         <?php
         // === SERVICES SYSTÈME ===
