@@ -509,17 +509,69 @@ $pdo = getDBConnection();
                 'method' => 'GET'
             ]
         ];
+        
+        // Combiner APIs manuelles et découvertes
+        $allApis = array_merge($manualApis, $discoveredComponents['apis']);
         ?>
 
-        <!-- APIs Système -->
+        <!-- APIs Essentielles -->
         <div class="api-section">
             <h2 class="section-title">
                 <i class="fas fa-code"></i>
-                APIs et Endpoints Système
+                APIs Essentielles (Configuration Manuelle)
             </h2>
             
             <div class="api-grid">
-                <?php foreach ($apis as $api): ?>
+                <?php foreach ($manualApis as $api): ?>
+                    <?php 
+                    $test = testAPI($api['url'], $api['method'], $api['data'] ?? null);
+                    $statusClass = $test['success'] ? 'online' : 'offline';
+                    $statusBadge = $test['success'] ? 'status-online' : 'status-offline';
+                    $statusText = $test['success'] ? 'ONLINE' : 'OFFLINE';
+                    ?>
+                    
+                    <div class="api-item <?= $statusClass ?>">
+                        <div class="health-indicator <?= $test['success'] ? '' : 'danger' ?>"></div>
+                        
+                        <div class="api-name"><?= htmlspecialchars($api['name']) ?></div>
+                        
+                        <div class="api-description">
+                            <strong>Fonction:</strong> <?= htmlspecialchars($api['description']) ?><br>
+                            <strong>Utilisé par:</strong> <?= htmlspecialchars($api['purpose']) ?><br>
+                            <strong>Méthode:</strong> <?= $api['method'] ?>
+                            <?= isset($api['data']) ? ' (avec données JSON)' : '' ?>
+                        </div>
+                        
+                        <div class="api-status">
+                            <span class="status-badge <?= $statusBadge ?>">
+                                <?= $statusText ?> (<?= $test['code'] ?>)
+                            </span>
+                            
+                            <?php if (!$test['success'] && $test['error']): ?>
+                                <small style="color: var(--danger);">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <?= htmlspecialchars($test['error']) ?>
+                                </small>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
+        <!-- APIs Découvertes Automatiquement -->
+        <div class="api-section">
+            <h2 class="section-title">
+                <i class="fas fa-search"></i>
+                APIs Découvertes Automatiquement (<?= count($discoveredComponents['apis']) ?>)
+            </h2>
+            <p style="color: var(--primary-dark); opacity: 0.8; margin-bottom: 20px;">
+                <i class="fas fa-info-circle"></i> 
+                Ces APIs ont été détectées automatiquement par le scanner réseau. Elles sont testées en temps réel.
+            </p>
+            
+            <div class="api-grid">
+                <?php foreach ($discoveredComponents['apis'] as $api): ?>
                     <?php 
                     $test = testAPI($api['url'], $api['method'], $api['data'] ?? null);
                     $statusClass = $test['success'] ? 'online' : 'offline';
