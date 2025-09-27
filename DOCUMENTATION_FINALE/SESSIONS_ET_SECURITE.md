@@ -87,6 +87,23 @@ LaunchedEffect(isLoggedIn) {
 }
 ```
 
+## ⚠️ IMPORTANT : Cohérence Session ↔ Assignation Courses
+
+### Principe fondamental
+```
+SESSION VALIDE = DISPONIBLE POUR COURSES
+SESSION INVALIDE = HORS LIGNE = PAS DE COURSES
+```
+
+### Flux automatique
+1. **Login réussi** → Token généré → `statut_connexion = 'en_ligne'` → **Coursier visible pour assignation**
+2. **Session révoquée** → `statut_connexion = 'hors_ligne'` → **Plus de courses assignées**  
+3. **Logout** → Token supprimé → `statut_connexion = 'hors_ligne'` → **Arrêt total des assignations**
+
+### Règle métier
+Un coursier **NE PEUT PAS** être `en_ligne` sans session valide. 
+Cette cohérence garantit qu'aucune course n'est assignée à un coursier non connecté.
+
 ## Cas d'usage
 
 ### Cas 1: Utilisateur normal
