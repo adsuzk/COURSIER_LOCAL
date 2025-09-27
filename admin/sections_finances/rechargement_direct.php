@@ -166,12 +166,11 @@ foreach ($allCoursiers as $coursier) {
     ]);
 }
 
-$connectedCoursiers = getConnectedCouriers($pdo);
-$connectedIds = array_column($connectedCoursiers, 'id');
+// UTILISER LA MÊME LOGIQUE QUE LA PAGE COMMANDES (SOURCE UNIQUE DE VÉRITÉ)
+$coursiersConnectes = getConnectedCouriers($pdo);
 
 // Statistiques rapides
 $totalCoursiers = count($coursiers);
-$coursiersConnectes = array_filter($coursiers, fn($c) => in_array($c['id'], $connectedIds, true));
 $coursiersAvecSolde = array_filter($coursiers, fn($c) => ($c['solde'] ?? 0) > 0);
 
 include __DIR__ . '/../functions.php';
