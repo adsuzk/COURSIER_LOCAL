@@ -323,7 +323,30 @@ L'application mobile Android utilise les endpoints API dédiés dans `/api/` (vo
 
 # 5. APPLICATION MOBILE ANDROID
 
-## 📱 Architecture MVVM
+## � Authentification Mobile
+
+### Endpoint Dédié : `/api/agent_auth.php`
+
+L'application Android utilise un système d'authentification spécifique :
+
+**Credentials :**
+- **Matricule** : Format `CM2025XXXX` (ex: CM20250003)
+- **Password** : Code alphanumérique (ex: KOrxI)
+
+**Différences avec l'interface web :**
+- ❌ PAS d'email/password comme sur `coursier.php`
+- ✅ Matricule/password via `/api/agent_auth.php`
+- ✅ Communication JSON pure (pas de sessions PHP)
+
+```kotlin
+// ApiService.kt - Configuration correcte
+fun login(matricule: String, password: String) {
+    val request = buildApi(base, "agent_auth.php") // ✅ Correct
+    // PAS buildCoursierPhp(base) ❌ (interface web)
+}
+```
+
+## �📱 Architecture MVVM
 
 ### Structure Packages
 ```kotlin
