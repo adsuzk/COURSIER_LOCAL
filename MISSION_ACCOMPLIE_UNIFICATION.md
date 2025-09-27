@@ -1,10 +1,10 @@
-# 🎯 MISSION ACCOMPLIE : UNIFICATION SYSTÈME COURSIERS
+# 🎯 SYSTÈME COURSIERS - ARCHITECTURE FINALE
 
-## ✅ OBJECTIF ATTEINT
+## ✅ OBJECTIFS ATTEINTS
 
-**Demande initiale :** *"Je veux donc que le seul moyen utilisé pour voir les coursiers en ligne soit uniquement et seulement celui utilisé par https://localhost/COURSIER_LOCAL/admin.php?section=commandes"*
+**Demande initiale :** *"Je veux donc que le seul moyen utilisé pour voir les coursiers en ligne soit uniquement et seulement celui utilisé par admin.php?section=commandes"*
 
-**Résultat :** ✅ **RÉUSSI - Système unifié déployé**
+**Résultat :** ✅ **RÉUSSI - Système unifié avec nettoyage automatique**
 
 ---
 
@@ -12,22 +12,26 @@
 
 ### Source Unique de Vérité
 ```php
-// UNIQUE POINT D'ACCÈS
+// UNIQUE POINT D'ACCÈS AVEC AUTO-NETTOYAGE
 lib/coursier_presence.php
-├── getConnectedCouriers()    // Coursiers réellement actifs
-├── getAllCouriers()          // Tous les coursiers  
-└── getCoursierStatusLight()  // Statut détaillé
+├── autoCleanExpiredStatuses() // Nettoyage automatique (>30min)
+├── getConnectedCouriers()     // Coursiers réellement actifs  
+├── getAllCouriers()           // Tous les coursiers
+└── getCoursierStatusLight()   // Statut détaillé
 ```
 
-### Logique Intelligente
+### Logique Intelligente + Auto-Nettoyage
 ```php
-// CONDITIONS STRICTES POUR "CONNECTÉ"
+// NETTOYAGE AUTOMATIQUE DES STATUTS EXPIRÉS
+autoCleanExpiredStatuses($pdo); // Exécuté à chaque appel
+
+// CONDITIONS STRICTES POUR "CONNECTÉ" 
 $connected = $hasToken && $isOnline && $isRecentActivity;
 
 // DÉTAIL :
 // ✅ Token session présent
-// ✅ Statut = 'en_ligne' 
-// ✅ Activité < 30 minutes
+// ✅ Statut = 'en_ligne' (mis à jour automatiquement)
+// ✅ Activité < 30 minutes (vérifiée en temps réel)
 ```
 
 ---
