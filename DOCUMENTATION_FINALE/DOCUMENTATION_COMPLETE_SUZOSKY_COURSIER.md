@@ -1438,6 +1438,37 @@ function healthCheck() {
 
 ---
 
+## ⚠️ POINTS CRITIQUES - MÉMO DÉVELOPPEUR
+
+### Authentification : NE PAS CONFONDRE
+
+**🌐 INTERFACE WEB :**
+- Endpoint : `coursier.php` (dashboard navigateur)
+- Auth : `/api/auth.php` avec email/password
+- Sessions PHP + formulaires HTML
+
+**📱 APPLICATION MOBILE :**
+- Endpoint : `/api/agent_auth.php` avec matricule/password
+- Format : JSON pur, pas de sessions
+- ApiService.kt : `buildApi(base, "agent_auth.php")`
+
+### Erreurs Fréquentes à Éviter
+
+❌ **Utiliser `coursier.php` pour mobile** → Cause erreurs 404/auth
+❌ **Mélanger email/password avec matricule** → Login impossible  
+❌ **buildCoursierPhp() dans ApiService.kt** → Mauvais endpoint
+
+✅ **Solution correcte** : Mobile → agent_auth.php, Web → coursier.php
+
+### Synchronisation Production
+
+Lors des mises à jour, TOUJOURS vérifier :
+1. `coursier.php` synchronisé (interface web)
+2. `/api/agent_auth.php` synchronisé (mobile)
+3. Tests de login sur les deux plateformes
+
+---
+
 **🎯 FIN DE LA DOCUMENTATION COMPLÈTE SUZOSKY COURSIER V7.0**
 
 *Cette documentation est maintenue à jour automatiquement. Dernière révision : 27 Septembre 2025*
