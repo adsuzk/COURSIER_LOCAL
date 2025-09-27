@@ -1,0 +1,9 @@
+TEST DE PROTECTION AUTOMATIQUE
+===================================
+
+Ce fichier teste si le système de protection automatique fonctionne.
+
+Timestamp: 2025-09-27 05:58:30
+Test: Création d'un nouveau fichier
+
+Si ce fichier apparaît dans GitHub, cela signifie que la protection fonctionne !
