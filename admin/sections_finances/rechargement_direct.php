@@ -499,8 +499,18 @@ include __DIR__ . '/../functions.php';
                                 </div>
                             </div>
                             <div>
-                                <div class="status-badge <?= $coursier['statut_connexion'] === 'en_ligne' ? 'status-online' : 'status-offline' ?>">
-                                    <?= $coursier['statut_connexion'] === 'en_ligne' ? '🟢 En ligne' : '⚫ Hors ligne' ?>
+                                <?php
+                                // UTILISER LA LOGIQUE UNIFIÉE - SOURCE UNIQUE DE VÉRITÉ
+                                $isReallyConnected = false;
+                                foreach ($coursiersConnectes as $connected) {
+                                    if ($connected['id'] == $coursier['id']) {
+                                        $isReallyConnected = true;
+                                        break;
+                                    }
+                                }
+                                ?>
+                                <div class="status-badge <?= $isReallyConnected ? 'status-online' : 'status-offline' ?>">
+                                    <?= $isReallyConnected ? '🟢 En ligne' : '⚫ Hors ligne' ?>
                                 </div>
                                 <div class="fcm-indicator <?= $coursier['fcm_tokens'] > 0 ? 'fcm-ok' : 'fcm-warning' ?>">
                                     🔔 FCM: <?= $coursier['fcm_tokens'] ?> token(s)
