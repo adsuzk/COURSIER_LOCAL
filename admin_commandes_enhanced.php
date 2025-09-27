@@ -486,6 +486,12 @@ function renderCoursiersStatusContent(array $coursiers): string
                 <i class="fas fa-motorcycle"></i>
                 <span>Coursiers Connectés</span>
                 <span class="badge-total"><?= $totalCoursiers ?></span>
+                
+                <!-- Indicateur FCM Global -->
+                <div class="fcm-status-indicator <?= $fcmStatus['status'] ?>" title="FCM: <?= $fcmStatus['with_fcm'] ?>/<?= $fcmStatus['total_connected'] ?> (<?= $fcmStatus['fcm_rate'] ?>%)">
+                    <i class="fas fa-bell"></i>
+                    <span><?= $fcmStatus['fcm_rate'] ?>%</span>
+                </div>
             </div>
             <div class="lights-summary">
                 <div class="light-indicator green" title="Disponibles"><?= $vertsCount ?></div>
