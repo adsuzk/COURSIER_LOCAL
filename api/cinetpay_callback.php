@@ -1,6 +1,7 @@
 <?php
 // api/cinetpay_callback.php
 require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../lib/finances_sync.php';
 
 // Lire la payload JSON ou POST form
 event:
@@ -53,16 +54,9 @@ go: try {
 
         // --- Synchronisation avec la banque admin (finances) ---
         try {
-            // 1) Assurer l'existence d'un compte coursier
-            $stmt = $pdo->prepare("SELECT id FROM comptes_coursiers WHERE coursier_id = ?");
-            $stmt->execute([$recharge['coursier_id']]);
-            $cc_id = $stmt->fetchColumn();
-            if (!$cc_id) {
-                $pdo->prepare("INSERT INTO comptes_coursiers (coursier_id, solde, statut) VALUES (?, 0, 'actif')")
-                    ->execute([$recharge['coursier_id']]);
-            }
+            ensureCourierAccount($pdo, (int)$recharge['coursier_id']);
 
-            // 2) Insérer/mettre à jour la recharge validée dans recharges_coursiers
+            // 1) Insérer/mettre à jour la recharge validée dans recharges_coursiers (historique back-office)
             $stmt = $pdo->prepare("SELECT id FROM recharges_coursiers WHERE reference_paiement = ?");
             $stmt->execute([$responseId]);
             $rc_id = $stmt->fetchColumn();
@@ -75,19 +69,19 @@ go: try {
                     ->execute([$rc_id]);
             }
 
-            // 3) Créditer le solde du coursier (idempotent via transactions_financieres)
-            // Eviter double crédit: vérifier si une transaction_financieres existe déjà pour cette référence
-            $stmt = $pdo->prepare("SELECT COUNT(*) FROM transactions_financieres WHERE reference = ?");
-            $referenceFinance = 'RECH_' . $rc_id;
-            $stmt->execute([$referenceFinance]);
-            $exists = (int)$stmt->fetchColumn() > 0;
-            if (!$exists) {
-                // Créditer le compte
-                $pdo->prepare("UPDATE comptes_coursiers SET solde = solde + ? WHERE coursier_id = ?")
-                    ->execute([$amount, $recharge['coursier_id']]);
-                // Ajouter la transaction
-                $pdo->prepare("INSERT INTO transactions_financieres (type, montant, compte_type, compte_id, reference, description, statut, date_creation) VALUES ('credit', ?, 'coursier', ?, ?, 'Recharge validée automatiquement via CinetPay', 'reussi', NOW())")
-                    ->execute([$amount, $recharge['coursier_id'], $referenceFinance]);
+            // 2) Créditer les soldes (comptes_coursiers + coursier_accounts) de manière idempotente
+            $financeReference = 'RECH_' . ($rc_id ?: $rechargeId);
+            $credited = creditCourierIfNewRef(
+                $pdo,
+                (int)$recharge['coursier_id'],
+                (float)$amount,
+                $financeReference,
+                'Recharge validée automatiquement via CinetPay'
+            );
+
+            if (!$credited) {
+                // Même référence déjà traitée: mettre à jour les indicateurs côté coursier_accounts
+                adjustCoursierRechargeBalance($pdo, (int)$recharge['coursier_id'], (float)$amount, ['affect_total' => true]);
             }
         } catch (Exception $syncEx) {
             // Log interne mais ne bloque pas la réponse
