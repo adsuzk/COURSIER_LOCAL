@@ -94,47 +94,69 @@ $pdo = getDBConnection();
         }
 
         .status-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            border-left: 5px solid var(--primary);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            border: 2px solid var(--primary-gold);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
         }
 
-        .status-card.success { border-left-color: var(--success); }
-        .status-card.warning { border-left-color: var(--warning); }
-        .status-card.danger { border-left-color: var(--danger); }
+        .status-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 45px rgba(212, 168, 83, 0.4);
+        }
+
+        .status-card.success { 
+            border-color: var(--success);
+            box-shadow: 0 15px 35px rgba(40, 167, 69, 0.2);
+        }
+        .status-card.warning { 
+            border-color: var(--warning);
+            box-shadow: 0 15px 35px rgba(255, 193, 7, 0.2);
+        }
+        .status-card.danger { 
+            border-color: var(--danger);
+            box-shadow: 0 15px 35px rgba(220, 53, 69, 0.2);
+        }
 
         .card-header {
             display: flex;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .card-icon {
-            font-size: 2em;
-            margin-right: 15px;
-            color: var(--primary);
+            font-size: 2.5em;
+            margin-right: 20px;
+            color: var(--primary-gold);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
 
         .card-title {
-            font-size: 1.3em;
-            font-weight: bold;
-            color: var(--dark);
+            font-size: 1.4em;
+            font-weight: 700;
+            color: var(--primary-dark);
         }
 
         .card-value {
-            font-size: 2.5em;
-            font-weight: bold;
-            color: var(--primary);
+            font-size: 3em;
+            font-weight: 800;
+            background: var(--gradient-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             text-align: center;
-            margin: 15px 0;
+            margin: 20px 0;
         }
 
         .card-description {
-            color: #666;
+            color: var(--primary-dark);
             text-align: center;
-            font-size: 0.9em;
+            font-size: 1em;
+            font-weight: 500;
+            opacity: 0.8;
         }
 
         .api-section {
