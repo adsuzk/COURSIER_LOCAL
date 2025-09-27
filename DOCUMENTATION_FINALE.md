@@ -200,7 +200,12 @@ FOREIGN KEY (coursier_id) REFERENCES agents_suzosky(id);
 2. **Session valide** : `current_session_token IS NOT NULL`
 3. **Activité récente** : `last_login_at > NOW() - 30 minutes`
 4. **Solde positif** : `solde_wallet > 0` ⭐ **CRITIQUE**
-5. **Token FCM actif** : Existe dans `device_tokens`
+5. **Token FCM actif** : Existe dans `device_tokens` ET `is_active = 1`
+
+⚠️ **CONTRÔLE CRITIQUE DE SÉCURITÉ** : 
+- Si coursier se déconnecte → Token automatiquement `is_active = 0`
+- Si aucun coursier connecté → Système refuse toutes nouvelles commandes
+- Message commercial affiché sur index.php pour expliquer indisponibilité
 
 > ℹ️ Ces contrôles sont orchestrés par `lib/coursier_presence.php`. Toute évolution doit passer par ce helper afin que **commandes** et **finances** restent parfaitement synchronisés.
 
