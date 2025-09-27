@@ -64,42 +64,58 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 20px;
         }
 
         .header {
-            background: linear-gradient(135deg, var(--suzosky-gold) 0%, #f4e4b8 100%);
-            border-radius: 16px;
-            padding: 2rem;
-            margin: 2rem 0;
+            background: var(--gradient-gold);
+            border-radius: 25px;
+            padding: 50px 40px;
+            margin-bottom: 40px;
             text-align: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 
+                0 0 60px rgba(212, 168, 83, 0.3),
+                0 20px 40px rgba(0,0,0,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: headerGlow 8s ease-in-out infinite;
+        }
+
+        @keyframes headerGlow {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(180deg); }
         }
 
         .header h1 {
-            color: var(--suzosky-dark);
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-            font-weight: 700;
+            color: var(--primary-dark);
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            font-weight: 800;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 2;
         }
 
         .header .subtitle {
-            color: var(--suzosky-dark);
-            font-size: 1.1rem;
-            opacity: 0.8;
-            margin-bottom: 1rem;
-        }
-        
-        .header .description {
-            background: rgba(255,255,255,0.9);
-            color: var(--text-secondary);
-            padding: 1rem;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            max-width: 600px;
-            margin: 0 auto;
+            color: var(--primary-dark);
+            font-size: 1.4rem;
+            opacity: 0.9;
+            font-weight: 600;
+            position: relative;
+            z-index: 2;
         }
 
         .stats-grid {
