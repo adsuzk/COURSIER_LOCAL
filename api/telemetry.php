@@ -361,13 +361,6 @@ try {
                 'message' => 'Crash reported and analyzed',
                 'auto_analysis' => $autoAnalysis
             ]);
-                    $data['screen_name'] ?? null,
-                    $data['user_action'] ?? null,
-                    isset($data['memory_usage']) ? (int)$data['memory_usage'] : null,
-                    isset($data['battery_level']) ? (int)$data['battery_level'] : null,
-                    $data['network_type'] ?? null
-                ]);
-            }
             
             echo json_encode(['success' => true, 'crash_hash' => $crashHash]);
             break;
