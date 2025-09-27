@@ -58,12 +58,15 @@ try {
     
     $stmt = $pdo->prepare("
         INSERT INTO commandes 
-        (code_commande, client_nom, client_telephone, adresse_depart, adresse_arrivee, 
+        (order_number, code_commande, client_nom, client_telephone, adresse_depart, adresse_arrivee, 
          description, prix_total, statut, coursier_id, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
     ");
     
+    $orderNumber = 'ORD' . date('YmdHis') . rand(100, 999);
+    
     $stmt->execute([
+        $orderNumber,
         $codeCommande,
         'CLIENT TEST',
         '0123456789',
