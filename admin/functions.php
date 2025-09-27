@@ -978,7 +978,10 @@ function renderHeader() {
                 flex-direction: column;
                 background: var(--gradient-dark);
                 position: relative;
-                overflow: hidden;
+                margin-left: 300px;
+                min-height: 100vh;
+                overflow-x: hidden;
+                overflow-y: auto;
             }
 
             .main-content::before {
