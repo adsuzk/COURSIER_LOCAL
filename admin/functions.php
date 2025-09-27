@@ -448,6 +448,7 @@ function renderLoginForm($error = '') {
 }
 }
 
+if (!function_exists('renderHeader')) {
 function renderHeader() {
     ?>
     <!DOCTYPE html>
@@ -1432,6 +1433,7 @@ function renderHeader() {
             
             <div class="content-area">
     <?php
+}
 }
 
 function renderFooter() {
