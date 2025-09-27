@@ -1436,6 +1436,7 @@ function renderHeader() {
 }
 }
 
+if (!function_exists('renderFooter')) {
 function renderFooter() {
     ?>
             </div>
@@ -1457,4 +1458,5 @@ function renderFooter() {
     </body>
     </html>
     <?php
+}
 }
