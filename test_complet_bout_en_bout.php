@@ -129,8 +129,8 @@ echo "   ⏱️  Le coursier doit maintenant ouvrir son app et accepter la comma
 echo "6. VÉRIFICATION TIMELINE COMMANDE:\n";
 
 $stmt = $pdo->prepare("
-    SELECT id, status, created_at, assigned_at, accepted_at, 
-           pickup_at, delivered_at, updated_at
+    SELECT id, statut, created_at, heure_acceptation, 
+           heure_retrait, heure_livraison, updated_at, code_commande
     FROM commandes 
     WHERE id = ?
 ");
@@ -138,12 +138,12 @@ $stmt->execute([$commandeId]);
 $commande = $stmt->fetch(PDO::FETCH_ASSOC);
 
 echo "   📋 ID Commande: {$commande['id']}\n";
-echo "   🔄 Status actuel: {$commande['status']}\n";
-echo "   🕐 Créée: {$commande['created_at']}\n";
-echo "   🕑 Attribuée: " . ($commande['assigned_at'] ?? 'N/A') . "\n";
-echo "   🕒 Acceptée: " . ($commande['accepted_at'] ?? 'En attente...') . "\n";
-echo "   🕓 Enlèvement: " . ($commande['pickup_at'] ?? 'N/A') . "\n";
-echo "   🕔 Livrée: " . ($commande['delivered_at'] ?? 'N/A') . "\n\n";
+echo "   🏷️  Code: {$commande['code_commande']}\n";
+echo "   � Status actuel: {$commande['statut']}\n";
+echo "   � Créée: {$commande['created_at']}\n";
+echo "   🕒 Acceptée: " . ($commande['heure_acceptation'] ?? 'En attente...') . "\n";
+echo "   🕓 Enlèvement: " . ($commande['heure_retrait'] ?? 'N/A') . "\n";
+echo "   🕔 Livrée: " . ($commande['heure_livraison'] ?? 'N/A') . "\n\n";
 
 echo "7. INSTRUCTIONS POUR POURSUIVRE LE TEST:\n";
 echo "   📱 1. Ouvrir l'app mobile du coursier {$coursier['nom']}\n";
