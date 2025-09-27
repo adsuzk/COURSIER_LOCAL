@@ -296,9 +296,11 @@ $pdo = getDBConnection();
 
         .timestamp {
             text-align: center;
-            color: #666;
-            margin-top: 20px;
+            color: var(--primary-dark);
+            margin-top: 25px;
             font-style: italic;
+            font-weight: 500;
+            opacity: 0.8;
         }
 
         .health-indicator {
