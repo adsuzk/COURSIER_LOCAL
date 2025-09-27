@@ -291,6 +291,30 @@ $assetRoute = function (string $path) {
         padding: 15px;
         text-align: center;
     }
+
+    .stat-card.wallet-card {
+        grid-column: 1 / -1;
+        text-align: left;
+        background: linear-gradient(135deg, rgba(212, 168, 83, 0.25), rgba(212, 168, 83, 0.1));
+        border: 1px solid rgba(212, 168, 83, 0.6);
+        box-shadow: 0 10px 30px rgba(212, 168, 83, 0.15);
+    }
+
+    .stat-card.wallet-card .stat-value {
+        font-size: 2.2rem;
+        color: #fff;
+    }
+
+    .stat-card.wallet-card .stat-label {
+        color: rgba(255, 255, 255, 0.85);
+        margin-bottom: 6px;
+    }
+
+    .stat-hint {
+        font-size: 0.75rem;
+        opacity: 0.8;
+        margin-top: 6px;
+    }
     
     .stat-value {
         font-size: 1.8rem;
