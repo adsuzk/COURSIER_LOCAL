@@ -64,9 +64,10 @@ try {
     
     $commandeId = $pdo->lastInsertId();
     echo "   ✅ Commande créée avec ID: {$commandeId}\n";
-    echo "   📍 Enlèvement: {$commandeData['pickup_address']}\n";
-    echo "   📍 Livraison: {$commandeData['delivery_address']}\n";
-    echo "   💵 Frais: {$commandeData['delivery_fee']} FCFA\n\n";
+    echo "   🏷️  Code: {$commandeData['code_commande']}\n";
+    echo "   📍 Enlèvement: {$commandeData['adresse_retrait']}\n";
+    echo "   📍 Livraison: {$commandeData['adresse_livraison']}\n";
+    echo "   💵 Frais: {$commandeData['prix_total']} FCFA\n\n";
     
 } catch (Exception $e) {
     echo "   ❌ Erreur création commande: " . $e->getMessage() . "\n";
