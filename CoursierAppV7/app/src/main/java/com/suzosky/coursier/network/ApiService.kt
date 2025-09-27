@@ -630,12 +630,6 @@ object ApiService {
         val deadline = System.currentTimeMillis() + timeoutMs
         var completed = false
 
-        fun schedule(delay: Long) {
-            if (!completed) {
-                handler.postDelayed({ poll() }, delay)
-            }
-        }
-
         fun parseBalance(value: Any?): Double? = when (value) {
             null -> null
             is Number -> value.toDouble()
@@ -664,10 +658,14 @@ object ApiService {
                     }
                     error != null -> {
                         // Erreur réseau momentanée : réessayer en allongeant légèrement le délai
-                        schedule(pollIntervalMs + 2_000)
+                        if (!completed) {
+                            handler.postDelayed({ poll() }, pollIntervalMs + 2_000)
+                        }
                     }
                     else -> {
-                        schedule(pollIntervalMs)
+                        if (!completed) {
+                            handler.postDelayed({ poll() }, pollIntervalMs)
+                        }
                     }
                 }
             }
