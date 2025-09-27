@@ -1,1 +1,2 @@
 {"timestamp":"2025-09-27 21:50:13","action":"ping","data":{"action":"ping"},"response":{"success":true,"message":"Serveur accessible","timestamp":1759002613,"server_time":"2025-09-27 21:50:13"},"ip":"::1"}
+{"timestamp":"2025-09-27 21:50:18","action":"get_profile","data":{"action":"get_profile","coursier_id":"3"},"response":{"success":true,"profile":{"id":3,"nom":"YAPO","prenoms":"Emmanuel","matricule":"CM20250001","email":"yapadone@gmail.com","telephone":"0758842029","solde":"1000.00","statut_connexion":"en_ligne","last_login_at":"2025-09-27 19:47:49"}},"ip":"::1"}
