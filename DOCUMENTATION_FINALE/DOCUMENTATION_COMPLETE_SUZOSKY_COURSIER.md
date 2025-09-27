@@ -269,12 +269,15 @@ sections_index/
 
 ### Interface Coursiers (`coursier.php`)
 
-**Dashboard coursier avec :**
+**Dashboard coursier WEB avec :**
 - Liste des commandes disponibles
 - Carte avec géolocalisation temps réel
 - Gestion du statut (En ligne/Hors ligne)
 - Historique des livraisons
 - Portefeuille et gains
+
+⚠️ **IMPORTANT** : `coursier.php` est l'interface WEB pour navigateur. 
+L'application mobile Android utilise les endpoints API dédiés dans `/api/` (voir section APIs ci-dessous).
 
 ### Administration (`admin.php`)
 
