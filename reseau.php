@@ -452,10 +452,16 @@ $pdo = getDBConnection();
             ];
         }
         
-        // Test des APIs principales
+        // DÉCOUVERTE AUTOMATIQUE DU RÉSEAU
+        require_once 'network_discovery.php';
+        $discovery = new NetworkDiscovery();
+        $discoveredComponents = $discovery->discoverAllNetworkComponents();
+        
+        // Test des APIs principales (manuelles + découvertes automatiquement)
         $baseUrl = 'http://localhost/COURSIER_LOCAL';
         
-        $apis = [
+        // APIs manuelles essentielles
+        $manualApis = [
             [
                 'name' => 'API Données Coursier',
                 'url' => $baseUrl . '/api/get_coursier_data.php?coursier_id=3',
