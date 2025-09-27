@@ -32,30 +32,34 @@ echo "   💰 Solde wallet: " . number_format($coursier['solde_wallet'], 0) . " 
 echo "2. CRÉATION COMMANDE DEPUIS INDEX:\n";
 
 $commandeData = [
-    'client_name' => 'Client Test',
-    'client_phone' => '+225 07 12 34 56 78',
-    'pickup_address' => '123 Rue de la République, Abidjan',
-    'delivery_address' => '456 Avenue Houphouët-Boigny, Cocody',
-    'package_description' => 'Document important',
-    'delivery_fee' => 2500,
-    'created_at' => date('Y-m-d H:i:s')
+    'client_nom' => 'Client Test',
+    'client_telephone' => '+225 07 12 34 56 78',
+    'adresse_retrait' => '123 Rue de la République, Abidjan',
+    'adresse_livraison' => '456 Avenue Houphouët-Boigny, Cocody',
+    'description_colis' => 'Document important',
+    'prix_total' => 2500,
+    'code_commande' => 'CMD' . date('YmdHis'),
+    'order_number' => 'ORD' . date('YmdHis')
 ];
 
 try {
     $stmt = $pdo->prepare("
         INSERT INTO commandes (
-            client_name, client_phone, pickup_address, delivery_address,
-            package_description, delivery_fee, status, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW(), NOW())
+            order_number, code_commande, client_nom, client_telephone, 
+            adresse_retrait, adresse_livraison, description_colis, 
+            prix_total, statut, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'en_attente', NOW(), NOW())
     ");
     
     $stmt->execute([
-        $commandeData['client_name'],
-        $commandeData['client_phone'], 
-        $commandeData['pickup_address'],
-        $commandeData['delivery_address'],
-        $commandeData['package_description'],
-        $commandeData['delivery_fee']
+        $commandeData['order_number'],
+        $commandeData['code_commande'],
+        $commandeData['client_nom'],
+        $commandeData['client_telephone'], 
+        $commandeData['adresse_retrait'],
+        $commandeData['adresse_livraison'],
+        $commandeData['description_colis'],
+        $commandeData['prix_total']
     ]);
     
     $commandeId = $pdo->lastInsertId();
