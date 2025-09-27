@@ -508,10 +508,7 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
             ];
         }
         
-        // DÉCOUVERTE AUTOMATIQUE DU RÉSEAU
-        require_once 'network_discovery.php';
-        $discovery = new NetworkDiscovery();
-        $discoveredComponents = $discovery->discoverAllNetworkComponents();
+        // DÉCOUVERTE AUTOMATIQUE DU RÉSEAU - Déjà initialisé en haut
         
         // Test des APIs principales (manuelles + découvertes automatiquement)
         $baseUrl = 'http://localhost/COURSIER_LOCAL';
