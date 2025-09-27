@@ -406,7 +406,7 @@ curl "http://192.168.1.5/COURSIER_LOCAL/api/get_coursier_data.php?coursier_id=5"
 ### 📋 **Bonnes pratiques API mobile :**
 
 1. **Source unique de vérité** : Toutes les APIs doivent lire `agents_suzosky.solde_wallet` en priorité
-2. **Test systématique** : Valider que `get_coursier_data.php` retourne les mêmes valeurs que `get_wallet_balance.php`
+2. **Sécurité FCM** : Aucun token actif pour coursier déconnecté (contrôle automatique)
 3. **Monitoring ADB** : Utiliser Android Debug Bridge pour diagnostiquer les problèmes de sync
 4. **Fallback cohérent** : Si `agents_suzosky` indisponible, utiliser le même ordre de fallback dans toutes les APIs
 5. **Documentation API** : Maintenir la liste des endpoints utilisés par l'app mobile
@@ -414,14 +414,18 @@ curl "http://192.168.1.5/COURSIER_LOCAL/api/get_coursier_data.php?coursier_id=5"
 ### 🛠️ **Commandes de diagnostic rapide :**
 
 ```bash
-# Vérifier la synchronisation des APIs
-curl "http://localhost/COURSIER_LOCAL/api/get_wallet_balance.php?coursier_id=5"
+# Tester l'API principal (utilisée par l'app)
 curl "http://localhost/COURSIER_LOCAL/api/get_coursier_data.php?coursier_id=5"
-
-# Les deux doivent retourner le même solde !
+curl -H "Content-Type: application/json" -d '{"coursier_id":5}' "http://localhost/COURSIER_LOCAL/api/get_coursier_data.php"
 
 # Surveiller l'app mobile en temps réel
 adb logcat --pid=$(adb shell pidof com.suzosky.coursier.debug) | grep "api"
+
+# Vérifier sécurité FCM tokens
+php fcm_token_security.php
+
+# Test assignation sécurisée
+php secure_order_assignment.php
 ```
 
 ---
