@@ -9,12 +9,12 @@ echo.
 
 echo Configuration des variables d'environnement...
 setx GIT_USERNAME "adsuzk"
-setx GIT_PASSWORD "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"
+setx GIT_PASSWORD "%GITHUB_TOKEN%"
 
 echo.
 echo Configuration Git globale...
 git config --global credential.helper "store --file=C:\Users\manud\.git-credentials"
-git config --global url."https://adsuzk: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@github.com/".insteadOf "https://github.com/"
+git config --global url."https://adsuzk:%GITHUB_TOKEN%@github.com/".insteadOf "https://github.com/"
 
 echo.
 echo ✓ Configuration terminee !
