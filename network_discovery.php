@@ -395,6 +395,26 @@ class NetworkDiscovery {
         
         return 'Outil de monitoring';
     }
+    
+    private function extractSectionDescription($file): string {
+        if (!file_exists($file)) {
+            return "Section admin découverte automatiquement";
+        }
+        
+        $content = file_get_contents($file);
+        
+        // Chercher dans les commentaires
+        if (preg_match('/\/\*\*\s*\n\s*\*\s*(.+?)\n/', $content, $matches)) {
+            return trim($matches[1]);
+        }
+        
+        // Chercher le titre de section
+        if (preg_match('/<h[1-4][^>]*>(.+?)<\/h[1-4]>/', $content, $matches)) {
+            return strip_tags(trim($matches[1]));
+        }
+        
+        return "Section admin découverte automatiquement";
+    }
 }
 
 // Test si exécuté directement
