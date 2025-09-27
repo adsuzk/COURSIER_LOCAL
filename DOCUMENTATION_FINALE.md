@@ -391,11 +391,11 @@ curl "http://192.168.1.5/COURSIER_LOCAL/api/get_coursier_data.php?coursier_id=5"
 
 ### 🔌 **APIs critiques :**
 
-1. **Login coursier** : `api/agent_auth.php`
-2. **Données coursier** : `api/get_coursier_data.php` ⭐ **UTILISÉE PAR L'APP**
-3. **Récupération commandes** : `api/get_coursier_orders.php`
-4. **Update statut** : `api/update_order_status.php`
-5. **Solde wallet (admin)** : `api/get_wallet_balance.php`
+1. **Login coursier** : `api/agent_auth.php` - Authentification + génération token session
+2. **Données coursier** : `api/get_coursier_data.php` ⭐ **UTILISÉE PAR L'APP** (corrigée POST JSON)
+3. **Récupération commandes** : `api/get_coursier_orders.php` - Liste commandes du coursier
+4. **Update statut** : `api/update_order_status.php` - Progression commandes
+5. **~~Solde wallet (admin)~~** : ❌ **SUPPRIMÉE** - Fonctionnalité intégrée dans get_coursier_data.php
 
 ### 🔄 **Synchronisation temps réel :**
 
