@@ -421,10 +421,12 @@ curl "http://192.168.1.5/COURSIER_LOCAL/api/get_coursier_data.php?coursier_id=5"
 ### 🔌 **APIs critiques :**
 
 1. **Login coursier** : `api/agent_auth.php` - Authentification + génération token session
-2. **Données coursier** : `api/get_coursier_data.php` ⭐ **UTILISÉE PAR L'APP** (corrigée POST JSON)
+2. **Données coursier** : `api/get_coursier_data.php` ⭐ **UTILISÉE PAR L'APP** (corrigée POST JSON + wallet intégré)
 3. **Récupération commandes** : `api/get_coursier_orders.php` - Liste commandes du coursier
 4. **Update statut** : `api/update_order_status.php` - Progression commandes
-5. **~~Solde wallet (admin)~~** : ❌ **SUPPRIMÉE** - Fonctionnalité intégrée dans get_coursier_data.php
+
+⚠️ **APIs supprimées (obsolètes) :**
+- `api/get_wallet_balance.php` → Remplacée par `get_coursier_data.php` (wallet intégré)
 
 ### 🔄 **Synchronisation temps réel :**
 
@@ -443,9 +445,10 @@ curl "http://192.168.1.5/COURSIER_LOCAL/api/get_coursier_data.php?coursier_id=5"
 ### 🛠️ **Commandes de diagnostic rapide :**
 
 ```bash
-# Tester l'API principal (utilisée par l'app)
-curl "http://localhost/COURSIER_LOCAL/api/get_coursier_data.php?coursier_id=5"
-curl -H "Content-Type: application/json" -d '{"coursier_id":5}' "http://localhost/COURSIER_LOCAL/api/get_coursier_data.php"
+# Tester l'API principal (utilisée par l'app) - Tous les formats supportés
+curl "http://localhost/COURSIER_LOCAL/api/get_coursier_data.php?coursier_id=5"  # GET
+curl -d "coursier_id=5" "http://localhost/COURSIER_LOCAL/api/get_coursier_data.php"  # POST form
+curl -H "Content-Type: application/json" -d '{"coursier_id":5}' "http://localhost/COURSIER_LOCAL/api/get_coursier_data.php"  # POST JSON
 
 # Surveiller l'app mobile en temps réel
 adb logcat --pid=$(adb shell pidof com.suzosky.coursier.debug) | grep "api"
@@ -455,6 +458,9 @@ php fcm_token_security.php
 
 # Test assignation sécurisée
 php secure_order_assignment.php
+
+# Test complet des corrections
+php test_corrections_critiques.php
 ```
 
 ---
