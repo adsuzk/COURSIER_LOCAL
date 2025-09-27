@@ -120,7 +120,16 @@ agents_suzosky:
 
 ## 🔔 **SYSTÈME FCM (Firebase Cloud Messaging)**
 
-### 📱 **Tables FCM**
+### � **RÈGLES CRITIQUES DE SÉCURITÉ FCM**
+
+⚠️ **CONFORMITÉ LÉGALE OBLIGATOIRE** : Pour éviter tout risque judiciaire
+
+1. **Token uniquement si connecté** : Un coursier déconnecté ne doit JAMAIS avoir de token actif
+2. **Suppression immédiate** : Dès déconnexion, tous les tokens doivent être désactivés
+3. **Aucune commande si déconnecté** : Système doit refuser toute attribution
+4. **Surveillance temps réel** : Auto-nettoyage obligatoire toutes les 5 minutes
+
+### �📱 **Tables FCM**
 
 ```sql
 device_tokens:
@@ -128,7 +137,8 @@ device_tokens:
 ├── coursier_id → agents_suzosky.id
 ├── token (FCM token)
 ├── device_type
-├── is_active
+├── is_active (DOIT être 0 si coursier déconnecté)
+├── last_used_at (surveillance activité)
 └── created_at, updated_at
 
 notifications_log_fcm:
@@ -137,7 +147,7 @@ notifications_log_fcm:
 ├── commande_id (nullable)
 ├── token_used
 ├── message
-├── status (sent/delivered/failed)
+├── status (sent/delivered/failed/blocked_offline_coursier)
 └── created_at
 ```
 
