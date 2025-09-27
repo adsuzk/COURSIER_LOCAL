@@ -1,11 +1,6 @@
-# SYNC_COURSIER_PROD_CLEAN.ps1
+# SYNC_COURSIER_PROD_SIMPLE.ps1
 # Synchronisation propre vers coursier_prod avec configuration automatique LWS
-# Date : 27 Septembre 2025
-
-param(
-    [switch]$Verbose,
-    [switch]$Force
-)
+param([switch]$Verbose, [switch]$Force)
 
 $ErrorActionPreference = "Continue"
 $HOST.UI.RawUI.WindowTitle = "Sync Coursier Prod - Structure Propre"
