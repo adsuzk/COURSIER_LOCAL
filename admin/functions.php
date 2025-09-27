@@ -541,8 +541,12 @@ function renderHeader() {
                 box-shadow: var(--glass-shadow);
                 display: flex;
                 flex-direction: column;
-                position: relative;
-                z-index: 20;
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                z-index: 1000;
+                overflow: hidden;
             }
 
             .sidebar::before {
