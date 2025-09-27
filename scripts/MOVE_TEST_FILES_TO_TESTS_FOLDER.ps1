@@ -148,8 +148,8 @@ if ($remainingTests -and $remainingTests.Count -gt 0) {
 
 # Lister le contenu du dossier Tests/ pour confirmation
 Write-Host "`n📁 CONTENU DU DOSSIER Tests/:" -ForegroundColor Cyan
-$testsContent = Get-ChildItem -Path $testsDir -Name "*.php" | Sort-Object
-if ($testsContent.Count -gt 0) {
+$testsContent = Get-ChildItem -Path $testsDir -Name "*.php" -ErrorAction SilentlyContinue | Sort-Object
+if ($testsContent -and $testsContent.Count -gt 0) {
     foreach ($file in $testsContent) {
         Write-Host "   ✓ $file" -ForegroundColor Gray
     }
