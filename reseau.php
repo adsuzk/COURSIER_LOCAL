@@ -26,14 +26,20 @@ $pdo = getDBConnection();
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary: #D4A853;
-            --secondary: #8B7A3A;
+            /* COLORIS OFFICIELS SUZOSKY */
+            --primary-gold: #D4A853;
+            --primary-dark: #1A1A2E;
+            --secondary-blue: #16213E;
+            --accent-light: #F4E4B8;
             --success: #28a745;
             --danger: #dc3545;
             --warning: #ffc107;
             --info: #17a2b8;
-            --dark: #343a40;
             --light: #f8f9fa;
+            
+            /* GRADIENTS SUZOSKY */
+            --gradient-gold: linear-gradient(135deg, #D4A853 0%, #F4E4B8 50%, #D4A853 100%);
+            --gradient-dark: linear-gradient(135deg, #1A1A2E 0%, #16213E 100%);
         }
 
         * {
@@ -43,10 +49,11 @@ $pdo = getDBConnection();
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--gradient-dark);
             min-height: 100vh;
             padding: 20px;
+            color: #fff;
         }
 
         .container {
