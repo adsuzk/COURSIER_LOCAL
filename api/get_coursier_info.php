@@ -149,20 +149,92 @@ try {
     ");
     $statsStmt->execute([$coursier_id]);
     $statsRow = $statsStmt->fetch(PDO::FETCH_ASSOC) ?: [];
+
+    // Déterminer le solde wallet prioritaire
+    $soldeWallet = null;
+    $walletSource = null;
+    if (array_key_exists('agent_solde_wallet', $coursierRow) && $coursierRow['agent_solde_wallet'] !== null) {
+        $soldeWallet = (float)$coursierRow['agent_solde_wallet'];
+        $walletSource = 'agents_suzosky';
+    }
+
+    if ($soldeWallet === null) {
+        try {
+            $stmtWallet = $pdo->prepare("SELECT solde_disponible, solde_total FROM coursier_accounts WHERE coursier_id = ? LIMIT 1");
+            $stmtWallet->execute([$coursier_id]);
+            if ($row = $stmtWallet->fetch(PDO::FETCH_ASSOC)) {
+                if (isset($row['solde_disponible']) && $row['solde_disponible'] !== null) {
+                    $soldeWallet = (float)$row['solde_disponible'];
+                    $walletSource = 'coursier_accounts.solde_disponible';
+                } elseif (isset($row['solde_total']) && $row['solde_total'] !== null) {
+                    $soldeWallet = (float)$row['solde_total'];
+                    $walletSource = 'coursier_accounts.solde_total';
+                }
+            }
+        } catch (Throwable $e) {
+            // table absente ou erreur non bloquante
+        }
+    }
+
+    if ($soldeWallet === null) {
+        try {
+            $stmtWallet = $pdo->prepare("SELECT solde FROM comptes_coursiers WHERE coursier_id = ? LIMIT 1");
+            $stmtWallet->execute([$coursier_id]);
+            if ($row = $stmtWallet->fetch(PDO::FETCH_ASSOC)) {
+                if (isset($row['solde']) && $row['solde'] !== null) {
+                    $soldeWallet = (float)$row['solde'];
+                    $walletSource = 'comptes_coursiers.solde';
+                }
+            }
+        } catch (Throwable $e) {
+            // table absente ou erreur non bloquante
+        }
+    }
+
+    if ($soldeWallet === null) {
+        try {
+            $stmtWallet = $pdo->prepare("SELECT balance FROM clients_particuliers WHERE id = ? AND type_client = 'coursier' LIMIT 1");
+            $stmtWallet->execute([$coursier_id]);
+            if ($row = $stmtWallet->fetch(PDO::FETCH_ASSOC)) {
+                if (isset($row['balance']) && $row['balance'] !== null) {
+                    $soldeWallet = (float)$row['balance'];
+                    $walletSource = 'clients_particuliers.balance';
+                }
+            }
+        } catch (Throwable $e) {
+            // table absente ou erreur non bloquante
+        }
+    }
+
+    if ($soldeWallet === null) {
+        $soldeWallet = 0.0;
+        $walletSource = $walletSource ?? 'default_zero';
+    }
+
+    // Fusion des informations d'identité (agents vs coursiers)
+    $agentFullName = trim(trim($coursierRow['agent_prenoms'] ?? '') . ' ' . trim($coursierRow['agent_nom'] ?? ''));
+    $nom = $agentFullName !== '' ? $agentFullName : ($coursierRow['coursier_nom'] ?? '');
+    $telephone = $coursierRow['agent_telephone'] ?? $coursierRow['coursier_telephone'] ?? null;
+    $email = $coursierRow['agent_email'] ?? $coursierRow['coursier_email'] ?? null;
+    $statutBase = $coursierRow['coursier_statut'] ?? null;
+    $statutConnexion = $coursierRow['agent_statut_connexion'] ?? null;
+    $statut = $statutBase ?? $statutConnexion ?? 'inconnu';
+    $zoneTravail = $coursierRow['agent_zone_travail'] ?? $coursierRow['coursier_zone_travail'] ?? null;
+    $vehiculeType = $coursierRow['agent_vehicule_type'] ?? $coursierRow['coursier_vehicule_type'] ?? null;
+    $derniereActivite = $coursierRow['derniere_activite'] ?? $coursierRow['agent_last_login_at'] ?? null;
+    $matricule = $coursierRow['agent_matricule'] ?? null;
+
+    $totalCommandes = (int)($statsRow['total_commandes'] ?? 0);
+    $commandesTerminees = (int)($statsRow['commandes_terminees'] ?? 0);
+    $commandesJour = (int)($statsRow['commandes_jour'] ?? 0);
+    $gainsJour = (float)($statsRow['gains_jour'] ?? 0);
+    $gainsTotal = (float)($statsRow['gains_total'] ?? 0);
+    $derniereCommande = $statsRow['derniere_commande'] ?? null;
+
     // Latest position via helper
     $pos = tracking_select_positions_for_courier($pdo, $coursier_id, 1);
     $derLat = null; $derLng = null; $derTs = null;
     if ($pos && isset($pos[0])) { $derLat = (float)$pos[0]['latitude']; $derLng = (float)$pos[0]['longitude']; $derTs = $pos[0]['created_at']; }
-    
-    if (!$coursier) {
-        http_response_code(404);
-        echo json_encode([
-            'success' => false,
-            'error' => 'COURSIER_NOT_FOUND',
-            'message' => 'Coursier non trouvé'
-        ]);
-        exit;
-    }
     
     // Récupérer les commandes actives (inclure nouveaux statuts + alias legacy)
     $placeholders = implode(',', array_fill(0, count($activeSet), '?'));
@@ -190,11 +262,11 @@ try {
     foreach ($commandes_raw as $row) {
         $s = $row['statut'];
         $canon = $s;
-        if ($s === 'attribuee') $canon = 'assignee';
-        if ($s === 'recupere') $canon = 'picked_up';
-    $row['statut_canon'] = $canon;
-    // Harmoniser clé montant_total pour sortie même si colonne physique absente
-    if (!isset($row['montant_total'])) { $row['montant_total'] = $row['montant_calcule']; }
+        if ($s === 'attribuee') { $canon = 'assignee'; }
+        if ($s === 'recupere') { $canon = 'picked_up'; }
+        $row['statut_canon'] = $canon;
+        // Harmoniser clé montant_total pour sortie même si colonne physique absente
+        if (!isset($row['montant_total'])) { $row['montant_total'] = $row['montant_calcule']; }
         // Alias pour ancienne app
         $row['statut_alias'] = ($canon === 'assignee') ? 'attribuee' : $canon;
         $normalized[] = $row;
@@ -202,30 +274,42 @@ try {
     $commandes_actives = $normalized;
     
     // Calculer le taux de réussite
-    $taux_reussite = $coursier['total_commandes'] > 0 
-        ? round(($coursier['commandes_terminees'] / $coursier['total_commandes']) * 100, 1) 
+    $taux_reussite = $totalCommandes > 0 
+        ? round(($commandesTerminees / $totalCommandes) * 100, 1) 
         : 0;
+
+    $availabilityStatus = strtolower($statutConnexion ?? $statut);
+    $isDisponible = in_array($availabilityStatus, ['actif','active','en_ligne','disponible'], true) && count($commandes_actives) < 3;
     
     // Formater la réponse
     $response = [
         'success' => true,
         'data' => [
-            'coursier_id' => $coursier['id'],
-            'nom' => $coursier['nom'],
-            'telephone' => $coursier['telephone'],
-            'email' => $coursier['email'],
-            'statut' => $coursier['statut'],
-            'date_inscription' => $coursier['date_inscription'],
-            'derniere_activite' => $coursier['derniere_activite'],
-            'zone_travail' => $coursier['zone_travail'],
-            'vehicule_type' => $coursier['vehicule_type'],
+            'coursier_id' => (int)$coursierRow['id'],
+            'nom' => $nom,
+            'telephone' => $telephone,
+            'email' => $email,
+            'statut' => $statut,
+            'statut_connexion' => $statutConnexion,
+            'matricule' => $matricule,
+            'date_inscription' => $coursierRow['date_inscription'],
+            'derniere_activite' => $derniereActivite,
+            'zone_travail' => $zoneTravail,
+            'vehicule_type' => $vehiculeType,
+            'solde_wallet' => $soldeWallet,
+            'solde_wallet_formatted' => number_format($soldeWallet, 0, ',', ' ') . ' F',
+            'solde_wallet_source' => $walletSource,
             
             // Statistiques
             'statistiques' => [
-                'total_commandes' => (int)$coursier['total_commandes'],
-                'commandes_terminees' => (int)$coursier['commandes_terminees'],
+                'total_commandes' => $totalCommandes,
+                'commandes_terminees' => $commandesTerminees,
+                'commandes_jour' => $commandesJour,
+                'gains_jour' => $gainsJour,
+                'gains_total' => $gainsTotal,
                 'taux_reussite' => $taux_reussite,
-                'derniere_commande' => $coursier['derniere_commande']
+                'derniere_commande' => $derniereCommande,
+                'note_moyenne' => null
             ],
             
             // Position actuelle
@@ -239,7 +323,7 @@ try {
             'commandes_actives' => $commandes_actives,
             'commandes_actives_count' => count($commandes_actives),
             // Statut de disponibilité (ex: libre si moins de 3 actives en file)
-            'disponible' => $coursier['statut'] === 'actif' && count($commandes_actives) < 3,
+            'disponible' => $isDisponible,
             // Jeu de statuts actif exposé pour debug app
             'active_status_set' => $activeSet,
             'completed_status_set' => $completedSet
