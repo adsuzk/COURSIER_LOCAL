@@ -21,7 +21,7 @@ echo Appuyez sur ENTREE pour continuer...
 pause > nul
 
 cd /d "C:\xampp\htdocs\COURSIER_LOCAL"
-powershell -ExecutionPolicy Bypass -File "scripts\SYNC_COURSIER_PROD_CLEAN.ps1"
+powershell -ExecutionPolicy Bypass -File "scripts\SYNC_SIMPLE_ASCII.ps1"
 
 echo.
 echo Synchronisation terminee. Appuyez sur une touche pour fermer.
