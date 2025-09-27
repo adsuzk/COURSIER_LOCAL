@@ -65,7 +65,7 @@ agents_suzosky:
 2. **✅ Liste temps réel des coursiers avec soldes** 
 3. **✅ Rechargement direct par coursier** (montant + motif)
 4. **✅ Notification FCM automatique** après rechargement
-5. **✅ Historique complet** dans `transactions_financieres`
+5. **✅ Historique complet** dans `recharges`
 6. **✅ Statistiques globales** (taux solvabilité, FCM, etc.)
 
 #### **Workflow de rechargement opérationnel :**
@@ -78,7 +78,7 @@ agents_suzosky:
 
 - **Contrôleur** : `admin/finances.php` (onglet ajouté)
 - **Module principal** : `admin/sections_finances/rechargement_direct.php`
-- **Base de données** : `agents_suzosky.solde_wallet` + `transactions_financieres`
+- **Base de données** : `agents_suzosky.solde_wallet` + `recharges`
 - **Notifications** : `notifications_log_fcm` + tokens FCM actifs
 
 ---
@@ -191,6 +191,26 @@ FOREIGN KEY (coursier_id) REFERENCES agents_suzosky(id);
 2. **Token FCM manquant** → Pas de notifications
 3. **Mauvaise référence FK** → Erreurs d'assignation
 4. **Timezone PHP/MySQL** → Problèmes activité récente
+5. **API mobile obsolète** → App affiche solde 0 même après rechargement
+
+### 🔧 **CORRECTION CRITIQUE SYNCHRONISATION (Sept 2025) :**
+
+**Problème identifié :** `api/get_coursier_data.php` ne lisait pas `agents_suzosky.solde_wallet`
+
+**AVANT (buggy) :**
+```php
+// L'API cherchait dans coursier_accounts, comptes_coursiers, etc.
+// MAIS PAS dans agents_suzosky.solde_wallet (table principale)
+```
+
+**APRÈS (corrigé) :**
+```php
+// Priorité absolue : agents_suzosky.solde_wallet
+$stmt = $pdo->prepare("SELECT solde_wallet FROM agents_suzosky WHERE id = ?");
+// Fallback uniquement si agents_suzosky indisponible
+```
+
+**Impact :** L'app mobile affiche maintenant le solde correct après rechargement admin ✅
 
 ---
 
@@ -216,9 +236,10 @@ FOREIGN KEY (coursier_id) REFERENCES agents_suzosky(id);
 ### 🔌 **APIs critiques :**
 
 1. **Login coursier** : `api/agent_auth.php`
-2. **Récupération commandes** : `api/get_coursier_orders.php`
-3. **Update statut** : `api/update_order_status.php`
-4. **Solde wallet** : `api/get_wallet_balance.php`
+2. **Données coursier** : `api/get_coursier_data.php` ⭐ **UTILISÉE PAR L'APP**
+3. **Récupération commandes** : `api/get_coursier_orders.php`
+4. **Update statut** : `api/update_order_status.php`
+5. **Solde wallet (admin)** : `api/get_wallet_balance.php`
 
 ### 🔄 **Synchronisation temps réel :**
 
@@ -250,13 +271,15 @@ FOREIGN KEY (coursier_id) REFERENCES agents_suzosky(id);
 
 ### ✅ **Tests validés (27 Sept 2025) :**
 - **Flux complet** : Commande #114 créée → assignée → notifiée → reçue → acceptée
-- **Rechargement** : 2 coursiers rechargés avec succès (DEMBA: 1000 FCFA, ZALLE: 5000 FCFA)  
+- **Rechargement** : 3 coursiers rechargés avec succès (DEMBA: 1000 FCFA, ZALLE: 5100 FCFA)  
 - **FCM robuste** : 1/1 coursiers connectés avec tokens actifs (100% taux FCM)
 - **Interface admin** : Module rechargement direct intégré et fonctionnel
-- **Synchronisation** : Notifications FCM + historique transactions complets
+- **Synchronisation** : ✅ **CORRIGÉE** - App mobile affiche maintenant les soldes corrects
+- **API mobile** : `get_coursier_data.php` lit maintenant `agents_suzosky.solde_wallet`
+- **Workflow FCM** : Notifications + enregistrement dans table `recharges` complets
 
 ---
 
-*Dernière mise à jour : 27 Septembre 2025 - 21:45*  
+*Dernière mise à jour : 27 Septembre 2025 - 23:15*  
 *Auteur : Système Suzosky*  
-*Statut : ✅ PRODUCTION READY*
+*Statut : ✅ PRODUCTION READY - SYNCHRONISATION MOBILE CORRIGÉE*
