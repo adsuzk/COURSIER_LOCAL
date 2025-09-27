@@ -1,9 +1,34 @@
 <?php
 /**
  * Outils centralisés pour l'état de connexion des coursiers
+ * AVEC NETTOYAGE AUTOMATIQUE DES STATUTS OBSOLÈTES
  */
 
 require_once __DIR__ . '/../config.php';
+
+if (!function_exists('autoCleanExpiredStatuses')) {
+    function autoCleanExpiredStatuses(?PDO $existingPdo = null): int {
+        $pdo = $existingPdo ?? getDBConnection();
+        
+        try {
+            // Nettoyer automatiquement les statuts expirés (> 30 min d'inactivité)
+            $stmt = $pdo->prepare("
+                UPDATE agents_suzosky 
+                SET statut_connexion = 'hors_ligne',
+                    current_session_token = NULL
+                WHERE statut_connexion = 'en_ligne' 
+                AND (
+                    last_login_at IS NULL 
+                    OR TIMESTAMPDIFF(MINUTE, last_login_at, NOW()) > 30
+                )
+            ");
+            $stmt->execute();
+            return $stmt->rowCount();
+        } catch (Exception $e) {
+            return 0;
+        }
+    }
+}
 
 if (!function_exists('getAgentsSchemaInfo')) {
     function getAgentsSchemaInfo(PDO $pdo): array
