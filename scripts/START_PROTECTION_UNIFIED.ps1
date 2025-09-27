@@ -117,7 +117,7 @@ while ($true) {
         
         # Test périodique de connexion (toutes les 20 scans)
         if (($scanCount % 20) -eq 0) {
-            $quickTest = git ls-remote origin HEAD 2>&1
+            git ls-remote origin HEAD 2>&1 | Out-Null
             if ($LASTEXITCODE -ne 0) {
                 Write-Host "[$timestamp] ⚠ Problème de connexion GitHub détecté" -ForegroundColor Yellow
             }
