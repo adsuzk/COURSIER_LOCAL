@@ -472,8 +472,13 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <h1><i class="fas fa-network-wired"></i> Réseau Système Suzosky</h1>
-            <p class="subtitle">Monitoring complet des connexions et synchronisations</p>
+            <h1>🔍 Vue d'ensemble de votre système Suzosky</h1>
+            <p class="subtitle">Interface simple pour comprendre votre plateforme de livraison</p>
+            <div class="description">
+                Cette page vous montre automatiquement tous les éléments de votre système : 
+                les APIs, les interfaces d'administration, la base de données et les outils de diagnostic.
+                <strong>Tout est détecté automatiquement !</strong>
+            </div>
         </div>
 
         <?php
