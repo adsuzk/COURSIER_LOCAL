@@ -322,6 +322,58 @@ function getCoursierStatusLight($coursier): array
     return $status;
 }
 
+function getFCMGlobalStatus(): array
+{
+    global $pdo;
+    
+    try {
+        if (!$pdo) $pdo = getDBConnection();
+        
+        // Coursiers connectés actuellement
+        $stmt = $pdo->prepare("
+            SELECT COUNT(*) as total_connected 
+            FROM agents_suzosky 
+            WHERE statut_connexion = 'en_ligne'
+            AND TIMESTAMPDIFF(MINUTE, last_login_at, NOW()) <= 30
+        ");
+        $stmt->execute();
+        $connectedCoursiers = $stmt->fetchColumn();
+        
+        // Coursiers connectés AVEC token FCM
+        $stmt = $pdo->prepare("
+            SELECT COUNT(DISTINCT a.id) as with_fcm
+            FROM agents_suzosky a
+            INNER JOIN device_tokens dt ON a.id = dt.coursier_id
+            WHERE a.statut_connexion = 'en_ligne'
+            AND TIMESTAMPDIFF(MINUTE, a.last_login_at, NOW()) <= 30
+            AND dt.is_active = 1
+        ");
+        $stmt->execute();
+        $connectedWithFCM = $stmt->fetchColumn();
+        
+        // Calcul du taux de robustesse FCM
+        $fcmRate = $connectedCoursiers > 0 ? round(($connectedWithFCM / $connectedCoursiers) * 100, 1) : 0;
+        
+        return [
+            'total_connected' => $connectedCoursiers,
+            'with_fcm' => $connectedWithFCM,
+            'without_fcm' => $connectedCoursiers - $connectedWithFCM,
+            'fcm_rate' => $fcmRate,
+            'status' => $fcmRate >= 80 ? 'excellent' : ($fcmRate >= 60 ? 'correct' : 'critique')
+        ];
+        
+    } catch (Exception $e) {
+        return [
+            'total_connected' => 0,
+            'with_fcm' => 0,
+            'without_fcm' => 0,
+            'fcm_rate' => 0,
+            'status' => 'erreur',
+            'error' => $e->getMessage()
+        ];
+    }
+}
+
 function getStatistics(): array
 {
     $pdo = getDBConnection();
