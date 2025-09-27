@@ -33,20 +33,22 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            /* COLORIS OFFICIELS SUZOSKY */
-            --primary-gold: #D4A853;
-            --primary-dark: #1A1A2E;
-            --secondary-blue: #16213E;
-            --accent-light: #F4E4B8;
-            --success: #28a745;
-            --danger: #dc3545;
-            --warning: #ffc107;
-            --info: #17a2b8;
-            --light: #f8f9fa;
+            /* COULEURS SIMPLES ET CLAIRES */
+            --primary: #2563eb;
+            --secondary: #64748b;
+            --success: #16a34a;
+            --warning: #f59e0b;
+            --danger: #dc2626;
+            --info: #0891b2;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
             
-            /* GRADIENTS SUZOSKY */
-            --gradient-gold: linear-gradient(135deg, #D4A853 0%, #F4E4B8 50%, #D4A853 100%);
-            --gradient-dark: linear-gradient(135deg, #1A1A2E 0%, #16213E 100%);
+            /* COULEURS SUZOSKY */
+            --suzosky-gold: #D4A853;
+            --suzosky-dark: #1A1A2E;
         }
 
         * {
@@ -56,41 +58,50 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
         }
 
         body {
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--gradient-dark);
-            min-height: 100vh;
-            padding: 20px;
-            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-size: 16px;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
+            padding: 0 20px;
         }
 
         .header {
-            background: var(--gradient-gold);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(212, 168, 83, 0.3);
-            padding: 40px;
-            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--suzosky-gold) 0%, #f4e4b8 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
             text-align: center;
-            border: 2px solid rgba(255,255,255,0.2);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
 
         .header h1 {
-            color: var(--primary-dark);
-            font-size: 3em;
-            margin-bottom: 15px;
-            font-weight: 800;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            color: var(--suzosky-dark);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
         }
 
         .header .subtitle {
-            color: var(--primary-dark);
-            font-size: 1.3em;
+            color: var(--suzosky-dark);
+            font-size: 1.1rem;
             opacity: 0.8;
-            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+        
+        .header .description {
+            background: rgba(255,255,255,0.9);
+            color: var(--text-secondary);
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
         .status-grid {
