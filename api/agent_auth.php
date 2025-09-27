@@ -94,7 +94,17 @@ switch ($action) {
             $loginIp = $_SERVER['REMOTE_ADDR'] ?? null;
             $loginUa = $_SERVER['HTTP_USER_AGENT'] ?? null;
             try {
-                $updTok = $pdo->prepare("UPDATE agents_suzosky SET current_session_token = ?, last_login_at = NOW(), last_login_ip = ?, last_login_user_agent = ? WHERE id = ?");
+                // Mettre à jour token ET statut de connexion pour assignation courses
+                $updTok = $pdo->prepare("
+                    UPDATE agents_suzosky 
+                    SET current_session_token = ?, 
+                        last_login_at = NOW(), 
+                        last_login_ip = ?, 
+                        last_login_user_agent = ?,
+                        statut_connexion = 'en_ligne',
+                        derniere_position = NOW()
+                    WHERE id = ?
+                ");
                 $updTok->execute([
                     $newToken,
                     $loginIp,
@@ -137,9 +147,9 @@ switch ($action) {
                 $valid = true;
                 $currentIp = $_SERVER['REMOTE_ADDR'] ?? null;
                 
-                // Si pas de token en DB, c'est valide (première connexion)
+                // CORRECTION: Pas de token = pas de session valide (nécessaire pour assignation courses)
                 if (empty($row['current_session_token'])) {
-                    $valid = true;
+                    $valid = false; // Pas de token = session expirée/inexistante
                 } else {
                     // Vérifier le token de session
                     $sessionTokenMatch = hash_equals($row['current_session_token'], $_SESSION['coursier_session_token'] ?? '');
@@ -162,7 +172,12 @@ switch ($action) {
                     echo json_encode(['success' => true, 'agent' => $row]);
                     break;
                 } else {
-                    // Session réellement invalide (autre appareil)
+                    // Session réellement invalide (autre appareil) - marquer hors ligne
+                    try {
+                        $offline = $pdo->prepare("UPDATE agents_suzosky SET statut_connexion = 'hors_ligne' WHERE id = ?");
+                        $offline->execute([$id]);
+                    } catch (Throwable $e) { /* ignore */ }
+                    
                     $_SESSION = [];
                     if (ini_get('session.use_cookies')) {
                         $params = session_get_cookie_params();
@@ -177,6 +192,15 @@ switch ($action) {
         echo json_encode(['success' => false, 'error' => 'NO_SESSION']);
         break;
     case 'logout':
+        // Marquer le coursier hors ligne lors de la déconnexion
+        if (!empty($_SESSION['coursier_id'])) {
+            try {
+                $id = (int)$_SESSION['coursier_id'];
+                $offline = $pdo->prepare("UPDATE agents_suzosky SET statut_connexion = 'hors_ligne', current_session_token = NULL WHERE id = ?");
+                $offline->execute([$id]);
+            } catch (Throwable $e) { /* ignore */ }
+        }
+        
         $_SESSION = [];
         if (ini_get('session.use_cookies')) {
             $params = session_get_cookie_params();
