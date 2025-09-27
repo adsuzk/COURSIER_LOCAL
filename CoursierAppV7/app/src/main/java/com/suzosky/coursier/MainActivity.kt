@@ -535,12 +535,15 @@ fun SuzoskyCoursierApp() {
                             // Ouvrir le paiement via Custom Tab et surveiller la confirmation
                             onRecharge = { amount ->
                                 if (amount > 0) {
+                                    pendingRechargeAmount = amount.toDouble()
+                                    isInitiatingPayment = true
                                     ApiService.initRecharge(coursierId, amount.toDouble()) { url, error ->
+                                        isInitiatingPayment = false
                                         if (url != null) {
                                             paymentUrl = url
-                                            showNativePayment = true
+                                            showPaymentDialog = true
                                         } else {
-                                            Toast.makeText(context, "Erreur paiement : $error", Toast.LENGTH_LONG).show()
+                                            Toast.makeText(context, "Erreur paiement : ${error ?: "inconnue"}", Toast.LENGTH_LONG).show()
                                         }
                                     }
                                 } else {
@@ -548,26 +551,60 @@ fun SuzoskyCoursierApp() {
                                 }
                             }
                         )
-                        // Afficher le suivi natif (ouvre l'URL dans un Custom Tab et sonde l'API)
-                        if (showNativePayment && paymentUrl != null) {
-                            PaymentNativeDialog(
-                                context = context,
-                                paymentUrl = paymentUrl!!,
-                                coursierId = coursierId,
-                                initialBalance = soldeReel,
+                        if (isInitiatingPayment) {
+                            PaymentStatusDialog(
+                                title = "Initialisation du paiement",
+                                message = "Connexion sécurisée à CinetPay…",
+                                cancellable = false
+                            )
+                        }
+
+                        if (isPollingBalance) {
+                            PaymentStatusDialog(
+                                title = "Validation du paiement",
+                                message = "Nous vérifions la confirmation et mettons à jour votre solde…",
+                                cancellable = false
+                            )
+                        }
+
+                        if (showPaymentDialog && paymentUrl != null) {
+                            val initialBalanceSnapshot = soldeReel
+                            PaymentWebViewDialog(
+                                url = paymentUrl!!,
+                                amount = pendingRechargeAmount,
                                 onDismiss = {
-                                    showNativePayment = false
+                                    showPaymentDialog = false
                                     paymentUrl = null
                                 },
-                                onCompleted = { success, newBalance ->
-                                    if (success && newBalance != null) {
-                                        soldeReel = newBalance
-                                        Toast.makeText(context, "Recharge réussie! Nouveau solde: ${'$'}newBalance", Toast.LENGTH_LONG).show()
-                                    } else {
-                                        Toast.makeText(context, "Recharge non confirmée", Toast.LENGTH_LONG).show()
-                                    }
-                                    showNativePayment = false
+                                onCompleted = { success, transactionId ->
+                                    showPaymentDialog = false
                                     paymentUrl = null
+                                    if (success) {
+                                        isPollingBalance = true
+                                        ApiService.pollBalanceUntilChange(
+                                            coursierId = coursierId,
+                                            initialBalance = initialBalanceSnapshot,
+                                            onResult = { newBalance, updated ->
+                                                isPollingBalance = false
+                                                if (updated && newBalance != null) {
+                                                    soldeReel = newBalance
+                                                    Toast.makeText(
+                                                        context,
+                                                        "Recharge réussie ! Nouveau solde : ${newBalance.toInt()} FCFA",
+                                                        Toast.LENGTH_LONG
+                                                    ).show()
+                                                } else {
+                                                    Toast.makeText(
+                                                        context,
+                                                        "Paiement reçu. Le solde sera synchronisé sous peu.",
+                                                        Toast.LENGTH_LONG
+                                                    ).show()
+                                                }
+                                            }
+                                        )
+                                    } else {
+                                        Toast.makeText(context, "Recharge non confirmée. Transaction: $transactionId", Toast.LENGTH_LONG).show()
+                                    }
                                 }
                             )
                         }
