@@ -130,7 +130,7 @@ try {
             VALUES (?, ?, ?, ?, 'sent', NOW())
         ");
         
-        $message = "Nouvelle commande #{$commandeId} - {$commandeData['adresse_depart']} → {$commandeData['adresse_arrivee']} ({$commandeData['prix_commande']} FCFA)";
+        $message = "Nouvelle commande #{$commandeId} - {$commandeData['adresse_depart']} → {$commandeData['adresse_arrivee']} ({$commandeData['prix_total']} FCFA)";
         
         $stmt->execute([
             $coursierTest['id'], 
