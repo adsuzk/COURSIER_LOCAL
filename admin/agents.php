@@ -1465,6 +1465,30 @@ $newAgentsThisMonth = count(array_filter($agents, fn($a) => isset($a['created_at
             color: #FFFFFF;
         }
 
+        /* Tooltip au survol pour voir le contenu complet */
+        .data-table td:hover {
+            position: relative;
+            overflow: visible;
+            z-index: 10;
+        }
+
+        .data-table td[title]:hover::after {
+            content: attr(title);
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            white-space: normal;
+            max-width: 250px;
+            word-wrap: break-word;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
         .btn-sm {
             padding: 6px 12px;
             font-size: 0.75rem;
@@ -2182,4 +2206,7 @@ document.addEventListener('DOMContentLoaded', function(){
     });
 
     // Charger immédiatement à l'ouverture
-    refreshA
+    refreshAgents();
+});
+</script>
+
