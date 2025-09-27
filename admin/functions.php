@@ -614,6 +614,27 @@ function renderHeader() {
                 flex: 1;
                 padding: var(--space-6) 0;
                 overflow-y: auto;
+                max-height: calc(100vh - 200px);
+                scrollbar-width: thin;
+                scrollbar-color: var(--primary-gold) transparent;
+            }
+
+            .sidebar-nav::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            .sidebar-nav::-webkit-scrollbar-track {
+                background: rgba(255,255,255,0.05);
+                border-radius: 3px;
+            }
+
+            .sidebar-nav::-webkit-scrollbar-thumb {
+                background: var(--primary-gold);
+                border-radius: 3px;
+            }
+
+            .sidebar-nav::-webkit-scrollbar-thumb:hover {
+                background: #E8C468;
             }
 
             .nav-section {
