@@ -137,10 +137,10 @@ try {
         SELECT 
             COUNT(*) AS total_commandes,
             SUM(CASE WHEN statut IN ('livree','termine') THEN 1 ELSE 0 END) AS commandes_terminees,
-            SUM(CASE WHEN statut IN ('livree','termine') AND DATE(COALESCE(created_at, date_creation)) = CURDATE() THEN 1 ELSE 0 END) AS commandes_jour,
-            SUM(CASE WHEN statut IN ('livree','termine') AND DATE(COALESCE(created_at, date_creation)) = CURDATE() THEN COALESCE(montant_total, prix_total, prix_estime, 0) ELSE 0 END) AS gains_jour,
-            SUM(CASE WHEN statut IN ('livree','termine') THEN COALESCE(montant_total, prix_total, prix_estime, 0) ELSE 0 END) AS gains_total,
-            MAX(COALESCE(created_at, date_creation)) AS derniere_commande
+            SUM(CASE WHEN statut IN ('livree','termine') AND DATE(created_at) = CURDATE() THEN 1 ELSE 0 END) AS commandes_jour,
+            SUM(CASE WHEN statut IN ('livree','termine') AND DATE(created_at) = CURDATE() THEN COALESCE(prix_total, prix_estime, 0) ELSE 0 END) AS gains_jour,
+            SUM(CASE WHEN statut IN ('livree','termine') THEN COALESCE(prix_total, prix_estime, 0) ELSE 0 END) AS gains_total,
+            MAX(created_at) AS derniere_commande
         FROM commandes
         WHERE coursier_id = ?
     ");
