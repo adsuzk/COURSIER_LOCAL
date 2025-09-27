@@ -1,6 +1,7 @@
 <?php
 /**
- * RÉSEAU SUZOSKY - Interface simple de monitoring
+ * RÉSEAU SUZOSKY - Monitoring Complet des APIs et Synchronisations
+ * Interface complète pour surveiller l'état de santé du système
  */
 
 require_once 'config.php';
@@ -16,17 +17,88 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
 
 $pdo = getDBConnection();
 
-// Fonction simple de test API
-function testApiSimple($url) {
+// Fonction de test API avancée
+function testApiAdvanced($url) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
     curl_setopt($ch, CURLOPT_NOBODY, true);
+    curl_setopt($ch, CURLOPT_HEADER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    
+    $start = microtime(true);
     $result = curl_exec($ch);
+    $responseTime = round((microtime(true) - $start) * 1000, 2);
+    
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
     curl_close($ch);
-    return $httpCode;
+    
+    return [
+        'status_code' => $httpCode,
+        'response_time' => $responseTime,
+        'content_type' => $contentType,
+        'is_online' => $httpCode == 200 || $httpCode == 302
+    ];
+}
+
+// Vérifier l'état de la synchronisation des tokens FCM
+function checkFCMTokenSync($pdo) {
+    try {
+        // Vérifier les tokens récents
+        $stmt = $pdo->query("SELECT COUNT(*) as total_tokens, 
+                            COUNT(CASE WHEN created_at > DATE_SUB(NOW(), INTERVAL 24 HOUR) THEN 1 END) as recent_tokens
+                            FROM fcm_tokens WHERE token IS NOT NULL AND token != ''");
+        $tokens = $stmt->fetch();
+        
+        // Vérifier les notifications envoyées récemment
+        $stmt = $pdo->query("SELECT COUNT(*) as notifications_24h 
+                            FROM notifications WHERE created_at > DATE_SUB(NOW(), INTERVAL 24 HOUR)");
+        $notifications = $stmt->fetch();
+        
+        return [
+            'total_tokens' => $tokens['total_tokens'] ?? 0,
+            'recent_tokens' => $tokens['recent_tokens'] ?? 0,
+            'notifications_24h' => $notifications['notifications_24h'] ?? 0,
+            'sync_health' => ($tokens['total_tokens'] ?? 0) > 0 ? 'GOOD' : 'WARNING'
+        ];
+    } catch (Exception $e) {
+        return ['sync_health' => 'ERROR', 'error' => $e->getMessage()];
+    }
+}
+
+// Vérifier l'état des synchronisations système
+function checkSystemSync($pdo) {
+    $results = [];
+    
+    try {
+        // Vérifier la synchronisation des coursiers
+        $stmt = $pdo->query("SELECT COUNT(*) as total_agents,
+                            COUNT(CASE WHEN statut = 'actif' THEN 1 END) as active_agents,
+                            COUNT(CASE WHEN last_seen > DATE_SUB(NOW(), INTERVAL 1 HOUR) THEN 1 END) as online_agents
+                            FROM agents_suzosky");
+        $results['agents'] = $stmt->fetch();
+        
+        // Vérifier les commandes récentes
+        $stmt = $pdo->query("SELECT COUNT(*) as total_orders,
+                            COUNT(CASE WHEN created_at > DATE_SUB(NOW(), INTERVAL 24 HOUR) THEN 1 END) as orders_24h,
+                            COUNT(CASE WHEN statut IN ('en_cours', 'assignee') THEN 1 END) as active_orders
+                            FROM commandes");
+        $results['orders'] = $stmt->fetch();
+        
+        // Vérifier les paiements
+        $stmt = $pdo->query("SELECT COUNT(*) as total_payments,
+                            COUNT(CASE WHEN created_at > DATE_SUB(NOW(), INTERVAL 24 HOUR) THEN 1 END) as payments_24h
+                            FROM transactions_suzosky WHERE type = 'payment'");
+        $results['payments'] = $stmt->fetch();
+        
+    } catch (Exception $e) {
+        $results['error'] = $e->getMessage();
+    }
+    
+    return $results;
 }
 ?>
 
