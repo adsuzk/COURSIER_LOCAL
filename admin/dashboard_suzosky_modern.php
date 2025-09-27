@@ -18,17 +18,18 @@ function getDashboardStats() {
         FROM commandes
     ")->fetch(PDO::FETCH_ASSOC);
     
-    // Statistiques des coursiers
-    $coursiersStats = $pdo->query("
-        SELECT 
-            COUNT(*) as total,
-            SUM(CASE WHEN statut_connexion = 'en_ligne' THEN 1 ELSE 0 END) as en_ligne,
-            SUM(CASE WHEN statut_connexion = 'hors_ligne' THEN 1 ELSE 0 END) as hors_ligne,
-            SUM(CASE WHEN statut_connexion = 'occupe' THEN 1 ELSE 0 END) as occupe,
-            SUM(CASE WHEN current_session_token IS NOT NULL THEN 1 ELSE 0 END) as avec_token
-        FROM agents_suzosky 
-        WHERE status = 'actif'
-    ")->fetch(PDO::FETCH_ASSOC);
+    // Statistiques des coursiers - UTILISER LA LOGIQUE UNIFIÉE
+    require_once __DIR__ . '/../lib/coursier_presence.php';
+    $coursiersConnectes = getConnectedCouriers($pdo);
+    $totalCoursiers = count(getAllCouriers($pdo));
+    
+    $coursiersStats = [
+        'total' => $totalCoursiers,
+        'en_ligne' => count($coursiersConnectes),  // LOGIQUE UNIFIÉE
+        'hors_ligne' => $totalCoursiers - count($coursiersConnectes),
+        'occupe' => 0,  // Peut être calculé séparément si nécessaire
+        'avec_token' => array_sum(array_map(fn($c) => !empty($c['current_session_token']) ? 1 : 0, getAllCouriers($pdo)))
+    ];
     
     // Revenus du jour
     $revenus = $pdo->query("
