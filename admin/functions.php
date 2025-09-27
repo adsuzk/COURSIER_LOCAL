@@ -1,11 +1,13 @@
 <?php
 // Common functions for admin interface
 
-function checkAdminAuth() {
-    if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-        return false;
+if (!function_exists('checkAdminAuth')) {
+    function checkAdminAuth() {
+        if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+            return false;
+        }
+        return true;
     }
-    return true;
 }
 
 function renderLoginForm($error = '') {
