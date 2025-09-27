@@ -9,18 +9,18 @@ echo "=== DIAGNOSTIC NOTIFICATION FCM RECHARGEMENT ===\n\n";
 echo "1. DERNIERS RECHARGEMENTS :\n";
 $stmt = $pdo->query("
     SELECT 
-        t.id, t.coursier_id, t.montant, t.motif, t.created_at,
+        r.id, r.coursier_id, r.montant, r.status, r.created_at,
         a.nom, a.prenoms, a.matricule
-    FROM transactions_financieres t
-    LEFT JOIN agents_suzosky a ON a.id = t.coursier_id
-    WHERE t.created_at >= DATE_SUB(NOW(), INTERVAL 2 HOUR)
-    ORDER BY t.created_at DESC
+    FROM recharges r
+    LEFT JOIN agents_suzosky a ON a.id = r.coursier_id
+    WHERE r.created_at >= DATE_SUB(NOW(), INTERVAL 2 HOUR)
+    ORDER BY r.created_at DESC
     LIMIT 5
 ");
 
 while($row = $stmt->fetch()) {
-    echo "Transaction #{$row['id']} - {$row['nom']} {$row['prenoms']} ({$row['matricule']})\n";
-    echo "  Montant: {$row['montant']} FCFA, Motif: {$row['motif']}\n";
+    echo "Recharge #{$row['id']} - {$row['nom']} {$row['prenoms']} ({$row['matricule']})\n";
+    echo "  Montant: {$row['montant']} FCFA, Statut: {$row['status']}\n";
     echo "  Date: {$row['created_at']}\n---\n";
 }
 
