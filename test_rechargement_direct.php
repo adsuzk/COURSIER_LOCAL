@@ -130,17 +130,17 @@ try {
     
     $stmt = $pdo->query("
         SELECT 
-            reference, montant, description, created_at
+            reference, montant, description, date_creation
         FROM transactions_financieres 
         WHERE type = 'credit' 
-        ORDER BY created_at DESC 
+        ORDER BY date_creation DESC 
         LIMIT 3
     ");
     $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     foreach ($transactions as $trans) {
         echo "   💳 {$trans['reference']}: {$trans['montant']} FCFA - {$trans['description']}\n";
-        echo "      📅 {$trans['created_at']}\n";
+        echo "      📅 {$trans['date_creation']}\n";
     }
     
     // 5. Test interface admin
