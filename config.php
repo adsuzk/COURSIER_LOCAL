@@ -228,7 +228,18 @@ function getAppBasePath(): string {
     if (isProductionEnvironment() && !in_array($host, ['localhost', '127.0.0.1'], true)) {
         return '/';
     }
-    // Local ou dev: base = dossier projet (ex: /coursier_prod)
+
+    // Détection dynamique basée sur SCRIPT_NAME pour éviter les 404 quand le projet est servi à la racine
+    $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+    if ($scriptName !== '') {
+        $normalized = trim(str_replace('\\', '/', dirname($scriptName)), '/');
+        if ($normalized !== '' && $normalized !== '.') {
+            return '/' . $normalized;
+        }
+        return '/';
+    }
+
+    // Fallback: base = dossier projet (ex: /COURSIER_LOCAL)
     $projectBase = '/' . basename(str_replace('\\', '/', __DIR__));
     return $projectBase;
 }
