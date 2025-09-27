@@ -110,12 +110,21 @@ $notificationData = [
     ]
 ];
 
-$resultFCM = $fcm->sendToCoursier($coursier['id'], $notificationData);
+// Utiliser la méthode correcte pour envoyer la notification
+$resultFCM = $fcm->envoyerNotificationCommande($coursier['id'], [
+    'id' => $commandeId,
+    'code_commande' => $commandeData['code_commande'],
+    'client_nom' => $commandeData['client_nom'],
+    'adresse_retrait' => $commandeData['adresse_retrait'],
+    'adresse_livraison' => $commandeData['adresse_livraison'],
+    'prix_total' => $commandeData['prix_total'],
+    'description_colis' => $commandeData['description_colis']
+]);
 
 if ($resultFCM['success']) {
     echo "   ✅ Notification FCM envoyée avec succès\n";
-    echo "   📱 Tokens actifs: {$resultFCM['tokens_sent']}\n";
-    echo "   💬 Message: {$notificationData['body']}\n\n";
+    echo "   📱 Tokens actifs: " . ($resultFCM['tokens_sent'] ?? 'N/A') . "\n";
+    echo "   💬 Message: Nouvelle commande {$commandeData['code_commande']}\n\n";
 } else {
     echo "   ⚠️  Notification FCM: " . ($resultFCM['error'] ?? 'Erreur inconnue') . "\n\n";
 }
