@@ -5,6 +5,8 @@
  * Respect des coloris Suzosky et UI/UX moderne
  */
 
+require_once __DIR__ . '/../../fcm_manager.php';
+
 // Traitement des actions POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     
@@ -28,46 +30,77 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     $ancienSolde = $coursier['solde_wallet'] ?? 0;
                     $nouveauSolde = $ancienSolde + $montant;
                     
-                    // Mettre à jour le solde directement dans agents_suzosky
+                    // 1. Mettre à jour le solde directement dans agents_suzosky
                     $stmt = $pdo->prepare("UPDATE agents_suzosky SET solde_wallet = ? WHERE id = ?");
                     $stmt->execute([$nouveauSolde, $coursier_id]);
                     
-                    // Enregistrer la transaction
+                    // 2. Enregistrer dans la table recharges (conforme documentation)
                     $stmt = $pdo->prepare("
-                        INSERT INTO transactions_financieres (
-                            type, montant, compte_type, compte_id, reference, description, statut, date_creation
-                        ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+                        INSERT INTO recharges (
+                            coursier_id, montant, currency, status, created_at, updated_at, details
+                        ) VALUES (?, ?, ?, ?, NOW(), NOW(), ?)
                     ");
                     
-                    $reference = 'ADMIN_RECH_' . date('YmdHis') . '_' . $coursier_id;
-                    $description = "Rechargement admin: {$montant} FCFA" . ($motif ? " - {$motif}" : "");
-                    
-                    $stmt->execute([
-                        'credit',
-                        $montant,
-                        'coursier',
-                        $coursier_id,
-                        $reference,
-                        $description,
-                        'reussi'
+                    $details = json_encode([
+                        'type' => 'rechargement_admin_direct',
+                        'admin_user' => $_SESSION['admin_user'] ?? 'admin',
+                        'motif' => $motif,
+                        'ancien_solde' => $ancienSolde,
+                        'nouveau_solde' => $nouveauSolde,
+                        'timestamp' => date('Y-m-d H:i:s')
                     ]);
                     
-                    // Envoyer notification FCM au coursier
+                    $stmt->execute([
+                        $coursier_id,
+                        $montant,
+                        'FCFA',
+                        'success',
+                        $details
+                    ]);
+                    
+                    // 3. Envoyer notification FCM RÉELLE via FCMManager
+                    $fcm = new FCMManager();
                     $stmt = $pdo->prepare("SELECT token FROM device_tokens WHERE coursier_id = ? AND is_active = 1");
                     $stmt->execute([$coursier_id]);
                     $tokens = $stmt->fetchAll(PDO::FETCH_COLUMN);
                     
                     $notificationsSent = 0;
+                    $notificationsFailed = 0;
+                    
                     foreach ($tokens as $token) {
-                        $message = "💰 Compte rechargé! +{$montant} FCFA - Nouveau solde: {$nouveauSolde} FCFA";
+                        $title = '💰 Compte Rechargé!';
+                        $body = "Votre compte a été crédité de {$montant} FCFA\nNouveau solde: {$nouveauSolde} FCFA" . ($motif ? "\nMotif: {$motif}" : '');
                         
-                        // Log notification FCM
+                        $data = [
+                            'type' => 'wallet_recharge',
+                            'montant' => (string)$montant,
+                            'nouveau_solde' => (string)$nouveauSolde,
+                            'motif' => $motif,
+                            'action' => 'refresh_wallet'
+                        ];
+                        
+                        $result = $fcm->envoyerNotification($token, $title, $body, $data);
+                        
+                        // Log détaillé de la notification FCM
                         $stmt = $pdo->prepare("
-                            INSERT INTO notifications_log_fcm (coursier_id, token_used, message, status, created_at)
-                            VALUES (?, ?, ?, 'sent', NOW())
+                            INSERT INTO notifications_log_fcm 
+                            (coursier_id, token_used, message, type, status, response_data, created_at)
+                            VALUES (?, ?, ?, 'wallet_recharge', ?, ?, NOW())
                         ");
-                        $stmt->execute([$coursier_id, $token, $message]);
-                        $notificationsSent++;
+                        
+                        $stmt->execute([
+                            $coursier_id, 
+                            $token, 
+                            $body,
+                            $result['success'] ? 'sent' : 'failed',
+                            json_encode($result)
+                        ]);
+                        
+                        if ($result['success']) {
+                            $notificationsSent++;
+                        } else {
+                            $notificationsFailed++;
+                        }
                     }
                     
                     $pdo->commit();
