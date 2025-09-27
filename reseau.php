@@ -566,76 +566,32 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
             </div>
         </div>
 
-        <!-- Section APIs - Fonctionnalités de votre système -->
-        <div class="section">
-            <div class="section-header">
-                <div class="section-icon">
-                    <i class="fas fa-plug"></i>
-                </div>
-                <div>
-                    <h2 class="section-title">🔌 Fonctionnalités de votre système (<?= count($discoveredComponents['apis']) ?>)</h2>
-                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">
-                        Les "APIs" sont les fonctionnalités que votre système peut faire : authentification, gestion des commandes, paiements, etc.
-                    </p>
-                </div>
-            </div>
+        <!-- APIs Découvertes Automatiquement -->
+        <div class="section-card">
+            <h2 class="section-title">
+                <i class="fas fa-plug"></i>
+                APIs Découvertes Automatiquement (<?= count($discoveredComponents['apis']) ?>)
+            </h2>
+            <p class="section-description">
+                Toutes les fonctionnalités de votre système détectées automatiquement : authentification, gestion des commandes, paiements, notifications, etc.
+            </p>
             
-            <button class="toggle-btn" onclick="toggleSection('apis')">
-                📋 Voir toutes les fonctionnalités
+            <button class="expand-btn" onclick="toggleSection('apis-section')">
+                Voir toutes les APIs
             </button>
             
-            <div id="apis" class="collapsible-content hidden">
-                <div class="items-grid">
-                    <?php 
-                    // Grouper les APIs par catégorie pour plus de clarté
-                    $categories = [
-                        'Authentification' => [],
-                        'Gestion des commandes' => [],
-                        'Coursiers' => [],
-                        'Paiements' => [],
-                        'Notifications' => [],
-                        'Autres' => []
-                    ];
-                    
-                    foreach ($discoveredComponents['apis'] as $api) {
-                        $name = strtolower($api['name']);
-                        if (strpos($name, 'auth') !== false || strpos($name, 'login') !== false) {
-                            $categories['Authentification'][] = $api;
-                        } elseif (strpos($name, 'order') !== false || strpos($name, 'command') !== false) {
-                            $categories['Gestion des commandes'][] = $api;
-                        } elseif (strpos($name, 'coursier') !== false || strpos($name, 'courier') !== false) {
-                            $categories['Coursiers'][] = $api;
-                        } elseif (strpos($name, 'pay') !== false || strpos($name, 'recharge') !== false) {
-                            $categories['Paiements'][] = $api;
-                        } elseif (strpos($name, 'notif') !== false || strpos($name, 'fcm') !== false) {
-                            $categories['Notifications'][] = $api;
-                        } else {
-                            $categories['Autres'][] = $api;
-                        }
-                    }
-                    
-                    foreach ($categories as $categoryName => $apis):
-                        if (empty($apis)) continue;
-                    ?>
-                        <h4 style="color: var(--suzosky-gold); margin: 1.5rem 0 1rem 0; font-size: 1.1rem;">
-                            📂 <?= $categoryName ?> (<?= count($apis) ?>)
-                        </h4>
-                        <?php foreach ($apis as $api): ?>
-                            <div class="item">
-                                <div class="item-header">
-                                    <span class="item-name">
-                                        <?= htmlspecialchars(str_replace('.php', '', $api['name'])) ?>
-                                    </span>
-                                    <span class="item-status status-online">ACTIF</span>
-                                </div>
-                                <div class="item-description">
-                                    <?= htmlspecialchars($api['description']) ?>
-                                </div>
-                                <div class="item-details">
-                                    📁 Fichier: <?= htmlspecialchars($api['file']) ?>
-                                </div>
+            <div id="apis-section" class="collapsible hidden">
+                <div class="api-grid">
+                    <?php foreach (array_slice($discoveredComponents['apis'], 0, 12) as $api): ?>
+                        <div class="api-item">
+                            <div class="api-name"><?= htmlspecialchars($api['name']) ?></div>
+                            <div class="api-description">
+                                <?= htmlspecialchars($api['description']) ?>
                             </div>
-                        <?php endforeach; ?>
+                            <div class="api-status">
+                                <span class="status-badge status-online">ACTIF</span>
+                            </div>
+                        </div>
                     <?php endforeach; ?>
                 </div>
             </div>
