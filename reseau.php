@@ -216,90 +216,118 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
             gap: 20px;
         }
         
-        .item {
-            background: #f8fafc;
-            border-radius: 8px;
-            padding: 1rem;
-            border: 1px solid var(--border);
-            transition: all 0.2s ease;
+        .api-item {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
-        
-        .item:hover {
-            background: #f1f5f9;
-            border-color: var(--suzosky-gold);
+
+        .api-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-gold);
         }
-        
-        .item-header {
+
+        .api-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 0 30px rgba(212, 168, 83, 0.15),
+                0 12px 25px rgba(0,0,0,0.3);
+        }
+
+        .api-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-gold);
+            margin-bottom: 10px;
+        }
+
+        .api-description {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .api-status {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 0.5rem;
         }
-        
-        .item-name {
-            font-weight: 600;
-            color: var(--text-primary);
-            font-size: 0.95rem;
-        }
-        
-        .item-status {
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
             font-size: 0.75rem;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        
+
         .status-online {
-            background: #dcfce7;
-            color: #166534;
-        }
-        
-        .status-warning {
-            background: #fef3c7;
-            color: #92400e;
-        }
-        
-        .status-error {
-            background: #fecaca;
-            color: #991b1b;
-        }
-        
-        .item-description {
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            line-height: 1.4;
-        }
-        
-        .item-details {
-            margin-top: 0.5rem;
-            padding-top: 0.5rem;
-            border-top: 1px solid #e2e8f0;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-        
-        .toggle-btn {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--success-color), #2ECC71);
             color: white;
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+        }
+
+        .status-warning {
+            background: linear-gradient(135deg, var(--warning-color), #F39C12);
+            color: white;
+            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+        }
+
+        .status-offline {
+            background: linear-gradient(135deg, var(--danger-color), #E74C3C);
+            color: white;
+            box-shadow: 0 4px 12px rgba(233, 69, 96, 0.3);
+        }
+
+        .expand-btn {
+            background: var(--gradient-gold);
+            color: var(--primary-dark);
             border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
+            padding: 12px 24px;
+            border-radius: 25px;
             cursor: pointer;
-            font-size: 0.85rem;
-            margin-top: 1rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        
-        .toggle-btn:hover {
-            background: #1d4ed8;
+
+        .expand-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(212, 168, 83, 0.4);
         }
-        
-        .collapsible-content {
-            margin-top: 1rem;
+
+        .collapsible {
+            margin-top: 20px;
         }
-        
+
         .hidden {
             display: none;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid, .api-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2.5rem;
+            }
         }
         }
 
