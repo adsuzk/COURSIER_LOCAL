@@ -291,7 +291,8 @@ if (basename(__FILE__) == basename($_SERVER['SCRIPT_NAME'])) {
     $assignment = new SecureOrderAssignment();
     
     // Tester la capacité globale du système
-    $systemCheck = $assignment->security->canAcceptNewOrders();
+    $security = new FCMTokenSecurity();
+    $systemCheck = $security->canAcceptNewOrders();
     echo "📊 État système: " . ($systemCheck['can_accept_orders'] ? '✅ OPÉRATIONNEL' : '❌ INDISPONIBLE') . "\n";
     echo "🔊 Message: {$systemCheck['message']}\n\n";
     
