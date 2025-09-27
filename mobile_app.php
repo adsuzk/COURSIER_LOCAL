@@ -685,10 +685,13 @@ $assetRoute = function (string $path) {
                 const walletSourceEl = document.getElementById('walletSourceLabel');
                 if (walletSourceEl) walletSourceEl.textContent = walletSource;
 
-                document.getElementById('todayOrders').textContent = stats.commandes_jour || '0';
-                document.getElementById('todayEarnings').textContent = formatCurrency(stats.gains_jour || 0);
-                document.getElementById('totalOrders').textContent = stats.total_commandes || '0';
-                document.getElementById('averageRating').textContent = (stats.note_moyenne ?? 0).toFixed ? (Number(stats.note_moyenne).toFixed(1)) : (stats.note_moyenne || '0.0');
+                const todayOrders = stats.commandes_jour ?? 0;
+                document.getElementById('todayOrders').textContent = todayOrders.toString();
+                document.getElementById('todayEarnings').textContent = formatCurrency(stats.gains_jour ?? 0);
+                const totalOrders = stats.total_commandes ?? 0;
+                document.getElementById('totalOrders').textContent = totalOrders.toString();
+                const averageRating = Number(stats.note_moyenne ?? 0);
+                document.getElementById('averageRating').textContent = averageRating.toFixed(1);
 
                 // Mettre à jour le profil
                 document.getElementById('coursierName').textContent = data.data.nom || '-';
