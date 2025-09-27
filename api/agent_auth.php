@@ -215,6 +215,12 @@ switch ($action) {
                 $offline = $pdo->prepare("UPDATE agents_suzosky SET statut_connexion = 'hors_ligne', current_session_token = NULL WHERE id = ?");
                 $offline->execute([$userId]);
             } catch (Throwable $e) { /* ignore */ }
+
+            // Désactiver tous les tokens FCM actifs de ce coursier (bonne hygiène sécurité)
+            try {
+                $deact = $pdo->prepare("UPDATE device_tokens SET is_active = 0, updated_at = NOW() WHERE coursier_id = ?");
+                $deact->execute([$userId]);
+            } catch (Throwable $e) { /* best-effort */ }
         }
         
         $_SESSION = [];
