@@ -1157,27 +1157,54 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
             </div>
         </div>
 
-        <!-- Actions -->
-        <button class="refresh-btn" onclick="location.reload()">
-            <i class="fas fa-sync-alt"></i> Actualiser le Monitoring
-        </button>
-
-        <div class="timestamp">
-            Dernière mise à jour: <?= date('d/m/Y à H:i:s') ?>
+        <!-- Pied de page -->
+        <div style="text-align: center; margin: 3rem 0; padding: 2rem; background: var(--surface); border-radius: 12px; border: 1px solid var(--border);">
+            <p style="color: var(--text-secondary); margin: 0;">
+                🕒 Dernière analyse: <?= date('d/m/Y à H:i:s') ?>
+            </p>
+            <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 0.5rem 0 0 0;">
+                Cette page se met à jour automatiquement pour vous montrer l'état en temps réel de votre système
+            </p>
+            <button class="toggle-btn" onclick="location.reload()" style="margin-top: 1rem;">
+                🔄 Actualiser maintenant
+            </button>
         </div>
     </div>
 
     <script>
-        // Auto-refresh toutes les 30 secondes
-        setTimeout(() => {
-            location.reload();
-        }, 30000);
+        // Fonction pour afficher/masquer les sections
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const isHidden = section.classList.contains('hidden');
+            
+            if (isHidden) {
+                section.classList.remove('hidden');
+                event.target.textContent = event.target.textContent.replace('Voir', 'Masquer');
+            } else {
+                section.classList.add('hidden');
+                event.target.textContent = event.target.textContent.replace('Masquer', 'Voir');
+            }
+        }
 
-        // Animation des indicateurs de santé
-        document.querySelectorAll('.health-indicator').forEach(indicator => {
-            setInterval(() => {
-                indicator.style.opacity = indicator.style.opacity === '0.3' ? '1' : '0.3';
-            }, 1000);
+        // Auto-actualisation intelligente (toutes les 2 minutes)
+        setTimeout(() => {
+            if (document.hidden === false) { // Seulement si la page est visible
+                location.reload();
+            }
+        }, 120000);
+
+        // Messages d'aide au survol
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ajouter des tooltips explicatifs
+            const items = document.querySelectorAll('.item');
+            items.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                });
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
         });
     </script>
 </body>
