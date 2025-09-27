@@ -1,16 +1,17 @@
 @echo off
-title SUZOSKY - Protection Automatique GitHub - UNIFIÉE
+title SUZOSKY - Protection + Sync Propre - VERSION AVANCÉE
 color 0A
 echo.
 echo ===============================================
-echo    SUZOSKY - PROTECTION AUTOMATIQUE GITHUB
-echo          VERSION UNIFIÉE ET CORRIGÉE
+echo   SUZOSKY - PROTECTION + SYNCHRONISATION PROPRE
+echo           VERSION AVANCÉE - SEPT 2025
 echo ===============================================
 echo.
-echo  ✓ Token GitHub testé et fonctionnel
-echo  ✓ Authentification automatique sécurisée  
-echo  ✓ Sauvegarde automatique toutes les 5 secondes
-echo  ✓ Gestion d'erreur avancée
+echo  ✓ Protection GitHub automatique (Git Credential Manager)
+echo  ✓ Synchronisation coursier_prod PROPRE (sans tests/debug)
+echo  ✓ Exclusion automatique des fichiers de développement
+echo  ✓ Structure de production toujours optimisée
+echo  ✓ Sauvegarde sécurisée toutes les 5 secondes
 echo.
 echo  GARDEZ CETTE FENETRE OUVERTE
 echo.
