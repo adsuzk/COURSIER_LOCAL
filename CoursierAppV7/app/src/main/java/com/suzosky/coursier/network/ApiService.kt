@@ -619,6 +619,63 @@ object ApiService {
         )
     }
 
+    fun pollBalanceUntilChange(
+        coursierId: Int,
+        initialBalance: Double,
+        timeoutMs: Long = 90_000,
+        pollIntervalMs: Long = 4_000,
+        onResult: (Double?, Boolean) -> Unit
+    ) {
+        val handler = Handler(Looper.getMainLooper())
+        val deadline = System.currentTimeMillis() + timeoutMs
+        var completed = false
+
+        fun schedule(delay: Long) {
+            if (!completed) {
+                handler.postDelayed({ poll() }, delay)
+            }
+        }
+
+        fun parseBalance(value: Any?): Double? = when (value) {
+            null -> null
+            is Number -> value.toDouble()
+            is String -> value.replace(" ", "").replace(" ", "").toDoubleOrNull()
+            else -> null
+        }
+
+        fun poll() {
+            if (completed) return
+            getCoursierData(coursierId) { data, error ->
+                if (completed) return@getCoursierData
+
+                val now = System.currentTimeMillis()
+                val balance = data?.let { parseBalance(it["balance"]) }
+
+                val hasChanged = balance?.let { kotlin.math.abs(it - initialBalance) > 0.5 } ?: false
+
+                when {
+                    hasChanged -> {
+                        completed = true
+                        onResult(balance, true)
+                    }
+                    now >= deadline -> {
+                        completed = true
+                        onResult(balance, false)
+                    }
+                    error != null -> {
+                        // Erreur réseau momentanée : réessayer en allongeant légèrement le délai
+                        schedule(pollIntervalMs + 2_000)
+                    }
+                    else -> {
+                        schedule(pollIntervalMs)
+                    }
+                }
+            }
+        }
+
+        poll()
+    }
+
     fun registerCoursier(
         nom: String,
         prenoms: String,
