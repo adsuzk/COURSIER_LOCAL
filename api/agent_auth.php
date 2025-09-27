@@ -209,6 +209,36 @@ switch ($action) {
         session_destroy();
         echo json_encode(['success' => true, 'message' => 'Déconnexion réussie']);
         break;
+    case 'validate_session':
+        $token = $data['token'] ?? '';
+        if (empty($token)) {
+            echo json_encode(['success' => false, 'error' => 'MISSING_TOKEN']);
+            break;
+        }
+        
+        try {
+            $stmt = $pdo->prepare("SELECT id, matricule, nom, prenoms, statut_connexion FROM agents_suzosky WHERE current_session_token = ? LIMIT 1");
+            $stmt->execute([$token]);
+            $agent = $stmt->fetch();
+            
+            if ($agent) {
+                echo json_encode([
+                    'success' => true, 
+                    'agent' => [
+                        'id' => (int)$agent['id'],
+                        'matricule' => $agent['matricule'],
+                        'nom' => $agent['nom'],
+                        'prenoms' => $agent['prenoms'],
+                        'statut_connexion' => $agent['statut_connexion']
+                    ]
+                ]);
+            } else {
+                echo json_encode(['success' => false, 'error' => 'INVALID_TOKEN']);
+            }
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'error' => 'VALIDATION_ERROR', 'message' => $e->getMessage()]);
+        }
+        break;
     default:
         echo json_encode(['success' => false, 'error' => 'UNKNOWN_ACTION']);
 }
