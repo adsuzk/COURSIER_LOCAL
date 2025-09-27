@@ -775,12 +775,16 @@ $pdo = getDBConnection();
         }
         ?>
 
-        <!-- Services Système -->
+        <!-- Services Critiques en Temps Réel -->
         <div class="api-section">
             <h2 class="section-title">
-                <i class="fas fa-cogs"></i>
-                Services et Synchronisations
+                <i class="fas fa-heartbeat"></i>
+                Services Critiques Temps Réel
             </h2>
+            <p style="color: var(--primary-dark); opacity: 0.8; margin-bottom: 20px;">
+                <i class="fas fa-info-circle"></i> 
+                Services essentiels surveillés en continu avec tests de connectivité avancés.
+            </p>
             
             <div class="api-grid">
                 <div class="api-item <?= $fcmStatus ?>">
