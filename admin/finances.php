@@ -844,6 +844,10 @@ $tarification = array_merge([
             <i class="fas fa-credit-card"></i>
             <span>Recharges (<?php echo $stats['recharges_attente']; ?>)</span>
         </a>
+        <a href="admin.php?section=finances&tab=rechargement_direct" class="tab-btn <?php echo $tab === 'rechargement_direct' ? 'active' : ''; ?>">
+            <i class="fas fa-wallet"></i>
+            <span>💳 Rechargement Direct</span>
+        </a>
         <a href="admin.php?section=finances&tab=pricing" class="tab-btn <?php echo $tab === 'pricing' ? 'active' : ''; ?>">
             <i class="fas fa-calculator"></i>
             <span>Calcul des prix</span>
