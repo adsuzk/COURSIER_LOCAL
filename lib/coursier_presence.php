@@ -227,6 +227,10 @@ if (!function_exists('getConnectedCouriers')) {
     function getConnectedCouriers(?PDO $existingPdo = null): array
     {
         $pdo = $existingPdo ?? getDBConnection();
+        
+        // NETTOYAGE AUTOMATIQUE des statuts expirés AVANT de récupérer les données
+        autoCleanExpiredStatuses($pdo);
+        
         $coursiers = getAllCouriers($pdo);
         $connected = [];
 
