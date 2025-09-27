@@ -137,7 +137,7 @@ try {
     // Enregistrer dans l'historique
     $stmt = $pdo->prepare("
         INSERT INTO notifications_log_fcm 
-        (coursier_id, commande_id, token_used, message, type, status, response, created_at)
+        (coursier_id, commande_id, token_used, message, type, status, response_data, created_at)
         VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
     ");
     
