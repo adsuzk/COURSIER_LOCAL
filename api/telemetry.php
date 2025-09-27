@@ -358,10 +358,7 @@ try {
                 'success' => true, 
                 'message' => 'Crash reported and analyzed',
                 'auto_analysis' => $autoAnalysis
-            ]); 
-                    WHERE id = ?
-                ");
-                $stmt->execute([$existingCrash['id']]);
+            ]);
             } else {
                 // Nouveau crash
                 $stmt = $pdo->prepare("
