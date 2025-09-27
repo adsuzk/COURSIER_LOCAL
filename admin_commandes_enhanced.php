@@ -183,6 +183,8 @@ function getCommandesWithFilters(string $statut, string $coursier, string $date,
     $stmt->execute($params);
 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
 function getStatistics(): array
 {
     $pdo = getDBConnection();
