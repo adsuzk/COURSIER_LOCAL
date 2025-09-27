@@ -510,22 +510,37 @@ object SuzoskyColors {
 
 ## 🔌 Endpoints REST
 
-### Authentification
+### Authentification Mobile
+
+⚠️ **ENDPOINT DÉDIÉ** : L'application mobile Android utilise `/api/agent_auth.php` (PAS `/api/auth.php`)
+
 ```php
-POST /api/auth.php
+POST /api/agent_auth.php
 {
-    "action": "login",
-    "email": "coursier@example.com", 
-    "password": "motdepasse"
+    "matricule": "CM20250003",
+    "password": "KOrxI"
 }
 
 Response: {
     "success": true,
+    "message": "Login successful",
     "data": {
-        "token": "jwt_token_here",
-        "user": { ... },
+        "agent_id": "123",
+        "matricule": "CM20250003",
+        "nom": "Nom Coursier",
+        "is_active": true,
         "expires_at": "2025-09-28T12:00:00Z"
     }
+}
+```
+
+### Authentification Web (Différente)
+```php
+POST /api/auth.php  # Pour interface web uniquement
+{
+    "action": "login",
+    "email": "coursier@example.com", 
+    "password": "motdepasse"
 }
 ```
 
