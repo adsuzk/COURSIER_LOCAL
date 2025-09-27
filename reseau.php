@@ -567,15 +567,29 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
             </div>
         </div>
 
-        <!-- APIs Découvertes Automatiquement -->
+        <!-- Résumé de la découverte automatique -->
+        <div class="section-card" style="margin-bottom: 20px;">
+            <h2 class="section-title">
+                <i class="fas fa-magic"></i>
+                Découverte Automatique - Résumé
+            </h2>
+            <div style="max-height: 120px; overflow-y: auto; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-bottom: 20px;">
+                <p style="font-size: 0.9rem; line-height: 1.5; margin: 0;">
+                    🔍 <strong>Scanner automatique activé :</strong> Cette interface analyse automatiquement votre système et découvre tous ses composants.
+                    <br><br>
+                    📊 <strong>Découvertes :</strong> <?= count($discoveredComponents['apis']) ?> APIs, <?= count($discoveredComponents['admin_sections']) ?> interfaces admin, <?= count($discoveredComponents['database_tables']) ?> tables BDD, <?= count($discoveredComponents['monitoring']) ?> outils de diagnostic.
+                    <br><br>
+                    🎯 <strong>Objectif :</strong> Vous permettre de comprendre votre plateforme sans connaissances techniques.
+                </p>
+            </div>
+        </div>
+
+        <!-- APIs Découvertes -->
         <div class="section-card">
             <h2 class="section-title">
                 <i class="fas fa-plug"></i>
-                APIs Découvertes Automatiquement (<?= count($discoveredComponents['apis']) ?>)
+                Fonctionnalités Système (<?= count($discoveredComponents['apis']) ?>)
             </h2>
-            <p class="section-description">
-                Toutes les fonctionnalités de votre système détectées automatiquement : authentification, gestion des commandes, paiements, notifications, etc.
-            </p>
             
             <button class="expand-btn" onclick="toggleSection('apis-section')">
                 Voir toutes les APIs
