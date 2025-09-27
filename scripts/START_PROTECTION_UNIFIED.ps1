@@ -70,7 +70,6 @@ Write-Host "Appuyez sur Ctrl+C pour arrêter" -ForegroundColor Yellow
 Write-Host ""
 
 $scanCount = 0
-$lastCommitTime = Get-Date
 
 while ($true) {
     $scanCount++
