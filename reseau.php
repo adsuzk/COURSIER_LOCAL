@@ -1,11 +1,9 @@
 <?php
 /**
- * RÉSEAU - MONITORING COMPLET DU SYSTÈME SUZOSKY
- * Interface complète pour surveiller toutes les connexions et APIs
+ * RÉSEAU SUZOSKY - Interface simple de monitoring
  */
 
 require_once 'config.php';
-require_once 'lib/coursier_presence.php';
 
 // Vérifier les permissions admin
 if (session_status() === PHP_SESSION_NONE) {
@@ -18,10 +16,18 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
 
 $pdo = getDBConnection();
 
-// DÉCOUVERTE AUTOMATIQUE DU RÉSEAU - Initialisation avant utilisation
-require_once 'network_discovery.php';
-$discovery = new NetworkDiscovery();
-$discoveredComponents = $discovery->discoverAllNetworkComponents();
+// Fonction simple de test API
+function testApiSimple($url) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_NOBODY, true);
+    $result = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    return $httpCode;
+}
 ?>
 
 <!DOCTYPE html>
