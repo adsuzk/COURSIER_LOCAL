@@ -305,16 +305,42 @@ $pdo = getDBConnection();
 
         .health-indicator {
             position: absolute;
-            top: 15px;
-            right: 15px;
-            width: 12px;
-            height: 12px;
+            top: 20px;
+            right: 20px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
-            background: var(--success);
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+            animation: pulse-success 2s infinite;
         }
 
-        .health-indicator.warning { background: var(--warning); }
-        .health-indicator.danger { background: var(--danger); }
+        .health-indicator.warning { 
+            background: linear-gradient(135deg, var(--primary-gold) 0%, #ffc107 100%);
+            box-shadow: 0 0 10px rgba(212, 168, 83, 0.5);
+            animation: pulse-warning 2s infinite;
+        }
+        
+        .health-indicator.danger { 
+            background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+            box-shadow: 0 0 10px rgba(220, 53, 69, 0.5);
+            animation: pulse-danger 2s infinite;
+        }
+
+        @keyframes pulse-success {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+        }
+
+        @keyframes pulse-warning {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+        }
+
+        @keyframes pulse-danger {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+        }
 
         @media (max-width: 768px) {
             .status-grid, .api-grid {
