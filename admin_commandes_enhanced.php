@@ -247,45 +247,32 @@ function renderStatsContent(array $stats): string
 function renderCoursiersStatusContent(array $coursiers): string
 {
     ob_start();
-    
-    // Récupération du statut FCM global
-    $fcmStatus = getFCMGlobalStatus();
-    
+    $pdo = getDBConnection();
+    $fcmStatus = getFCMGlobalStatus($pdo);
+    $coursiersConnectes = getConnectedCouriers($pdo);
+
     $vertsCount = 0;
     $orangesCount = 0;
     $rougesCount = 0;
-    
-    // FILTRER UNIQUEMENT LES COURSIERS CONNECTÉS
-    $coursiersConnectes = [];
-    foreach ($coursiers as $coursier) {
-        $statusLight = getCoursierStatusLight($coursier);
-        
-        // Un coursier est connecté s'il a un token ET est en ligne ET a une activité récente
-        $hasToken = !empty($coursier['current_session_token']);
-        $isOnline = ($coursier['statut_connexion'] ?? '') === 'en_ligne';
-        // Utiliser les données MySQL pour éviter les problèmes de fuseau horaire
-        $isRecentActivity = !empty($coursier['is_recent_activity']);
-        
-        // Fallback si is_recent_activity n'est pas disponible
-        if (!isset($coursier['is_recent_activity'])) {
-            $lastActivity = strtotime($coursier['last_login_at'] ?? '0');
-            $isRecentActivity = $lastActivity > (time() - 1800); // 30 minutes
-        }
-        
-        $isConnected = $hasToken && $isOnline && $isRecentActivity;
-        
-        // Ne garder que les coursiers connectés
-        if ($isConnected) {
-            $coursiersConnectes[] = array_merge($coursier, ['status_light' => $statusLight]);
-            
-            switch($statusLight['color']) {
-                case 'green': $vertsCount++; break;
-                case 'orange': $orangesCount++; break;
-                case 'red': $rougesCount++; break;
-            }
+
+    foreach ($coursiersConnectes as &$coursierConnecte) {
+        $statusLight = $coursierConnecte['status_light'] ?? getCoursierStatusLight($coursierConnecte, $pdo);
+        $coursierConnecte['status_light'] = $statusLight;
+
+        switch ($statusLight['color']) {
+            case 'green':
+                $vertsCount++;
+                break;
+            case 'orange':
+                $orangesCount++;
+                break;
+            case 'red':
+                $rougesCount++;
+                break;
         }
     }
-    
+    unset($coursierConnecte);
+
     $totalCoursiers = count($coursiersConnectes);
     ?>
     
