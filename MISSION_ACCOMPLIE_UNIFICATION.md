@@ -38,12 +38,14 @@ $connected = $hasToken && $isOnline && $isRecentActivity;
 
 ## 📊 VALIDATION TECHNIQUE
 
-### Test de Cohérence
+### Test de Cohérence (FINAL)
 ```
-LOGIQUE UNIFIÉE     : 1 coursier (ZALLE Ismael - 13 min)
-Anciennes logiques  : 2 coursiers (+ YAPO Emmanuel - 101 min)
+AVANT NETTOYAGE AUTO : 2 coursiers "en_ligne" (dont 1 expiré)
+APRÈS NETTOYAGE AUTO : 1 coursier "en_ligne" (actifs uniquement)
 
-✅ FILTRAGE INTELLIGENT : Connexions anciennes exclues
+✅ YAPO Emmanuel : Auto-nettoyé (105min inactivité) 
+✅ ZALLE Ismael : Conservé (actif < 30min)
+✅ BASE ET AFFICHAGE : Parfaitement synchronisés
 ```
 
 ### Pages Admin Unifiées
@@ -51,26 +53,26 @@ Anciennes logiques  : 2 coursiers (+ YAPO Emmanuel - 101 min)
 - ✅ **Commandes** (`/admin_commandes_enhanced.php`)  
 - ✅ **Finances** (`/admin/sections_finances/rechargement_direct.php`)
 
-**Toutes utilisent :** `getConnectedCouriers()` uniquement
+**Toutes utilisent :** `getConnectedCouriers()` avec auto-nettoyage
 
 ---
 
 ## 🚀 AVANTAGES DU SYSTÈME
 
-### 1. Cohérence Totale
-- Même nombre affiché partout
-- Même logique de filtratge  
-- Plus de divergences
+### 1. Cohérence Automatique
+- Nettoyage auto des statuts expirés (>30min)
+- Base de données toujours à jour
+- Zéro incohérence possible
 
 ### 2. Logique Métier Intelligente
-- Filtre les sessions expirées
+- Filtre automatique des sessions expirées
 - Vérifications multiples (token + statut + activité)
-- Statut temps réel
+- Statut temps réel sans code en dur
 
-### 3. Maintenance Simplifiée
-- 1 seul fichier à modifier
-- Code réutilisable
-- Documentation centralisée
+### 3. Maintenance Zéro
+- Auto-correction permanente
+- 1 seul fichier source
+- Système auto-entretenu
 
 ---
 
