@@ -120,36 +120,39 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
         }
 
         .stat-card {
-            background: var(--surface);
-            border-radius: 12px;
-            padding: 1.5rem;
-            border: 1px solid var(--border);
-            transition: all 0.2s ease;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px 25px;
+            text-align: center;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-gold);
         }
 
         .stat-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            transform: translateY(-2px);
-        }
-
-        .stat-card.success {
-            border-left: 4px solid var(--success);
-        }
-        .stat-card.info {
-            border-left: 4px solid var(--info);
-        }
-        .stat-card.warning {
-            border-left: 4px solid var(--warning);
-        }
-        .stat-card.primary {
-            border-left: 4px solid var(--primary);
+            transform: translateY(-5px);
+            box-shadow: 
+                0 0 40px rgba(212, 168, 83, 0.2),
+                0 20px 50px rgba(0,0,0,0.5);
         }
 
         .stat-header {
