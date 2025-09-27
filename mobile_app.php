@@ -557,7 +557,7 @@ $assetRoute = function (string $path) {
                     </div>
                     <div style="margin-bottom: 15px;">
                         <strong>Solde wallet:</strong> <span id="profileWallet">0 F</span>
-                        <div style="font-size: 0.75rem; opacity: 0.7;" id="profileWalletSource">&nbsp;</div>
+                        <div style="font-size: 0.75rem; opacity: 0.7;" id="profileWalletSource">Synchronisation en cours…</div>
                     </div>
                     <div style="margin-bottom: 15px;">
                         <strong>Matricule:</strong> <span id="coursierMatricule">-</span>
