@@ -343,10 +343,19 @@ $stmt = $pdo->prepare("SELECT solde_wallet FROM agents_suzosky WHERE id = ?");
 
 ### 🎯 **KPIs à surveiller :**
 
+- **Sécurité FCM** : 0 violation = conforme (critique légal)
+- **Coursiers disponibles** : > 0 = service opérationnel
 - Taux FCM global (> 80% = excellent)
 - Nombre de coursiers avec solde > 0
 - Temps moyen de livraison
 - Taux d'acceptation des commandes
+
+### ⚠️ **Alertes Critiques :**
+
+- **Tokens orphelins** : Tokens actifs sur coursiers déconnectés
+- **Service indisponible** : Aucun coursier connecté 
+- **Violations sécurité** : Assignations à coursiers hors ligne
+- **Erreurs API mobile** : Échecs synchronisation wallet
 
 ---
 
