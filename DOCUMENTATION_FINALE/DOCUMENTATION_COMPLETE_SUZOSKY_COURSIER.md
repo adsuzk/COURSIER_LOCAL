@@ -135,7 +135,7 @@ COURSIER_LOCAL/
 ├── _sql/                  # Dumps et sauvegardes
 ├── config.php             # Configuration centrale
 ├── index.php              # Page d'accueil
-├── coursier.php           # Interface coursiers web
+├── coursier.php           # Interface coursiers WEB (navigateur)
 ├── admin.php              # Dashboard admin
 └── DOCUMENTATION_FINALE/  # Documentation complète
 ```
