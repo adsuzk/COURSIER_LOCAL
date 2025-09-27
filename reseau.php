@@ -451,7 +451,7 @@ $pdo = getDBConnection();
         }
         
         // Test des APIs principales
-        $baseUrl = 'https://localhost/COURSIER_LOCAL';
+        $baseUrl = 'http://localhost/COURSIER_LOCAL';
         
         $apis = [
             [
