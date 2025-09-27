@@ -462,6 +462,11 @@ $assetRoute = function (string $path) {
                 </h3>
                 
                 <div class="stats-grid">
+                    <div class="stat-card wallet-card">
+                        <div class="stat-label"><i class="fas fa-wallet"></i> Solde wallet</div>
+                        <div class="stat-value" id="walletBalance">0 F</div>
+                        <div class="stat-hint" id="walletSourceLabel">Synchronisation en cours…</div>
+                    </div>
                     <div class="stat-card">
                         <div class="stat-value" id="todayOrders">0</div>
                         <div class="stat-label">Commandes aujourd'hui</div>
