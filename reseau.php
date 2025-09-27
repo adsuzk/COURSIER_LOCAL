@@ -271,21 +271,27 @@ $pdo = getDBConnection();
         }
 
         .refresh-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
+            background: var(--gradient-gold);
+            color: var(--primary-dark);
+            border: 2px solid var(--primary-gold);
             padding: 15px 30px;
             border-radius: 25px;
             font-size: 1.1em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
             margin: 20px auto;
             display: block;
+            box-shadow: 0 5px 20px rgba(212, 168, 83, 0.3);
         }
 
         .refresh-btn:hover {
-            background: var(--secondary);
-            transform: translateY(-2px);
+            background: var(--primary-gold);
+            color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(212, 168, 83, 0.5);
         }
 
         .timestamp {
