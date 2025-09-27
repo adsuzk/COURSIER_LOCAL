@@ -37,11 +37,11 @@ try {
         echo "   ❌ Nouvelle API POST JSON manquante\n";
     }
     
-    // 3. Vérifier absence ancienne API
-    if (strpos($html, 'get_wallet_balance.php') !== false) {
-        echo "   ❌ Ancienne API encore présente\n";
+    // 3. Vérifier que l'ancienne API n'est plus testée (mais mention de remplacement OK)
+    if (strpos($html, "'/api/get_wallet_balance.php") !== false) {
+        echo "   ❌ Ancienne URL API encore testée\n";
     } else {
-        echo "   ✅ Ancienne API supprimée\n";
+        echo "   ✅ Ancienne URL API plus testée\n";
     }
     
     // 4. Vérifier mention de remplacement
