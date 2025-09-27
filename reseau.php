@@ -35,25 +35,90 @@ function testApiSimple($url) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Réseau - Monitoring Système Suzosky</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <title>Réseau Suzosky</title>
     <style>
-        /* DESIGN SYSTEM SUZOSKY - INTERFACE ADMIN RESEAU */
-        :root {
-            --primary-gold: #D4A853;
-            --primary-dark: #1A1A2E;
-            --secondary-blue: #16213E;
-            --accent-blue: #0F3460;
-            --accent-red: #E94560;
-            --success-color: #27AE60;
-            --glass-bg: rgba(255,255,255,0.08);
-            --glass-border: rgba(255,255,255,0.2);
-            --gradient-gold: linear-gradient(135deg, #D4A853 0%, #F4E4B8 50%, #D4A853 100%);
-            --gradient-dark: linear-gradient(135deg, #1A1A2E 0%, #16213E 100%);
-            --success-color: #28a745;
-            --warning-color: #ffc107;
-            --danger-color: #E94560;
+        body {
+            font-family: Arial, sans-serif;
+            background: #1A1A2E;
+            color: white;
+            margin: 0;
+            padding: 20px;
         }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #D4A853;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .api-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .api-card {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid #D4A853;
+            border-radius: 10px;
+            padding: 20px;
+            color: white;
+        }
+        
+        .api-name {
+            color: #D4A853;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        
+        .api-description {
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+        
+        .api-status {
+            text-align: right;
+            font-weight: bold;
+        }
+        
+        .status-online { color: #27AE60; }
+        .status-offline { color: #E94560; }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-box {
+            background: rgba(212,168,83,0.1);
+            border: 1px solid #D4A853;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #D4A853;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
 
         * {
             margin: 0;
