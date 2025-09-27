@@ -200,6 +200,11 @@ icacls "C:\xampp\htdocs\COURSIER_LOCAL" /grant Everyone:(OI)(CI)F
 
 ## 🌐 Déploiement Production (LWS)
 
+⚠️ **IMPORTANT SYNC** : Lors du déploiement, s'assurer que :
+- `coursier.php` (interface web) est synchronisé
+- `/api/agent_auth.php` (mobile) est synchronisé  
+- Les deux endpoints sont fonctionnels en production
+
 ### Configuration Serveur
 
 1. **Upload des fichiers**
@@ -208,8 +213,12 @@ icacls "C:\xampp\htdocs\COURSIER_LOCAL" /grant Everyone:(OI)(CI)F
 # Structure recommandée :
 /www/
 ├── api/
+│   ├── agent_auth.php    # ✅ OBLIGATOIRE pour mobile
+│   ├── auth.php          # ✅ OBLIGATOIRE pour web
+│   └── ...
 ├── assets/ 
 ├── sections_index/
+├── coursier.php          # ✅ OBLIGATOIRE pour interface web
 ├── config.php
 ├── index.php
 └── ...
