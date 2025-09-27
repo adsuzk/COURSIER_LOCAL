@@ -505,42 +505,58 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
         $tokensActifs = $stmt->fetchColumn();
         ?>
 
-        <!-- Statistiques générales -->
-        <div class="status-grid">
-            <div class="status-card <?= $nombreCoursiers > 0 ? 'success' : 'warning' ?>">
-                <div class="card-header">
-                    <i class="fas fa-users card-icon"></i>
-                    <div class="card-title">Coursiers Connectés</div>
+        <!-- État général du système -->
+        <div class="stats-grid">
+            <div class="stat-card <?= $nombreCoursiers > 0 ? 'success' : 'warning' ?>">
+                <div class="stat-header">
+                    <h3 class="stat-title">Coursiers en ligne</h3>
+                    <div class="stat-icon success">
+                        <i class="fas fa-users"></i>
+                    </div>
                 </div>
-                <div class="card-value"><?= $nombreCoursiers ?></div>
-                <div class="card-description">Coursiers actifs en temps réel</div>
+                <div class="stat-value"><?= $nombreCoursiers ?></div>
+                <div class="stat-description">
+                    Nombre de livreurs actuellement connectés et disponibles pour prendre des commandes
+                </div>
             </div>
 
-            <div class="status-card <?= $dbStatus === 'online' ? 'success' : 'danger' ?>">
-                <div class="card-header">
-                    <i class="fas fa-database card-icon"></i>
-                    <div class="card-title">Base de Données</div>
+            <div class="stat-card info">
+                <div class="stat-header">
+                    <h3 class="stat-title">APIs découvertes</h3>
+                    <div class="stat-icon info">
+                        <i class="fas fa-plug"></i>
+                    </div>
                 </div>
-                <div class="card-value"><?= $dbStatus === 'online' ? 'ONLINE' : 'OFFLINE' ?></div>
-                <div class="card-description">Connexion MySQL agents_suzosky</div>
+                <div class="stat-value"><?= count($discoveredComponents['apis']) ?></div>
+                <div class="stat-description">
+                    Points d'entrée automatiquement détectés dans votre système
+                </div>
             </div>
 
-            <div class="status-card <?= $commandesActives > 0 ? 'success' : 'warning' ?>">
-                <div class="card-header">
-                    <i class="fas fa-shipping-fast card-icon"></i>
-                    <div class="card-title">Commandes Actives</div>
+            <div class="stat-card <?= $commandesActives > 0 ? 'success' : 'warning' ?>">
+                <div class="stat-header">
+                    <h3 class="stat-title">Commandes actives</h3>
+                    <div class="stat-icon success">
+                        <i class="fas fa-shipping-fast"></i>
+                    </div>
                 </div>
-                <div class="card-value"><?= $commandesActives ?></div>
-                <div class="card-description">En cours de traitement</div>
+                <div class="stat-value"><?= $commandesActives ?></div>
+                <div class="stat-description">
+                    Livraisons en cours de traitement dans votre système
+                </div>
             </div>
 
-            <div class="status-card <?= $tokensActifs > 0 ? 'success' : 'warning' ?>">
-                <div class="card-header">
-                    <i class="fas fa-mobile-alt card-icon"></i>
-                    <div class="card-title">Tokens FCM</div>
+            <div class="stat-card primary">
+                <div class="stat-header">
+                    <h3 class="stat-title">Tables de données</h3>
+                    <div class="stat-icon primary">
+                        <i class="fas fa-database"></i>
+                    </div>
                 </div>
-                <div class="card-value"><?= $tokensActifs ?></div>
-                <div class="card-description">Dispositifs mobiles connectés</div>
+                <div class="stat-value"><?= count($discoveredComponents['database_tables']) ?></div>
+                <div class="stat-description">
+                    Tables de votre base de données automatiquement analysées
+                </div>
             </div>
         </div>
 
