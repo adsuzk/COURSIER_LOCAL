@@ -57,7 +57,10 @@ try {
         $check_stmt->execute([$coursier_id]);
         $coursier = $check_stmt->fetch();
     } catch (Throwable $e) {
-        // Fallback vers agents_suzosky
+        // ignore, we'll attempt the agents_suzosky fallback below
+    }
+
+    if (!$coursier) {
         try {
             $check_sql = "SELECT id, CONCAT(nom, ' ', prenoms) AS nom, 'actif' AS statut FROM agents_suzosky WHERE id = ?";
             $check_stmt = $pdo->prepare($check_sql);
