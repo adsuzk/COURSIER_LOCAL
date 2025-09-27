@@ -676,18 +676,30 @@ $assetRoute = function (string $path) {
             const data = await response.json();
             
             if (data.success) {
-                const stats = data.data.statistiques;
-                
+                const stats = data.data.statistiques || {};
+
+                const walletValue = data.data.solde_wallet ?? 0;
+                const walletSource = data.data.solde_wallet_source ? `Source: ${data.data.solde_wallet_source}` : 'Solde synchronisé';
+                const walletBalanceEl = document.getElementById('walletBalance');
+                if (walletBalanceEl) walletBalanceEl.textContent = formatCurrency(walletValue);
+                const walletSourceEl = document.getElementById('walletSourceLabel');
+                if (walletSourceEl) walletSourceEl.textContent = walletSource;
+
                 document.getElementById('todayOrders').textContent = stats.commandes_jour || '0';
-                document.getElementById('todayEarnings').textContent = (stats.gains_jour || 0) + ' F';
+                document.getElementById('todayEarnings').textContent = formatCurrency(stats.gains_jour || 0);
                 document.getElementById('totalOrders').textContent = stats.total_commandes || '0';
-                document.getElementById('averageRating').textContent = stats.note_moyenne || '0.0';
-                
+                document.getElementById('averageRating').textContent = (stats.note_moyenne ?? 0).toFixed ? (Number(stats.note_moyenne).toFixed(1)) : (stats.note_moyenne || '0.0');
+
                 // Mettre à jour le profil
-                document.getElementById('coursierName').textContent = data.data.nom;
-                document.getElementById('coursierPhone').textContent = data.data.telephone;
-                document.getElementById('coursierStatus').textContent = data.data.statut;
+                document.getElementById('coursierName').textContent = data.data.nom || '-';
+                document.getElementById('coursierPhone').textContent = data.data.telephone || '-';
+                const statusText = data.data.statut_connexion ? `${data.data.statut || '-' } (${data.data.statut_connexion})` : (data.data.statut || '-');
+                document.getElementById('coursierStatus').textContent = statusText;
                 document.getElementById('workZone').textContent = data.data.zone_travail || 'Non définie';
+                const profileWallet = document.getElementById('profileWallet');
+                if (profileWallet) profileWallet.textContent = formatCurrency(walletValue);
+                const profileWalletSource = document.getElementById('profileWalletSource');
+                if (profileWalletSource) profileWalletSource.textContent = walletSource;
             }
         } catch (error) {
             console.error('Erreur chargement données:', error);
