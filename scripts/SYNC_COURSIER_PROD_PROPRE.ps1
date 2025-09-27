@@ -243,11 +243,11 @@ if (Test-Path $configPath) {
     $configContent = $configContent -replace "define\('DB_USER',\s*'[^']*'\);", "define('DB_USER', 'conci2547642_1m4twb');"
     $configContent = $configContent -replace "define\('DB_PASS',\s*'[^']*'\);", "define('DB_PASS', 'wN1!_TT!yHsK6Y6');"
     
-    # Alternative pour les variables $db_ si elles existent
-    $configContent = $configContent -replace '\$db_host\s*=\s*[''"][^''"]*[''"];', '$db_host = "185.98.131.214";'
-    $configContent = $configContent -replace '\$db_name\s*=\s*[''"][^''"]*[''"];', '$db_name = "conci2547642_1m4twb";'
-    $configContent = $configContent -replace '\$db_user\s*=\s*[''"][^''"]*[''"];', '$db_user = "conci2547642_1m4twb";'
-    $configContent = $configContent -replace '\$db_pass\s*=\s*[''"][^''"]*[''"];', '$db_pass = "wN1!_TT!yHsK6Y6";'
+    # Alternative pour les variables `$db_` si elles existent
+    $configContent = $configContent -replace '\$db_host\s*=\s*["''][^"'']*["''];', '$db_host = "185.98.131.214";'
+    $configContent = $configContent -replace '\$db_name\s*=\s*["''][^"'']*["''];', '$db_name = "conci2547642_1m4twb";'
+    $configContent = $configContent -replace '\$db_user\s*=\s*["''][^"'']*["''];', '$db_user = "conci2547642_1m4twb";'
+    $configContent = $configContent -replace '\$db_pass\s*=\s*["''][^"'']*["''];', '$db_pass = "wN1!_TT!yHsK6Y6";'
     
     # Désactiver les modes de développement/debug
     $configContent = $configContent -replace "define\('DEBUG_MODE',\s*true\);", "define('DEBUG_MODE', false);"
