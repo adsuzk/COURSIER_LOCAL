@@ -32,6 +32,25 @@ agents_suzosky:
 3. **SESSION ACTIVE** : `current_session_token` requis pour connexion app
 4. **ACTIVITÉ RÉCENTE** : `last_login_at < 30 minutes` pour être "disponible"
 
+### 🔍 **Système de présence unifié (coursiers actifs)**
+
+- **Source unique** : `lib/coursier_presence.php` centralise toute la logique de présence. Aucune autre page ne doit recalculer ces indicateurs manuellement.
+- **Fonctions clés** :
+	- `getAllCouriers($pdo)` → retourne les coursiers avec indicateurs normalisés (`is_connected`, `has_wallet_balance`, `has_active_token`, etc.).
+	- `getConnectedCouriers($pdo)` → fournit la liste officielle des IDs connectés utilisée par toutes les interfaces.
+	- `getCoursierStatusLight($row)` → prépare le résumé couleur/icône consommé par les vues.
+	- `getFCMGlobalStatus($pdo)` → calcule les KPIs FCM globaux (taux actifs, tokens manquants).
+- **Données utilisées** :
+	- `agents_suzosky` (statut, solde, session, dernier login)
+	- `device_tokens` (token actif obligatoire)
+	- `notifications_log_fcm` (statistiques historiques)
+- **Consommateurs actuels** :
+	- `admin_commandes_enhanced.php` (tableau commandes)
+	- `admin/sections_finances/rechargement_direct.php` (liste finances + rechargements)
+- **Bonnes pratiques** :
+	- Pour afficher ou filtrer les coursiers connectés, importer le helper et utiliser ces fonctions.
+	- Ne plus appeler directement d'anciennes routes comme `check_table_agents.php`, `check_coursier_debug.php`, etc. → elles sont conservées uniquement pour diagnostic ponctuel.
+
 ---
 
 ## 💰 **SYSTÈME DE RECHARGEMENT**
