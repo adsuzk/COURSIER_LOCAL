@@ -304,6 +304,27 @@ curl "http://192.168.1.5/COURSIER_LOCAL/api/get_coursier_data.php?coursier_id=5"
 - **WebSocket** (futur) pour sync ultra-rapide
 - **Polling** toutes les 30 secondes en backup
 
+### 📋 **Bonnes pratiques API mobile :**
+
+1. **Source unique de vérité** : Toutes les APIs doivent lire `agents_suzosky.solde_wallet` en priorité
+2. **Test systématique** : Valider que `get_coursier_data.php` retourne les mêmes valeurs que `get_wallet_balance.php`
+3. **Monitoring ADB** : Utiliser Android Debug Bridge pour diagnostiquer les problèmes de sync
+4. **Fallback cohérent** : Si `agents_suzosky` indisponible, utiliser le même ordre de fallback dans toutes les APIs
+5. **Documentation API** : Maintenir la liste des endpoints utilisés par l'app mobile
+
+### 🛠️ **Commandes de diagnostic rapide :**
+
+```bash
+# Vérifier la synchronisation des APIs
+curl "http://localhost/COURSIER_LOCAL/api/get_wallet_balance.php?coursier_id=5"
+curl "http://localhost/COURSIER_LOCAL/api/get_coursier_data.php?coursier_id=5"
+
+# Les deux doivent retourner le même solde !
+
+# Surveiller l'app mobile en temps réel
+adb logcat --pid=$(adb shell pidof com.suzosky.coursier.debug) | grep "api"
+```
+
 ---
 
 ## 🚀 **ROADMAP ET AMÉLIORATIONS**
