@@ -38,22 +38,31 @@ Si les tokens ne correspondent pas:
 - Nécessite **2 erreurs consécutives** pour éviter les faux positifs
 - Ignore les erreurs temporaires (`NO_SESSION`, erreurs réseau)
 
+### 4. Liaison avec l'assignation de courses
+**CRITIQUE** : La session est directement liée à la disponibilité pour les courses :
+- **Token valide** → `statut_connexion = 'en_ligne'` → **Peut recevoir des courses**
+- **Pas de token/token invalide** → `statut_connexion = 'hors_ligne'` → **Pas de courses**
+- **Déconnexion/révocation** → Automatiquement `hors_ligne` → **Arrêt des assignations**
+
 ## Avantages du système
 
 ### ✅ Sécurité
 - Empêche l'utilisation simultanée depuis plusieurs appareils
 - Chaque nouvelle connexion invalide automatiquement les précédentes
 - Tokens de session cryptographiquement sécurisés
+- **Cohérence session ↔ disponibilité courses**
 
 ### ✅ Tolérance utilisateur
 - Reconnexions automatiques du même appareil sans interruption
 - Résistance aux erreurs réseau temporaires  
 - Pas de déconnexions intempestives lors d'instabilités réseau
+- **Maintien automatique du statut 'en_ligne' si session valide**
 
 ### ✅ Expérience utilisateur
 - Transitions transparentes lors des reconnexions
 - Messages clairs en cas de connexion depuis un autre appareil
 - Surveillance de session non-intrusive
+- **Pas de courses perdues par incohérence de statut**
 
 ## Configuration technique
 
