@@ -75,7 +75,7 @@ if (!function_exists('getAllCouriers')) {
                 FROM agents_suzosky a
                 LEFT JOIN device_tokens dt ON dt.coursier_id = a." . $info['join_column'] . " AND dt.is_active = 1
                 $filter
-                GROUP BY a." . $info['join_column'] . ", a.nom, a.prenoms, a.telephone, a.email, a.solde_wallet,
+                GROUP BY a." . $info['join_column'] . ", a.nom, a.prenoms, a.telephone, a.email, a.type_poste, a.solde_wallet,
                          a.current_session_token, a.last_login_at, " . $info['status_expression'] . "
                 ORDER BY " . $info['status_expression'] . " DESC, a.last_login_at DESC
             ";
