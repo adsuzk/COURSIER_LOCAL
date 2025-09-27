@@ -673,41 +673,37 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
             </div>
         </div>
 
-        <!-- Section Outils de diagnostic -->
-        <div class="section">
-            <div class="section-header">
-                <div class="section-icon">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <div>
-                    <h2 class="section-title">🔧 Outils de diagnostic (<?= count($discoveredComponents['monitoring']) ?>)</h2>
-                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">
-                        Scripts pour vérifier le bon fonctionnement de votre système
-                    </p>
-                </div>
-            </div>
+        <!-- Outils de Monitoring -->
+        <div class="section-card">
+            <h2 class="section-title">
+                <i class="fas fa-chart-line"></i>
+                Outils de Monitoring (<?= count($discoveredComponents['monitoring']) ?>)
+            </h2>
+            <p class="section-description">
+                Scripts de diagnostic pour surveiller et tester le bon fonctionnement de votre système.
+            </p>
             
-            <button class="toggle-btn" onclick="toggleSection('monitoring')">
-                🛠️ Voir tous les outils
+            <button class="expand-btn" onclick="toggleSection('monitoring-section')">
+                Voir les outils principaux
             </button>
             
-            <div id="monitoring" class="collapsible-content hidden">
-                <div class="items-grid">
-                    <?php foreach ($discoveredComponents['monitoring'] as $tool): ?>
-                        <div class="item">
-                            <div class="item-header">
-                                <span class="item-name">
-                                    <?= htmlspecialchars(str_replace('.php', '', $tool['name'])) ?>
-                                </span>
-                                <span class="item-status status-warning">OUTIL</span>
+            <div id="monitoring-section" class="collapsible hidden">
+                <div class="api-grid">
+                    <?php foreach (array_slice($discoveredComponents['monitoring'], 0, 8) as $tool): ?>
+                        <div class="api-item">
+                            <div class="api-name">
+                                <?= htmlspecialchars(str_replace(['.php', '_'], ['', ' '], $tool['name'])) ?>
                             </div>
-                            <div class="item-description">
+                            <div class="api-description">
                                 <?= htmlspecialchars($tool['description']) ?>
                             </div>
-                            <div class="item-details">
-                                📁 Fichier: <?= htmlspecialchars($tool['file']) ?>
+                            <div class="api-status">
                                 <?php if (isset($tool['url'])): ?>
-                                    <br>🔗 <a href="<?= $tool['url'] ?>" target="_blank" style="color: var(--primary);">Exécuter le test</a>
+                                    <a href="<?= $tool['url'] ?>" target="_blank" class="status-badge status-warning">
+                                        EXÉCUTER
+                                    </a>
+                                <?php else: ?>
+                                    <span class="status-badge status-warning">OUTIL</span>
                                 <?php endif; ?>
                             </div>
                         </div>
