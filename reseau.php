@@ -217,8 +217,8 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
         }
         
         .api-item {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
+            background: rgba(255,255,255,0.95);
+            border: 1px solid var(--primary-gold);
             border-radius: 15px;
             padding: 25px;
             backdrop-filter: blur(15px);
@@ -226,6 +226,7 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            color: var(--primary-dark);
         }
 
         .api-item::before {
@@ -248,13 +249,13 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
         .api-name {
             font-size: 1.1rem;
             font-weight: 700;
-            color: var(--primary-gold);
+            color: var(--primary-dark);
             margin-bottom: 10px;
         }
 
         .api-description {
             font-size: 0.9rem;
-            opacity: 0.8;
+            color: var(--secondary-blue);
             line-height: 1.5;
             margin-bottom: 15px;
         }
