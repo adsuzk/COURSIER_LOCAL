@@ -1778,6 +1778,10 @@ $tarification = array_merge([
             </div>
         </div>
         
+        <?php elseif ($tab === 'rechargement_direct'): ?>
+        <!-- RECHARGEMENT DIRECT -->
+        <?php include __DIR__ . '/sections_finances/rechargement_direct.php'; ?>
+        
         <?php elseif ($tab === 'pricing'): ?>
         <!-- CALCUL DES PRIX -->
         <div class="finances-container">
