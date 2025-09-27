@@ -628,51 +628,46 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
             </div>
         </div>
 
-        <!-- Section Base de données -->
-        <div class="section">
-            <div class="section-header">
-                <div class="section-icon">
-                    <i class="fas fa-database"></i>
-                </div>
-                <div>
-                    <h2 class="section-title">🗄️ Données de votre système (<?= count($discoveredComponents['database_tables']) ?>)</h2>
-                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">
-                        Toutes les tables qui stockent vos informations : clients, commandes, coursiers, etc.
-                    </p>
-                </div>
-            </div>
+        <!-- Base de Données -->
+        <div class="section-card">
+            <h2 class="section-title">
+                <i class="fas fa-database"></i>
+                Base de Données (<?= count($discoveredComponents['database_tables']) ?>)
+            </h2>
+            <p class="section-description">
+                Aperçu des tables principales qui stockent vos données : clients, commandes, coursiers, finances, etc.
+            </p>
             
-            <button class="toggle-btn" onclick="toggleSection('database')">
-                📊 Voir toutes les tables de données
+            <button class="expand-btn" onclick="toggleSection('database-section')">
+                Voir les tables principales
             </button>
             
-            <div id="database" class="collapsible-content hidden">
-                <div class="items-grid">
+            <div id="database-section" class="collapsible hidden">
+                <div class="api-grid">
                     <?php 
-                    // Grouper les tables par type
-                    $tableTypes = [];
+                    // Afficher seulement les tables principales
+                    $mainTables = ['commandes', 'agents_suzosky', 'clients', 'recharges', 'device_tokens', 'order_payments'];
+                    $displayedTables = [];
+                    
                     foreach ($discoveredComponents['database_tables'] as $table) {
-                        $tableTypes[$table['type']][] = $table;
+                        if (in_array($table['name'], $mainTables) || count($displayedTables) < 8) {
+                            $displayedTables[] = $table;
+                        }
                     }
                     
-                    foreach ($tableTypes as $typeName => $tables):
+                    foreach (array_slice($displayedTables, 0, 8) as $table): 
                     ?>
-                        <h4 style="color: var(--suzosky-gold); margin: 1.5rem 0 1rem 0; font-size: 1.1rem;">
-                            📁 <?= $typeName ?> (<?= count($tables) ?> tables)
-                        </h4>
-                        <?php foreach ($tables as $table): ?>
-                            <div class="item">
-                                <div class="item-header">
-                                    <span class="item-name"><?= htmlspecialchars($table['name']) ?></span>
-                                    <span class="item-status status-online">
-                                        <?= number_format($table['row_count']) ?> lignes
-                                    </span>
-                                </div>
-                                <div class="item-description">
-                                    <?= htmlspecialchars($table['description']) ?>
-                                </div>
+                        <div class="api-item">
+                            <div class="api-name"><?= htmlspecialchars($table['name']) ?></div>
+                            <div class="api-description">
+                                <strong><?= ucfirst($table['type']) ?>:</strong> <?= htmlspecialchars($table['description']) ?>
                             </div>
-                        <?php endforeach; ?>
+                            <div class="api-status">
+                                <span class="status-badge status-online">
+                                    <?= number_format($table['row_count']) ?> lignes
+                                </span>
+                            </div>
+                        </div>
                     <?php endforeach; ?>
                 </div>
             </div>
