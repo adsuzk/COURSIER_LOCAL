@@ -224,6 +224,92 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
             display: grid;
             gap: 1rem;
         }
+        
+        .item {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+        
+        .item:hover {
+            background: #f1f5f9;
+            border-color: var(--suzosky-gold);
+        }
+        
+        .item-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .item-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+        
+        .item-status {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-online {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .status-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status-error {
+            background: #fecaca;
+            color: #991b1b;
+        }
+        
+        .item-description {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+        
+        .item-details {
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid #e2e8f0;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        .toggle-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+        }
+        
+        .toggle-btn:hover {
+            background: #1d4ed8;
+        }
+        
+        .collapsible-content {
+            margin-top: 1rem;
+        }
+        
+        .hidden {
+            display: none;
+        }
         }
 
         .api-item {
