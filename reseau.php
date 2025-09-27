@@ -183,38 +183,47 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
             line-height: 1.4;
         }
 
-        .api-section {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 25px;
-            padding: 40px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-            margin-bottom: 30px;
-            border: 2px solid rgba(212, 168, 83, 0.3);
-            backdrop-filter: blur(15px);
+        .section {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
         }
 
         .section-title {
-            font-size: 2.2em;
-            background: var(--gradient-gold);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 30px;
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .section-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
-            font-weight: 800;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.5rem;
+            color: white;
+            background: var(--suzosky-gold);
         }
 
-        .section-title i {
-            margin-right: 20px;
-            color: var(--primary-gold);
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .api-grid {
+        .items-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 20px;
+            gap: 1rem;
+        }
         }
 
         .api-item {
