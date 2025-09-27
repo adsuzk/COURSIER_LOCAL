@@ -47,10 +47,24 @@ if (isset($_GET['coursier_id'])) {
 - ✅ POST form: `curl -d "coursier_id=5" localhost/COURSIER_LOCAL/api/get_coursier_data.php`
 - ✅ POST JSON: `curl -H "Content-Type: application/json" -d '{"coursier_id":5}' localhost/COURSIER_LOCAL/api/get_coursier_data.php`
 
-### 📱 **ROUTES OBSOLÈTES SUPPRIMÉES :**
-- ❌ `get_wallet_balance.php` - Remplacée par get_coursier_data.php
-- ❌ `check_coursier_debug.php` - Fonction intégrée dans lib/coursier_presence.php
-- ❌ `check_table_agents.php` - Diagnostic uniquement, pas utilisée par l'app
+### 📱 **CONSOLIDATION DES APIs (Sept 2025) :**
+
+#### **API Unique Consolidée :**
+- ✅ `api/get_coursier_data.php` - **API PRINCIPALE** pour l'app mobile
+  - **Données fournies :** Profil + Solde wallet + Commandes + Statut
+  - **Formats supportés :** GET, POST form-data, POST JSON
+  - **Usage :** Remplace toutes les anciennes APIs de données coursier
+
+#### **APIs Supprimées (consolidées) :**
+- ❌ `get_wallet_balance.php` → Intégrée dans `get_coursier_data.php`
+- ❌ `check_coursier_debug.php` → Fonction déplacée dans `lib/coursier_presence.php`
+- ❌ `check_table_agents.php` → Diagnostic seulement, pas d'usage mobile
+
+#### **Avantages de la consolidation :**
+- **Moins d'appels réseau** : 1 seule requête au lieu de 3-4
+- **Cohérence données** : Toutes les infos depuis la même source
+- **Maintenance simplifiée** : Un seul endpoint à maintenir
+- **Performance améliorée** : Cache et optimisations centralisées
 
 ---
 
