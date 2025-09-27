@@ -361,8 +361,6 @@ try {
                 'message' => 'Crash reported and analyzed',
                 'auto_analysis' => $autoAnalysis
             ]);
-            
-            echo json_encode(['success' => true, 'crash_hash' => $crashHash]);
             break;
             
         case 'start_session':
