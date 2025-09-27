@@ -17,7 +17,7 @@ class FCMManager {
         $this->projectId = 'coursier-suzosky'; // Votre project ID Firebase
     }
     
-    private function getServerKey() {
+    public function getServerKey() {
         // Essayer de lire depuis le fichier de config Firebase
         $firebaseConfig = 'coursier-suzosky-firebase-adminsdk-fbsvc-3605815057.json';
         
