@@ -217,16 +217,15 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
         }
         
         .api-item {
-            background: rgba(255,255,255,0.95);
-            border: 1px solid var(--primary-gold);
+            background: #FFFFFF;
+            border: 2px solid var(--primary-gold);
             border-radius: 15px;
             padding: 25px;
-            backdrop-filter: blur(15px);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
-            color: var(--primary-dark);
+            color: #1A1A2E;
         }
 
         .api-item::before {
@@ -567,28 +566,11 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
             </div>
         </div>
 
-        <!-- Résumé de la découverte automatique -->
-        <div class="section-card" style="margin-bottom: 20px;">
-            <h2 class="section-title">
-                <i class="fas fa-magic"></i>
-                Découverte Automatique - Résumé
-            </h2>
-            <div style="max-height: 120px; overflow-y: auto; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-bottom: 20px;">
-                <p style="font-size: 0.9rem; line-height: 1.5; margin: 0;">
-                    🔍 <strong>Scanner automatique activé :</strong> Cette interface analyse automatiquement votre système et découvre tous ses composants.
-                    <br><br>
-                    📊 <strong>Découvertes :</strong> <?= count($discoveredComponents['apis']) ?> APIs, <?= count($discoveredComponents['admin_sections']) ?> interfaces admin, <?= count($discoveredComponents['database_tables']) ?> tables BDD, <?= count($discoveredComponents['monitoring']) ?> outils de diagnostic.
-                    <br><br>
-                    🎯 <strong>Objectif :</strong> Vous permettre de comprendre votre plateforme sans connaissances techniques.
-                </p>
-            </div>
-        </div>
-
-        <!-- APIs Découvertes -->
+        <!-- APIs Essentielles -->
         <div class="section-card">
             <h2 class="section-title">
-                <i class="fas fa-plug"></i>
-                Fonctionnalités Système (<?= count($discoveredComponents['apis']) ?>)
+                <i class="fas fa-code"></i>
+                APIs Essentielles du Système
             </h2>
             
             <button class="expand-btn" onclick="toggleSection('apis-section')">

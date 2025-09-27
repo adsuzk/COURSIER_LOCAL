@@ -887,6 +887,29 @@ function renderHeader() {
             /* === MENU SIDEBAR === */
             .sidebar-menu {
                 padding: var(--space-6) 0;
+                flex: 1;
+                overflow-y: auto;
+                max-height: calc(100vh - 300px);
+                scrollbar-width: thin;
+                scrollbar-color: var(--primary-gold) transparent;
+            }
+
+            .sidebar-menu::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            .sidebar-menu::-webkit-scrollbar-track {
+                background: rgba(255,255,255,0.05);
+                border-radius: 3px;
+            }
+
+            .sidebar-menu::-webkit-scrollbar-thumb {
+                background: var(--primary-gold);
+                border-radius: 3px;
+            }
+
+            .sidebar-menu::-webkit-scrollbar-thumb:hover {
+                background: #E8C468;
             }
 
             .menu-item {
