@@ -439,6 +439,9 @@ function renderCoursiersStatusContent(array $coursiers): string
 {
     ob_start();
     
+    // Récupération du statut FCM global
+    $fcmStatus = getFCMGlobalStatus();
+    
     $vertsCount = 0;
     $orangesCount = 0;
     $rougesCount = 0;
