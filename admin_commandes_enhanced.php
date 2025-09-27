@@ -1225,6 +1225,42 @@ body.admin-commandes-page {
     gap: 8px;
 }
 
+/* Indicateur FCM Global */
+.fcm-status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 6px;
+    border-radius: 12px;
+    font-size: 0.75em;
+    font-weight: bold;
+    margin-left: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.fcm-status-indicator.excellent {
+    background: linear-gradient(135deg, var(--success-color), #2dd981);
+    color: white;
+    box-shadow: 0 0 6px rgba(39, 174, 96, 0.4);
+}
+
+.fcm-status-indicator.correct {
+    background: linear-gradient(135deg, var(--warning-color), #ffd54f);
+    color: #1A1A2E;
+    box-shadow: 0 0 6px rgba(255, 193, 7, 0.4);
+}
+
+.fcm-status-indicator.critique {
+    background: linear-gradient(135deg, var(--danger-color), #ff6b93);
+    color: white;
+    box-shadow: 0 0 6px rgba(233, 69, 96, 0.4);
+}
+
+.fcm-status-indicator.erreur {
+    background: linear-gradient(135deg, #666, #999);
+    color: white;
+}
+
 .light-indicator {
     width: 20px;
     height: 20px;
