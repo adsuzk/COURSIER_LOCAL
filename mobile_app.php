@@ -598,6 +598,16 @@ $assetRoute = function (string $path) {
     function apiPath(rel){return __BASE_PATH + rel;}
     let watchPositionId = null;
 
+    function formatCurrency(amount) {
+        if (amount === null || amount === undefined || isNaN(amount)) {
+            return '0 F';
+        }
+        return Number(amount).toLocaleString('fr-FR', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        }) + ' F';
+    }
+
     // Gestion des écrans
     function showScreen(screenId) {
         // Masquer tous les écrans
