@@ -82,8 +82,7 @@ try {
                 telephone AS agent_telephone,
                 email AS agent_email,
                 statut_connexion AS agent_statut_connexion,
-                zone_travail AS agent_zone_travail,
-                type_vehicule AS agent_vehicule_type,
+                type_poste AS agent_vehicule_type,
                 COALESCE(solde_wallet, 0) AS agent_solde_wallet,
                 last_login_at AS agent_last_login_at,
                 matricule AS agent_matricule
