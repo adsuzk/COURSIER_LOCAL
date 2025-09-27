@@ -158,3 +158,4 @@ echo "   👁️  Chercher la commande ID {$commandeId}\n";
 echo "   📊 Vérifier que les statuts se mettent à jour en temps réel\n\n";
 
 echo "✅ TEST PRÉPARÉ - Le système est prêt pour validation complète!\n";
+?>
