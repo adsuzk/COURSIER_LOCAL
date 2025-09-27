@@ -1298,6 +1298,10 @@ function renderHeader() {
                     width: 280px;
                 }
                 
+                .main-content {
+                    margin-left: 280px;
+                }
+                
                 .content-area {
                     padding: var(--space-5);
                 }
