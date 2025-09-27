@@ -60,11 +60,12 @@ if (!function_exists('getAllCouriers')) {
 
         try {
             $query = "
-                SELECT a." . $info['join_column'] . " AS id,
+          SELECT a." . $info['join_column'] . " AS id,
                        a.nom,
                        a.prenoms,
                        a.telephone,
                        a.email,
+              a.type_poste,
                        COALESCE(a.solde_wallet, 0) AS solde_wallet,
                        " . $info['status_expression'] . " AS statut_connexion,
                        a.current_session_token,
