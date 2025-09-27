@@ -62,23 +62,28 @@ $pdo = getDBConnection();
         }
 
         .header {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            padding: 30px;
+            background: var(--gradient-gold);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(212, 168, 83, 0.3);
+            padding: 40px;
             margin-bottom: 30px;
             text-align: center;
+            border: 2px solid rgba(255,255,255,0.2);
         }
 
         .header h1 {
-            color: var(--primary);
-            font-size: 2.5em;
-            margin-bottom: 10px;
+            color: var(--primary-dark);
+            font-size: 3em;
+            margin-bottom: 15px;
+            font-weight: 800;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
 
         .header .subtitle {
-            color: var(--dark);
-            font-size: 1.2em;
+            color: var(--primary-dark);
+            font-size: 1.3em;
+            opacity: 0.8;
+            font-weight: 500;
         }
 
         .status-grid {
