@@ -59,7 +59,7 @@ try {
             a.telephone AS agent_telephone,
             a.email AS agent_email,
             a.statut_connexion AS agent_statut_connexion,
-            a.type_vehicule AS agent_vehicule_type,
+            a.type_poste AS agent_vehicule_type,
             a.solde_wallet AS agent_solde_wallet,
             a.last_login_at AS agent_last_login_at,
             a.matricule AS agent_matricule
