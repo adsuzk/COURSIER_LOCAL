@@ -509,6 +509,28 @@ if ($sessionSenderPhoneRaw !== '') {
                     </div>
                     <div class="order-form">
                         <h2 class="form-title">💫 Commander un coursier</h2>
+                        
+                        <?php if (!$coursiersDisponibles): ?>
+                        <!-- SÉCURITÉ: Aucun coursier disponible -->
+                        <div class="service-unavailable-alert">
+                            <?= $messageIndisponibilite ?>
+                            <div style="text-align: center; margin-top: 15px;">
+                                <button type="button" onclick="location.reload()" style="
+                                    background: linear-gradient(135deg, #D4A853 0%, #B8941F 100%);
+                                    color: #1A1A2E;
+                                    border: none;
+                                    padding: 12px 25px;
+                                    border-radius: 25px;
+                                    font-weight: bold;
+                                    cursor: pointer;
+                                    transition: all 0.3s ease;
+                                " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                                    🔄 Actualiser
+                                </button>
+                            </div>
+                        </div>
+                        <?php else: ?>
+                        
                         <form id="orderForm" action="/api/submit_order.php" method="post">
                             <div class="address-row">
                                 <div class="form-group">
