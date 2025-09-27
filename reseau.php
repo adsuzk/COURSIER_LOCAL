@@ -17,6 +17,11 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
 }
 
 $pdo = getDBConnection();
+
+// DÉCOUVERTE AUTOMATIQUE DU RÉSEAU - Initialisation avant utilisation
+require_once 'network_discovery.php';
+$discovery = new NetworkDiscovery();
+$discoveredComponents = $discovery->discoverAllNetworkComponents();
 ?>
 
 <!DOCTYPE html>
