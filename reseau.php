@@ -183,46 +183,37 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
             margin-top: 10px;
         }
 
-        .section {
-            background: var(--surface);
-            border-radius: 12px;
-            padding: 2rem;
-            margin: 2rem 0;
-            border: 1px solid var(--border);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .section-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border);
+        .section-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
         }
 
         .section-title {
-            font-size: 1.5rem;
-            color: var(--text-primary);
-            margin: 0;
-            font-weight: 600;
-        }
-
-        .section-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 10px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-gold);
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            margin-right: 1rem;
-            font-size: 1.5rem;
-            color: white;
-            background: var(--suzosky-gold);
+            gap: 15px;
         }
 
-        .items-grid {
+        .section-description {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .api-grid {
             display: grid;
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
         }
         
         .item {
