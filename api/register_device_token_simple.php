@@ -44,14 +44,23 @@ try {
         return;
     }
 
-    // Helper: teste l'existence d'une table
+    // Helper: teste l'existence d'une table (robuste via information_schema)
     $tableExists = function (PDO $pdo, string $table): bool {
         try {
-            $stmt = $pdo->prepare("SHOW TABLES LIKE ?");
+            $stmt = $pdo->prepare(
+                "SELECT 1 FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = ? LIMIT 1"
+            );
             $stmt->execute([$table]);
             return (bool)$stmt->fetchColumn();
         } catch (Throwable $e) {
-            return false;
+            // Fallback ultime: tentative SHOW TABLES (sans param bind)
+            try {
+                $safe = str_replace('`', '``', $table);
+                $res = $pdo->query("SHOW TABLES LIKE '" . $safe . "'");
+                return $res && $res->fetchColumn() !== false;
+            } catch (Throwable $e2) {
+                return false;
+            }
         }
     };
 
