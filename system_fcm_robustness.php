@@ -99,7 +99,8 @@ function checkFCMRobustness() {
     ];
 }
 
-function calculateRobustnessScore($total, $sans_fcm, $inactifs) {
+function calculateRobustnessScore($total_coursiers, $sans_fcm, $inactifs) {
+    $total = count($total_coursiers);
     if ($total == 0) return 100; // Aucun coursier connecté = pas de problème
     
     $problemes = count($sans_fcm) + count($inactifs);
