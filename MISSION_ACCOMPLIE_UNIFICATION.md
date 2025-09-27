@@ -117,19 +117,45 @@ php show_table_structure.php
 
 ## 📝 NOTES TECHNIQUES
 
-### Ancienne Logique (OBSOLÈTE)
+### ❌ MÉTHODES OBSOLÈTES (Supprimées)
 ```sql
--- ❌ NE PLUS UTILISER
+-- ANCIEN (Incohérent) 
 SELECT COUNT(*) FROM agents_suzosky WHERE statut_connexion = 'en_ligne'
+
+-- ANCIEN (Code en dur)
+$coursier['statut_connexion'] === 'en_ligne' ? 'En ligne' : 'Hors ligne'
 ```
 
-### Nouvelle Logique (OFFICIELLE)  
+### ✅ MÉTHODE OFFICIELLE (Auto-nettoyante)
 ```php
-// ✅ TOUJOURS UTILISER
+// UTILISATION CORRECTE (avec auto-nettoyage)
 $coursiers = getConnectedCouriers($pdo);
 $nombre = count($coursiers);
+
+// Le système nettoie automatiquement :
+// - Statuts expirés (>30min) → 'hors_ligne'
+// - Sessions obsolètes → NULL  
+// - Base toujours cohérente
+```
+
+### 🔧 INTÉGRATION
+```php
+// Dans toute page admin, inclure :
+require_once 'lib/coursier_presence.php';
+
+// Puis utiliser uniquement :
+$coursiersConnectes = getConnectedCouriers($pdo);
+// → Nettoyage automatique + données cohérentes
 ```
 
 ---
 
-*Documentation générée le 27/09/2025 - Système unifié opérationnel*
+## 📊 TESTS DISPONIBLES
+
+- `test_coherence_coursiers.php` - Vérification cohérence globale
+- `test_nettoyage_automatique.php` - Test système auto-nettoyage  
+- `audit_synchronisation_finale.php` - Audit complet
+
+---
+
+*Documentation mise à jour le 27/09/2025 - Système auto-nettoyant déployé*
