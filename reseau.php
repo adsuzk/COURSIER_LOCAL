@@ -217,15 +217,16 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
         }
         
         .api-item {
-            background: #FFFFFF;
+            background: var(--glass-bg);
             border: 2px solid var(--primary-gold);
             border-radius: 15px;
             padding: 25px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
-            color: #1A1A2E;
+            color: #FFFFFF;
         }
 
         .api-item::before {
@@ -248,13 +249,13 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
         .api-name {
             font-size: 1.1rem;
             font-weight: 700;
-            color: var(--primary-dark);
+            color: var(--primary-gold);
             margin-bottom: 10px;
         }
 
         .api-description {
             font-size: 0.9rem;
-            color: var(--secondary-blue);
+            color: rgba(255,255,255,0.9);
             line-height: 1.5;
             margin-bottom: 15px;
         }
@@ -623,120 +624,11 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
             </div>
         </div>
 
-        <!-- Interfaces d'Administration -->
-        <div class="section-card">
-            <h2 class="section-title">
-                <i class="fas fa-tachometer-alt"></i>
-                Interfaces d'Administration (<?= count($discoveredComponents['admin_sections']) ?>)
-            </h2>
-            <p class="section-description">
-                Toutes les pages d'administration disponibles pour gérer votre plateforme de livraison.
-            </p>
-            
-            <div class="api-grid">
-                <?php foreach ($discoveredComponents['admin_sections'] as $section): ?>
-                    <div class="api-item">
-                        <div class="api-name"><?= htmlspecialchars($section['name']) ?></div>
-                        <div class="api-description">
-                            <?= htmlspecialchars($section['description']) ?>
-                        </div>
-                        <div class="api-status">
-                            <?php if (isset($section['url'])): ?>
-                                <a href="<?= $section['url'] ?>" target="_blank" class="status-badge status-online">
-                                    ACCÉDER
-                                </a>
-                            <?php else: ?>
-                                <span class="status-badge status-online">DISPONIBLE</span>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        </div>
 
-        <!-- Base de Données -->
-        <div class="section-card">
-            <h2 class="section-title">
-                <i class="fas fa-database"></i>
-                Base de Données (<?= count($discoveredComponents['database_tables']) ?>)
-            </h2>
-            <p class="section-description">
-                Aperçu des tables principales qui stockent vos données : clients, commandes, coursiers, finances, etc.
-            </p>
-            
-            <button class="expand-btn" onclick="toggleSection('database-section')">
-                Voir les tables principales
-            </button>
-            
-            <div id="database-section" class="collapsible hidden">
-                <div class="api-grid">
-                    <?php 
-                    // Afficher seulement les tables principales
-                    $mainTables = ['commandes', 'agents_suzosky', 'clients', 'recharges', 'device_tokens', 'order_payments'];
-                    $displayedTables = [];
-                    
-                    foreach ($discoveredComponents['database_tables'] as $table) {
-                        if (in_array($table['name'], $mainTables) || count($displayedTables) < 8) {
-                            $displayedTables[] = $table;
-                        }
-                    }
-                    
-                    foreach (array_slice($displayedTables, 0, 8) as $table): 
-                    ?>
-                        <div class="api-item">
-                            <div class="api-name"><?= htmlspecialchars($table['name']) ?></div>
-                            <div class="api-description">
-                                <strong><?= ucfirst($table['type']) ?>:</strong> <?= htmlspecialchars($table['description']) ?>
-                            </div>
-                            <div class="api-status">
-                                <span class="status-badge status-online">
-                                    <?= number_format($table['row_count']) ?> lignes
-                                </span>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-        </div>
 
-        <!-- Outils de Monitoring -->
-        <div class="section-card">
-            <h2 class="section-title">
-                <i class="fas fa-chart-line"></i>
-                Outils de Monitoring (<?= count($discoveredComponents['monitoring']) ?>)
-            </h2>
-            <p class="section-description">
-                Scripts de diagnostic pour surveiller et tester le bon fonctionnement de votre système.
-            </p>
-            
-            <button class="expand-btn" onclick="toggleSection('monitoring-section')">
-                Voir les outils principaux
-            </button>
-            
-            <div id="monitoring-section" class="collapsible hidden">
-                <div class="api-grid">
-                    <?php foreach (array_slice($discoveredComponents['monitoring'], 0, 8) as $tool): ?>
-                        <div class="api-item">
-                            <div class="api-name">
-                                <?= htmlspecialchars(str_replace(['.php', '_'], ['', ' '], $tool['name'])) ?>
-                            </div>
-                            <div class="api-description">
-                                <?= htmlspecialchars($tool['description']) ?>
-                            </div>
-                            <div class="api-status">
-                                <?php if (isset($tool['url'])): ?>
-                                    <a href="<?= $tool['url'] ?>" target="_blank" class="status-badge status-warning">
-                                        EXÉCUTER
-                                    </a>
-                                <?php else: ?>
-                                    <span class="status-badge status-warning">OUTIL</span>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-        </div>
+
+
+
 
         <?php
         // === TEST DES APIs ===
