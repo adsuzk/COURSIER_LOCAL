@@ -255,6 +255,8 @@ function getAllCouriers(): array
 
 function getCoursierStatusLight($coursier): array
 {
+    global $pdo;
+    
     // Système de feux : Vert, Orange, Rouge
     $status = [
         'color' => 'red',
@@ -270,11 +272,23 @@ function getCoursierStatusLight($coursier): array
     $isOnline = ($coursier['statut_connexion'] ?? '') === 'en_ligne';
     $status['conditions']['online'] = $isOnline;
     
-    // Condition 3: Solde suffisant (à implémenter selon logique métier)
+    // Condition 3: Token FCM présent pour recevoir notifications
+    $hasFCMToken = false;
+    try {
+        if (!$pdo) $pdo = getDBConnection();
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM device_tokens WHERE coursier_id = ? AND is_active = 1");
+        $stmt->execute([$coursier['id']]);
+        $hasFCMToken = ((int) $stmt->fetchColumn()) > 0;
+    } catch (Exception $e) {
+        // Ignorer l'erreur, considérer FCM comme manquant
+    }
+    $status['conditions']['fcm'] = $hasFCMToken;
+    
+    // Condition 4: Solde suffisant (à implémenter selon logique métier)
     $hasSufficientBalance = true; // TODO: Vérifier le solde réel
     $status['conditions']['balance'] = $hasSufficientBalance;
     
-    // Condition 4: Dernière activité récente
+    // Condition 5: Dernière activité récente
     $lastActivity = strtotime($coursier['last_login_at'] ?? '0');
     $isRecentActivity = $lastActivity > (time() - 300); // 5 minutes
     $status['conditions']['activity'] = $isRecentActivity;
