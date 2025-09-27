@@ -573,11 +573,156 @@ $pdo = getDBConnection();
             <div class="api-grid">
                 <?php foreach ($discoveredComponents['apis'] as $api): ?>
                     <?php 
-                    $test = testAPI($api['url'], $api['method'], $api['data'] ?? null);
-                    $statusClass = $test['success'] ? 'online' : 'offline';
-                    $statusBadge = $test['success'] ? 'status-online' : 'status-offline';
-                    $statusText = $test['success'] ? 'ONLINE' : 'OFFLINE';
+                    // Tester seulement les APIs avec URLs complètes
+                    if (isset($api['url']) && filter_var($api['url'], FILTER_VALIDATE_URL)) {
+                        $test = testAPI($api['url'], $api['methods'][0] ?? 'GET', $api['data'] ?? null);
+                        $statusClass = $test['success'] ? 'online' : 'offline';
+                        $statusBadge = $test['success'] ? 'status-online' : 'status-offline';
+                        $statusText = $test['success'] ? 'ONLINE' : 'OFFLINE';
+                    } else {
+                        // Fichier système sans URL testable
+                        $statusClass = 'warning';
+                        $statusBadge = 'status-warning';
+                        $statusText = 'DETECTED';
+                    }
                     ?>
+                    
+                    <div class="api-item <?= $statusClass ?>">
+                        <div class="health-indicator <?= $statusClass === 'online' ? '' : ($statusClass === 'offline' ? 'danger' : 'warning') ?>"></div>
+                        
+                        <div class="api-name">
+                            <?= htmlspecialchars($api['name']) ?>
+                            <small style="opacity: 0.7; font-size: 0.8em;">🔍 Auto-découvert</small>
+                        </div>
+                        
+                        <div class="api-description">
+                            <strong>Description:</strong> <?= htmlspecialchars($api['description']) ?><br>
+                            <strong>Usage:</strong> <?= htmlspecialchars($api['purpose']) ?><br>
+                            <strong>Méthodes:</strong> <?= implode(', ', $api['methods'] ?? ['Détection']) ?><br>
+                            <strong>Fichier:</strong> <code><?= htmlspecialchars($api['file']) ?></code>
+                        </div>
+                        
+                        <div class="api-status">
+                            <span class="status-badge <?= $statusBadge ?>">
+                                <?= $statusText ?><?= isset($test) ? " ({$test['code']})" : '' ?>
+                            </span>
+                            
+                            <?php if (isset($test) && !$test['success'] && $test['error']): ?>
+                                <small style="color: var(--danger);">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <?= htmlspecialchars($test['error']) ?>
+                                </small>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
+        <!-- Composants Système Découverts -->
+        <div class="api-section">
+            <h2 class="section-title">
+                <i class="fas fa-cogs"></i>
+                Composants Système Découverts
+            </h2>
+            
+            <!-- Sections Admin -->
+            <h3 style="color: var(--primary-dark); margin: 25px 0 15px 0;">
+                <i class="fas fa-tachometer-alt"></i> Sections Admin (<?= count($discoveredComponents['admin_sections']) ?>)
+            </h3>
+            <div class="api-grid">
+                <?php foreach ($discoveredComponents['admin_sections'] as $section): ?>
+                    <div class="api-item online">
+                        <div class="health-indicator"></div>
+                        <div class="api-name"><?= htmlspecialchars($section['name']) ?></div>
+                        <div class="api-description">
+                            <?= htmlspecialchars($section['description']) ?><br>
+                            <?php if (isset($section['url'])): ?>
+                                <strong>URL:</strong> <a href="<?= $section['url'] ?>" target="_blank">Accéder</a><br>
+                            <?php endif; ?>
+                            <?php if (isset($section['path'])): ?>
+                                <strong>Fichier:</strong> <code><?= htmlspecialchars($section['path']) ?></code>
+                            <?php endif; ?>
+                        </div>
+                        <div class="api-status">
+                            <span class="status-badge status-online">ACTIF</span>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            
+            <!-- Tables Base de Données -->
+            <h3 style="color: var(--primary-dark); margin: 25px 0 15px 0;">
+                <i class="fas fa-database"></i> Tables Base de Données (<?= count($discoveredComponents['database_tables']) ?>)
+            </h3>
+            <div class="api-grid">
+                <?php foreach ($discoveredComponents['database_tables'] as $table): ?>
+                    <div class="api-item online">
+                        <div class="health-indicator"></div>
+                        <div class="api-name"><?= htmlspecialchars($table['name']) ?></div>
+                        <div class="api-description">
+                            <strong>Type:</strong> <?= htmlspecialchars($table['type']) ?><br>
+                            <strong>Description:</strong> <?= htmlspecialchars($table['description']) ?><br>
+                            <strong>Lignes:</strong> <?= number_format($table['row_count']) ?>
+                        </div>
+                        <div class="api-status">
+                            <span class="status-badge status-online">
+                                <?= number_format($table['row_count']) ?> LIGNES
+                            </span>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+
+            <!-- Services Système -->
+            <h3 style="color: var(--primary-dark); margin: 25px 0 15px 0;">
+                <i class="fas fa-server"></i> Services Système (<?= count($discoveredComponents['services']) ?>)
+            </h3>
+            <div class="api-grid">
+                <?php foreach ($discoveredComponents['services'] as $service): ?>
+                    <div class="api-item <?= $service['status'] === 'actif' ? 'online' : 'warning' ?>">
+                        <div class="health-indicator <?= $service['status'] === 'actif' ? '' : 'warning' ?>"></div>
+                        <div class="api-name"><?= htmlspecialchars($service['name']) ?></div>
+                        <div class="api-description">
+                            <?= htmlspecialchars($service['description']) ?><br>
+                            <strong>Fichier:</strong> <code><?= htmlspecialchars($service['file']) ?></code>
+                        </div>
+                        <div class="api-status">
+                            <span class="status-badge <?= $service['status'] === 'actif' ? 'status-online' : 'status-warning' ?>">
+                                <?= strtoupper($service['status']) ?>
+                            </span>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+
+            <!-- Outils de Monitoring -->
+            <h3 style="color: var(--primary-dark); margin: 25px 0 15px 0;">
+                <i class="fas fa-chart-line"></i> Outils de Monitoring (<?= count($discoveredComponents['monitoring']) ?>)
+            </h3>
+            <div class="api-grid">
+                <?php foreach ($discoveredComponents['monitoring'] as $tool): ?>
+                    <div class="api-item warning">
+                        <div class="health-indicator warning"></div>
+                        <div class="api-name"><?= htmlspecialchars($tool['name']) ?></div>
+                        <div class="api-description">
+                            <?= htmlspecialchars($tool['description']) ?><br>
+                            <strong>Fichier:</strong> <code><?= htmlspecialchars($tool['file']) ?></code><br>
+                            <?php if (isset($tool['url'])): ?>
+                                <strong>Test:</strong> <a href="<?= $tool['url'] ?>" target="_blank">Exécuter</a>
+                            <?php endif; ?>
+                        </div>
+                        <div class="api-status">
+                            <span class="status-badge status-warning">TOOL</span>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
+        <?php
+        // Continuer avec les services existants...
+        ?>
                     
                     <div class="api-item <?= $statusClass ?>">
                         <div class="health-indicator <?= $test['success'] ? '' : 'danger' ?>"></div>
