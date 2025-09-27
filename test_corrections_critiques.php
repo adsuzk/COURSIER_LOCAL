@@ -123,7 +123,7 @@ try {
     
     echo "\n📈 SCORE CORRECTIONS: $score/$total ($percentage%)\n";
     
-    if ($percentage === 100) {
+    if ($percentage >= 100) {
         echo "\n🚀 FÉLICITATIONS: Toutes les corrections critiques sont opérationnelles!\n";
         echo "   ✅ ERREUR 500 API mobile → CORRIGÉE (support POST JSON)\n";
         echo "   ✅ Tokens FCM coursiers déconnectés → NETTOYÉS automatiquement\n";
