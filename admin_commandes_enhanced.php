@@ -7,6 +7,7 @@
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/lib/SystemSync.php';
 require_once __DIR__ . '/lib/db_maintenance.php';
+require_once __DIR__ . '/lib/coursier_presence.php';
 
 // Fonction de secours si db_maintenance.php ne se charge pas correctement
 if (!function_exists('ensureLegacyClientsTable')) {
