@@ -15,13 +15,11 @@ import java.io.File
 
 object UpdateUtils {
     private const val LOCAL_SEGMENT = "/COURSIER_LOCAL"
+    private const val DEFAULT_PROD_BASE = "https://coursier.conciergerie-privee-suzosky.com$LOCAL_SEGMENT"
     private fun resolveBaseUrl(): String {
         val useProd = try { com.suzosky.coursier.BuildConfig.USE_PROD_SERVER } catch (_: Throwable) { true }
         if (useProd) {
-            val prod = try { com.suzosky.coursier.BuildConfig.PROD_BASE } catch (_: Throwable) {
-                "https://coursier.conciergerie-privee-suzosky.com"
-            }
-            return prod.trimEnd('/')
+            return prodBase()
         }
 
         val host = try { com.suzosky.coursier.BuildConfig.DEBUG_LOCAL_HOST } catch (_: Throwable) { "" }
@@ -36,6 +34,11 @@ object UpdateUtils {
     private fun normalizeLocalBase(base: String): String {
         val trimmed = base.trimEnd('/')
         return if (trimmed.endsWith(LOCAL_SEGMENT, ignoreCase = true)) trimmed else "$trimmed$LOCAL_SEGMENT"
+    }
+
+    private fun prodBase(): String {
+        val configured = try { com.suzosky.coursier.BuildConfig.PROD_BASE } catch (_: Throwable) { null }
+        return (configured?.takeIf { it.isNotBlank() } ?: DEFAULT_PROD_BASE).trimEnd('/')
     }
 
     private fun updateUrl(): String = "${resolveBaseUrl()}/api/check_update.php"
