@@ -19,7 +19,21 @@ try {
         $rechargeBalance = null;
         $legacyComptesBalance = null;
 
-        // 1) Système rechargement moderne: coursier_accounts
+        // 0) TABLE PRINCIPALE selon documentation: agents_suzosky.solde_wallet (PRIORITÉ ABSOLUE)
+        try {
+            $stmt = $pdo->prepare("SELECT solde_wallet FROM agents_suzosky WHERE id = ? LIMIT 1");
+            $stmt->execute([$coursierId]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($row && isset($row['solde_wallet'])) {
+                $balance = (float)$row['solde_wallet'];
+                $rechargeBalance = $balance;
+                $balanceFound = true;
+            }
+        } catch (Throwable $e) {
+            // Si agents_suzosky indisponible, continuer avec les anciennes tables
+        }
+
+        // 1) Système rechargement moderne: coursier_accounts (FALLBACK UNIQUEMENT)
         try {
             $stmt = $pdo->prepare("SELECT solde_disponible, solde_total FROM coursier_accounts WHERE coursier_id = ? LIMIT 1");
             $stmt->execute([$coursierId]);
