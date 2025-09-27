@@ -300,7 +300,7 @@ if (basename(__FILE__) == basename($_SERVER['SCRIPT_NAME'])) {
         echo "🎯 Système prêt pour accepter des commandes\n";
     } else {
         echo "⚠️ Message client à afficher:\n";
-        echo $assignment->security->getUnavailabilityMessage() . "\n";
+        echo $security->getUnavailabilityMessage() . "\n";
     }
 }
 ?>
