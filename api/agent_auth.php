@@ -131,26 +131,45 @@ switch ($action) {
     case 'check_session':
         if (!empty($_SESSION['coursier_logged_in']) && !empty($_SESSION['coursier_id'])) {
             $id = (int)$_SESSION['coursier_id'];
-            $stmt = $pdo->prepare("SELECT id, matricule, nom, prenoms, telephone, type_poste, nationalite, current_session_token FROM agents_suzosky WHERE id = ?");
+            $stmt = $pdo->prepare("SELECT id, matricule, nom, prenoms, telephone, type_poste, nationalite, current_session_token, last_login_ip FROM agents_suzosky WHERE id = ?");
             $stmt->execute([$id]);
             if ($row = $stmt->fetch()) {
                 $valid = true;
-                if (!empty($row['current_session_token'])) {
-                    $valid = hash_equals($row['current_session_token'], $_SESSION['coursier_session_token'] ?? '');
+                $currentIp = $_SERVER['REMOTE_ADDR'] ?? null;
+                
+                // Si pas de token en DB, c'est valide (première connexion)
+                if (empty($row['current_session_token'])) {
+                    $valid = true;
+                } else {
+                    // Vérifier le token de session
+                    $sessionTokenMatch = hash_equals($row['current_session_token'], $_SESSION['coursier_session_token'] ?? '');
+                    
+                    // Si le token ne correspond pas, vérifier si c'est le même appareil (IP)
+                    if (!$sessionTokenMatch) {
+                        $sameDevice = ($currentIp && $row['last_login_ip'] && $currentIp === $row['last_login_ip']);
+                        if ($sameDevice) {
+                            // Même appareil: mettre à jour le token en session pour éviter futurs conflits
+                            $_SESSION['coursier_session_token'] = $row['current_session_token'];
+                            $valid = true;
+                        } else {
+                            $valid = false;
+                        }
+                    }
                 }
+                
                 if ($valid) {
                     unset($row['current_session_token']);
                     echo json_encode(['success' => true, 'agent' => $row]);
                     break;
                 } else {
-                    // Session invalide (connecté ailleurs), forcer déconnexion locale
+                    // Session réellement invalide (autre appareil)
                     $_SESSION = [];
                     if (ini_get('session.use_cookies')) {
                         $params = session_get_cookie_params();
                         setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
                     }
                     session_destroy();
-                    echo json_encode(['success' => false, 'error' => 'SESSION_REVOKED']);
+                    echo json_encode(['success' => false, 'error' => 'SESSION_REVOKED', 'message' => 'Connexion depuis un autre appareil détectée']);
                     break;
                 }
             }

@@ -461,21 +461,33 @@ fun SuzoskyCoursierApp() {
             }
         }
 
-        // Surveillance de session: déconnexion automatique si SESSION_REVOKED / NO_SESSION
+        // Surveillance de session: déconnexion automatique si SESSION_REVOKED uniquement
         LaunchedEffect(isLoggedIn) {
             if (isLoggedIn) {
+                var consecutiveErrors = 0
                 while (isLoggedIn) {
-                    kotlinx.coroutines.delay(15000) // toutes les 15s
+                    kotlinx.coroutines.delay(30000) // toutes les 30s (moins agressif)
                     ApiService.checkCoursierSession { id, err ->
                         if (err != null) {
                             val e = err.uppercase()
-                            if (e.contains("SESSION_REVOKED") || e.contains("NO_SESSION")) {
-                                try { prefs.edit { putBoolean("isLoggedIn", false) } } catch (_: Exception) {}
-                                isLoggedIn = false
-                                android.os.Handler(android.os.Looper.getMainLooper()).post {
-                                    Toast.makeText(context, "Session expirée: connexion depuis un autre appareil", Toast.LENGTH_LONG).show()
+                            // Seul SESSION_REVOKED force la déconnexion (pas NO_SESSION qui peut être temporaire)
+                            if (e.contains("SESSION_REVOKED")) {
+                                consecutiveErrors++
+                                // Déconnexion uniquement après 2 erreurs consécutives pour éviter les faux positifs
+                                if (consecutiveErrors >= 2) {
+                                    try { prefs.edit { putBoolean("isLoggedIn", false) } } catch (_: Exception) {}
+                                    isLoggedIn = false
+                                    android.os.Handler(android.os.Looper.getMainLooper()).post {
+                                        Toast.makeText(context, "Session expirée: connexion depuis un autre appareil", Toast.LENGTH_LONG).show()
+                                    }
                                 }
+                            } else {
+                                // Erreur temporaire, on ignore
+                                consecutiveErrors = maxOf(0, consecutiveErrors - 1)
                             }
+                        } else {
+                            // Succès, reset du compteur d'erreurs
+                            consecutiveErrors = 0
                         }
                     }
                 }
