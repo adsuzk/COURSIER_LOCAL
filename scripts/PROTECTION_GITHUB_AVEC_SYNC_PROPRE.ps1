@@ -68,43 +68,17 @@ $lastSyncTime = Get-Date
 function Sync-ToCoursierProd {
     param($timestamp)
     
-    Write-Host "[$timestamp] 🔄 Synchronisation vers coursier_prod..." -ForegroundColor Cyan
+    Write-Host "[$timestamp] Synchronisation vers coursier_prod..." -ForegroundColor Cyan
     
-    # Commande robocopy avec exclusions complètes des fichiers de test/debug
-    $robocopyArgs = @(
-        "C:\xampp\htdocs\COURSIER_LOCAL",
-        "C:\xampp\htdocs\coursier_prod",
-        "/MIR",
-        "/XD", ".git", "node_modules", "vendor\phpunit", "Tests", "diagnostic_logs", ".vscode",
-        "/XF", "*.log", "*.tmp", "*.bak", "*debug*", "*test*", "*cli_*", "*check_*", "*restore_*", "*post_deploy*", "*setup_*", "*diagnostic*", "*temp*", "TEST_*", "*smoketest*", "*_debug.*", "rebuild_*",
-        "/R:1", "/W:1", "/NFL", "/NDL", "/NP", "/NS", "/NC"
-    )
+    # Utiliser le script de synchronisation simple
+    $syncResult = & "$PSScriptRoot\SYNC_COURSIER_PROD_SIMPLE.ps1" -Force
+    $syncExitCode = $LASTEXITCODE
     
-    $syncResult = & robocopy @robocopyArgs 2>&1
-    $robocopyExitCode = $LASTEXITCODE
-    
-    # Codes de sortie Robocopy : 0-7 sont des succès, 8+ sont des erreurs
-    if ($robocopyExitCode -lt 8) {
-        Write-Host "[$timestamp] ✅ Synchronisation coursier_prod réussie" -ForegroundColor Green
-        
-        # Vérification que coursier_prod est propre
-        $testFiles = Get-ChildItem "$coursierProdPath" -Name "*.php" -ErrorAction SilentlyContinue | Where-Object { 
-            $_ -like "*test*" -or $_ -like "*debug*" -or $_ -like "*cli_*" 
-        }
-        
-        if ($testFiles) {
-            Write-Host "[$timestamp] ⚠️ Fichiers de test détectés dans coursier_prod !" -ForegroundColor Yellow
-            foreach ($file in $testFiles) {
-                Remove-Item "$coursierProdPath\$file" -Force -ErrorAction SilentlyContinue
-                Write-Host "   🗑️ Supprimé: $file" -ForegroundColor Red
-            }
-        } else {
-            Write-Host "[$timestamp] ✅ Structure coursier_prod PROPRE" -ForegroundColor Green
-        }
-        
+    if ($syncExitCode -eq 0) {
+        Write-Host "[$timestamp] Synchronisation coursier_prod reussie" -ForegroundColor Green
         return $true
     } else {
-        Write-Host "[$timestamp] ❌ Erreur synchronisation coursier_prod (Code: $robocopyExitCode)" -ForegroundColor Red
+        Write-Host "[$timestamp] Erreur synchronisation coursier_prod" -ForegroundColor Red
         return $false
     }
 }
