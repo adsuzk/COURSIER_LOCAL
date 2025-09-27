@@ -310,3 +310,9 @@
 [2025-09-26 22:30:56] [ERROR] SHOW TABLES LIKE 'clients_particuliers' a échoué: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '?' at line 1
 [2025-09-26 22:30:56] [WARNING] Table clients introuvable et clients_particuliers absente: impossible de recréer.
 [2025-09-26 22:30:58] Execution INSERT réussie
+[2025-09-27 07:50:53] Tentative de connexion à la base
+[2025-09-27 07:51:14] Connexion DB réussie
+[2025-09-27 07:51:14] [ERROR] SHOW TABLES LIKE 'clients' a échoué: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '?' at line 1
+[2025-09-27 07:51:14] [ERROR] SHOW TABLES LIKE 'clients_particuliers' a échoué: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '?' at line 1
+[2025-09-27 07:51:14] [WARNING] Table clients introuvable et clients_particuliers absente: impossible de recréer.
+[2025-09-27 07:51:14] Execution INSERT réussie

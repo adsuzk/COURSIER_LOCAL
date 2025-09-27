@@ -6,15 +6,16 @@
 La carte et l'autocomplétion Google ne se chargeaient pas immédiatement à l'ouverture de l'index.
 
 ### Solution Implémentée
-- **Chargement précoce** : Ajout du script Google Maps API dans le `<head>` de `index.php` avec callback `initGoogleMapsEarly`
-- **Callback d'initialisation** : Fonction `initializeMapAfterLoad()` pour démarrer l'initialisation dès que l'API est chargée
-- **Gestion d'attente** : Autocomplétion avec vérification cyclique de disponibilité de l'API
-- **Suppression des doublons** : Retrait du chargement tardif dans `js_google_maps.php`
+- **Chargement précoce** : Script Google Maps unique dans le `<head>` via `index.php` (callback `initGoogleMapsEarly`)
+- **Initialisation sécurisée** : `initMap()` délègue à `initializeMapAfterLoad()` (anti double init, gestion DOM ready)
+- **Gestion d'attente** : Autocomplétion déclenchée dès disponibilité de `setupAutocomplete()` (retries contrôlés)
+- **Suppression des doublons** : Retrait du chargement tardif et uniformisation de la clé API (env → constante → fallback)
 
 ### Fichiers Modifiés
-- `index.php` : Ajout du script Google Maps dans le head
-- `sections_index/js_google_maps.php` : Mise à jour de l'initialisation
-- `sections_index/map.php` : Amélioration de la gestion d'attente pour l'autocomplétion
+- `index.php` : Injection unique de l'API dans le head + calcul dynamique de la clé
+- `sections_index/js_google_maps.php` : Réécriture complète de l'initialisation (anti doublons, guard DOM, retry)
+- `sections_index/js_initialization.php` : Préchargement d'assets via `ROOT_PATH` pour éviter les 404
+- `sections_index/map.php` : (historique) amélioration de la gestion d'attente pour l'autocomplétion
 
 ## 2. Correction Erreur 404 lors de la Commande
 
@@ -77,7 +78,7 @@ C:/xampp/php/php.exe -r "$_POST=[]; parse_str('email=test@test.com&password=abcd
 ## 6. Notes Techniques
 
 ### API Google Maps
-- **Clé API** : `AIzaSyAf8KhU-K8BrPCIa_KdBgCQ8kHjbC9Y7Qs`
+- **Clé API** : Résolution prioritaire `GOOGLE_MAPS_API_KEY` (env/const) → fallback `AIzaSyBjUgj9KM0SNj847a_bIsf6chWp9L8Hr1A`
 - **Bibliothèques** : `places,geometry`
 - **Restrictions** : Côte d'Ivoire (CI)
 

@@ -884,9 +884,22 @@ function debounce(func, wait, immediate) {
     
     // Préchargement des images
     function preloadImages() {
+        const buildAssetPath = (relativePath) => {
+            const root = (typeof window.ROOT_PATH === 'string' ? window.ROOT_PATH : '') || '';
+            const cleanedRoot = root.replace(/\/$/, '');
+            const cleanedRelative = String(relativePath || '').replace(/^\/+/, '');
+            if (!cleanedRelative) {
+                return cleanedRoot || '';
+            }
+            if (!cleanedRoot) {
+                return '/' + cleanedRelative;
+            }
+            return cleanedRoot + '/' + cleanedRelative;
+        };
+
         const imagesToPreload = [
-            '/assets/logo-suzosky-new.svg',
-            '/assets/icon-192.svg'
+            buildAssetPath('assets/logo-suzosky-new.svg'),
+            buildAssetPath('assets/icon-192.svg')
         ];
         
         imagesToPreload.forEach(src => {

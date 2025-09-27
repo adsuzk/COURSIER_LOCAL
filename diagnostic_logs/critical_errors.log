@@ -1332,3 +1332,91 @@ Stack Trace: [
     }
 ]
 =====================================
+🚨 ALERTE ERREUR CRITIQUE 🚨
+Timestamp: 2025-09-27 07:51:58.000000
+Interface: PHP_ERROR
+Message: Erreur PHP: file_get_contents(): SSL operation failed with code 1. OpenSSL Error messages:
+error:0A000086:SSL routines::certificate verify failed
+Fichier: advanced_logger.php:376
+Contexte: {
+    "severity": 2,
+    "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\api\\submit_order.php",
+    "line": 582,
+    "error_type": "WARNING"
+}
+Stack Trace: [
+    {
+        "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+        "line": 318,
+        "function": "log",
+        "class": "AdvancedLogger",
+        "type": "->"
+    },
+    {
+        "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+        "line": 376,
+        "function": "logError"
+    },
+    {
+        "function": "{closure}"
+    }
+]
+=====================================
+🚨 ALERTE ERREUR CRITIQUE 🚨
+Timestamp: 2025-09-27 07:51:58.000000
+Interface: PHP_ERROR
+Message: Erreur PHP: file_get_contents(): Failed to enable crypto
+Fichier: advanced_logger.php:376
+Contexte: {
+    "severity": 2,
+    "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\api\\submit_order.php",
+    "line": 582,
+    "error_type": "WARNING"
+}
+Stack Trace: [
+    {
+        "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+        "line": 318,
+        "function": "log",
+        "class": "AdvancedLogger",
+        "type": "->"
+    },
+    {
+        "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+        "line": 376,
+        "function": "logError"
+    },
+    {
+        "function": "{closure}"
+    }
+]
+=====================================
+🚨 ALERTE ERREUR CRITIQUE 🚨
+Timestamp: 2025-09-27 07:51:58.000000
+Interface: PHP_ERROR
+Message: Erreur PHP: file_get_contents(https://localhost/COURSIER_LOCALapi/assign_nearest_coursier.php): Failed to open stream: operation failed
+Fichier: advanced_logger.php:376
+Contexte: {
+    "severity": 2,
+    "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\api\\submit_order.php",
+    "line": 582,
+    "error_type": "WARNING"
+}
+Stack Trace: [
+    {
+        "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+        "line": 318,
+        "function": "log",
+        "class": "AdvancedLogger",
+        "type": "->"
+    },
+    {
+        "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+        "line": 376,
+        "function": "logError"
+    },
+    {
+        "function": "{closure}"
+    }
+]
+=====================================

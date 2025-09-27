@@ -133,3 +133,138 @@
         }
     ]
 }
+{
+    "system": {
+        "timestamp": "2025-09-27 07:51:58.000000",
+        "microtime": 1758952318.382036,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "PHP_ERROR",
+        "level": "ERROR",
+        "pid": 13516,
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/140.0.0.0 Safari\/537.36 Edg\/140.0.0.0",
+        "ip_address": "::1",
+        "request_uri": "\/COURSIER_LOCAL\/api\/submit_order.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 65.0705,
+        "file": "advanced_logger.php",
+        "line": 376,
+        "function": "logError",
+        "class": ""
+    },
+    "message": "Erreur PHP: file_get_contents(): SSL operation failed with code 1. OpenSSL Error messages:\nerror:0A000086:SSL routines::certificate verify failed",
+    "context": {
+        "severity": 2,
+        "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\api\\submit_order.php",
+        "line": 582,
+        "error_type": "WARNING"
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 318,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 376,
+            "function": "logError"
+        },
+        {
+            "function": "{closure}"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-27 07:51:58.000000",
+        "microtime": 1758952318.418935,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "PHP_ERROR",
+        "level": "ERROR",
+        "pid": 13516,
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/140.0.0.0 Safari\/537.36 Edg\/140.0.0.0",
+        "ip_address": "::1",
+        "request_uri": "\/COURSIER_LOCAL\/api\/submit_order.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 65.107,
+        "file": "advanced_logger.php",
+        "line": 376,
+        "function": "logError",
+        "class": ""
+    },
+    "message": "Erreur PHP: file_get_contents(): Failed to enable crypto",
+    "context": {
+        "severity": 2,
+        "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\api\\submit_order.php",
+        "line": 582,
+        "error_type": "WARNING"
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 318,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 376,
+            "function": "logError"
+        },
+        {
+            "function": "{closure}"
+        }
+    ]
+}
+{
+    "system": {
+        "timestamp": "2025-09-27 07:51:58.000000",
+        "microtime": 1758952318.436395,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "PHP_ERROR",
+        "level": "ERROR",
+        "pid": 13516,
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/140.0.0.0 Safari\/537.36 Edg\/140.0.0.0",
+        "ip_address": "::1",
+        "request_uri": "\/COURSIER_LOCAL\/api\/submit_order.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 65.1245,
+        "file": "advanced_logger.php",
+        "line": 376,
+        "function": "logError",
+        "class": ""
+    },
+    "message": "Erreur PHP: file_get_contents(https:\/\/localhost\/COURSIER_LOCALapi\/assign_nearest_coursier.php): Failed to open stream: operation failed",
+    "context": {
+        "severity": 2,
+        "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\api\\submit_order.php",
+        "line": 582,
+        "error_type": "WARNING"
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 318,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 376,
+            "function": "logError"
+        },
+        {
+            "function": "{closure}"
+        }
+    ]
+}
