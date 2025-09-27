@@ -464,11 +464,12 @@ $pdo = getDBConnection();
                 'method' => 'GET'
             ],
             [
-                'name' => 'API Solde Wallet', 
-                'url' => $baseUrl . '/api/get_wallet_balance.php?coursier_id=3',
-                'description' => 'Récupère uniquement le solde du wallet d\'un coursier',
-                'purpose' => 'Application mobile - Affichage solde temps réel',
-                'method' => 'GET'
+                'name' => 'API Données Coursier (POST JSON)', 
+                'url' => $baseUrl . '/api/get_coursier_data.php',
+                'description' => 'REMPLACE get_wallet_balance.php - Récupère données complètes avec solde wallet via POST JSON',
+                'purpose' => 'Application mobile Android - Format JSON natif (correction erreur 500)',
+                'method' => 'POST',
+                'data' => json_encode(['coursier_id' => 3])
             ],
             [
                 'name' => 'API Synchronisation Mobile',
