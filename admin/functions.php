@@ -1382,6 +1382,12 @@ function renderHeader() {
                     </a>
                 </div>
                 <div class="nav-section">
+                    <div class="nav-section-title">Système</div>
+                    <a href="admin.php?section=reseau" class="menu-item <?php echo ($_GET['section'] ?? '') === 'reseau' ? 'active' : ''; ?>">
+                        <i class="fas fa-network-wired"></i><span>Réseau & APIs</span>
+                    </a>
+                </div>
+                <div class="nav-section">
                     <div class="nav-section-title">Ressources humaines</div>
                     <a href="admin.php?section=recrutement" class="menu-item <?php echo ($_GET['section'] ?? '') === 'recrutement' ? 'active' : ''; ?>">
                         <i class="fas fa-id-badge"></i><span>Recrutement</span>
