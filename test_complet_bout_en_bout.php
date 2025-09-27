@@ -80,13 +80,13 @@ echo "3. ATTRIBUTION AU COURSIER:\n";
 try {
     $stmt = $pdo->prepare("
         UPDATE commandes 
-        SET coursier_id = ?, status = 'assigned', assigned_at = NOW(), updated_at = NOW()
+        SET coursier_id = ?, statut = 'assigne', updated_at = NOW()
         WHERE id = ?
     ");
     $stmt->execute([$coursier['id'], $commandeId]);
     
     echo "   ✅ Commande attribuée à {$coursier['nom']} {$coursier['prenoms']}\n";
-    echo "   🔄 Status: pending → assigned\n\n";
+    echo "   🔄 Status: en_attente → assigne\n\n";
     
 } catch (Exception $e) {
     echo "   ❌ Erreur attribution: " . $e->getMessage() . "\n";
@@ -158,4 +158,3 @@ echo "   👁️  Chercher la commande ID {$commandeId}\n";
 echo "   📊 Vérifier que les statuts se mettent à jour en temps réel\n\n";
 
 echo "✅ TEST PRÉPARÉ - Le système est prêt pour validation complète!\n";
-?>
