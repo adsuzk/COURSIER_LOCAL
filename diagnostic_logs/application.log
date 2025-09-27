@@ -3026,3 +3026,4 @@ error:0A000086:SSL routines::certificate verify failed | Context: {"severity":2,
 [2025-09-27 22:52:38.000000] [ERROR] [get_coursier_info.php:337] [GENERAL] GET_COURSIER_INFO_ERROR | Context: "SQLSTATE[42S22]: Column not found: 1054 Unknown column 'c.date_inscription' in 'field list'" | Memory: 2 MB
 [2025-09-27 22:53:11.000000] [ERROR] [get_coursier_info.php:335] [GENERAL] GET_COURSIER_INFO_ERROR | Context: "SQLSTATE[42S22]: Column not found: 1054 Unknown column 'a.type_vehicule' in 'field list'" | Memory: 2 MB
 [2025-09-27 22:53:47.000000] [ERROR] [get_coursier_info.php:334] [GENERAL] GET_COURSIER_INFO_ERROR | Context: "SQLSTATE[42S22]: Column not found: 1054 Unknown column 'date_creation' in 'field list'" | Memory: 2 MB
+[2025-09-27 22:54:15.000000] [ERROR] [get_coursier_info.php:334] [GENERAL] GET_COURSIER_INFO_ERROR | Context: "SQLSTATE[42S22]: Column not found: 1054 Unknown column 'montant_total' in 'field list'" | Memory: 2 MB
