@@ -8,7 +8,9 @@ require_once 'config.php';
 require_once 'lib/coursier_presence.php';
 
 // Vérifier les permissions admin
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
     header('Location: auth.php');
     exit;
