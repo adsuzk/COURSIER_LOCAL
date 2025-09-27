@@ -635,6 +635,133 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
             </div>
         </div>
 
+        <!-- Section Interfaces d'administration -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-tachometer-alt"></i>
+                </div>
+                <div>
+                    <h2 class="section-title">🎛️ Interfaces d'administration (<?= count($discoveredComponents['admin_sections']) ?>)</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">
+                        Les différentes pages d'administration pour gérer votre plateforme
+                    </p>
+                </div>
+            </div>
+            
+            <div class="items-grid">
+                <?php foreach ($discoveredComponents['admin_sections'] as $section): ?>
+                    <div class="item">
+                        <div class="item-header">
+                            <span class="item-name"><?= htmlspecialchars($section['name']) ?></span>
+                            <span class="item-status status-online">DISPONIBLE</span>
+                        </div>
+                        <div class="item-description">
+                            <?= htmlspecialchars($section['description']) ?>
+                        </div>
+                        <?php if (isset($section['url'])): ?>
+                            <div class="item-details">
+                                🔗 <a href="<?= $section['url'] ?>" target="_blank" style="color: var(--primary);">Ouvrir l'interface</a>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
+        <!-- Section Base de données -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-database"></i>
+                </div>
+                <div>
+                    <h2 class="section-title">🗄️ Données de votre système (<?= count($discoveredComponents['database_tables']) ?>)</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">
+                        Toutes les tables qui stockent vos informations : clients, commandes, coursiers, etc.
+                    </p>
+                </div>
+            </div>
+            
+            <button class="toggle-btn" onclick="toggleSection('database')">
+                📊 Voir toutes les tables de données
+            </button>
+            
+            <div id="database" class="collapsible-content hidden">
+                <div class="items-grid">
+                    <?php 
+                    // Grouper les tables par type
+                    $tableTypes = [];
+                    foreach ($discoveredComponents['database_tables'] as $table) {
+                        $tableTypes[$table['type']][] = $table;
+                    }
+                    
+                    foreach ($tableTypes as $typeName => $tables):
+                    ?>
+                        <h4 style="color: var(--suzosky-gold); margin: 1.5rem 0 1rem 0; font-size: 1.1rem;">
+                            📁 <?= $typeName ?> (<?= count($tables) ?> tables)
+                        </h4>
+                        <?php foreach ($tables as $table): ?>
+                            <div class="item">
+                                <div class="item-header">
+                                    <span class="item-name"><?= htmlspecialchars($table['name']) ?></span>
+                                    <span class="item-status status-online">
+                                        <?= number_format($table['row_count']) ?> lignes
+                                    </span>
+                                </div>
+                                <div class="item-description">
+                                    <?= htmlspecialchars($table['description']) ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Outils de diagnostic -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div>
+                    <h2 class="section-title">🔧 Outils de diagnostic (<?= count($discoveredComponents['monitoring']) ?>)</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">
+                        Scripts pour vérifier le bon fonctionnement de votre système
+                    </p>
+                </div>
+            </div>
+            
+            <button class="toggle-btn" onclick="toggleSection('monitoring')">
+                🛠️ Voir tous les outils
+            </button>
+            
+            <div id="monitoring" class="collapsible-content hidden">
+                <div class="items-grid">
+                    <?php foreach ($discoveredComponents['monitoring'] as $tool): ?>
+                        <div class="item">
+                            <div class="item-header">
+                                <span class="item-name">
+                                    <?= htmlspecialchars(str_replace('.php', '', $tool['name'])) ?>
+                                </span>
+                                <span class="item-status status-warning">OUTIL</span>
+                            </div>
+                            <div class="item-description">
+                                <?= htmlspecialchars($tool['description']) ?>
+                            </div>
+                            <div class="item-details">
+                                📁 Fichier: <?= htmlspecialchars($tool['file']) ?>
+                                <?php if (isset($tool['url'])): ?>
+                                    <br>🔗 <a href="<?= $tool['url'] ?>" target="_blank" style="color: var(--primary);">Exécuter le test</a>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+
         <?php
         // === TEST DES APIs ===
         
