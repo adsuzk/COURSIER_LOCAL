@@ -573,24 +573,53 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
                 APIs Essentielles du Système
             </h2>
             
-            <button class="expand-btn" onclick="toggleSection('apis-section')">
-                Voir toutes les APIs
-            </button>
-            
-            <div id="apis-section" class="collapsible hidden">
-                <div class="api-grid">
-                    <?php foreach (array_slice($discoveredComponents['apis'], 0, 12) as $api): ?>
-                        <div class="api-item">
-                            <div class="api-name"><?= htmlspecialchars($api['name']) ?></div>
-                            <div class="api-description">
-                                <?= htmlspecialchars($api['description']) ?>
-                            </div>
-                            <div class="api-status">
-                                <span class="status-badge status-online">ACTIF</span>
-                            </div>
+            <div class="api-grid">
+                <?php 
+                // APIs manuelles essentielles avec tests
+                $manualApis = [
+                    [
+                        'name' => 'API Données Coursier (GET)',
+                        'url' => 'http://localhost/COURSIER_LOCAL/api/get_coursier_data.php?coursier_id=3',
+                        'description' => 'API principale - Récupère données complètes coursier (wallet, commandes, statut)',
+                        'purpose' => 'Application mobile Android - Synchronisation profil',
+                        'method' => 'GET'
+                    ],
+                    [
+                        'name' => 'API Commandes Coursier (GET)',
+                        'url' => 'http://localhost/COURSIER_LOCAL/api/get_coursier_orders.php?coursier_id=3',
+                        'description' => 'Récupération des commandes assignées au coursier',
+                        'purpose' => 'Application mobile - Liste des livraisons',
+                        'method' => 'GET'
+                    ],
+                    [
+                        'name' => 'API Authentification (POST)',
+                        'url' => 'http://localhost/COURSIER_LOCAL/api/agent_auth.php',
+                        'description' => 'Connexion sécurisée des coursiers',
+                        'purpose' => 'Application mobile - Login',
+                        'method' => 'POST'
+                    ]
+                ];
+
+                foreach ($manualApis as $api): 
+                    $test = testAPI($api['url'], $api['method']);
+                    $statusClass = $test['success'] ? 'online' : 'offline';
+                ?>
+                    <div class="api-item <?= $statusClass ?>">
+                        <div class="api-name"><?= htmlspecialchars($api['name']) ?></div>
+                        
+                        <div class="api-description">
+                            <strong>Fonction:</strong> <?= htmlspecialchars($api['description']) ?><br>
+                            <strong>Utilisé par:</strong> <?= htmlspecialchars($api['purpose']) ?><br>
+                            <strong>Méthode:</strong> <?= $api['method'] ?>
                         </div>
-                    <?php endforeach; ?>
-                </div>
+                        
+                        <div class="api-status">
+                            <span class="status-badge <?= $test['success'] ? 'status-online' : 'status-offline' ?>">
+                                <?= $test['success'] ? 'ONLINE' : 'OFFLINE' ?> (<?= $test['code'] ?>)
+                            </span>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
             </div>
         </div>
 
