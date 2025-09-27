@@ -115,11 +115,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                             'ancien_solde' => $ancienSolde,
                             'nouveau_solde' => $nouveauSolde,
                             'motif' => $motif,
-                            'notifications_sent' => $notificationsSent
+                            'notifications_sent' => $notificationsSent,
+                            'notifications_failed' => $notificationsFailed
                         ]
                     );
                     
-                    $_SESSION['success_message'] = "✅ Rechargement réussi! {$montant} FCFA ajoutés au compte de {$coursier['nom']} {$coursier['prenoms']}. {$notificationsSent} notification(s) envoyée(s).";
+                    $fcmStatus = "";
+                    if ($notificationsSent > 0) {
+                        $fcmStatus .= " ✅ {$notificationsSent} notification(s) FCM envoyée(s)";
+                    }
+                    if ($notificationsFailed > 0) {
+                        $fcmStatus .= " ⚠️ {$notificationsFailed} notification(s) échouée(s)";
+                    }
+                    
+                    $_SESSION['success_message'] = "✅ Rechargement réussi! {$montant} FCFA ajoutés au compte de {$coursier['nom']} {$coursier['prenoms']}.{$fcmStatus}";
                     
                 } else {
                     $_SESSION['error_message'] = "❌ Coursier introuvable.";
