@@ -121,7 +121,11 @@
 
 ```
 COURSIER_LOCAL/
-├── api/                    # APIs REST (auth, orders, etc.)
+├── api/                    # APIs REST dédiées mobile
+│   ├── agent_auth.php     # Authentification mobile (matricule/password)
+│   ├── auth.php           # Authentification web (email/password)
+│   ├── orders.php         # Gestion commandes API
+│   └── ...                # Autres endpoints API
 ├── assets/                 # CSS, JS, images
 ├── BAT/                   # Scripts Windows automation
 ├── sections_index/        # Modules PHP interface web
