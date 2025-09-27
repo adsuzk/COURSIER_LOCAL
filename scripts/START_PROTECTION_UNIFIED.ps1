@@ -94,13 +94,12 @@ while ($true) {
             
             if ($LASTEXITCODE -eq 0) {
                 Write-Host "[$timestamp] ✓ Sauvegarde GitHub terminée" -ForegroundColor Green
-                $lastCommitTime = Get-Date
             } else {
                 Write-Host "[$timestamp] ✗ Erreur push GitHub" -ForegroundColor Red
                 Write-Host "Détails: $pushResult" -ForegroundColor Red
                 
                 # Test de connectivité pour diagnostiquer
-                $diagResult = git ls-remote origin HEAD 2>&1
+                git ls-remote origin HEAD 2>&1 | Out-Null
                 if ($LASTEXITCODE -eq 0) {
                     Write-Host "Auth OK - Erreur temporaire de push" -ForegroundColor Yellow
                 } else {
