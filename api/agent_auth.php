@@ -193,11 +193,27 @@ switch ($action) {
         break;
     case 'logout':
         // Marquer le coursier hors ligne lors de la déconnexion
+        $userId = null;
+        $token = $data['token'] ?? '';
+        
+        // Trouver l'utilisateur soit par session soit par token
         if (!empty($_SESSION['coursier_id'])) {
+            $userId = (int)$_SESSION['coursier_id'];
+        } elseif (!empty($token)) {
             try {
-                $id = (int)$_SESSION['coursier_id'];
+                $stmt = $pdo->prepare("SELECT id FROM agents_suzosky WHERE current_session_token = ? LIMIT 1");
+                $stmt->execute([$token]);
+                $user = $stmt->fetch();
+                if ($user) {
+                    $userId = (int)$user['id'];
+                }
+            } catch (Throwable $e) { /* ignore */ }
+        }
+        
+        if ($userId) {
+            try {
                 $offline = $pdo->prepare("UPDATE agents_suzosky SET statut_connexion = 'hors_ligne', current_session_token = NULL WHERE id = ?");
-                $offline->execute([$id]);
+                $offline->execute([$userId]);
             } catch (Throwable $e) { /* ignore */ }
         }
         
