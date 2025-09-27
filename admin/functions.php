@@ -19,52 +19,23 @@ function renderLoginForm($error = '') {
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
         <style>
-            /* === VARIABLES CSS SUZOSKY === */
+            /* DESIGN SYSTEM SUZOSKY - IDENTIQUE À COURSIER.PHP */
             :root {
-                /* COULEURS OFFICIELLES - IDENTIQUES À COURSIER.PHP */
                 --primary-gold: #D4A853;
                 --primary-dark: #1A1A2E;
                 --secondary-blue: #16213E;
                 --accent-blue: #0F3460;
                 --accent-red: #E94560;
                 --success-color: #27AE60;
-                --warning-color: #FFC107;
-                --danger-color: #E94560;
-                --info-color: #3B82F6;
-                
-                /* DÉGRADÉS IDENTIQUES */
-                --gradient-gold: linear-gradient(135deg, #D4A853 0%, #F4E4B8 50%, #D4A853 100%);
-                --gradient-dark: linear-gradient(135deg, #1A1A2E 0%, #16213E 100%);
-                --gradient-deep: linear-gradient(135deg, #0F3460 0%, #1A1A2E 100%);
-                
-                /* GLASS MORPHISM IDENTIQUE */
                 --glass-bg: rgba(255,255,255,0.08);
                 --glass-border: rgba(255,255,255,0.2);
-                --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
-                --glass-blur: blur(20px);
-                
-                /* OMBRES ET LUEURS IDENTIQUES */
-                --shadow-gold: 0 8px 25px rgba(212, 168, 83, 0.3);
-                --glow-gold: 0 0 20px rgba(212, 168, 83, 0.3);
-                --glow-gold-strong: 0 0 40px rgba(212, 168, 83, 0.5);
-                
-                /* ESPACEMENTS */
-                --space-2: 0.5rem;
-                --space-3: 0.75rem;
-                --space-4: 1rem;
-                --space-5: 1.25rem;
-                --space-6: 1.5rem;
-                --space-8: 2rem;
-                --space-10: 2.5rem;
-                --space-12: 3rem;
-                --space-16: 4rem;
-                
-                /* TRANSITIONS */
-                --duration-normal: 0.3s;
-                --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+                --gradient-gold: linear-gradient(135deg, #D4A853 0%, #F4E4B8 50%, #D4A853 100%);
+                --gradient-dark: linear-gradient(135deg, #1A1A2E 0%, #16213E 100%);
+                --success-color: #28a745;
+                --warning-color: #ffc107;
+                --danger-color: #E94560;
             }
 
-            /* === RESET ET BASE === */
             * {
                 margin: 0;
                 padding: 0;
@@ -74,80 +45,57 @@ function renderLoginForm($error = '') {
             body {
                 font-family: 'Montserrat', sans-serif;
                 background: var(--gradient-dark);
+                color: white;
+                min-height: 100vh;
+                overflow-x: hidden;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+            }
+
+            /* === STYLES CONNEXION/INSCRIPTION IDENTIQUE À COURSIER.PHP === */
+            .auth-screen {
                 min-height: 100vh;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                overflow: hidden;
-                position: relative;
+                padding: 20px;
             }
 
-            /* === BACKGROUND ANIMATIONS === */
-            body::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: 
-                    radial-gradient(circle at 20% 80%, rgba(212, 168, 83, 0.1) 0%, transparent 50%),
-                    radial-gradient(circle at 80% 20%, rgba(212, 168, 83, 0.08) 0%, transparent 50%),
-                    radial-gradient(circle at 40% 40%, rgba(15, 52, 96, 0.1) 0%, transparent 50%);
-                animation: float 20s ease-in-out infinite;
-            }
-
-            @keyframes float {
-                0%, 100% { transform: translateY(0px); }
-                50% { transform: translateY(-20px); }
-            }
-
-            /* === PARTICULES DORÉES === */
-            .particles {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                overflow: hidden;
-                z-index: 1;
-            }
-
-            .particle {
-                position: absolute;
-                background: var(--primary-gold);
-                border-radius: 50%;
-                animation: particle-float 15s infinite linear;
-                opacity: 0.6;
-            }
-
-            @keyframes particle-float {
-                0% {
-                    transform: translateY(100vh) rotate(0deg);
-                    opacity: 0;
-                }
-                10% {
-                    opacity: 0.6;
-                }
-                90% {
-                    opacity: 0.6;
-                }
-                100% {
-                    transform: translateY(-100px) rotate(360deg);
-                    opacity: 0;
-                }
-            }
-
-            /* === CONTENEUR DE CONNEXION === */
-            .login-container {
+            .auth-container {
                 background: var(--glass-bg);
-                backdrop-filter: var(--glass-blur);
+                backdrop-filter: blur(20px);
                 border: 1px solid var(--glass-border);
-                border-radius: 24px;
-                padding: var(--space-12);
+                border-radius: 30px;
+                padding: 40px;
                 width: 100%;
-                max-width: 450px;
-                box-shadow: var(--glass-shadow);
+                max-width: 500px;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            }
+
+            .auth-header {
+                text-align: center;
+                margin-bottom: 30px;
+            }
+
+            .brand-name {
+                font-size: 2.2rem;
+                font-weight: 900;
+                background: var(--gradient-gold);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                margin-bottom: 8px;
+                letter-spacing: 2px;
+            }
+
+            .brand-subtitle {
+                color: var(--primary-gold);
+                font-size: 0.9rem;
+                font-weight: 600;
+                letter-spacing: 1.5px;
+                opacity: 0.9;
+            }
                 position: relative;
                 z-index: 10;
                 overflow: hidden;
@@ -222,124 +170,171 @@ function renderLoginForm($error = '') {
                 font-weight: 400;
             }
 
-            /* === FORMULAIRE === */
+            /* === SYSTEME DE FORMULAIRES - CHARTE SUZOSKY IDENTIQUE === */
             .form-group {
-                margin-bottom: var(--space-6);
+                margin-bottom: 28px;
                 position: relative;
             }
 
             .form-group label {
                 display: block;
-                margin-bottom: var(--space-2);
-                color: var(--primary-gold);
-                font-weight: 600;
-                font-size: 0.95rem;
-                text-transform: uppercase;
+                color: rgba(255,255,255,0.95);
+                font-weight: 700;
+                margin-bottom: 12px;
+                font-size: 14px;
+                font-family: 'Montserrat', sans-serif;
                 letter-spacing: 0.5px;
-            }
-
-            .input-container {
+                text-transform: uppercase;
                 position: relative;
             }
-
-            .form-group input {
-                width: 100%;
-                padding: var(--space-4) var(--space-5);
-                padding-left: var(--space-12);
-                background: rgba(255, 255, 255, 0.05);
-                border: 1px solid rgba(255, 255, 255, 0.2);
-                border-radius: 12px;
-                color: #FFFFFF;
-                font-family: 'Montserrat', sans-serif;
-                font-size: 1rem;
-                transition: all var(--duration-normal) var(--ease-standard);
-                backdrop-filter: blur(10px);
-            }
-
-            .form-group input:focus {
-                outline: none;
-                border-color: var(--primary-gold);
-                background: rgba(255, 255, 255, 0.08);
-                box-shadow: 0 0 0 3px rgba(212, 168, 83, 0.2);
-                transform: translateY(-2px);
-            }
-
-            .form-group input::placeholder {
-                color: rgba(255, 255, 255, 0.5);
-                font-style: italic;
-            }
-
-            .input-icon {
+            
+            .form-group label::after {
+                content: '';
                 position: absolute;
-                left: var(--space-4);
-                top: 50%;
-                transform: translateY(-50%);
-                color: var(--primary-gold);
-                font-size: 1.1rem;
-                z-index: 2;
+                bottom: -4px;
+                left: 0;
+                width: 30px;
+                height: 2px;
+                background: var(--gradient-gold);
+                border-radius: 2px;
             }
 
-            /* === BOUTON DE CONNEXION === */
-            .btn-login {
+            .form-group input,
+            .form-group select {
                 width: 100%;
-                padding: var(--space-4) var(--space-6);
-                background: var(--gradient-gold);
-                color: var(--primary-dark);
-                border: none;
-                border-radius: 12px;
+                padding: 18px 20px;
+                background: var(--glass-bg);
+                backdrop-filter: blur(20px);
+                border: 2px solid var(--glass-border);
+                border-radius: 15px;
+                color: white;
                 font-family: 'Montserrat', sans-serif;
-                font-weight: 700;
-                font-size: 1.1rem;
-                cursor: pointer;
-                transition: all var(--duration-normal) var(--ease-standard);
-                box-shadow: var(--shadow-gold);
-                text-transform: uppercase;
-                letter-spacing: 1px;
+                font-size: 14px;
+                font-weight: 600;
+                transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
                 position: relative;
                 overflow: hidden;
             }
+            
+            .form-group input::placeholder {
+                color: rgba(255,255,255,0.5);
+                font-weight: 500;
+            }
 
-            .btn-login::before {
+            .form-group input:focus,
+            .form-group select:focus {
+                outline: none;
+                border-color: var(--primary-gold);
+                box-shadow: 0 8px 35px rgba(212, 168, 83, 0.3);
+                background: rgba(255,255,255,0.08);
+                transform: translateY(-2px);
+            }
+            
+            .form-group input:hover,
+            .form-group select:hover {
+                border-color: rgba(212, 168, 83, 0.6);
+                background: rgba(255,255,255,0.06);
+            }
+
+            /* === BOUTONS PRINCIPAUX - CHARTE SUZOSKY IDENTIQUE === */
+            .btn {
+                width: 100%;
+                padding: 15px;
+                border: none;
+                border-radius: 12px;
+                font-family: 'Montserrat', sans-serif;
+                font-weight: 600;
+                font-size: 1rem;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+            }
+
+            .btn-primary {
+                background: var(--gradient-gold);
+                color: var(--primary-dark);
+                box-shadow: 0 8px 25px rgba(212, 168, 83, 0.3);
+                border: 2px solid transparent;
+                position: relative;
+                overflow: hidden;
+                font-family: 'Montserrat', sans-serif;
+                font-weight: 700;
+                letter-spacing: 0.5px;
+                transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            }
+            
+            .btn-primary::before {
                 content: '';
                 position: absolute;
                 top: 0;
                 left: -100%;
                 width: 100%;
                 height: 100%;
-                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-                transition: left 0.5s;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+                transition: left 0.5s ease;
             }
-
-            .btn-login:hover {
-                transform: translateY(-3px);
-                box-shadow: var(--glow-gold-strong);
-            }
-
-            .btn-login:hover::before {
+            
+            .btn-primary:hover::before {
                 left: 100%;
             }
 
-            .btn-login:active {
-                transform: translateY(-1px);
+            .btn-primary:hover {
+                transform: translateY(-3px) scale(1.02);
+                box-shadow: 0 15px 40px rgba(212, 168, 83, 0.5);
+                filter: brightness(1.1);
             }
 
-            /* === MESSAGE D'ERREUR === */
-            .error-message {
+            /* === SYSTEME D'ALERTES - CHARTE SUZOSKY IDENTIQUE === */
+            .alert {
+                padding: 20px 25px;
+                border-radius: 18px;
+                margin-bottom: 25px;
+                font-weight: 600;
+                font-family: 'Montserrat', sans-serif;
+                font-size: 14px;
+                letter-spacing: 0.3px;
+                border: 2px solid;
+                backdrop-filter: blur(20px);
+                position: relative;
+                overflow: hidden;
+                transition: all 0.4s ease;
+            }
+            
+            .alert::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+                transition: left 0.5s ease;
+            }
+            
+            .alert:hover::before {
+                left: 100%;
+            }
+
+            .alert-error {
                 background: rgba(233, 69, 96, 0.15);
-                color: var(--danger-red);
-                padding: var(--space-4);
-                border-radius: 12px;
-                margin-bottom: var(--space-6);
-                text-align: center;
-                border: 1px solid rgba(233, 69, 96, 0.3);
-                backdrop-filter: blur(10px);
-                animation: shake 0.5s ease-in-out;
+                border-color: var(--accent-red);
+                color: var(--accent-red);
+                box-shadow: 0 8px 30px rgba(233, 69, 96, 0.2);
+                animation: errorPulse 2s infinite;
             }
-
-            @keyframes shake {
-                0%, 100% { transform: translateX(0); }
-                25% { transform: translateX(-5px); }
-                75% { transform: translateX(5px); }
+            
+            @keyframes errorPulse {
+                0%, 100% { box-shadow: 0 8px 30px rgba(233, 69, 96, 0.2); }
+                50% { box-shadow: 0 12px 40px rgba(233, 69, 96, 0.4); }
+            }
+            
+            .alert-error:hover {
+                background: rgba(233, 69, 96, 0.25);
+                transform: translateY(-2px);
+                animation: none;
             }
 
             /* === FOOTER === */
@@ -378,131 +373,69 @@ function renderLoginForm($error = '') {
         </style>
     </head>
     <body>
-        <!-- Particules d'arrière-plan -->
-        <div class="particles" id="particles"></div>
-
-        <div class="login-container">
-            <div class="login-header">
-                <div class="logo-container">
-                    <i class="fas fa-shield-alt"></i>
+        <div class="auth-screen">
+            <div class="auth-container">
+                <div class="auth-header">
+                    <div class="brand-name">SUZOSKY</div>
+                    <div class="brand-subtitle">ADMINISTRATION</div>
                 </div>
-                <h1>Administration</h1>
-                <p>Plateforme Suzosky</p>
-            </div>
-            
-            <?php if ($error): ?>
-                <div class="error-message">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <?php echo htmlspecialchars($error); ?>
-                </div>
-            <?php endif; ?>
-            
-            <form method="POST" action="<?php echo routePath('admin.php'); ?>">
-                <div class="form-group">
-                    <label for="username">
-                        <i class="fas fa-user"></i>
-                        Nom d'utilisateur
-                    </label>
-                    <div class="input-container">
-                        <i class="fas fa-user input-icon"></i>
+                
+                <?php if ($error): ?>
+                    <div class="alert alert-error">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <?php echo htmlspecialchars($error); ?>
+                    </div>
+                <?php endif; ?>
+                
+                <form method="POST" action="<?php echo routePath('admin.php'); ?>" class="auth-form active">
+                    <div class="form-group">
+                        <label for="username">Nom d'utilisateur</label>
                         <input type="text" id="username" name="username" placeholder="Entrez votre nom d'utilisateur" required>
                     </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="password">
-                        <i class="fas fa-lock"></i>
-                        Mot de passe
-                    </label>
-                    <div class="input-container">
-                        <i class="fas fa-lock input-icon"></i>
+                    
+                    <div class="form-group">
+                        <label for="password">Mot de passe</label>
                         <input type="password" id="password" name="password" placeholder="Entrez votre mot de passe" required>
                     </div>
-                </div>
-                
-                <button type="submit" name="login" class="btn-login">
-                    <i class="fas fa-sign-in-alt"></i>
-                    Se connecter
-                </button>
-            </form>
-
-            <div class="login-footer">
-                <p>© 2025 Suzosky - Système sécurisé</p>
+                    
+                    <button type="submit" name="login" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Se connecter
+                    </button>
+                </form>
             </div>
         </div>
 
         <script>
-            // Création des particules animées
-            function createParticles() {
-                const particlesContainer = document.getElementById('particles');
-                const particleCount = 50;
-                
-                for (let i = 0; i < particleCount; i++) {
-                    const particle = document.createElement('div');
-                    particle.className = 'particle';
-                    
-                    // Taille aléatoire
-                    const size = Math.random() * 4 + 1;
-                    particle.style.width = size + 'px';
-                    particle.style.height = size + 'px';
-                    
-                    // Position horizontale aléatoire
-                    particle.style.left = Math.random() * 100 + '%';
-                    
-                    // Délai d'animation aléatoire
-                    particle.style.animationDelay = Math.random() * 15 + 's';
-                    
-                    // Durée d'animation aléatoire
-                    particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
-                    
-                    particlesContainer.appendChild(particle);
-                }
-            }
-
-            // Effet de frappe pour le titre
-            function typeWriter(element, text, speed = 100) {
-                let i = 0;
-                element.innerHTML = '';
-                
-                function type() {
-                    if (i < text.length) {
-                        element.innerHTML += text.charAt(i);
-                        i++;
-                        setTimeout(type, speed);
-                    }
-                }
-                type();
-            }
-
-            // Animation au chargement
+            // Animation au chargement - Style Suzosky
             document.addEventListener('DOMContentLoaded', function() {
-                createParticles();
-                
                 // Animation des champs de formulaire
                 const inputs = document.querySelectorAll('input');
                 inputs.forEach(input => {
                     input.addEventListener('focus', function() {
-                        this.parentElement.style.transform = 'scale(1.02)';
+                        this.style.transform = 'scale(1.02)';
                     });
                     
                     input.addEventListener('blur', function() {
-                        this.parentElement.style.transform = 'scale(1)';
+                        this.style.transform = 'scale(1)';
                     });
                 });
 
                 // Effet de lueur sur le bouton
-                const loginBtn = document.querySelector('.btn-login');
-                loginBtn.addEventListener('mousemove', function(e) {
-                    const rect = this.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
+                const loginBtn = document.querySelector('.btn-primary');
+                if (loginBtn) {
+                    loginBtn.addEventListener('mousemove', function(e) {
+                        const rect = this.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        
+                        this.style.background = `radial-gradient(circle at ${x}px ${y}px, #E8C468, #D4A853)`;
+                    });
                     
-                    this.style.background = `radial-gradient(circle at ${x}px ${y}px, #E8C468, #D4A853)`;
-                });
-                
-                loginBtn.addEventListener('mouseleave', function() {
-                    this.style.background = 'var(--gradient-gold)';
-                });
+                    loginBtn.addEventListener('mouseleave', function() {
+                        this.style.background = 'var(--gradient-gold)';
+                    });
+                }
             });
         </script>
     </body>

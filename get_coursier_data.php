@@ -1,7 +1,11 @@
 <?php
 // get_coursier_data.php - Récupérer les vraies données du coursier (racine)
+session_start();
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/api/schema_utils.php';
+
+// Vérification de la session admin pour les détails complets
+$isAdminRequest = isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true;
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -190,6 +194,121 @@ try {
         $commandesFormatees[] = $formatted;
     }
     
+    // Si c'est une requête admin avec ID spécifique, fournir plus de détails
+    if ($isAdminRequest && isset($_GET['id'])) {
+        $adminCoursierId = intval($_GET['id']);
+        
+        // Récupérer les informations complètes du coursier
+        try {
+            $stmt = $pdo->prepare("
+                SELECT 
+                    id, nom, prenoms, telephone, email, 
+                    current_session_token, last_login_at, statut_connexion,
+                    created_at, statut
+                FROM agents_suzosky 
+                WHERE id = ?
+            ");
+            $stmt->execute([$adminCoursierId]);
+            $coursierDetails = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$coursierDetails) {
+                throw new Exception('Coursier introuvable');
+            }
+
+            // Fonction pour déterminer le statut du coursier
+            function getCoursierStatusLightAdmin($coursier): array {
+                $status = [
+                    'color' => 'red',
+                    'label' => 'Non disponible',
+                ];
+                
+                $hasToken = !empty($coursier['current_session_token']);
+                $isOnline = ($coursier['statut_connexion'] ?? '') === 'en_ligne';
+                $lastActivity = strtotime($coursier['last_login_at'] ?? '0');
+                $isRecentActivity = $lastActivity > (time() - 300); // 5 minutes
+                $hasSufficientBalance = true; // TODO: Vérifier le solde réel
+                
+                if ($hasToken && $isOnline && $isRecentActivity) {
+                    if ($hasSufficientBalance) {
+                        $status['color'] = 'green';
+                        $status['label'] = 'Disponible pour courses';
+                    } else {
+                        $status['color'] = 'orange';
+                        $status['label'] = 'Solde insuffisant';
+                    }
+                } else {
+                    $status['color'] = 'red';
+                    if (!$hasToken) {
+                        $status['label'] = 'Token app manquant';
+                    } elseif (!$isOnline) {
+                        $status['label'] = 'Hors ligne';
+                    } else {
+                        $status['label'] = 'Inactif';
+                    }
+                }
+                
+                return $status;
+            }
+
+            // Statistiques de commandes détaillées
+            $stmt = $pdo->prepare("
+                SELECT 
+                    SUM(CASE WHEN statut = 'en_cours' THEN 1 ELSE 0 END) as en_cours,
+                    SUM(CASE WHEN statut = 'assignee' THEN 1 ELSE 0 END) as en_attente,
+                    SUM(CASE WHEN statut = 'annulee' AND coursier_id = ? THEN 1 ELSE 0 END) as refusees,
+                    SUM(CASE WHEN statut = 'livree' AND DATE(updated_at) = CURDATE() THEN 1 ELSE 0 END) as livrees_aujourd_hui,
+                    COUNT(*) as total_commandes
+                FROM commandes 
+                WHERE coursier_id = ?
+            ");
+            $stmt->execute([$adminCoursierId, $adminCoursierId]);
+            $commandesStats = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Performances
+            $stmt = $pdo->prepare("
+                SELECT 
+                    COUNT(*) as total_livrees,
+                    AVG(TIMESTAMPDIFF(MINUTE, created_at, updated_at)) as temps_moyen_minutes
+                FROM commandes 
+                WHERE coursier_id = ? AND statut = 'livree' AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+            ");
+            $stmt->execute([$adminCoursierId]);
+            $performanceData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            $stmt = $pdo->prepare("
+                SELECT COUNT(*) as total_assignees
+                FROM commandes 
+                WHERE coursier_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+            ");
+            $stmt->execute([$adminCoursierId]);
+            $totalAssignees = $stmt->fetch(PDO::FETCH_ASSOC)['total_assignees'];
+
+            $tauxReussite = $totalAssignees > 0 ? round(($performanceData['total_livrees'] / $totalAssignees) * 100, 1) : 0;
+            $tempsMoyen = $performanceData['temps_moyen_minutes'] ? round($performanceData['temps_moyen_minutes']) . ' min' : 'N/A';
+
+            $statusLight = getCoursierStatusLightAdmin($coursierDetails);
+
+            echo json_encode([
+                'success' => true,
+                'coursier' => $coursierDetails,
+                'commandes' => $commandesStats,
+                'status_light' => $statusLight,
+                'performance' => [
+                    'taux_reussite' => $tauxReussite,
+                    'temps_moyen' => $tempsMoyen,
+                    'total_livrees' => $performanceData['total_livrees']
+                ]
+            ], JSON_UNESCAPED_UNICODE);
+            
+        } catch (Exception $e) {
+            echo json_encode([
+                'success' => false, 
+                'error' => 'Erreur lors de la récupération des détails: ' . $e->getMessage()
+            ]);
+        }
+        exit;
+    }
+
     echo json_encode([
         'success' => true,
         'data' => [

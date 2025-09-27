@@ -184,6 +184,7 @@ switch ($section) {
     case 'finances': include __DIR__ . '/finances.php'; break;
     case 'finances_audit': include __DIR__ . '/finances_audit.php'; break;
     case 'notifications': include __DIR__ . '/notifications_admin.php'; break;
-    default: include __DIR__ . '/dashboard.php';
+    case 'dashboard': include __DIR__ . '/dashboard_suzosky_modern.php'; break;
+    default: include __DIR__ . '/dashboard_suzosky_modern.php';
 }
 renderFooter();
