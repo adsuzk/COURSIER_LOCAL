@@ -242,11 +242,11 @@ try {
             COALESCE(adresse_depart, adresse_retrait) AS adresse_depart,
             COALESCE(adresse_arrivee, adresse_livraison) AS adresse_arrivee,
             statut,
-            COALESCE(montant_total, prix_total, prix_estime, 0) AS montant_calcule,
-            COALESCE(created_at, date_creation) AS date_creation
+            COALESCE(prix_total, prix_estime, 0) AS montant_calcule,
+            created_at AS date_creation
         FROM commandes 
         WHERE coursier_id = ? AND statut IN ($placeholders)
-        ORDER BY COALESCE(created_at, date_creation) DESC
+        ORDER BY created_at DESC
         LIMIT 20
     ";
     $params = array_merge([$coursier_id], $activeSet);
