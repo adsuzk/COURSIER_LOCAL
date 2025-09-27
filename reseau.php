@@ -463,19 +463,21 @@ $pdo = getDBConnection();
         // APIs manuelles essentielles
         $manualApis = [
             [
-                'name' => 'API Données Coursier',
+                'name' => 'API Données Coursier (GET)',
                 'url' => $baseUrl . '/api/get_coursier_data.php?coursier_id=3',
-                'description' => 'Récupère les données complètes d\'un coursier (wallet, commandes, statut)',
-                'purpose' => 'Application mobile Android - Synchronisation profil coursier',
-                'method' => 'GET'
+                'description' => 'API principale - Récupère données complètes coursier (wallet, commandes, statut)',
+                'purpose' => 'Application mobile Android - Synchronisation profil',
+                'method' => 'GET',
+                'category' => 'essential'
             ],
             [
                 'name' => 'API Données Coursier (POST JSON)', 
                 'url' => $baseUrl . '/api/get_coursier_data.php',
-                'description' => 'REMPLACE get_wallet_balance.php - Récupère données complètes avec solde wallet via POST JSON',
-                'purpose' => 'Application mobile Android - Format JSON natif (correction erreur 500)',
+                'description' => 'REMPLACE get_wallet_balance.php - Format JSON natif pour app mobile',
+                'purpose' => 'Application mobile Android - Correction erreur 500',
                 'method' => 'POST',
-                'data' => json_encode(['coursier_id' => 3])
+                'data' => json_encode(['coursier_id' => 3]),
+                'category' => 'essential'
             ],
             [
                 'name' => 'API Synchronisation Mobile',
