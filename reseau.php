@@ -160,23 +160,31 @@ $pdo = getDBConnection();
         }
 
         .api-section {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
             margin-bottom: 30px;
+            border: 2px solid rgba(212, 168, 83, 0.3);
+            backdrop-filter: blur(15px);
         }
 
         .section-title {
-            font-size: 1.8em;
-            color: var(--primary);
-            margin-bottom: 20px;
+            font-size: 2.2em;
+            background: var(--gradient-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 30px;
             display: flex;
             align-items: center;
+            font-weight: 800;
         }
 
         .section-title i {
-            margin-right: 15px;
+            margin-right: 20px;
+            color: var(--primary-gold);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
 
         .api-grid {
