@@ -157,6 +157,8 @@ FOREIGN KEY (coursier_id) REFERENCES agents_suzosky(id);
 4. **Solde positif** : `solde_wallet > 0` ⭐ **CRITIQUE**
 5. **Token FCM actif** : Existe dans `device_tokens`
 
+> ℹ️ Ces contrôles sont orchestrés par `lib/coursier_presence.php`. Toute évolution doit passer par ce helper afin que **commandes** et **finances** restent parfaitement synchronisés.
+
 ### 🔄 **Workflow complet :**
 
 ```
