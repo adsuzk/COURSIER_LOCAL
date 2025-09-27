@@ -168,7 +168,7 @@ try {
             echo "      • Téléphone: {$cmd['client_telephone']}\n";
             echo "      • Départ: {$cmd['adresse_depart']}\n";
             echo "      • Arrivée: {$cmd['adresse_arrivee']}\n";
-            echo "      • Prix: {$cmd['prix_commande']} FCFA\n";
+            echo "      • Prix: {$cmd['prix_total']} FCFA\n";
             echo "      • Statut: {$cmd['statut']}\n";
             break;
         }
