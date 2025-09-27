@@ -107,86 +107,321 @@ function checkSystemSync($pdo) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Réseau Suzosky</title>
+    <title>Réseau & APIs - Suzosky</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #1A1A2E;
-            color: white;
+        :root {
+            --primary-gold: #D4A853;
+            --primary-dark: #1A1A2E;
+            --status-success: #27AE60;
+            --status-warning: #F39C12;
+            --status-error: #E74C3C;
+            --glass-bg: rgba(255,255,255,0.1);
+            --glass-border: rgba(255,255,255,0.2);
+        }
+        
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1A1A2E 0%, #16213E 100%);
+            color: white;
+            min-height: 100vh;
             padding: 20px;
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
         
-        h1 {
-            color: #D4A853;
+        .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            color: var(--primary-gold);
+            text-shadow: 0 0 30px rgba(212, 168, 83, 0.5);
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+        
+        .refresh-btn {
+            background: var(--primary-gold);
+            color: var(--primary-dark);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .refresh-btn:hover {
+            background: #E8C468;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 168, 83, 0.3);
+        }
+        
+        /* === STATISTIQUES GLOBALES === */
+        .global-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-card .icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            color: var(--primary-gold);
+        }
+        
+        .stat-card .number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-gold);
+            margin-bottom: 8px;
+        }
+        
+        .stat-card .label {
+            font-size: 1rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .stat-card .health {
+            margin-top: 12px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .health.good { background: var(--status-success); color: white; }
+        .health.warning { background: var(--status-warning); color: white; }
+        .health.error { background: var(--status-error); color: white; }
+        
+        /* === SECTIONS D'APIS === */
+        .api-section {
+            margin-bottom: 50px;
+        }
+        
+        .section-header {
+            background: linear-gradient(135deg, var(--primary-gold), #E8C468);
+            color: var(--primary-dark);
+            padding: 20px;
+            border-radius: 12px 12px 0 0;
+            margin-bottom: 0;
+        }
+        
+        .section-header h2 {
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .section-header p {
+            margin-top: 8px;
+            opacity: 0.8;
         }
         
         .api-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
             gap: 20px;
-            margin: 30px 0;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 0 0 12px 12px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
         }
         
         .api-card {
-            background: rgba(255,255,255,0.1);
-            border: 2px solid #D4A853;
-            border-radius: 10px;
-            padding: 20px;
-            color: white;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .api-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .api-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-gold), #E8C468);
+        }
+        
+        .api-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
         }
         
         .api-name {
-            color: #D4A853;
+            font-size: 1.3rem;
             font-weight: bold;
-            font-size: 1.2em;
-            margin-bottom: 10px;
-        }
-        
-        .api-description {
-            margin: 10px 0;
-            line-height: 1.5;
+            color: var(--primary-gold);
+            flex: 1;
         }
         
         .api-status {
-            text-align: right;
-            font-weight: bold;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
         }
         
-        .status-online { color: #27AE60; }
-        .status-offline { color: #E94560; }
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
         
-        .stats {
+        .status-badge.online {
+            background: var(--status-success);
+            color: white;
+        }
+        
+        .status-badge.offline {
+            background: var(--status-error);
+            color: white;
+        }
+        
+        .response-time {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        
+        .api-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 16px;
+            opacity: 0.9;
+        }
+        
+        .api-details {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            font-size: 0.9rem;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .detail-label {
+            opacity: 0.7;
+        }
+        
+        .detail-value {
+            font-weight: bold;
+            color: var(--primary-gold);
+        }
+        
+        /* === SYNC STATUS === */
+        .sync-status {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .sync-header {
+            text-align: center;
             margin-bottom: 30px;
         }
         
-        .stat-box {
-            background: rgba(212,168,83,0.1);
-            border: 1px solid #D4A853;
-            border-radius: 8px;
-            padding: 15px;
-            text-align: center;
+        .sync-header h2 {
+            font-size: 2rem;
+            color: var(--primary-gold);
+            margin-bottom: 10px;
         }
         
-        .stat-number {
-            font-size: 2em;
-            font-weight: bold;
-            color: #D4A853;
+        .sync-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
         }
         
-        .stat-label {
-            font-size: 0.9em;
-            opacity: 0.8;
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .global-stats {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 15px;
+            }
+            
+            .api-grid {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+            
+            .api-card {
+                padding: 20px;
+            }
+            
+            .api-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .api-status {
+                align-items: flex-start;
+            }
         }
     </style>
 </head>
