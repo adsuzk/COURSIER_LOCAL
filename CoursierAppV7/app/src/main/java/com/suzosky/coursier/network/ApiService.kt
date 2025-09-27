@@ -28,8 +28,9 @@ import java.util.Locale
 import java.util.UUID
 
 object ApiService {
+    private const val LOCAL_SEGMENT = "/COURSIER_LOCAL"
     // Local dev: emulator loopback. For physical device, we will prefer LAN host from BuildConfig.DEBUG_LOCAL_HOST if provided.
-    private const val EMULATOR_LOCAL_BASE = "http://10.0.2.2/coursier_prod"
+    private const val EMULATOR_LOCAL_BASE = "http://10.0.2.2$LOCAL_SEGMENT"
     private const val PROD_BASE = "https://coursier.conciergerie-privee-suzosky.com"
 
     private fun isDebug(): Boolean = BuildConfig.DEBUG
@@ -37,12 +38,17 @@ object ApiService {
     private fun forceLocalOnly(): Boolean = try { BuildConfig.FORCE_LOCAL_ONLY } catch (_: Throwable) { false }
 
     private fun deviceLocalBase(): String? {
-        // Prefer developer-provided LAN IP (e.g., http://192.168.1.20/coursier_prod) for physical devices
+        // Prefer developer-provided LAN IP (e.g., http://192.168.1.20/COURSIER_LOCAL) for physical devices
         val host = try { BuildConfig.DEBUG_LOCAL_HOST } catch (_: Throwable) { "" }
         return host.takeIf { it.isNotBlank() }?.let { h ->
             val base = if (h.startsWith("http")) h else "http://$h"
-            if (base.endsWith("/coursier_prod")) base else "$base/coursier_prod"
+            normalizeLocalBase(base)
         }
+    }
+
+    private fun normalizeLocalBase(base: String): String {
+        val trimmed = base.trimEnd('/')
+        return if (trimmed.endsWith(LOCAL_SEGMENT, ignoreCase = true)) trimmed else "$trimmed$LOCAL_SEGMENT"
     }
 
     private fun isEmulator(): Boolean {
