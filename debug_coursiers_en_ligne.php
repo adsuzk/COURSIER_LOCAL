@@ -12,6 +12,6 @@ echo "COURSIERS MARQUÉS 'en_ligne' DANS LA BASE:\n";
 while($row = $stmt->fetch()) {
     echo "ID: {$row['id']}, {$row['nom']} {$row['prenoms']}\n";
     echo "   Session: " . ($row['current_session_token'] ? 'OUI' : 'NON') . "\n";
-    echo "   Last activity: {$row['last_activity']}\n\n";
+    echo "   Last login: {$row['last_login']}\n\n";
 }
 ?>
