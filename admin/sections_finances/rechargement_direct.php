@@ -106,31 +106,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-// Récupération des données pour affichage
-$stmt = $pdo->prepare("
-    SELECT 
-        a.id, 
-        a.nom, 
-        a.prenoms, 
-        a.email, 
-        a.telephone,
-        COALESCE(a.solde_wallet, 0) as solde,
-        a.statut_connexion,
-        a.last_login_at,
-        COUNT(dt.id) as fcm_tokens
-    FROM agents_suzosky a
-    LEFT JOIN device_tokens dt ON a.id = dt.coursier_id AND dt.is_active = 1
-    WHERE a.type_poste IN ('coursier', 'coursier_moto', 'coursier_velo', 'coursier_cargo')
-    GROUP BY a.id
-    ORDER BY a.statut_connexion DESC, a.nom ASC
-");
-$stmt->execute();
-$coursiers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+require_once __DIR__ . '/../../lib/coursier_presence.php';
+
+$allowedTypes = ['coursier', 'coursier_moto', 'coursier_velo', 'coursier_cargo'];
+$allCoursiers = getAllCouriers($pdo);
+$coursiers = [];
+
+foreach ($allCoursiers as $coursier) {
+    $type = strtolower($coursier['type_poste'] ?? '');
+    if ($type !== '' && !in_array($type, $allowedTypes, true)) {
+        continue;
+    }
+
+    $coursiers[] = array_merge($coursier, [
+        'solde' => (float)($coursier['solde_wallet'] ?? 0),
+        'fcm_tokens' => (int)($coursier['active_fcm_tokens'] ?? 0)
+    ]);
+}
+
+$connectedCoursiers = getConnectedCouriers($pdo);
+$connectedIds = array_column($connectedCoursiers, 'id');
 
 // Statistiques rapides
 $totalCoursiers = count($coursiers);
-$coursiersConnectes = array_filter($coursiers, fn($c) => $c['statut_connexion'] === 'en_ligne');
-$coursiersAvecSolde = array_filter($coursiers, fn($c) => $c['solde'] > 0);
+$coursiersConnectes = array_filter($coursiers, fn($c) => in_array($c['id'], $connectedIds, true));
+$coursiersAvecSolde = array_filter($coursiers, fn($c) => ($c['solde'] ?? 0) > 0);
 
 include __DIR__ . '/../functions.php';
 ?>
