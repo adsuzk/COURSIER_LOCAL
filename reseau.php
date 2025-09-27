@@ -194,28 +194,45 @@ $pdo = getDBConnection();
         }
 
         .api-item {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            border-left: 4px solid var(--info);
+            background: linear-gradient(135deg, rgba(244, 228, 184, 0.1) 0%, rgba(255,255,255,0.05) 100%);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid var(--primary-gold);
             position: relative;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
         }
 
-        .api-item.online { border-left-color: var(--success); }
-        .api-item.offline { border-left-color: var(--danger); }
-        .api-item.warning { border-left-color: var(--warning); }
+        .api-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(212, 168, 83, 0.3);
+        }
+
+        .api-item.online { 
+            border-color: var(--success);
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(255,255,255,0.05) 100%);
+        }
+        .api-item.offline { 
+            border-color: var(--danger);
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.1) 0%, rgba(255,255,255,0.05) 100%);
+        }
+        .api-item.warning { 
+            border-color: var(--warning);
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255,255,255,0.05) 100%);
+        }
 
         .api-name {
-            font-weight: bold;
-            font-size: 1.1em;
-            color: var(--dark);
-            margin-bottom: 8px;
+            font-weight: 700;
+            font-size: 1.2em;
+            color: var(--primary-dark);
+            margin-bottom: 12px;
         }
 
         .api-description {
-            color: #666;
-            margin-bottom: 10px;
-            line-height: 1.4;
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+            line-height: 1.5;
+            opacity: 0.8;
         }
 
         .api-status {
