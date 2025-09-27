@@ -57,7 +57,7 @@ try {
         $reference = 'TEST_RECH_' . date('YmdHis');
         $stmt = $pdo->prepare("
             INSERT INTO transactions_financieres (
-                type, montant, compte_type, compte_id, reference, description, statut, created_at
+                type, montant, compte_type, compte_id, reference, description, statut, date_creation
             ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
         ");
         $stmt->execute([
