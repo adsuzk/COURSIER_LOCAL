@@ -33,6 +33,7 @@ import com.suzosky.coursier.services.AutoUpdateService
 import com.suzosky.coursier.services.OrderRingService
 import com.suzosky.coursier.telemetry.TelemetrySDK
 import com.suzosky.coursier.telemetry.UpdateInfo
+import com.suzosky.coursier.ui.components.PaymentStatusDialog
 import com.suzosky.coursier.ui.components.PaymentWebViewDialog
 import com.suzosky.coursier.ui.screens.CoursierScreenNew
 import com.suzosky.coursier.ui.screens.LoginScreen
@@ -579,6 +580,7 @@ fun SuzoskyCoursierApp() {
                                 onCompleted = { success, transactionId ->
                                     showPaymentDialog = false
                                     paymentUrl = null
+                                    pendingRechargeAmount = null
                                     if (success) {
                                         isPollingBalance = true
                                         ApiService.pollBalanceUntilChange(
