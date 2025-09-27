@@ -772,37 +772,7 @@ $pdo = getDBConnection();
         </div>
 
         <?php
-        // Continuer avec les services existants...
-        ?>
-                    
-                    <div class="api-item <?= $statusClass ?>">
-                        <div class="health-indicator <?= $test['success'] ? '' : 'danger' ?>"></div>
-                        
-                        <div class="api-name"><?= htmlspecialchars($api['name']) ?></div>
-                        
-                        <div class="api-description">
-                            <strong>Fonction:</strong> <?= htmlspecialchars($api['description']) ?><br>
-                            <strong>Utilisé par:</strong> <?= htmlspecialchars($api['purpose']) ?><br>
-                            <strong>Méthode:</strong> <?= $api['method'] ?>
-                            <?= isset($api['data']) ? ' (avec données JSON)' : '' ?>
-                        </div>
-                        
-                        <div class="api-status">
-                            <span class="status-badge <?= $statusBadge ?>">
-                                <?= $statusText ?> (<?= $test['code'] ?>)
-                            </span>
-                            
-                            <?php if (!$test['success'] && $test['error']): ?>
-                                <small style="color: var(--danger);">
-                                    <i class="fas fa-exclamation-triangle"></i>
-                                    <?= htmlspecialchars($test['error']) ?>
-                                </small>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        </div>
+        // === SERVICES SYSTÈME ===
 
         <?php
         // === SERVICES SYSTÈME ===
