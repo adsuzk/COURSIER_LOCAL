@@ -35,3 +35,40 @@
         }
     ]
 }
+{
+    "system": {
+        "timestamp": "2025-09-27 22:53:11.000000",
+        "microtime": 1759006391.739113,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "GENERAL",
+        "level": "ERROR",
+        "pid": 1540,
+        "user_agent": "Mozilla\/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell\/5.1.26100.6584",
+        "ip_address": "::1",
+        "request_uri": "\/COURSIER_LOCAL\/api\/get_coursier_info.php?coursier_id=5",
+        "request_method": "GET",
+        "session_id": "no_session",
+        "execution_time": 0.0507,
+        "file": "get_coursier_info.php",
+        "line": 335,
+        "function": "logError",
+        "class": ""
+    },
+    "message": "GET_COURSIER_INFO_ERROR",
+    "context": "SQLSTATE[42S22]: Column not found: 1054 Unknown column 'a.type_vehicule' in 'field list'",
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 318,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\api\\get_coursier_info.php",
+            "line": 335,
+            "function": "logError"
+        }
+    ]
+}
