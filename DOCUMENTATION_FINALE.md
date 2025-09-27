@@ -1,11 +1,46 @@
-# DOCUMENTATION FINALE - SYSTÈME COURSIER SUZOSKY
-## Version: 1.0 - Date: 27 Septembre 2025
+# 📚 DOCUMENTATION TECHNIQUE FINALE - SUZOSKY COURSIER
+## Version: 2.0 - Date: 27 Septembre 2025 - SYSTÈME AUTO-NETTOYANT
 
 ---
 
-## 📋 **ARCHITECTURE DU SYSTÈME**
+## 🎯 ARCHITECTURE SYSTÈME
 
-### 🏗️ **STRUCTURE DES TABLES PRINCIPALES**
+### Source Unique de Vérité
+- **Fichier principal :** `lib/coursier_presence.php`
+- **Auto-nettoyage :** Intégré dans chaque appel
+- **Cohérence :** Garantie à 100%
+
+### API Mobile Synchronisée  
+- **Endpoint principal :** `api/get_coursier_data.php`
+- **Lecture correcte :** `agents_suzosky.solde_wallet`
+- **FCM intégré :** Notifications temps réel
+
+---
+
+## 🔧 FONCTIONS PRINCIPALES
+
+### getConnectedCouriers($pdo)
+```php
+// UTILISATION STANDARD
+$coursiersActifs = getConnectedCouriers($pdo);
+
+// LOGIQUE INTERNE :
+// 1. autoCleanExpiredStatuses() → Nettoie base automatiquement  
+// 2. Filtrage intelligent : token + statut + activité < 30min
+// 3. Retour : Coursiers réellement connectés uniquement
+```
+
+### autoCleanExpiredStatuses($pdo) 
+```php
+// NETTOYAGE AUTOMATIQUE (interne)
+// - Statuts 'en_ligne' > 30min → 'hors_ligne'  
+// - Sessions expirées → NULL
+// - Exécution : À chaque appel getConnectedCouriers()
+```
+
+---
+
+## 🏗️ **STRUCTURE DES TABLES PRINCIPALES**
 
 #### **Table unique pour les coursiers : `agents_suzosky`**
 - **Décision architecturale** : Une seule table pour éviter les incohérences
