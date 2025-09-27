@@ -252,7 +252,7 @@ if (basename(__FILE__) === basename($_SERVER['SCRIPT_NAME'])) {
         // Configuration à vérifier
         echo "\n🔧 3. CONFIGURATION À VÉRIFIER\n";
         echo "   📋 Points importants:\n";
-        echo "   • Server Key Firebase: " . (strlen($fcm->serverKey) > 50 ? '✅ Configurée' : '❌ À configurer') . "\n";
+        echo "   • Server Key Firebase: " . (strlen($fcm->getServerKey()) > 50 ? '✅ Configurée' : '❌ À configurer') . "\n";
         echo "   • Project ID: {$fcm->projectId}\n";
         echo "   • Fichier config: " . (file_exists('coursier-suzosky-firebase-adminsdk-fbsvc-3605815057.json') ? '✅' : '❌') . "\n";
         
