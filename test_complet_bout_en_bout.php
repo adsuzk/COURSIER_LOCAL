@@ -98,14 +98,15 @@ echo "4. ENVOI NOTIFICATION FCM:\n";
 
 $notificationData = [
     'title' => '🚛 Nouvelle commande disponible',
-    'body' => "Client: {$commandeData['client_name']} - Frais: {$commandeData['delivery_fee']} FCFA",
+    'body' => "Client: {$commandeData['client_nom']} - Frais: {$commandeData['prix_total']} FCFA",
     'data' => [
         'type' => 'new_order',
         'order_id' => $commandeId,
-        'pickup_address' => $commandeData['pickup_address'],
-        'delivery_address' => $commandeData['delivery_address'],
-        'fee' => $commandeData['delivery_fee'],
-        'client_phone' => $commandeData['client_phone']
+        'code_commande' => $commandeData['code_commande'],
+        'pickup_address' => $commandeData['adresse_retrait'],
+        'delivery_address' => $commandeData['adresse_livraison'],
+        'fee' => $commandeData['prix_total'],
+        'client_phone' => $commandeData['client_telephone']
     ]
 ];
 
