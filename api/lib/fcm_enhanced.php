@@ -45,13 +45,72 @@ function fcm_send_with_log($tokens, $title, $body, $data = [], $coursier_id = nu
         // continue without blocking
     }
     $logTable = 'notifications_log_fcm';
+    // Préparer une fonction de journalisation tolérante au schéma existant
+    $logTable = 'notifications_log_fcm';
+    $logOnce = function($status, $tokensUsed = null, $respCode = null, $respText = null) use ($pdo, $logTable, $coursier_id, $commande_id, $title, $body) {
+        try {
+            // Récupérer les colonnes existantes
+            $cols = [];
+            try {
+                $res = $pdo->query("SHOW COLUMNS FROM {$logTable}");
+                foreach ($res as $row) { $cols[strtolower($row['Field'])] = $row['Field']; }
+            } catch (Throwable $e) { /* ignore */ }
 
+            // Si la table n'existe pas, la créer selon la documentation (schéma minimal)
+            if (empty($cols)) {
+                $pdo->exec("CREATE TABLE IF NOT EXISTS {$logTable} (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    coursier_id INT NULL,
+                    commande_id INT NULL,
+                    token_used TEXT NULL,
+                    message TEXT NULL,
+                    status VARCHAR(64) NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+                $cols = [
+                    'coursier_id' => 'coursier_id',
+                    'commande_id' => 'commande_id',
+                    'token_used'  => 'token_used',
+                    'message'     => 'message',
+                    'status'      => 'status',
+                ];
+            }
+
+            // Construire INSERT dynamique en fonction des colonnes disponibles
+            $fields = [];
+            $placeholders = [];
+            $values = [];
+            $add = function($name, $value) use (&$fields, &$placeholders, &$values) {
+                $fields[] = $name; $placeholders[] = ':' . $name; $values[':' . $name] = $value; };
+
+            if (isset($cols['coursier_id'])) $add($cols['coursier_id'], $coursier_id);
+            if (isset($cols['commande_id'])) $add($cols['commande_id'], $commande_id);
+            // Support à la fois token_used et fcm_tokens_used
+            $tokensStr = is_array($tokensUsed) ? json_encode($tokensUsed) : (string)$tokensUsed;
+            if (isset($cols['token_used'])) $add($cols['token_used'], $tokensStr);
+            if (isset($cols['fcm_tokens_used'])) $add($cols['fcm_tokens_used'], $tokensStr);
+            // Support message et/ou title/message séparés
+            if (isset($cols['message'])) $add($cols['message'], $body);
+            if (isset($cols['title'])) $add($cols['title'], $title);
+            // Statut et/ou success + codes
+            if (isset($cols['status'])) $add($cols['status'], $status);
+            if (isset($cols['success'])) $add($cols['success'], $status === 'sent' ? 1 : 0);
+            if (isset($cols['fcm_response_code'])) $add($cols['fcm_response_code'], $respCode);
+            if (isset($cols['fcm_response'])) $add($cols['fcm_response'], $respText);
+            // Type
+            if (isset($cols['notification_type'])) $add($cols['notification_type'], 'new_order');
+
+            if ($fields) {
+                $sql = 'INSERT INTO ' . $logTable . ' (' . implode(',', $fields) . ') VALUES (' . implode(',', $placeholders) . ')';
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute($values);
+            }
+        } catch (Throwable $e) { /* ne pas bloquer l'envoi si le log échoue */ }
+    };
     // Permettre de forcer le mode legacy (variable d'env ou fichier drapeau)
     $forceLegacy = getenv('FCM_FORCE_LEGACY');
     if ($forceLegacy === false) {
-        $flagFile = __DIR__ . '/../../data/force_legacy_fcm';
-        if (is_file($flagFile)) $forceLegacy = '1';
-    }
+        $logOnce($success ? 'sent' : 'failed', $tokens, $code, is_string($resp) ? $resp : json_encode($resp));
 
     $saPath = getenv('FIREBASE_SERVICE_ACCOUNT_FILE');
     if (!$saPath) {
