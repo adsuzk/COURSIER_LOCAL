@@ -3,14 +3,12 @@
 param([switch]$Verbose, [switch]$Force)
 
 $ErrorActionPreference = "Continue"
-$HOST.UI.RawUI.WindowTitle = "Sync Coursier Prod - Structure Propre"
-
 Clear-Host
-Write-Host "🔄 SYNCHRONISATION COURSIER_PROD - STRUCTURE PROPRE" -ForegroundColor Cyan
-Write-Host "=" * 60
+
+Write-Host "===== SYNCHRONISATION COURSIER_PROD =====" -ForegroundColor Cyan
 Write-Host "Source: C:\xampp\htdocs\COURSIER_LOCAL" -ForegroundColor Yellow
 Write-Host "Target: C:\xampp\htdocs\coursier_prod" -ForegroundColor Yellow
-Write-Host "Mode  : EXCLUSION AUTOMATIQUE + CONFIG LWS" -ForegroundColor Green
+Write-Host "Mode  : EXCLUSION AUTO + CONFIG LWS" -ForegroundColor Green
 Write-Host ""
 
 $sourceDir = "C:\xampp\htdocs\COURSIER_LOCAL"
