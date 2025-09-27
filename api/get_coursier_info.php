@@ -42,26 +42,113 @@ if (!$coursier_id || $coursier_id <= 0) {
 
 try {
     $pdo = getPDO();
-    
+
+    // Récupération des informations de base (coursiers + agents_suzosky)
+    $infoSql = "
+        SELECT 
+            c.id,
+            c.nom AS coursier_nom,
+            c.telephone AS coursier_telephone,
+            c.email AS coursier_email,
+            c.statut AS coursier_statut,
+            c.date_inscription,
+            c.derniere_activite,
+            c.zone_travail AS coursier_zone_travail,
+            c.vehicule_type AS coursier_vehicule_type,
+            a.nom AS agent_nom,
+            a.prenoms AS agent_prenoms,
+            a.telephone AS agent_telephone,
+            a.email AS agent_email,
+            a.statut_connexion AS agent_statut_connexion,
+            a.zone_travail AS agent_zone_travail,
+            a.type_vehicule AS agent_vehicule_type,
+            a.solde_wallet AS agent_solde_wallet,
+            a.last_login_at AS agent_last_login_at,
+            a.matricule AS agent_matricule
+        FROM coursiers c
+        LEFT JOIN agents_suzosky a ON a.id = c.id
+        WHERE c.id = ?
+        LIMIT 1
+    ";
+    $stmt = $pdo->prepare($infoSql);
+    $stmt->execute([$coursier_id]);
+    $coursierRow = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$coursierRow) {
+        // Fallback si le pont coursiers n'est pas synchronisé
+        $fallback = $pdo->prepare("
+            SELECT 
+                id,
+                nom AS agent_nom,
+                prenoms AS agent_prenoms,
+                telephone AS agent_telephone,
+                email AS agent_email,
+                statut_connexion AS agent_statut_connexion,
+                zone_travail AS agent_zone_travail,
+                type_vehicule AS agent_vehicule_type,
+                COALESCE(solde_wallet, 0) AS agent_solde_wallet,
+                last_login_at AS agent_last_login_at,
+                matricule AS agent_matricule
+            FROM agents_suzosky
+            WHERE id = ?
+            LIMIT 1
+        ");
+        $fallback->execute([$coursier_id]);
+        $agentRow = $fallback->fetch(PDO::FETCH_ASSOC);
+
+        if ($agentRow) {
+            $coursierRow = [
+                'id' => (int)$agentRow['id'],
+                'coursier_nom' => trim(($agentRow['agent_prenoms'] ?? '') . ' ' . ($agentRow['agent_nom'] ?? '')),
+                'coursier_telephone' => $agentRow['agent_telephone'] ?? null,
+                'coursier_email' => $agentRow['agent_email'] ?? null,
+                'coursier_statut' => $agentRow['agent_statut_connexion'] ?? 'actif',
+                'date_inscription' => null,
+                'derniere_activite' => $agentRow['agent_last_login_at'] ?? null,
+                'coursier_zone_travail' => $agentRow['agent_zone_travail'] ?? null,
+                'coursier_vehicule_type' => $agentRow['agent_vehicule_type'] ?? null,
+                'agent_nom' => $agentRow['agent_nom'] ?? null,
+                'agent_prenoms' => $agentRow['agent_prenoms'] ?? null,
+                'agent_telephone' => $agentRow['agent_telephone'] ?? null,
+                'agent_email' => $agentRow['agent_email'] ?? null,
+                'agent_statut_connexion' => $agentRow['agent_statut_connexion'] ?? null,
+                'agent_zone_travail' => $agentRow['agent_zone_travail'] ?? null,
+                'agent_vehicule_type' => $agentRow['agent_vehicule_type'] ?? null,
+                'agent_solde_wallet' => $agentRow['agent_solde_wallet'] ?? 0,
+                'agent_last_login_at' => $agentRow['agent_last_login_at'] ?? null,
+                'agent_matricule' => $agentRow['agent_matricule'] ?? null
+            ];
+        }
+    }
+
+    if (!$coursierRow) {
+        http_response_code(404);
+        echo json_encode([
+            'success' => false,
+            'error' => 'COURSIER_NOT_FOUND',
+            'message' => 'Coursier non trouvé'
+        ]);
+        exit;
+    }
+
     // Jeu de statuts (nouvelle taxonomie unifiée)
     $completedSet = [ 'livree', 'termine' ]; // 'termine' legacy
     $activeSet    = [ 'assignee','attribuee','acceptee','en_cours','picked_up','recupere','nouvelle' ];
 
-    // Récupérer les infos du coursier avec stats (compat legacy + nouveau)
-    $sql = "
+    // Statistiques de commandes consolidées
+    $statsStmt = $pdo->prepare("
         SELECT 
-            c.*,
-            COUNT(DISTINCT cmd.id) as total_commandes,
-            COUNT(DISTINCT CASE WHEN cmd.statut IN ('livree','termine') THEN cmd.id END) as commandes_terminees,
-            MAX(COALESCE(cmd.created_at, cmd.date_creation)) as derniere_commande
-        FROM coursiers c
-        LEFT JOIN commandes cmd ON c.id = cmd.coursier_id
-        WHERE c.id = ?
-        GROUP BY c.id
-    ";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([$coursier_id]);
-    $coursier = $stmt->fetch();
+            COUNT(*) AS total_commandes,
+            SUM(CASE WHEN statut IN ('livree','termine') THEN 1 ELSE 0 END) AS commandes_terminees,
+            SUM(CASE WHEN statut IN ('livree','termine') AND DATE(COALESCE(created_at, date_creation)) = CURDATE() THEN 1 ELSE 0 END) AS commandes_jour,
+            SUM(CASE WHEN statut IN ('livree','termine') AND DATE(COALESCE(created_at, date_creation)) = CURDATE() THEN COALESCE(montant_total, prix_total, prix_estime, 0) ELSE 0 END) AS gains_jour,
+            SUM(CASE WHEN statut IN ('livree','termine') THEN COALESCE(montant_total, prix_total, prix_estime, 0) ELSE 0 END) AS gains_total,
+            MAX(COALESCE(created_at, date_creation)) AS derniere_commande
+        FROM commandes
+        WHERE coursier_id = ?
+    ");
+    $statsStmt->execute([$coursier_id]);
+    $statsRow = $statsStmt->fetch(PDO::FETCH_ASSOC) ?: [];
     // Latest position via helper
     $pos = tracking_select_positions_for_courier($pdo, $coursier_id, 1);
     $derLat = null; $derLng = null; $derTs = null;
