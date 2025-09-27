@@ -5,7 +5,27 @@ require_once __DIR__ . '/../config.php';
 header('Content-Type: application/json; charset=utf-8');
 
 try {
-    $coursierId = intval($_GET['coursier_id'] ?? $_POST['coursier_id'] ?? 0);
+    // Gestion des données POST JSON et form-data
+    $coursierId = 0;
+    
+    // 1. GET parameters
+    if (isset($_GET['coursier_id'])) {
+        $coursierId = intval($_GET['coursier_id']);
+    }
+    // 2. POST form-data
+    elseif (isset($_POST['coursier_id'])) {
+        $coursierId = intval($_POST['coursier_id']);
+    }
+    // 3. POST JSON
+    else {
+        $input = file_get_contents('php://input');
+        if ($input) {
+            $data = json_decode($input, true);
+            if ($data && isset($data['coursier_id'])) {
+                $coursierId = intval($data['coursier_id']);
+            }
+        }
+    }
     
     if ($coursierId <= 0) {
         throw new Exception('ID coursier requis');
