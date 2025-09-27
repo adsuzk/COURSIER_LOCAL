@@ -10,7 +10,51 @@
 - **Auto-nettoyage :** Intégré dans chaque appel
 - **Cohérence :** Garantie à 100%
 
-### API Mobile Synchronisée  
+### API M---
+
+## 🚨 **CORRECTION CRITIQUE API MOBILE (27 Sept 2025)**
+
+### ❌ **PROBLÈME IDENTIFIÉ :**
+- L'API `api/get_coursier_data.php` était fonctionnelle pour GET et POST form-data
+- **MAIS** l'app mobile Android utilise POST JSON via `php://input`
+- **Résultat :** Erreur 500 sur toutes les requêtes JSON de l'app
+
+### ✅ **SOLUTION IMPLÉMENTÉE :**
+```php
+// AVANT (incomplet)
+$coursierId = $_GET['coursier_id'] ?? $_POST['coursier_id'] ?? 0;
+
+// APRÈS (complet - support JSON)
+$coursierId = 0;
+if (isset($_GET['coursier_id'])) {
+    $coursierId = intval($_GET['coursier_id']);
+} elseif (isset($_POST['coursier_id'])) {
+    $coursierId = intval($_POST['coursier_id']);
+} else {
+    // Support POST JSON via php://input
+    $input = file_get_contents('php://input');
+    if ($input) {
+        $data = json_decode($input, true);
+        if ($data && isset($data['coursier_id'])) {
+            $coursierId = intval($data['coursier_id']);
+        }
+    }
+}
+```
+
+### 🧪 **VALIDATION :**
+- ✅ GET: `curl "localhost/COURSIER_LOCAL/api/get_coursier_data.php?coursier_id=5"`
+- ✅ POST form: `curl -d "coursier_id=5" localhost/COURSIER_LOCAL/api/get_coursier_data.php`
+- ✅ POST JSON: `curl -H "Content-Type: application/json" -d '{"coursier_id":5}' localhost/COURSIER_LOCAL/api/get_coursier_data.php`
+
+### 📱 **ROUTES OBSOLÈTES SUPPRIMÉES :**
+- ❌ `get_wallet_balance.php` - Remplacée par get_coursier_data.php
+- ❌ `check_coursier_debug.php` - Fonction intégrée dans lib/coursier_presence.php
+- ❌ `check_table_agents.php` - Diagnostic uniquement, pas utilisée par l'app
+
+---
+
+## �📱 **INTÉGRATION APP MOBILE**le Synchronisée  
 - **Endpoint principal :** `api/get_coursier_data.php`
 - **Lecture correcte :** `agents_suzosky.solde_wallet`
 - **FCM intégré :** Notifications temps réel
