@@ -32,23 +32,21 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
     <title>Réseau - Monitoring Système Suzosky</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
+        /* DESIGN SYSTEM SUZOSKY - INTERFACE ADMIN RESEAU */
         :root {
-            /* COULEURS SIMPLES ET CLAIRES */
-            --primary: #2563eb;
-            --secondary: #64748b;
-            --success: #16a34a;
-            --warning: #f59e0b;
-            --danger: #dc2626;
-            --info: #0891b2;
-            --background: #f8fafc;
-            --surface: #ffffff;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --border: #e2e8f0;
-            
-            /* COULEURS SUZOSKY */
-            --suzosky-gold: #D4A853;
-            --suzosky-dark: #1A1A2E;
+            --primary-gold: #D4A853;
+            --primary-dark: #1A1A2E;
+            --secondary-blue: #16213E;
+            --accent-blue: #0F3460;
+            --accent-red: #E94560;
+            --success-color: #27AE60;
+            --glass-bg: rgba(255,255,255,0.08);
+            --glass-border: rgba(255,255,255,0.2);
+            --gradient-gold: linear-gradient(135deg, #D4A853 0%, #F4E4B8 50%, #D4A853 100%);
+            --gradient-dark: linear-gradient(135deg, #1A1A2E 0%, #16213E 100%);
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #E94560;
         }
 
         * {
@@ -58,11 +56,11 @@ $discoveredComponents = $discovery->discoverAllNetworkComponents();
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-            background: var(--background);
-            color: var(--text-primary);
-            line-height: 1.6;
-            font-size: 16px;
+            font-family: 'Montserrat', sans-serif;
+            background: var(--gradient-dark);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
         .container {
