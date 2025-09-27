@@ -348,6 +348,8 @@ try {
                 ]);
             }
             
+            }
+            
             // Log automatique pour surveillance proactive
             error_log("🚨 CRASH AUTO-DETECTED: " . $autoAnalysis['category'] . 
                      " | Device: " . ($deviceInfo['device_brand'] ?? '') . ' ' . ($deviceInfo['device_model'] ?? '') . 
@@ -359,20 +361,6 @@ try {
                 'message' => 'Crash reported and analyzed',
                 'auto_analysis' => $autoAnalysis
             ]);
-        } else {
-                // Nouveau crash
-                $stmt = $pdo->prepare("
-                    INSERT INTO app_crashes (
-                        device_id, crash_hash, app_version_code, android_version, 
-                        device_model, crash_type, exception_class, exception_message, 
-                        stack_trace, screen_name, user_action, memory_usage, 
-                        battery_level, network_type
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ");
-                
-                $stmt->execute([
-                    $deviceId,
-                    $crashHash,
                     (int)($data['app_version_code'] ?? 1),
                     $data['android_version'] ?? null,
                     $data['device_model'] ?? null,
