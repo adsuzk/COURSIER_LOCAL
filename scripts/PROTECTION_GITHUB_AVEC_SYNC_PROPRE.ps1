@@ -74,11 +74,12 @@ function Sync-ToCoursierProd {
     $syncResult = & "$PSScriptRoot\SYNC_COURSIER_PROD_SIMPLE.ps1" -Force
     $syncExitCode = $LASTEXITCODE
     
-    if ($syncExitCode -eq 0) {
-        Write-Host "[$timestamp] Synchronisation coursier_prod reussie" -ForegroundColor Green
+    # Robocopy codes de succès: 0=aucun changement, 1=fichiers copiés, 2=fichiers supplémentaires, 3=fichiers copiés+supplémentaires
+    if ($syncExitCode -le 3) {
+        Write-Host "[$timestamp] Synchronisation coursier_prod reussie (code $syncExitCode)" -ForegroundColor Green
         return $true
     } else {
-        Write-Host "[$timestamp] Erreur synchronisation coursier_prod" -ForegroundColor Red
+        Write-Host "[$timestamp] Erreur synchronisation coursier_prod (code $syncExitCode)" -ForegroundColor Red
         return $false
     }
 }

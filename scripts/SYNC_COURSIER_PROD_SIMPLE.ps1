@@ -71,3 +71,10 @@ if ($testFiles) {
 
 Write-Host ""
 Write-Host "Synchronisation terminee" -ForegroundColor Green
+
+# Retourner le bon code de sortie
+if ($exitCode -lt 8) {
+    exit 0  # Succès
+} else {
+    exit 1  # Échec
+}
