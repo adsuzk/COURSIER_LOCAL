@@ -38,7 +38,7 @@ if ($userId <= 0 || $amount <= 0) {
 
 try {
     $pdo = getDBConnection();
-    // Auto-créer la table recharges si elle n'existe pas
+    // Auto-créer la table recharges si elle n'existe pas (référence correcte vers coursiers.id)
     $pdo->exec("CREATE TABLE IF NOT EXISTS recharges (
         id INT AUTO_INCREMENT PRIMARY KEY,
         coursier_id INT NOT NULL,
@@ -50,9 +50,59 @@ try {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         details JSON,
         INDEX idx_coursier (coursier_id),
-        INDEX idx_status (status),
-        FOREIGN KEY (coursier_id) REFERENCES clients_particuliers(id) ON DELETE CASCADE
+        INDEX idx_status (status)
+        -- La contrainte FK est (ré)ajoutée plus bas pour gérer les migrations
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+    // Vérifier et corriger la contrainte de clé étrangère si nécessaire
+    try {
+        $sqlCheckFk = "
+            SELECT CONSTRAINT_NAME, REFERENCED_TABLE_NAME
+            FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+            WHERE TABLE_SCHEMA = DATABASE()
+              AND TABLE_NAME = 'recharges'
+              AND COLUMN_NAME = 'coursier_id'
+              AND REFERENCED_TABLE_NAME IS NOT NULL
+            LIMIT 1
+        ";
+        $fkInfo = $pdo->query($sqlCheckFk)->fetch(PDO::FETCH_ASSOC);
+        $needsFix = false;
+        $existingConstraint = null;
+        if ($fkInfo) {
+            $existingConstraint = $fkInfo['CONSTRAINT_NAME'] ?? null;
+            $refTable = $fkInfo['REFERENCED_TABLE_NAME'] ?? null;
+            if ($refTable && strtolower($refTable) !== 'coursiers') {
+                $needsFix = true;
+                error_log("⚠️ FK recharges.coursier_id réfère '$refTable' au lieu de 'coursiers' -> migration requise");
+            }
+        } else {
+            // Aucune FK présente, il faudra l'ajouter
+            $needsFix = true;
+        }
+
+        if ($needsFix) {
+            // Supprimer l'ancienne FK si elle existe
+            if (!empty($existingConstraint)) {
+                try {
+                    $pdo->exec("ALTER TABLE recharges DROP FOREIGN KEY `{$existingConstraint}`");
+                    error_log("🧹 Ancienne FK supprimée: {$existingConstraint}");
+                } catch (Throwable $e) {
+                    error_log("❕ Impossible de supprimer l'ancienne FK ({$existingConstraint}) ou inexistante: " . $e->getMessage());
+                }
+            }
+            // Ajouter la FK correcte vers coursiers(id)
+            try {
+                $pdo->exec("ALTER TABLE recharges ADD CONSTRAINT fk_recharges_coursier FOREIGN KEY (coursier_id) REFERENCES coursiers(id) ON DELETE CASCADE");
+                error_log("✅ FK corrigée: recharges.coursier_id -> coursiers.id");
+            } catch (Throwable $e) {
+                // Si l'ajout échoue (ex: table coursiers absente), continuer sans FK dure
+                error_log("❌ Échec ajout FK recharges->coursiers: " . $e->getMessage());
+            }
+        }
+    } catch (Throwable $e) {
+        // En cas d'environnement MySQL restreint, on n'interrompt pas le flux
+        error_log("ℹ️ Vérification FK ignorée (erreur bénigne): " . $e->getMessage());
+    }
     // Insérer transaction pending
     $stmt = $pdo->prepare("INSERT INTO recharges (coursier_id, montant, currency, status) VALUES (?, ?, 'XOF', 'pending')");
     $stmt->execute([$userId, $amount]);
