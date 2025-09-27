@@ -14,7 +14,7 @@
 
 // Envoi FCM avec journalisation. Utilise HTTP v1 si un compte de service Firebase est disponible,
 // sinon bascule sur l'API Legacy via FCM_SERVER_KEY.
-function fcm_send_with_log($tokens, $title, $body, $data = [], $coursier_id = null, $order_id = null) {
+function fcm_send_with_log($tokens, $title, $body, $data = [], $coursier_id = null, $commande_id = null) {
     global $pdo;
 
     // Initialiser connexion DB si pas déjà fait
@@ -25,10 +25,11 @@ function fcm_send_with_log($tokens, $title, $body, $data = [], $coursier_id = nu
 
     // Ensure dedicated log table exists to avoid conflicting legacy schemas
     try {
+        // Créer la table avec le schéma aligné sur la documentation (commande_id)
         $pdo->exec("CREATE TABLE IF NOT EXISTS notifications_log_fcm (
             id INT AUTO_INCREMENT PRIMARY KEY,
             coursier_id INT NULL,
-            order_id INT NULL,
+            commande_id INT NULL,
             notification_type VARCHAR(64) NULL,
             title VARCHAR(255) NULL,
             message TEXT NULL,
@@ -38,6 +39,8 @@ function fcm_send_with_log($tokens, $title, $body, $data = [], $coursier_id = nu
             success TINYINT(1) DEFAULT 0,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        // Migration douce: si une ancienne colonne order_id existe et commande_id n'existe pas, l'ajouter
+        try { $pdo->exec("ALTER TABLE notifications_log_fcm ADD COLUMN commande_id INT NULL"); } catch (Throwable $e2) { /* peut déjà exister */ }
     } catch (Throwable $e) {
         // continue without blocking
     }
@@ -73,8 +76,8 @@ function fcm_send_with_log($tokens, $title, $body, $data = [], $coursier_id = nu
         $resp = $result['result'] ?? ($result['error'] ?? null);
 
         if ($pdo && $coursier_id) {
-            $stmt = $pdo->prepare("INSERT INTO {$logTable} (coursier_id, order_id, notification_type, title, message, fcm_tokens_used, fcm_response_code, fcm_response, success) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$coursier_id, $order_id, "new_order", $title, $body, json_encode($tokens), $code, is_string($resp) ? $resp : json_encode($resp), (int) $success]);
+            $stmt = $pdo->prepare("INSERT INTO {$logTable} (coursier_id, commande_id, notification_type, title, message, fcm_tokens_used, fcm_response_code, fcm_response, success) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$coursier_id, $commande_id, "new_order", $title, $body, json_encode($tokens), $code, is_string($resp) ? $resp : json_encode($resp), (int) $success]);
         }
 
         if ($pdo && isset($result['result']) && is_array($result['result'])) {
@@ -88,8 +91,8 @@ function fcm_send_with_log($tokens, $title, $body, $data = [], $coursier_id = nu
     $serverKey = getenv("FCM_SERVER_KEY");
     if (!$serverKey) {
         if ($pdo && $coursier_id) {
-            $stmt = $pdo->prepare("INSERT INTO {$logTable} (coursier_id, order_id, notification_type, title, message, success, fcm_response) VALUES (?, ?, ?, ?, ?, FALSE, ?)");
-            $stmt->execute([$coursier_id, $order_id, "new_order", $title, $body, "FCM_SERVER_KEY manquante et aucun compte service détecté"]);
+            $stmt = $pdo->prepare("INSERT INTO {$logTable} (coursier_id, commande_id, notification_type, title, message, success, fcm_response) VALUES (?, ?, ?, ?, ?, FALSE, ?)");
+            $stmt->execute([$coursier_id, $commande_id, "new_order", $title, $body, "FCM_SERVER_KEY manquante et aucun compte service détecté"]);
         }
         return ["success" => false, "error" => "Aucun moyen FCM configuré (ni HTTP v1, ni legacy).", 'method' => 'none'];
     }
@@ -124,16 +127,16 @@ function fcm_send_with_log($tokens, $title, $body, $data = [], $coursier_id = nu
         $error = curl_error($ch);
         curl_close($ch);
         if ($pdo && $coursier_id) {
-            $stmt = $pdo->prepare("INSERT INTO {$logTable} (coursier_id, order_id, notification_type, title, message, fcm_tokens_used, success, fcm_response) VALUES (?, ?, ?, ?, ?, ?, FALSE, ?)");
-            $stmt->execute([$coursier_id, $order_id, "new_order", $title, $body, json_encode($tokens), $error]);
+            $stmt = $pdo->prepare("INSERT INTO {$logTable} (coursier_id, commande_id, notification_type, title, message, fcm_tokens_used, success, fcm_response) VALUES (?, ?, ?, ?, ?, ?, FALSE, ?)");
+            $stmt->execute([$coursier_id, $commande_id, "new_order", $title, $body, json_encode($tokens), $error]);
         }
         return ["success" => false, "error" => $error, 'method' => 'legacy'];
     }
     curl_close($ch);
     $success = $httpCode >= 200 && $httpCode < 300;
     if ($pdo && $coursier_id) {
-        $stmt = $pdo->prepare("INSERT INTO {$logTable} (coursier_id, order_id, notification_type, title, message, fcm_tokens_used, fcm_response_code, fcm_response, success) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$coursier_id, $order_id, "new_order", $title, $body, json_encode($tokens), $httpCode, $result, (int) $success]);
+        $stmt = $pdo->prepare("INSERT INTO {$logTable} (coursier_id, commande_id, notification_type, title, message, fcm_tokens_used, fcm_response_code, fcm_response, success) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$coursier_id, $commande_id, "new_order", $title, $body, json_encode($tokens), $httpCode, $result, (int) $success]);
     }
     return ["success" => $success, "code" => $httpCode, "result" => $result, 'method' => 'legacy'];
 }
