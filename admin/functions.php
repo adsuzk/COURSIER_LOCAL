@@ -1319,12 +1319,18 @@ function renderHeader() {
                 .sidebar {
                     width: 100%;
                     height: auto;
+                    position: relative;
+                }
+                
+                .main-content {
+                    margin-left: 0;
                 }
                 
                 .sidebar-menu {
                     display: flex;
                     overflow-x: auto;
                     padding: var(--space-3);
+                    height: auto;
                 }
                 
                 .menu-item {
