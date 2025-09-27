@@ -422,6 +422,57 @@ $pdo = getDBConnection();
             </div>
         </div>
 
+        <!-- Résumé de la Découverte Automatique -->
+        <div class="api-section">
+            <h2 class="section-title">
+                <i class="fas fa-radar"></i>
+                Découverte Automatique du Réseau
+            </h2>
+            <p style="color: var(--primary-dark); opacity: 0.8; margin-bottom: 20px;">
+                <i class="fas fa-magic"></i> 
+                Scanner intelligent qui détecte automatiquement tous les composants du système.
+                Idéal pour les non-développeurs pour comprendre l'architecture complète.
+            </p>
+            
+            <div class="status-grid">
+                <div class="status-card success">
+                    <div class="card-header">
+                        <i class="fas fa-plug card-icon"></i>
+                        <div class="card-title">APIs Découvertes</div>
+                    </div>
+                    <div class="card-value"><?= count($discoveredComponents['apis']) ?></div>
+                    <div class="card-description">Endpoints détectés automatiquement</div>
+                </div>
+
+                <div class="status-card success">
+                    <div class="card-header">
+                        <i class="fas fa-tachometer-alt card-icon"></i>
+                        <div class="card-title">Sections Admin</div>
+                    </div>
+                    <div class="card-value"><?= count($discoveredComponents['admin_sections']) ?></div>
+                    <div class="card-description">Interfaces d'administration</div>
+                </div>
+
+                <div class="status-card success">
+                    <div class="card-header">
+                        <i class="fas fa-database card-icon"></i>
+                        <div class="card-title">Tables BDD</div>
+                    </div>
+                    <div class="card-value"><?= count($discoveredComponents['database_tables']) ?></div>
+                    <div class="card-description">Tables base de données</div>
+                </div>
+
+                <div class="status-card success">
+                    <div class="card-header">
+                        <i class="fas fa-tools card-icon"></i>
+                        <div class="card-title">Outils Monitoring</div>
+                    </div>
+                    <div class="card-value"><?= count($discoveredComponents['monitoring']) ?></div>
+                    <div class="card-description">Scripts de diagnostic</div>
+                </div>
+            </div>
+        </div>
+
         <?php
         // === TEST DES APIs ===
         
