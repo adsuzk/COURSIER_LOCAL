@@ -86,9 +86,10 @@ try {
     if ($stmt->execute($commandeData)) {
         $commandeId = $pdo->lastInsertId();
         echo "   ✅ Commande créée avec ID: $commandeId\n";
-        echo "   📍 Départ: {$commandeData['adresse_depart']}\n";
+        echo "   � Code: {$commandeData['code_commande']}\n";
+        echo "   �📍 Départ: {$commandeData['adresse_depart']}\n";
         echo "   📍 Arrivée: {$commandeData['adresse_arrivee']}\n";
-        echo "   💰 Prix: {$commandeData['prix_commande']} FCFA\n";
+        echo "   💰 Prix: {$commandeData['prix_total']} FCFA\n";
     } else {
         echo "   ❌ Erreur création commande\n";
         exit(1);
