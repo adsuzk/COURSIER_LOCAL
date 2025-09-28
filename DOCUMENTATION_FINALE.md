@@ -3,7 +3,19 @@
 
 ---
 
-## 🎯 ARCHITECTURE SYSTÈME RÉVOLUTIONNAIRE
+## 🎯 ARCHITECTURE SYSTÈME RÉVOLUTI## 📱 **INTÉGRATION APP MOBILE CONSOLIDÉE**
+
+### 🎨 **INTERFACE UTILISATEUR MOBILE :**
+- **Menu mobile corrigé** : Boutons connexion/business parfaitement visibles
+- **Responsive design** : Media queries optimisées pour tous écrans
+- **Navigation fluide** : Animations CSS avec classes `active`/`open`
+- **Design premium** : Gradient or/bleu, effets glass morphism
+
+### 🚀 **API MOBILE UNIVERSELLE :**
+- **Endpoint principal :** `api/get_coursier_data.php`
+- **Support complet :** GET, POST form-data, POST JSON (php://input)
+- **Données consolidées :** Profil + Solde + Commandes + Statut
+- **FCM intégré :** Notifications temps réel sécuriséesIRE
 
 ### 🚀 **NOUVEAUTÉS SYSTÈME (28 Sept 2025) :**
 - **🔄 Migrations DB 100% automatiques** : Détection + génération + application sans intervention
@@ -147,24 +159,32 @@ if (isset($_GET['coursier_id'])) {
 - ✅ POST form: `curl -d "coursier_id=5" localhost/COURSIER_LOCAL/api/get_coursier_data.php`
 - ✅ POST JSON: `curl -H "Content-Type: application/json" -d '{"coursier_id":5}' localhost/COURSIER_LOCAL/api/get_coursier_data.php`
 
-### 📱 **CONSOLIDATION DES APIs (Sept 2025) :**
+### � **SYSTÈME MIGRATIONS AUTOMATIQUES (28 Sept 2025) :**
 
-#### **API Unique Consolidée :**
-- ✅ `api/get_coursier_data.php` - **API PRINCIPALE** pour l'app mobile
-  - **Données fournies :** Profil + Solde wallet + Commandes + Statut
-  - **Formats supportés :** GET, POST form-data, POST JSON
-  - **Usage :** Remplace toutes les anciennes APIs de données coursier
+#### **🎆 RÉVOLUTION : ZÉRO-CODE DATABASE MIGRATION**
+- ✅ `Scripts/Scripts cron/auto_migration_generator.php` - **GÉNÉRATEUR INTELLIGENT**
+  - **Détection automatique** des changements de structure DB locale
+  - **Génération automatique** des scripts de migration
+  - **Comparaison INFORMATION_SCHEMA** : Tables, colonnes, index, contraintes
+  - **Logs détaillés** dans `diagnostic_logs/`
 
-#### **APIs Supprimées (consolidées) :**
-- ❌ `get_wallet_balance.php` → Intégrée dans `get_coursier_data.php`
-- ❌ `check_coursier_debug.php` → Fonction déplacée dans `lib/coursier_presence.php`
-- ❌ `check_table_agents.php` → Diagnostic seulement, pas d'usage mobile
+- ✅ `Scripts/Scripts cron/automated_db_migration.php` - **APPLICATEUR LWS**
+  - **Application automatique** des migrations sur serveur production
+  - **Verrouillage MySQL** via `GET_LOCK()` pour éviter conflits
+  - **Gestion d'erreurs robuste** avec rollback
+  - **Logs de migration** dans `db_migrations.log`
 
-#### **Avantages de la consolidation :**
-- **Moins d'appels réseau** : 1 seule requête au lieu de 3-4
-- **Cohérence données** : Toutes les infos depuis la même source
-- **Maintenance simplifiée** : Un seul endpoint à maintenir
-- **Performance améliorée** : Cache et optimisations centralisées
+#### **🛣️ WORKFLOW UTILISATEUR ZÉRO-CODE :**
+1. **Travaillez** normalement avec phpMyAdmin local (ajouts tables, colonnes...)
+2. **Lancez** `BAT/SYNC_COURSIER_PROD.bat` (détecte et génère migrations)
+3. **Uploadez** le dossier `coursier_prod` sur LWS
+4. **CRON LWS** applique automatiquement vos changements DB
+
+#### **🎯 AVANTAGES RÉVOLUTIONNAIRES :**
+- **Zéro SQL à écrire** : Tout est détecté et généré automatiquement
+- **Zéro risque d'erreur** : Comparaison scientifique INFORMATION_SCHEMA
+- **Traçabilité totale** : Chaque migration horodatée et loggée
+- **Sécurité maximale** : Verrouillage base + gestion d'erreurs
 
 ---
 
@@ -175,25 +195,42 @@ if (isset($_GET['coursier_id'])) {
 
 ---
 
-## 🔧 FONCTIONS PRINCIPALES
+## 🔧 FONCTIONS PRINCIPALES AUTO-PILOTÉES
 
-### getConnectedCouriers($pdo)
+### 🔄 Auto-Migration System
 ```php
-// UTILISATION STANDARD
-$coursiersActifs = getConnectedCouriers($pdo);
+// GÉNÉRATEUR (auto_migration_generator.php)
+class AutoMigrationGenerator {
+    public function detectChanges() {
+        // 1. Analyse INFORMATION_SCHEMA actuelle
+        // 2. Compare avec snapshot sauvegardé
+        // 3. Génère ID migration horodaté
+        // 4. Sauvegarde nouveau snapshot
+    }
+}
 
-// LOGIQUE INTERNE :
-// 1. autoCleanExpiredStatuses() → Nettoie base automatiquement  
-// 2. Filtrage intelligent : token + statut + activité < 30min
-// 3. Retour : Coursiers réellement connectés uniquement
+// APPLICATEUR LWS (automated_db_migration.php)
+class DatabaseMigrator {
+    public function applyMigrations() {
+        // 1. Verrouillage MySQL GET_LOCK('db_migration', 10)
+        // 2. Application séquentielle des migrations
+        // 3. Logging détaillé + gestion erreurs
+        // 4. Libération verrou
+    }
+}
 ```
 
-### autoCleanExpiredStatuses($pdo) 
+### 🔍 Surveillance Automatique
 ```php
-// NETTOYAGE AUTOMATIQUE (interne)
-// - Statuts 'en_ligne' > 30min → 'hors_ligne'  
-// - Sessions expirées → NULL
-// - Exécution : À chaque appel getConnectedCouriers()
+// FCM Security (fcm_token_security.php)
+class FCMTokenSecurity {
+    public function enforceTokenSecurity() {
+        // 1. autoCleanExpiredStatuses() → Nettoie statuts expirés
+        // 2. Filtrage intelligent : token + statut + activité < 30min
+        // 3. Désactivation tokens coursiers déconnectés
+        // 4. Retour : Coursiers réellement disponibles uniquement
+    }
+}
 ```
 
 ---
