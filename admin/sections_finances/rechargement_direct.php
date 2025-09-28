@@ -166,9 +166,6 @@ foreach ($allCoursiers as $coursier) {
     ]);
 }
 
-// UTILISER LA MÊME LOGIQUE QUE LA PAGE COMMANDES (SOURCE UNIQUE DE VÉRITÉ)
-$coursiersConnectes = getConnectedCouriers($pdo);
-
 // Statistiques rapides
 $totalCoursiers = count($coursiers);
 $coursiersAvecSolde = array_filter($coursiers, fn($c) => ($c['solde'] ?? 0) > 0);
