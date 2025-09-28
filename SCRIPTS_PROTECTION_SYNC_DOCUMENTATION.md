@@ -135,6 +135,11 @@ Synchronisation manuelle        → SYNC_COURSIER_PROD_SIMPLE.ps1
 Get-ChildItem "C:\xampp\htdocs\coursier_prod" -Recurse -Name "*test*", "*debug*", "*cli_*" | Where-Object { $_ -notlike "*vendor*" }
 ```
 
+### 🌐 Spécificités LWS (MàJ 28/09/2025)
+- Suppression automatique de `default_index.html` dans `coursier_prod` afin que `index.php` soit immédiatement servi après upload.
+- Génération/actualisation de `FORCE_PRODUCTION_DB` pour forcer la configuration MySQL de production lors des exécutions CLI/CRON sur LWS.
+- Préservation du dossier `Scripts/` (cron PHP) : les scripts critiques (`fcm_token_security.php`, `secure_order_assignment.php`, `fcm_auto_cleanup.php`, `automated_db_migration.php`) sont désormais regroupés dans `Scripts/Scripts cron/` ; les anciens points d'entrée à la racine ne sont plus que des shims de compatibilité.
+
 ---
 
 ## 🔧 CONFIGURATION ET PERSONNALISATION
