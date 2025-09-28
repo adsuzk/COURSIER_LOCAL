@@ -197,10 +197,11 @@ agents_suzosky:
 	- `device_tokens` (token actif obligatoire)
 	- `notifications_log_fcm` (statistiques historiques)
 - **Consommateurs actuels** :
-	- `admin_commandes_enhanced.php` (tableau commandes)
-	- `admin/sections_finances/rechargement_direct.php` (liste finances + rechargements)
+    - `admin_commandes_enhanced.php` → front-end JS interroge `api/coursiers_connectes.php`
+    - `admin/sections_finances/rechargement_direct.php` → rafraîchissement temps réel via l'API dédiée
+    - `admin/dashboard_suzosky_modern.php` → cartes et compteurs synchronisés avec la même API
 - **Bonnes pratiques** :
-	- Pour afficher ou filtrer les coursiers connectés, importer le helper et utiliser ces fonctions.
+    - Pour afficher ou filtrer la présence, consommer l'API `api/coursiers_connectes.php` (retour JSON avec `data[]`, `meta.total`, `meta.fcm_summary`).
 	- Ne plus appeler directement d'anciennes routes comme `check_table_agents.php`, `check_coursier_debug.php`, etc. → elles sont conservées uniquement pour diagnostic ponctuel.
 
 ---
