@@ -1,5 +1,5 @@
 # DOCUMENTATION - SCRIPTS BAT SUZOSKY
-**Date de mise à jour : 27 Septembre 2025**
+**Date de mise à jour : 28 Septembre 2025**
 
 ## Architecture Corrigée - Deux Scripts Distincts
 
