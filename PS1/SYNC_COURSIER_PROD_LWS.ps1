@@ -60,7 +60,7 @@ $robocopyArgs = @(
 # Ajout des exclusions de dossiers
 $robocopyArgs += @(".git", "node_modules", "CoursierAppV7", "CoursierSuzoskyApp Clt", 
                   "Applications", "DOCUMENTATION_FINALE", "Tests", "tools", 
-                  "uploads\temp", "BAT", "PS1")
+                  "uploads\temp", "BAT", "PS1", "_sql")
 
 # Ajout des exclusions de fichiers
 $robocopyArgs += "/XF"
