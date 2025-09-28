@@ -1884,7 +1884,7 @@ $newAgentsThisMonth = count(array_filter($agents, fn($a) => isset($a['created_at
 
   <!-- TABLEAU COURSIEURS -->
   <div id="coursiers" class="tab-content active">
-    <div class="table-container">
+    <div class="table-container" style="width: calc(100% + 200px); margin-left: -200px;">
       <table class="data-table" id="coursiersTable">
         <thead>
           <tr>
@@ -1920,7 +1920,7 @@ $newAgentsThisMonth = count(array_filter($agents, fn($a) => isset($a['created_at
 
   <!-- TABLEAU CONCIÈRGES -->
   <div id="concierges" class="tab-content">
-    <div class="table-container">
+    <div class="table-container" style="width: calc(100% + 200px); margin-left: -200px;">
       <table class="data-table" id="conciergesTable">
         <thead>
           <tr>
