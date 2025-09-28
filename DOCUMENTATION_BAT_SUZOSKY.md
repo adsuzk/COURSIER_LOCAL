@@ -107,7 +107,7 @@ coursier_prod/
 	```powershell
 	C:\xampp\php\php.exe Scripts\Scripts cron\automated_db_migration.php
 	```
-4. **Vérifier** la structure dans coursier_prod puis uploader vers LWS
+4. **Vérifier** la structure dans coursier_prod puis **uploader uniquement le contenu interne** (fichiers + sous-dossiers) vers la racine du site LWS
 5. **Redémarrer** PROTECTION_GITHUB.bat
 
 ---
