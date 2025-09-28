@@ -148,11 +148,16 @@ Après SYNC_COURSIER_PROD.bat, vérifier :
 
 ## Historique des Versions
 
+### Version 28 Septembre 2025 :
+- ✅ **Dossier PS1/** : Isolation complète des scripts PowerShell
+- ✅ **Migrations automatiques** : Détection + génération sans intervention
+- ✅ **Sécurité renforcée** : Aucun .ps1 déployé en production
+- ✅ **Structure optimisée** : Scripts PHP cron séparés des utilitaires PowerShell
+
 ### Version 27 Septembre 2025 :
-- ✅ Séparation complète des deux scripts
+- ✅ Séparation complète des deux scripts BAT
 - ✅ Correction confusion protection + sync
 - ✅ Structure LWS optimisée
-- ✅ Documentation complète mise à jour
 
-**Fichiers supprimés** : `PROTECTION_AUTO.bat` (créait confusion)
-**Nouveaux fichiers** : `PROTECTION_GITHUB.bat` + `SYNC_COURSIER_PROD.bat`
+**Évolution architecture** : `scripts/*.ps1` → `PS1/*.ps1` (isolation sécurisée)
+**Nouveaux systèmes** : Auto-migration + génération intelligente
