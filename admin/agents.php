@@ -2205,4 +2205,8 @@ document.addEventListener('DOMContentLoaded', function(){
         }, index * 100);
     });
 
-    // Charger immédiate
+    // Charger immédiatement à l'ouverture
+    refreshAgents();
+});
+</script>
+
