@@ -183,7 +183,6 @@ $devFiles = $rootFiles | Where-Object {
 }
 
 if ($devFiles.Count -eq 0) {
-if ($devFiles.Count -eq 0) {
     Write-Host "Structure parfaitement propre pour LWS !" -ForegroundColor Green
     Write-Host "- Aucun fichier de developpement à la racine" -ForegroundColor Green
     Write-Host "- Tests/debug dans dossier Tests/" -ForegroundColor Green
