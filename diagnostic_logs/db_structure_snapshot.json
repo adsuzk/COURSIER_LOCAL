@@ -74,6 +74,7 @@
         "support_messages",
         "system_sync_heartbeats",
         "tarifs",
+        "test_auto_migration",
         "tracking_coursiers",
         "transactions",
         "transactions_financieres"
@@ -6883,6 +6884,40 @@
                 "COLUMN_COMMENT": ""
             }
         ],
+        "test_auto_migration": [
+            {
+                "COLUMN_NAME": "id",
+                "COLUMN_TYPE": "int(11)",
+                "IS_NULLABLE": "NO",
+                "COLUMN_DEFAULT": null,
+                "EXTRA": "auto_increment",
+                "COLUMN_COMMENT": ""
+            },
+            {
+                "COLUMN_NAME": "nom",
+                "COLUMN_TYPE": "varchar(100)",
+                "IS_NULLABLE": "NO",
+                "COLUMN_DEFAULT": null,
+                "EXTRA": "",
+                "COLUMN_COMMENT": ""
+            },
+            {
+                "COLUMN_NAME": "email",
+                "COLUMN_TYPE": "varchar(150)",
+                "IS_NULLABLE": "YES",
+                "COLUMN_DEFAULT": "NULL",
+                "EXTRA": "",
+                "COLUMN_COMMENT": ""
+            },
+            {
+                "COLUMN_NAME": "created_at",
+                "COLUMN_TYPE": "timestamp",
+                "IS_NULLABLE": "NO",
+                "COLUMN_DEFAULT": "current_timestamp()",
+                "EXTRA": "",
+                "COLUMN_COMMENT": ""
+            }
+        ],
         "tracking_coursiers": [
             {
                 "COLUMN_NAME": "id",
@@ -8987,6 +9022,20 @@
             }
         },
         "tarifs": {
+            "PRIMARY": {
+                "columns": [
+                    "id"
+                ],
+                "unique": true
+            }
+        },
+        "test_auto_migration": {
+            "email": {
+                "columns": [
+                    "email"
+                ],
+                "unique": true
+            },
             "PRIMARY": {
                 "columns": [
                     "id"

@@ -2,125 +2,192 @@
 declare(strict_types=1);
 
 /**
- * Déclarations de migrations pour l'automate de mise à jour SQL.
- * Chaque migration est décrite via un tableau associatif contenant :
- *   - id (string) identifiant unique, ordre assuré par tri alphabétique
- *   - description (string) résumé humain de l'évolution
- *   - steps (array) liste ordonnée des opérations à exécuter
- *
- * Types de step pris en charge :
- *   • ensureTable   : crée la table si elle n'existe pas (requires table & createStatement)
- *   • ensureColumn  : ajoute une colonne si absente (requires table, column, definition)
- *   • ensureIndex   : ajoute un index si absent (requires table, index, columns[], unique=false)
- *   • runSql        : exécute une requête brute (requires sql, optionnels skipIf/onlyIf)
- *
- * Les conditions skipIf/onlyIf acceptent les clés suivantes :
- *   - tableExists => 'nom_table'
- *   - columnExists => ['table' => 'nom', 'column' => 'colonne']
- *   - indexExists => ['table' => 'nom', 'index' => 'index_name']
- *
- * Toutes les requêtes doivent être idempotentes pour éviter les effets de bord.
+ * MIGRATIONS AUTO-GÉNÉRÉES
+ * Fichier mis à jour automatiquement le 2025-09-28 05:49:50
+ * Détection automatique des changements de structure
  */
 
-return [
-    [
-        'id' => '2024_10_05_001_device_tokens_structure',
-        'description' => 'Sécurise la structure critique de device_tokens (colonnes + normalisation).',
-        'steps' => [
-            [
-                'type' => 'ensureColumn',
-                'table' => 'device_tokens',
-                'column' => 'device_type',
-                'definition' => "VARCHAR(50) NOT NULL DEFAULT 'mobile' AFTER `token`",
-                'onlyIf' => ['tableExists' => 'device_tokens'],
-            ],
-            [
-                'type' => 'ensureColumn',
-                'table' => 'device_tokens',
-                'column' => 'is_active',
-                'definition' => "TINYINT(1) NOT NULL DEFAULT 1 AFTER `device_type`",
-                'onlyIf' => ['tableExists' => 'device_tokens'],
-            ],
-            [
-                'type' => 'ensureColumn',
-                'table' => 'device_tokens',
-                'column' => 'device_info',
-                'definition' => 'TEXT NULL AFTER `is_active`',
-                'onlyIf' => ['tableExists' => 'device_tokens'],
-            ],
-            [
-                'type' => 'ensureColumn',
-                'table' => 'device_tokens',
-                'column' => 'last_ping',
-                'definition' => 'TIMESTAMP NULL DEFAULT NULL AFTER `device_info`',
-                'onlyIf' => ['tableExists' => 'device_tokens'],
-            ],
-            [
-                'type' => 'runSql',
-                'label' => 'Normalisation valeurs NULL',
-                'sql' => "UPDATE device_tokens SET is_active = 1, device_type = COALESCE(device_type, 'mobile'), last_ping = COALESCE(last_ping, NOW()) WHERE is_active IS NULL OR device_type IS NULL OR last_ping IS NULL",
-                'onlyIf' => ['tableExists' => 'device_tokens'],
-            ],
-        ],
-    ],
-    [
-        'id' => '2024_10_05_002_device_tokens_indexes',
-        'description' => 'Ajoute les index critiques sur device_tokens pour la sécurité et la vitesse.',
-        'steps' => [
-            [
-                'type' => 'ensureIndex',
-                'table' => 'device_tokens',
-                'index' => 'idx_device_tokens_coursier_active',
-                'columns' => ['coursier_id', 'is_active'],
-                'onlyIf' => ['tableExists' => 'device_tokens'],
-            ],
-            [
-                'type' => 'ensureIndex',
-                'table' => 'device_tokens',
-                'index' => 'idx_device_tokens_last_ping',
-                'columns' => ['last_ping'],
-                'onlyIf' => ['tableExists' => 'device_tokens'],
-            ],
-        ],
-    ],
-    [
-        'id' => '2024_10_05_003_agents_connectivity_safety',
-        'description' => 'Garantit les champs de suivi de connexion des coursiers.',
-        'steps' => [
-            [
-                'type' => 'ensureColumn',
-                'table' => 'agents_suzosky',
-                'column' => 'current_session_token',
-                'definition' => 'VARCHAR(255) NULL DEFAULT NULL AFTER `statut_connexion`',
-                'onlyIf' => ['tableExists' => 'agents_suzosky'],
-            ],
-            [
-                'type' => 'ensureColumn',
-                'table' => 'agents_suzosky',
-                'column' => 'last_login_at',
-                'definition' => 'DATETIME NULL DEFAULT NULL AFTER `current_session_token`',
-                'onlyIf' => ['tableExists' => 'agents_suzosky'],
-            ],
-            [
-                'type' => 'ensureColumn',
-                'table' => 'agents_suzosky',
-                'column' => 'last_logout_at',
-                'definition' => 'DATETIME NULL DEFAULT NULL AFTER `last_login_at`',
-                'onlyIf' => ['tableExists' => 'agents_suzosky'],
-            ],
-            [
-                'type' => 'ensureIndex',
-                'table' => 'agents_suzosky',
-                'index' => 'idx_agents_statut_connexion',
-                'columns' => ['statut_connexion'],
-                'onlyIf' => ['tableExists' => 'agents_suzosky'],
-            ],
-            [
-                'type' => 'runSql',
-                'label' => 'Normalisation statut connexion',
-                'sql' => "UPDATE agents_suzosky SET statut_connexion = COALESCE(statut_connexion, 'hors_ligne') WHERE statut_connexion IS NULL",
-                'onlyIf' => ['tableExists' => 'agents_suzosky'],
-            ],
-        ],
-    ],
-];
+return array (
+  0 => 
+  array (
+    'id' => '2024_10_05_001_device_tokens_structure',
+    'description' => 'Sécurise la structure critique de device_tokens (colonnes + normalisation).',
+    'steps' => 
+    array (
+      0 => 
+      array (
+        'type' => 'ensureColumn',
+        'table' => 'device_tokens',
+        'column' => 'device_type',
+        'definition' => 'VARCHAR(50) NOT NULL DEFAULT \'mobile\' AFTER `token`',
+        'onlyIf' => 
+        array (
+          'tableExists' => 'device_tokens',
+        ),
+      ),
+      1 => 
+      array (
+        'type' => 'ensureColumn',
+        'table' => 'device_tokens',
+        'column' => 'is_active',
+        'definition' => 'TINYINT(1) NOT NULL DEFAULT 1 AFTER `device_type`',
+        'onlyIf' => 
+        array (
+          'tableExists' => 'device_tokens',
+        ),
+      ),
+      2 => 
+      array (
+        'type' => 'ensureColumn',
+        'table' => 'device_tokens',
+        'column' => 'device_info',
+        'definition' => 'TEXT NULL AFTER `is_active`',
+        'onlyIf' => 
+        array (
+          'tableExists' => 'device_tokens',
+        ),
+      ),
+      3 => 
+      array (
+        'type' => 'ensureColumn',
+        'table' => 'device_tokens',
+        'column' => 'last_ping',
+        'definition' => 'TIMESTAMP NULL DEFAULT NULL AFTER `device_info`',
+        'onlyIf' => 
+        array (
+          'tableExists' => 'device_tokens',
+        ),
+      ),
+      4 => 
+      array (
+        'type' => 'runSql',
+        'label' => 'Normalisation valeurs NULL',
+        'sql' => 'UPDATE device_tokens SET is_active = 1, device_type = COALESCE(device_type, \'mobile\'), last_ping = COALESCE(last_ping, NOW()) WHERE is_active IS NULL OR device_type IS NULL OR last_ping IS NULL',
+        'onlyIf' => 
+        array (
+          'tableExists' => 'device_tokens',
+        ),
+      ),
+    ),
+  ),
+  1 => 
+  array (
+    'id' => '2024_10_05_002_device_tokens_indexes',
+    'description' => 'Ajoute les index critiques sur device_tokens pour la sécurité et la vitesse.',
+    'steps' => 
+    array (
+      0 => 
+      array (
+        'type' => 'ensureIndex',
+        'table' => 'device_tokens',
+        'index' => 'idx_device_tokens_coursier_active',
+        'columns' => 
+        array (
+          0 => 'coursier_id',
+          1 => 'is_active',
+        ),
+        'onlyIf' => 
+        array (
+          'tableExists' => 'device_tokens',
+        ),
+      ),
+      1 => 
+      array (
+        'type' => 'ensureIndex',
+        'table' => 'device_tokens',
+        'index' => 'idx_device_tokens_last_ping',
+        'columns' => 
+        array (
+          0 => 'last_ping',
+        ),
+        'onlyIf' => 
+        array (
+          'tableExists' => 'device_tokens',
+        ),
+      ),
+    ),
+  ),
+  2 => 
+  array (
+    'id' => '2024_10_05_003_agents_connectivity_safety',
+    'description' => 'Garantit les champs de suivi de connexion des coursiers.',
+    'steps' => 
+    array (
+      0 => 
+      array (
+        'type' => 'ensureColumn',
+        'table' => 'agents_suzosky',
+        'column' => 'current_session_token',
+        'definition' => 'VARCHAR(255) NULL DEFAULT NULL AFTER `statut_connexion`',
+        'onlyIf' => 
+        array (
+          'tableExists' => 'agents_suzosky',
+        ),
+      ),
+      1 => 
+      array (
+        'type' => 'ensureColumn',
+        'table' => 'agents_suzosky',
+        'column' => 'last_login_at',
+        'definition' => 'DATETIME NULL DEFAULT NULL AFTER `current_session_token`',
+        'onlyIf' => 
+        array (
+          'tableExists' => 'agents_suzosky',
+        ),
+      ),
+      2 => 
+      array (
+        'type' => 'ensureColumn',
+        'table' => 'agents_suzosky',
+        'column' => 'last_logout_at',
+        'definition' => 'DATETIME NULL DEFAULT NULL AFTER `last_login_at`',
+        'onlyIf' => 
+        array (
+          'tableExists' => 'agents_suzosky',
+        ),
+      ),
+      3 => 
+      array (
+        'type' => 'ensureIndex',
+        'table' => 'agents_suzosky',
+        'index' => 'idx_agents_statut_connexion',
+        'columns' => 
+        array (
+          0 => 'statut_connexion',
+        ),
+        'onlyIf' => 
+        array (
+          'tableExists' => 'agents_suzosky',
+        ),
+      ),
+      4 => 
+      array (
+        'type' => 'runSql',
+        'label' => 'Normalisation statut connexion',
+        'sql' => 'UPDATE agents_suzosky SET statut_connexion = COALESCE(statut_connexion, \'hors_ligne\') WHERE statut_connexion IS NULL',
+        'onlyIf' => 
+        array (
+          'tableExists' => 'agents_suzosky',
+        ),
+      ),
+    ),
+  ),
+  3 => 
+  array (
+    'id' => '2025_09_28_054950_auto_sync',
+    'description' => 'Synchronisation automatique - 1 changements détectés',
+    'steps' => 
+    array (
+      0 => 
+      array (
+        'type' => 'runSql',
+        'label' => 'Création automatique de la table test_auto_migration',
+        'sql' => 'SELECT \'Table test_auto_migration détectée lors de la synchronisation\' AS info',
+        'onlyIf' => 
+        array (
+          'tableExists' => 'test_auto_migration',
+        ),
+      ),
+    ),
+  ),
+);
