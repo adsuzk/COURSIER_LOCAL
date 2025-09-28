@@ -79,18 +79,28 @@ function tableExists(PDO $pdo, string $table): bool
 
 function columnExists(PDO $pdo, string $table, string $column): bool
 {
-    $escapedTable = str_replace('`', '``', $table);
-    $stmt = $pdo->prepare("SHOW COLUMNS FROM `{$escapedTable}` LIKE ?");
-    $stmt->execute([$column]);
-    return (bool) $stmt->fetchColumn();
+    $stmt = $pdo->prepare("
+        SELECT COUNT(*) 
+        FROM INFORMATION_SCHEMA.COLUMNS 
+        WHERE TABLE_SCHEMA = DATABASE() 
+        AND TABLE_NAME = ? 
+        AND COLUMN_NAME = ?
+    ");
+    $stmt->execute([$table, $column]);
+    return (int) $stmt->fetchColumn() > 0;
 }
 
 function indexExists(PDO $pdo, string $table, string $index): bool
 {
-    $escapedTable = str_replace('`', '``', $table);
-    $stmt = $pdo->prepare("SHOW INDEX FROM `{$escapedTable}` WHERE Key_name = ?");
-    $stmt->execute([$index]);
-    return (bool) $stmt->fetchColumn();
+    $stmt = $pdo->prepare("
+        SELECT COUNT(*) 
+        FROM INFORMATION_SCHEMA.STATISTICS 
+        WHERE TABLE_SCHEMA = DATABASE() 
+        AND TABLE_NAME = ? 
+        AND INDEX_NAME = ?
+    ");
+    $stmt->execute([$table, $index]);
+    return (int) $stmt->fetchColumn() > 0;
 }
 
 function getAppliedStatus(PDO $pdo, string $id): ?string
