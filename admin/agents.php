@@ -776,15 +776,7 @@ $totalConcierges = count($concierges);
 $newAgentsThisMonth = count(array_filter($agents, fn($a) => isset($a['created_at']) && date('Y-m', strtotime($a['created_at'])) === date('Y-m')));
 ?>
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administration Suzosky</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
+<style>
         /* === VARIABLES CSS SUZOSKY === */
         :root {
             /* COULEURS OFFICIELLES */
@@ -1772,16 +1764,8 @@ $newAgentsThisMonth = count(array_filter($agents, fn($a) => isset($a['created_at
             transform: translateY(-2px);
         }
     </style>
-</head>
-<body>
-    <!-- Inline sidebar removed to avoid duplicate primary navigation -->
-    <!-- Rely on global navigation sidebar loaded elsewhere -->
-    
-    <div class="main-content">
-        <!-- header local supprimé, on utilise renderHeader() global -->
-        <div class="content-area fade-in">
 
-    <div id="agents" class="content-section agents-content-wrapper">
+<div id="agents" class="content-section agents-content-wrapper fade-in">
         <!-- HEADER AVEC ACTIONS (inline) -->
         <div class="section-header">
                 <div class="header-actions">
