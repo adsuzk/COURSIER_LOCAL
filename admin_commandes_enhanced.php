@@ -1135,6 +1135,12 @@ body.admin-commandes-page {
     margin-top: 2px;
 }
 
+.coursier-meta {
+    color: #718096;
+    font-size: 0.7em;
+    margin-top: 2px;
+}
+
 .coursier-badges {
     display: flex;
     align-items: center;
