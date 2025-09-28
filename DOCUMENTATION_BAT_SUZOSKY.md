@@ -103,8 +103,12 @@ coursier_prod/
 ### Déploiement production :
 1. **Arrêter** la protection GitHub (CTRL+C)
 2. **Exécuter SYNC_COURSIER_PROD.bat** pour synchroniser
-3. **Vérifier** la structure dans coursier_prod
-4. **Redémarrer** PROTECTION_GITHUB.bat
+3. **Lancer** la migration automatique :
+	```powershell
+	C:\xampp\php\php.exe Scripts\Scripts cron\automated_db_migration.php
+	```
+4. **Vérifier** la structure dans coursier_prod puis uploader vers LWS
+5. **Redémarrer** PROTECTION_GITHUB.bat
 
 ---
 
