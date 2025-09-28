@@ -96,7 +96,7 @@ foreach ($folder in $lwsFolders) {
     }
 }
 
-@# Fichiers critiques qui restent à la racine même s'ils ressemblent à des outils de diagnostic
+# Fichiers critiques qui restent à la racine même s'ils ressemblent à des outils de diagnostic
 $productionSafeRootFiles = @(
     "fcm_daily_diagnostic.php",
     "fcm_auto_cleanup.php",
