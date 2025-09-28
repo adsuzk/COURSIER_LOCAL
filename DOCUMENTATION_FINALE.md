@@ -393,9 +393,11 @@ $stmt = $pdo->prepare("SELECT solde_wallet FROM agents_suzosky WHERE id = ?");
 ### � **Surveillance Automatique de Sécurité (NOUVEAU)**
 
 #### **Scripts de sécurité critique :**
-- **`fcm_token_security.php`** : Contrôle et nettoyage sécurité FCM
+- **`fcm_token_security.php`** : Contrôle et nettoyage sécurité FCM *(mode silencieux par défaut côté web, logs détaillés uniquement en CLI via option `verbose`)*
 - **`secure_order_assignment.php`** : Assignation sécurisée des commandes  
 - **`fcm_auto_cleanup.php`** : Nettoyage automatique (CRON toutes les 5min)
+
+> ℹ️ **Mise à jour 28 sept. 2025** : La classe `FCMTokenSecurity` accepte désormais un paramètre `['verbose' => bool]`. Toutes les interfaces web (dont `index.php`) l'instancient sans verbose afin d'éviter tout flash visuel, tandis que les exécutions CLI (`php fcm_token_security.php`, CRON) continuent d'afficher le rapport complet.
 
 #### **Configuration CRON recommandée :**
 ```bash
