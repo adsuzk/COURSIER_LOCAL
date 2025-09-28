@@ -73,6 +73,8 @@ coursier_prod/
 ├── 📄 coursier.php    ← Interface coursier
 ├── 📄 admin.php       ← Interface admin
 └── ... (autres fichiers de production)
+
+> 📦 **Déploiement LWS :** transférer ces éléments individuellement (contenu du dossier `coursier_prod`, pas le dossier parent) vers le répertoire web distant.
 ```
 
 ### Exclusions automatiques :
