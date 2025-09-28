@@ -1,0 +1,7 @@
+[2025-09-28 05:30:11] [INFO] ➡️  Début migration 2024_10_05_001_device_tokens_structure: Sécurise la structure critique de device_tokens (colonnes + normalisation).
+[2025-09-28 05:30:11] [ERROR]    ✖ SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '?' at line 1
+[2025-09-28 05:30:11] [ERROR] ❌ Migration 2024_10_05_001_device_tokens_structure échouée (durée 11ms).
+[2025-09-28 05:30:11] [INFO] ---- RÉCAPITULATIF ----
+[2025-09-28 05:30:11] [INFO] Appliquées : aucune
+[2025-09-28 05:30:11] [INFO] Ignorées  : aucune
+[2025-09-28 05:30:11] [ERROR] Échecs    : 2024_10_05_001_device_tokens_structure
