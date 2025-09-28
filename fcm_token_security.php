@@ -4,4 +4,43 @@
  * Les scripts FCM résident désormais dans Scripts/Scripts cron
  */
 
-require_once __DIR__ . '/Scripts/Scripts cron/fcm_token_security.php';
+$newPath = __DIR__ . '/Scripts/Scripts cron/fcm_token_security.php';
+if (file_exists($newPath)) {
+    require_once $newPath;
+} else {
+    // Fallback si le fichier cible n'existe pas (déploiement incomplet)
+    error_log('[COMPAT] fcm_token_security.php redirect failed - target missing: ' . $newPath);
+    
+    if (!class_exists('FCMTokenSecurity')) {
+        // Classe de secours minimale pour éviter les fatal errors
+        class FCMTokenSecurity {
+            private bool $verbose;
+            
+            public function __construct(array $options = []) {
+                $this->verbose = (bool)($options['verbose'] ?? false);
+            }
+            
+            public function enforceTokenSecurity(): array {
+                return [
+                    'tokens_disabled' => 0,
+                    'sessions_cleaned' => 0,
+                    'security_violations' => [],
+                    'timestamp' => date('Y-m-d H:i:s'),
+                    'fallback_mode' => true
+                ];
+            }
+            
+            public function canAcceptNewOrders(): array {
+                return [
+                    'can_accept_orders' => true,
+                    'available_coursiers' => 0,
+                    'fallback_mode' => true
+                ];
+            }
+            
+            public function getUnavailabilityMessage(): string {
+                return 'Service en maintenance technique.';
+            }
+        }
+    }
+}
