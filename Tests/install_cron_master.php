@@ -159,7 +159,7 @@
             <div class="cron-command">
 * * * * * /usr/bin/php /home/coursier/public_html/Scripts/Scripts\ cron/cron_master.php
             </div>
-            <p><strong>Explication :</strong> Exécute toutes les 2 minutes, mais les tâches s'adaptent automatiquement selon leur fréquence nécessaire.</p>
+            <p><strong>Explication :</strong> Exécute chaque minute pour une réactivité maximale, les tâches s'adaptent automatiquement selon leur fréquence nécessaire.</p>
         </div>
 
         <div class="step">
@@ -179,8 +179,8 @@ crontab -e
             <ul>
                 <li>Allez dans "Tâches CRON" ou "CRON Jobs"</li>
                 <li>Cliquez sur "Ajouter une tâche"</li>
-                <li>Fréquence : <strong>Toutes les 2 minutes</strong></li>
-                <li>Commande : <code>/usr/bin/php /home/coursier/public_html/Tests/cron_master.php</code></li>
+                <li>Fréquence : <strong>Chaque minute</strong></li>
+                <li>Commande : <code>/usr/bin/php /home/coursier/public_html/Scripts/Scripts\ cron/cron_master.php</code></li>
             </ul>
         </div>
 
@@ -194,7 +194,7 @@ crontab -e
             <div class="step-number">4</div>
             <h3>Tâches Automatiques Incluses</h3>
             <ul>
-                <li><strong>Toutes les 2min :</strong> Assignation commandes, Surveillance temps réel</li>
+                <li><strong>Chaque minute :</strong> Assignation commandes, Surveillance temps réel, Assignation sécurisée</li>
                 <li><strong>Toutes les 5min :</strong> MAJ statuts coursiers</li>
                 <li><strong>Toutes les 15min :</strong> Nettoyage statuts</li>
                 <li><strong>Toutes les heures :</strong> Sécurité FCM, Nettoyage tokens, Vérification système</li>
