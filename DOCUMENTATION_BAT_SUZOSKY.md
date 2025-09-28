@@ -47,6 +47,7 @@ C:\xampp\htdocs\COURSIER_LOCAL\BAT\PROTECTION_GITHUB.bat
 - ✅ **Déplacement des scripts** vers dossier scripts/
 - ✅ **Racine propre** sans fichiers de développement
 - ✅ **Configuration LWS** appliquée automatiquement
+- ✅ **Fichiers critiques `diagnostic_logs/*.php`** conservés pour `index.php`
 
 ### Utilisation :
 ```batch
