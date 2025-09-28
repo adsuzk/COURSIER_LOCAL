@@ -41,3 +41,10 @@
 [2025-09-28 05:33:34] [INFO] Appliquées : 2024_10_05_001_device_tokens_structure, 2024_10_05_002_device_tokens_indexes, 2024_10_05_003_agents_connectivity_safety
 [2025-09-28 05:33:34] [INFO] Ignorées  : aucune
 [2025-09-28 05:33:34] [INFO] Échecs    : aucun
+[2025-09-28 05:33:52] [INFO] ➡️  Migration 2024_10_05_001_device_tokens_structure déjà appliquée - ignorée.
+[2025-09-28 05:33:52] [INFO] ➡️  Migration 2024_10_05_002_device_tokens_indexes déjà appliquée - ignorée.
+[2025-09-28 05:33:52] [INFO] ➡️  Migration 2024_10_05_003_agents_connectivity_safety déjà appliquée - ignorée.
+[2025-09-28 05:33:52] [INFO] ---- RÉCAPITULATIF ----
+[2025-09-28 05:33:52] [INFO] Appliquées : aucune
+[2025-09-28 05:33:52] [INFO] Ignorées  : 2024_10_05_001_device_tokens_structure, 2024_10_05_002_device_tokens_indexes, 2024_10_05_003_agents_connectivity_safety
+[2025-09-28 05:33:52] [INFO] Échecs    : aucun
