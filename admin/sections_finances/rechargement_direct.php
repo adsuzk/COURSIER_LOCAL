@@ -453,7 +453,7 @@ include __DIR__ . '/../functions.php';
                     <div class="stat-label">Total Coursiers</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number"><?= count($coursiersConnectes) ?></div>
+                    <div class="stat-number"><span data-connected-count>--</span></div>
                     <div class="stat-label">Connectés</div>
                 </div>
                 <div class="stat-card">
