@@ -599,6 +599,36 @@ body {
     width: 100%;
 }
 
+/* Style pour le bouton de déconnexion mobile */
+.mobile-menu-auth .nav-logout {
+    display: block;
+    text-align: center;
+    padding: 14px 20px;
+    background: var(--accent-red);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(233, 69, 96, 0.3);
+    margin-top: 8px;
+}
+
+.mobile-menu-auth .nav-logout:hover {
+    background: var(--secondary-blue);
+    color: var(--primary-gold);
+    border-color: var(--primary-gold);
+    transform: translateY(-1px);
+}
+
+/* Amélioration de l'espacement dans la section auth mobile */
+.mobile-menu-auth .auth-state {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
 /* Styles pour utilisateur connecté mobile */
 .mobile-user-profile {
     display: flex;
