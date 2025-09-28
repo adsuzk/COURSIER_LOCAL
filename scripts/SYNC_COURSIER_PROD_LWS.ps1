@@ -43,7 +43,7 @@ $exclusions = @(
     "find_*", "fix_*", "search_*", "test_*", "*_debug*", "*_test*",
     ".git", ".gitignore", "node_modules", "vendor\composer\installed.json",
     "CoursierAppV7", "CoursierSuzoskyApp*", "Applications", "DOCUMENTATION_FINALE",
-    "Tests", "tools", "uploads\temp", "diagnostic_logs", "BAT"
+    "Tests", "tools", "uploads\temp", "BAT"
 )
 
 # Construction de la commande robocopy avec exclusions
@@ -60,7 +60,7 @@ $robocopyArgs = @(
 # Ajout des exclusions de dossiers
 $robocopyArgs += @(".git", "node_modules", "CoursierAppV7", "CoursierSuzoskyApp Clt", 
                   "Applications", "DOCUMENTATION_FINALE", "Tests", "tools", 
-                  "uploads\temp", "diagnostic_logs", "BAT")
+                  "uploads\temp", "BAT")
 
 # Ajout des exclusions de fichiers
 $robocopyArgs += "/XF"
@@ -141,6 +141,30 @@ Write-Host ""
 
 # ==== ÉTAPE 3: CONFIGURATION LWS ====
 Write-Host "ETAPE 3: Application configuration LWS..." -ForegroundColor Yellow
+
+# S'assurer que le dossier diagnostic_logs contient les fichiers essentiels
+$diagnosticSource = Join-Path $sourcePath "diagnostic_logs"
+$diagnosticTarget = Join-Path $targetPath "diagnostic_logs"
+if (Test-Path $diagnosticSource) {
+    if (-not (Test-Path $diagnosticTarget)) {
+        New-Item -Path $diagnosticTarget -ItemType Directory -Force | Out-Null
+    }
+
+    $essentialDiagnosticFiles = @(
+        "deployment_error_detector.php",
+        "logging_hooks.php",
+        "advanced_logger.php",
+        "log_viewer.php"
+    )
+
+    foreach ($fileName in $essentialDiagnosticFiles) {
+        $sourceFile = Join-Path $diagnosticSource $fileName
+        if (Test-Path $sourceFile) {
+            Copy-Item -Path $sourceFile -Destination $diagnosticTarget -Force
+            Write-Host "  -> diagnostic_logs/$fileName" -ForegroundColor Gray
+        }
+    }
+}
 
 # Configuration de production dans config.php (si nécessaire)
 $configFile = "config.php"
