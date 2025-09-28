@@ -3,7 +3,8 @@
  * SURVEILLANCE AUTOMATIQUE FCM TOKENS - TÂCHE CRON
  * Exécution automatique toutes les 5 minutes pour sécurité
  *
- * Exemple de cron: */5 * * * * /usr/bin/php /path/to/Scripts/Scripts cron/fcm_auto_cleanup.php
+ * Exemple de cron (toutes les 5 minutes) :
+ *   /usr/bin/php /chemin/vers/Scripts/Scripts cron/fcm_auto_cleanup.php
  */
 
 require_once dirname(__DIR__, 2) . '/config.php';
