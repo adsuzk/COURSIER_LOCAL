@@ -321,6 +321,48 @@ include __DIR__ . '/../functions.php';
             color: white;
         }
 
+        .status-warning {
+            background: rgba(243, 156, 18, 0.25);
+            color: var(--warning-color);
+        }
+
+        .status-pending {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+        }
+
+        .status-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+            text-align: right;
+        }
+
+        .status-icon {
+            font-size: 1rem;
+        }
+
+        .status-text {
+            white-space: nowrap;
+        }
+
+        .status-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 0.75rem;
+            color: var(--text-light);
+            opacity: 0.8;
+            align-items: flex-end;
+        }
+
+        .status-last-seen {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
         .solde-display {
             font-size: 1.5rem;
             font-weight: bold;
