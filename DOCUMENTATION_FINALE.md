@@ -402,21 +402,27 @@ $stmt = $pdo->prepare("SELECT solde_wallet FROM agents_suzosky WHERE id = ?");
 
 ### 🗂️ Organisation des scripts automatisés
 
-- `Scripts/` (nouveau dossier racine) regroupe l'intégralité des utilitaires d'exploitation.
-    - `Scripts/Scripts cron/` → scripts PHP prêts pour CRON (sécurité FCM, assignation sécurisée, nettoyage automatique, migrations SQL).
-    - `Scripts/*.ps1` → scripts PowerShell de synchronisation/déploiement (dont `SYNC_COURSIER_PROD_LWS.ps1`).
-- Les scripts PowerShell déplacent automatiquement leurs homologues PHP vers ces emplacements et mettent à jour les anciens points d'entrée pour préserver la rétrocompatibilité.
+- `PS1/` → **TOUS** les scripts PowerShell (.ps1) isolés du déploiement production pour sécurité maximale
+    - `PS1/SYNC_COURSIER_PROD_LWS.ps1` → script principal de synchronisation vers LWS
+    - `PS1/PROTECTION_GITHUB_*.ps1` → scripts de sauvegarde GitHub
+    - **JAMAIS copiés** vers coursier_prod (exclusion robocopy)
+- `Scripts/` → utilitaires d'exploitation PHP uniquement
+    - `Scripts/Scripts cron/` → scripts CRON (sécurité FCM, migrations SQL automatiques, assignation sécurisée)
+    - `Scripts/db_schema_migrations.php` → catalogue de migrations auto-générées
+- **Migration automatique** : Le système détecte automatiquement les changements de structure DB locale et génère les migrations nécessaires
 
-### ⚙️ Automatisation des migrations SQL (NOUVEAU)
+### ⚙️ Automatisation complète des migrations SQL
 
-- **Fichier d'instructions :** `Scripts/db_schema_migrations.php` (liste ordonnée des migrations idempotentes).
-- **Runner CLI :** `Scripts/Scripts cron/automated_db_migration.php` (verrouillage `GET_LOCK`, journal `diagnostic_logs/db_migrations.log`, table `schema_migrations`).
-- **Exécution recommandée :**
-    ```powershell
-    C:\xampp\php\php.exe Scripts\Scripts cron\automated_db_migration.php
-    ```
-    À lancer **après chaque synchronisation** ou directement sur LWS via CRON (`php Scripts/Scripts cron/automated_db_migration.php`).
-- **Fonctionnement :** chaque migration possède des blocs `ensureColumn`, `ensureIndex`, `runSql` avec garde `onlyIf/skipIf` pour éviter les effets de bord. Les nouvelles évolutions schéma doivent impérativement être ajoutées au catalogue.
+**🎯 ZÉRO CODE À ÉCRIRE** - Le système détecte automatiquement vos modifications !
+
+- **Détection automatique :** `Scripts/Scripts cron/auto_migration_generator.php` analyse votre DB locale
+- **Génération auto :** Crée les migrations dans `Scripts/db_schema_migrations.php` sans intervention
+- **Application auto :** `Scripts/Scripts cron/automated_db_migration.php` applique sur LWS
+- **Workflow utilisateur :**
+    1. Travaillez normalement en local (créez tables, colonnes avec phpMyAdmin)
+    2. Lancez `BAT/SYNC_COURSIER_PROD.bat` → détection + génération automatiques
+    3. Uploadez sur LWS → application automatique via CRON
+- **Traçabilité :** Logs dans `diagnostic_logs/db_migrations.log` et table `schema_migrations`
 
 #### **Configuration CRON recommandée :**
 ```bash
@@ -433,9 +439,11 @@ $stmt = $pdo->prepare("SELECT solde_wallet FROM agents_suzosky WHERE id = ?");
 
 ### 📊 **Scripts de diagnostic :**
 
-- `Scripts/Scripts cron/fcm_daily_diagnostic.php` : Diagnostic FCM quotidien
-- `diagnostic_fcm_token.php` : Analyse tokens FCM
-- `system_fcm_robustness.php` : Monitoring robustesse
+- `Scripts/Scripts cron/fcm_daily_diagnostic.php` : Diagnostic FCM quotidien automatique
+- `Scripts/Scripts cron/auto_migration_generator.php` : Générateur automatique de migrations DB
+- `Scripts/Scripts cron/automated_db_migration.php` : Applicateur de migrations avec verrouillage
+- `diagnostic_fcm_token.php` : Analyse tokens FCM (conservé racine pour compatibilité)
+- `system_fcm_robustness.php` : Monitoring robustesse système
 
 ### 🎯 **KPIs à surveiller :**
 
