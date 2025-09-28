@@ -392,12 +392,31 @@ $stmt = $pdo->prepare("SELECT solde_wallet FROM agents_suzosky WHERE id = ?");
 
 ### � **Surveillance Automatique de Sécurité (NOUVEAU)**
 
-#### **Scripts de sécurité critique :**
-- **`fcm_token_security.php`** : Contrôle et nettoyage sécurité FCM *(mode silencieux par défaut côté web, logs détaillés uniquement en CLI via option `verbose`)*
-- **`secure_order_assignment.php`** : Assignation sécurisée des commandes  
-- **`fcm_auto_cleanup.php`** : Nettoyage automatique (CRON toutes les 5min)
+#### **Scripts de sécurité critique (localisation 2025-09-28) :**
+- **`Scripts/Scripts cron/fcm_token_security.php`** : Contrôle et nettoyage sécurité FCM *(mode silencieux par défaut côté web, logs détaillés uniquement en CLI via option `verbose`)*
+- **`Scripts/Scripts cron/secure_order_assignment.php`** : Assignation sécurisée des commandes  
+- **`Scripts/Scripts cron/fcm_auto_cleanup.php`** : Nettoyage automatique (CRON toutes les 5 min)
+- **Shims de compatibilité racine** (`fcm_token_security.php`, `fcm_auto_cleanup.php`, `secure_order_assignment.php`) : simples proxys conservés pour les appels historiques ; aucun traitement métier n'y réside plus.
 
-> ℹ️ **Mise à jour 28 sept. 2025** : La classe `FCMTokenSecurity` accepte désormais un paramètre `['verbose' => bool]`. Toutes les interfaces web (dont `index.php`) l'instancient sans verbose afin d'éviter tout flash visuel, tandis que les exécutions CLI (`php fcm_token_security.php`, CRON) continuent d'afficher le rapport complet.
+> ℹ️ **Mise à jour 28 sept. 2025** : La classe `FCMTokenSecurity` accepte désormais un paramètre `['verbose' => bool]`. Toutes les interfaces web (dont `index.php`) l'instancient sans verbose afin d'éviter tout flash visuel, tandis que les exécutions CLI (`php Scripts/Scripts cron/fcm_token_security.php`, CRON) continuent d'afficher le rapport complet.
+
+### 🗂️ Organisation des scripts automatisés
+
+- `Scripts/` (nouveau dossier racine) regroupe l'intégralité des utilitaires d'exploitation.
+    - `Scripts/Scripts cron/` → scripts PHP prêts pour CRON (sécurité FCM, assignation sécurisée, nettoyage automatique, migrations SQL).
+    - `Scripts/*.ps1` → scripts PowerShell de synchronisation/déploiement (dont `SYNC_COURSIER_PROD_LWS.ps1`).
+- Les scripts PowerShell déplacent automatiquement leurs homologues PHP vers ces emplacements et mettent à jour les anciens points d'entrée pour préserver la rétrocompatibilité.
+
+### ⚙️ Automatisation des migrations SQL (NOUVEAU)
+
+- **Fichier d'instructions :** `Scripts/db_schema_migrations.php` (liste ordonnée des migrations idempotentes).
+- **Runner CLI :** `Scripts/Scripts cron/automated_db_migration.php` (verrouillage `GET_LOCK`, journal `diagnostic_logs/db_migrations.log`, table `schema_migrations`).
+- **Exécution recommandée :**
+    ```powershell
+    C:\xampp\php\php.exe Scripts\Scripts cron\automated_db_migration.php
+    ```
+    À lancer **après chaque synchronisation** ou directement sur LWS via CRON (`php Scripts/Scripts cron/automated_db_migration.php`).
+- **Fonctionnement :** chaque migration possède des blocs `ensureColumn`, `ensureIndex`, `runSql` avec garde `onlyIf/skipIf` pour éviter les effets de bord. Les nouvelles évolutions schéma doivent impérativement être ajoutées au catalogue.
 
 #### **Configuration CRON recommandée :**
 ```bash
