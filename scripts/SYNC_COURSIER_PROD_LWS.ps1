@@ -172,6 +172,32 @@ if (Test-Path $configFile) {
     Write-Host "Configuration LWS appliquee dans config.php" -ForegroundColor Green
 }
 
+# Suppression de la page LWS par défaut pour éviter l'écrasement de index.php
+$placeholderFile = Join-Path $targetPath "default_index.html"
+if (Test-Path $placeholderFile) {
+    try {
+        Remove-Item -Path $placeholderFile -Force
+        Write-Host "Fichier placeholder default_index.html supprime (priorite a index.php)." -ForegroundColor Yellow
+    } catch {
+        Write-Host "Impossible de supprimer default_index.html : $($_.Exception.Message)" -ForegroundColor Red
+    }
+}
+
+# Forcer l'environnement production pour l'execution CLI sur LWS
+$forceProdFile = Join-Path $targetPath "FORCE_PRODUCTION_DB"
+$forceProdContent = @(
+    "# Fichier genere automatiquement par SYNC_COURSIER_PROD_LWS.ps1",
+    "# Permet aux scripts CLI sur LWS d'utiliser la configuration MySQL de production",
+    "# Date de generation : $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
+) -join "`r`n"
+
+try {
+    Set-Content -Path $forceProdFile -Value $forceProdContent -Encoding UTF8
+    Write-Host "Flag FORCE_PRODUCTION_DB mis a jour pour forcer la configuration MySQL de production." -ForegroundColor Yellow
+} catch {
+    Write-Host "ATTENTION: impossible d'ecrire FORCE_PRODUCTION_DB : $($_.Exception.Message)" -ForegroundColor Red
+}
+
 # Vérification finale de la structure
 Write-Host ""
 Write-Host "ETAPE 4: Verification structure finale..." -ForegroundColor Yellow
