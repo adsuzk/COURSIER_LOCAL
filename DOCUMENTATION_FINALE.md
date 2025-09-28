@@ -424,16 +424,16 @@ $stmt = $pdo->prepare("SELECT solde_wallet FROM agents_suzosky WHERE id = ?");
 */5 * * * * /usr/bin/php /path/to/fcm_auto_cleanup.php
 
 # Diagnostic complet quotidien
-0 6 * * * /usr/bin/php /path/to/fcm_daily_diagnostic.php
+0 6 * * * /usr/bin/php '/path/to/Scripts/Scripts cron/fcm_daily_diagnostic.php'
 ```
 
 #### **Logs de surveillance :**
 - **`logs/fcm_auto_cleanup.log`** : Historique nettoyages automatiques
 - **`logs/fcm_stats_latest.json`** : Statistiques temps réel pour dashboard
 
-### �📊 **Scripts de diagnostic :**
+### 📊 **Scripts de diagnostic :**
 
-- `fcm_daily_diagnostic.php` : Diagnostic FCM quotidien
+- `Scripts/Scripts cron/fcm_daily_diagnostic.php` : Diagnostic FCM quotidien
 - `diagnostic_fcm_token.php` : Analyse tokens FCM
 - `system_fcm_robustness.php` : Monitoring robustesse
 
