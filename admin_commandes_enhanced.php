@@ -2299,8 +2299,8 @@ function closeCoursierModal(event) {
                 statsContainer.innerHTML = data.stats || '';
                 coursiersContainer.innerHTML = data.coursiers || '';
                 commandesContainer.innerHTML = data.commandes || '';
-                if (typeof refreshConnectivityPanel === 'function') {
-                    refreshConnectivityPanel();
+                if (typeof window.refreshConnectivityPanel === 'function') {
+                    window.refreshConnectivityPanel();
                 }
 
                 const paramsForUrl = buildParams();
