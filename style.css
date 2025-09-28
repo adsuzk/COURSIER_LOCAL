@@ -1268,8 +1268,7 @@ body {
     }
     
     /* S'assurer que le menu mobile est bien caché par défaut */
-    .mobile-menu:not(.active) {
-        display: none !important;
+    .mobile-menu:not(.active):not(.open) {
         opacity: 0 !important;
         visibility: hidden !important;
         transform: translateX(100%) !important;
