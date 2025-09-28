@@ -19,3 +19,25 @@
 [2025-09-28 05:32:05] [INFO] Appliquées : aucune
 [2025-09-28 05:32:05] [INFO] Ignorées  : aucune
 [2025-09-28 05:32:05] [ERROR] Échecs    : 2024_10_05_001_device_tokens_structure
+[2025-09-28 05:33:33] [INFO] ➡️  Début migration 2024_10_05_001_device_tokens_structure: Sécurise la structure critique de device_tokens (colonnes + normalisation).
+[2025-09-28 05:33:33] [DEBUG]    • Colonne device_tokens.device_type déjà existante
+[2025-09-28 05:33:33] [DEBUG]    • Colonne device_tokens.is_active déjà existante
+[2025-09-28 05:33:33] [DEBUG]    • Colonne device_tokens.device_info déjà existante
+[2025-09-28 05:33:33] [DEBUG]    • Colonne device_tokens.last_ping déjà existante
+[2025-09-28 05:33:33] [INFO]    • SQL exécuté (3 lignes affectées) : Normalisation valeurs NULL
+[2025-09-28 05:33:33] [SUCCESS] ✅ Migration 2024_10_05_001_device_tokens_structure terminée en 110ms.
+[2025-09-28 05:33:33] [INFO] ➡️  Début migration 2024_10_05_002_device_tokens_indexes: Ajoute les index critiques sur device_tokens pour la sécurité et la vitesse.
+[2025-09-28 05:33:33] [INFO]    • Index device_tokens.idx_device_tokens_coursier_active créé
+[2025-09-28 05:33:34] [INFO]    • Index device_tokens.idx_device_tokens_last_ping créé
+[2025-09-28 05:33:34] [SUCCESS] ✅ Migration 2024_10_05_002_device_tokens_indexes terminée en 377ms.
+[2025-09-28 05:33:34] [INFO] ➡️  Début migration 2024_10_05_003_agents_connectivity_safety: Garantit les champs de suivi de connexion des coursiers.
+[2025-09-28 05:33:34] [DEBUG]    • Colonne agents_suzosky.current_session_token déjà existante
+[2025-09-28 05:33:34] [DEBUG]    • Colonne agents_suzosky.last_login_at déjà existante
+[2025-09-28 05:33:34] [INFO]    • Colonne agents_suzosky.last_logout_at ajoutée
+[2025-09-28 05:33:34] [INFO]    • Index agents_suzosky.idx_agents_statut_connexion créé
+[2025-09-28 05:33:34] [INFO]    • SQL exécuté (0 lignes affectées) : Normalisation statut connexion
+[2025-09-28 05:33:34] [SUCCESS] ✅ Migration 2024_10_05_003_agents_connectivity_safety terminée en 114ms.
+[2025-09-28 05:33:34] [INFO] ---- RÉCAPITULATIF ----
+[2025-09-28 05:33:34] [INFO] Appliquées : 2024_10_05_001_device_tokens_structure, 2024_10_05_002_device_tokens_indexes, 2024_10_05_003_agents_connectivity_safety
+[2025-09-28 05:33:34] [INFO] Ignorées  : aucune
+[2025-09-28 05:33:34] [INFO] Échecs    : aucun
