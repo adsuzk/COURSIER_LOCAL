@@ -99,7 +99,14 @@ try {
         $coursiersDisponibles = $coursiersConnectes > 0;
         
         if (!$coursiersDisponibles) {
-            $messageIndisponibilite = "Service temporairement indisponible. Aucun coursier connecté.";
+            $messageIndisponibilite = "
+            <div style='background: linear-gradient(135deg, #ff6b6b, #ffa500); color: white; padding: 20px; border-radius: 10px; text-align: center; margin: 20px 0;'>
+                <h3>🚚 Service Temporairement Indisponible</h3>
+                <p>Nos coursiers Suzosky sont actuellement tous en mission ou hors service.</p>
+                <p><strong>Veuillez réessayer dans quelques minutes</strong></p>
+                <p style='font-size: 0.9em; opacity: 0.8;'>Nous garantissons la sécurité et la qualité de nos services</p>
+            </div>
+            ";
         }
         
         if (function_exists('logDeploymentError')) {

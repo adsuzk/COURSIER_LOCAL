@@ -630,6 +630,46 @@ body {
     gap: 12px;
 }
 
+/* Style pour l'alerte de service indisponible */
+.service-unavailable-alert {
+    background: linear-gradient(135deg, #ff6b6b, #ffa500);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    margin: 20px 0;
+    box-shadow: 0 8px 32px rgba(255, 107, 107, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.service-unavailable-alert h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.service-unavailable-alert p {
+    margin: 8px 0;
+    line-height: 1.4;
+}
+
+.service-unavailable-alert .refresh-btn {
+    background: linear-gradient(135deg, #D4A853 0%, #B8941F 100%);
+    color: #1A1A2E;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 15px;
+}
+
+.service-unavailable-alert .refresh-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(212, 168, 83, 0.4);
+}
+
 /* Force l'affichage correct des boutons d'authentification mobile */
 @media (max-width: 768px) {
     .mobile-menu-auth {
