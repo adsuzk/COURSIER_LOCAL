@@ -87,7 +87,8 @@ function columnExists(PDO $pdo, string $table, string $column): bool
 
 function indexExists(PDO $pdo, string $table, string $index): bool
 {
-    $stmt = $pdo->prepare('SHOW INDEX FROM `' . str_replace('`', '``', $table) . '` WHERE Key_name = ?');
+    $escapedTable = str_replace('`', '``', $table);
+    $stmt = $pdo->prepare("SHOW INDEX FROM `{$escapedTable}` WHERE Key_name = ?");
     $stmt->execute([$index]);
     return (bool) $stmt->fetchColumn();
 }
