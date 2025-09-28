@@ -2,7 +2,19 @@
 // Page d'accueil modulaire : inclut les différentes sections depuis le dossier /sections index
 
 // DÉTECTEUR D'ERREURS DE DÉPLOIEMENT - DOIT ÊTRE EN PREMIER
-require_once __DIR__ . '/diagnostic_logs/deployment_error_detector.php';
+$deploymentDetectorPath = __DIR__ . '/diagnostic_logs/deployment_error_detector.php';
+if (file_exists($deploymentDetectorPath)) {
+    require_once $deploymentDetectorPath;
+} else {
+    error_log('[DEPLOYMENT] deployment_error_detector.php introuvable à ' . $deploymentDetectorPath);
+
+    if (!function_exists('logDeploymentError')) {
+        function logDeploymentError($error, $context = []) {
+            $contextDump = empty($context) ? '' : ' | context=' . json_encode($context);
+            error_log('[DEPLOYMENT-FALLBACK] ' . $error . $contextDump);
+        }
+    }
+}
 // Charger la config pour helpers d'URL
 require_once __DIR__ . '/config.php';
 
