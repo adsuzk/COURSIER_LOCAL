@@ -157,7 +157,7 @@
             <h3>Commande CRON Unique à Ajouter</h3>
             <p>Copiez cette ligne dans votre crontab :</p>
             <div class="cron-command">
-*/2 * * * * /usr/bin/php /home/coursier/public_html/Tests/cron_master.php
+* * * * * /usr/bin/php /home/coursier/public_html/Scripts/Scripts\ cron/cron_master.php
             </div>
             <p><strong>Explication :</strong> Exécute toutes les 2 minutes, mais les tâches s'adaptent automatiquement selon leur fréquence nécessaire.</p>
         </div>
