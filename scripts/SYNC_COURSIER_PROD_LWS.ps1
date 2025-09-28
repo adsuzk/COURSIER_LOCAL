@@ -181,10 +181,8 @@ $devFiles = $rootFiles | Where-Object {
     $_.Extension -match "\.(md|ps1|log)$" -or 
     $_.Name -match "(test|debug|diagnostic)" 
 }
-if ($devFiles) {
-    $devFiles = $devFiles | Where-Object { -not ($productionSafeRootFiles -contains $_.Name) }
-}
 
+if ($devFiles.Count -eq 0) {
 if ($devFiles.Count -eq 0) {
     Write-Host "Structure parfaitement propre pour LWS !" -ForegroundColor Green
     Write-Host "- Aucun fichier de developpement à la racine" -ForegroundColor Green
