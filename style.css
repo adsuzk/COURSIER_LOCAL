@@ -220,7 +220,8 @@ body {
     .mobile-menu-toggle {
         display: block;
     }
-    .mobile-menu.open {
+    .mobile-menu.open,
+    .mobile-menu.active {
         opacity: 1;
         visibility: visible;
         transform: translateX(0);
