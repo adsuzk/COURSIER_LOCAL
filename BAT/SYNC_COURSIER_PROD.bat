@@ -25,7 +25,7 @@ echo Appuyez sur ENTREE pour continuer ou CTRL+C pour annuler...
 pause > nul
 
 cd /d "C:\xampp\htdocs\COURSIER_LOCAL"
-powershell -ExecutionPolicy Bypass -File "scripts\SYNC_COURSIER_PROD_LWS.ps1"
+powershell -ExecutionPolicy Bypass -File "PS1\SYNC_COURSIER_PROD_LWS.ps1"
 
 echo.
 echo Synchronisation coursier_prod terminee. Appuyez sur une touche pour fermer.
