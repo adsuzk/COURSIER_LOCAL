@@ -1,6 +1,7 @@
 <?php
 // api/agent_auth.php - API d'authentification pour agents/coursiers (agents_suzosky)
 require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../lib/coursier_presence.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -80,38 +81,23 @@ switch ($action) {
                 exit;
             }
             // Assurer la colonne de jeton de session côté DB
-            try {
-                $pdo->exec("ALTER TABLE agents_suzosky
-                    ADD COLUMN IF NOT EXISTS current_session_token VARCHAR(100) NULL,
-                    ADD COLUMN IF NOT EXISTS last_login_at DATETIME NULL,
-                    ADD COLUMN IF NOT EXISTS last_login_ip VARCHAR(64) NULL,
-                    ADD COLUMN IF NOT EXISTS last_login_user_agent VARCHAR(255) NULL
-                ");
-            } catch (Throwable $e) { /* best-effort */ }
-
             // Générer un nouveau jeton de session et invalider l'ancien
             $newToken = bin2hex(random_bytes(16));
             $loginIp = $_SERVER['REMOTE_ADDR'] ?? null;
             $loginUa = $_SERVER['HTTP_USER_AGENT'] ?? null;
+            markCourierConnected($pdo, (int)$agent['id'], [
+                'session_token' => $newToken,
+                'ip' => $loginIp,
+                'user_agent' => $loginUa,
+                'source' => 'auth_login',
+                'details' => 'agent_auth',
+                'touch_last_login' => true,
+            ]);
+
             try {
-                // Mettre à jour token ET statut de connexion pour assignation courses
-                $updTok = $pdo->prepare("
-                    UPDATE agents_suzosky 
-                    SET current_session_token = ?, 
-                        last_login_at = NOW(), 
-                        last_login_ip = ?, 
-                        last_login_user_agent = ?,
-                        statut_connexion = 'en_ligne',
-                        derniere_position = NOW()
-                    WHERE id = ?
-                ");
-                $updTok->execute([
-                    $newToken,
-                    $loginIp,
-                    $loginUa ? substr($loginUa, 0, 240) : null,
-                    (int)$agent['id']
-                ]);
-            } catch (Throwable $e) { /* ignore */ }
+                $touchPosition = $pdo->prepare('UPDATE agents_suzosky SET derniere_position = NOW() WHERE id = ?');
+                $touchPosition->execute([(int)$agent['id']]);
+            } catch (Throwable $e) { /* ignore colonne manquante */ }
 
             // Créer session serveur
             $_SESSION['coursier_logged_in'] = true;
@@ -173,10 +159,7 @@ switch ($action) {
                     break;
                 } else {
                     // Session réellement invalide (autre appareil) - marquer hors ligne
-                    try {
-                        $offline = $pdo->prepare("UPDATE agents_suzosky SET statut_connexion = 'hors_ligne' WHERE id = ?");
-                        $offline->execute([$id]);
-                    } catch (Throwable $e) { /* ignore */ }
+                    markCourierDisconnected($pdo, $id, ['source' => 'session_check', 'details' => 'token_mismatch']);
                     
                     $_SESSION = [];
                     if (ini_get('session.use_cookies')) {
@@ -211,10 +194,7 @@ switch ($action) {
         }
         
         if ($userId) {
-            try {
-                $offline = $pdo->prepare("UPDATE agents_suzosky SET statut_connexion = 'hors_ligne', current_session_token = NULL WHERE id = ?");
-                $offline->execute([$userId]);
-            } catch (Throwable $e) { /* ignore */ }
+            markCourierDisconnected($pdo, $userId, ['source' => 'logout']);
 
             // Désactiver tous les tokens FCM actifs de ce coursier (bonne hygiène sécurité)
             try {
