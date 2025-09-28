@@ -600,6 +600,177 @@ include __DIR__ . '/../functions.php';
         </div>
     </div>
 
+    <script>
+        (function () {
+            const API_URL = '../../api/coursiers_connectes.php';
+            const connectedCountEl = document.querySelector('[data-connected-count]');
+            const panelElements = Array.from(document.querySelectorAll('[data-status-panel]'));
+
+            if (!panelElements.length) {
+                if (connectedCountEl) {
+                    connectedCountEl.textContent = '0';
+                }
+                return;
+            }
+
+            const panels = new Map();
+            panelElements.forEach((element) => {
+                const id = element.getAttribute('data-coursier-id');
+                if (!id) {
+                    return;
+                }
+                panels.set(String(id), {
+                    badge: element.querySelector('.status-badge'),
+                    icon: element.querySelector('[data-status-icon]'),
+                    text: element.querySelector('[data-status-text]'),
+                    lastSeen: element.querySelector('[data-last-seen]'),
+                    fcmIndicator: element.querySelector('[data-fcm-indicator]'),
+                    fcmCount: element.querySelector('[data-fcm-count]')
+                });
+            });
+
+            function setFCMState(entry, tokens) {
+                if (!entry || !entry.fcmIndicator) {
+                    return;
+                }
+                const count = Number.isFinite(tokens) ? tokens : 0;
+                if (entry.fcmCount) {
+                    entry.fcmCount.textContent = count;
+                }
+                entry.fcmIndicator.classList.toggle('fcm-ok', count > 0);
+                entry.fcmIndicator.classList.toggle('fcm-warning', count <= 0);
+            }
+
+            function applyDefaultState(entry) {
+                if (!entry || !entry.badge) {
+                    return;
+                }
+                entry.badge.classList.remove('status-online', 'status-warning', 'status-pending');
+                entry.badge.classList.add('status-offline');
+                if (entry.icon) {
+                    entry.icon.textContent = '⚫';
+                }
+                if (entry.text) {
+                    entry.text.textContent = 'Hors ligne';
+                }
+                if (entry.lastSeen) {
+                    entry.lastSeen.textContent = 'Dernière activité inconnue';
+                }
+                if (entry.fcmIndicator) {
+                    const baseCount = entry.fcmCount ? parseInt(entry.fcmCount.textContent, 10) || 0 : 0;
+                    setFCMState(entry, baseCount);
+                }
+            }
+
+            function formatRelativeTime(value) {
+                if (!value) {
+                    return 'Dernière activité inconnue';
+                }
+
+                const normalized = value.replace(' ', 'T');
+                const date = new Date(normalized);
+                if (Number.isNaN(date.getTime())) {
+                    return 'Dernière activité inconnue';
+                }
+
+                const diffMs = Date.now() - date.getTime();
+                if (diffMs < 0) {
+                    return "Dernière activité : à l'instant";
+                }
+
+                const diffSec = Math.floor(diffMs / 1000);
+                if (diffSec < 60) {
+                    return "Dernière activité : à l'instant";
+                }
+                if (diffSec < 3600) {
+                    const minutes = Math.floor(diffSec / 60);
+                    return `Dernière activité : il y a ${minutes} minute${minutes > 1 ? 's' : ''}`;
+                }
+                if (diffSec < 86400) {
+                    const hours = Math.floor(diffSec / 3600);
+                    return `Dernière activité : il y a ${hours} heure${hours > 1 ? 's' : ''}`;
+                }
+                const days = Math.floor(diffSec / 86400);
+                return `Dernière activité : il y a ${days} jour${days > 1 ? 's' : ''}`;
+            }
+
+            async function refreshConnectivity() {
+                if (!panels.size) {
+                    return;
+                }
+
+                try {
+                    const response = await fetch(API_URL, { cache: 'no-store' });
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+
+                    const payload = await response.json();
+                    const couriers = Array.isArray(payload.data) ? payload.data : [];
+
+                    panels.forEach((entry) => applyDefaultState(entry));
+
+                    couriers.forEach((coursier) => {
+                        const id = String(coursier.id ?? '');
+                        if (!panels.has(id)) {
+                            return;
+                        }
+
+                        const entry = panels.get(id);
+                        const statusLight = coursier.status_light || {};
+                        const color = String(statusLight.color || '').toLowerCase();
+
+                        entry.badge.classList.remove('status-online', 'status-warning', 'status-offline', 'status-pending');
+
+                        if (color === 'green') {
+                            entry.badge.classList.add('status-online');
+                            if (entry.icon) {
+                                entry.icon.textContent = '🟢';
+                            }
+                        } else if (color === 'orange') {
+                            entry.badge.classList.add('status-warning');
+                            if (entry.icon) {
+                                entry.icon.textContent = '🟠';
+                            }
+                        } else {
+                            entry.badge.classList.add('status-offline');
+                            if (entry.icon) {
+                                entry.icon.textContent = '⚫';
+                            }
+                        }
+
+                        if (entry.text) {
+                            entry.text.textContent = statusLight.label || 'Statut inconnu';
+                        }
+
+                        if (entry.lastSeen) {
+                            const lastSeen = coursier.last_seen_at || coursier.last_login_at || null;
+                            entry.lastSeen.textContent = formatRelativeTime(lastSeen);
+                        }
+
+                        const tokenCount = parseInt(coursier.fcm_tokens, 10);
+                        setFCMState(entry, Number.isNaN(tokenCount) ? 0 : tokenCount);
+                    });
+
+                    if (connectedCountEl) {
+                        if (payload && payload.meta && typeof payload.meta.total === 'number') {
+                            connectedCountEl.textContent = payload.meta.total;
+                        } else {
+                            connectedCountEl.textContent = couriers.length;
+                        }
+                    }
+                } catch (error) {
+                    if (connectedCountEl) {
+                        connectedCountEl.textContent = '??';
+                    }
+                    console.warn('Impossible de récupérer les coursiers connectés', error);
+                }
+            }
+
+            refreshConnectivity();
+            setInterval(refreshConnectivity, 30000);
+        })();
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
 </body>
 </html>
