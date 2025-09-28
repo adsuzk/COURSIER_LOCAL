@@ -12,6 +12,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
 
 try {
     require_once __DIR__ . '/../config.php';
+    require_once __DIR__ . '/../lib/coursier_presence.php';
     require_once __DIR__ . '/schema_utils.php';
 
     $pdo = getDBConnection();
@@ -152,6 +153,13 @@ try {
             'appv' => $appVersion,
         ]);
     }
+
+    markCourierConnected($pdo, $coursierId, [
+        'source' => 'fcm_token',
+        'details' => $platform . ' ' . $appVersion,
+        'ip' => $_SERVER['REMOTE_ADDR'] ?? null,
+        'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? null,
+    ]);
 
     echo json_encode([
         'success' => true,
