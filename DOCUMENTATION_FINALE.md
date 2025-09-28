@@ -1,9 +1,16 @@
 # 📚 DOCUMENTATION TECHNIQUE FINALE - SUZOSKY COURSIER
-## Version: 2.0 - Date: 27 Septembre 2025 - SYSTÈME AUTO-NETTOYANT
+## Version: 3.0 - Date: 28 Septembre 2025 - SYSTÈME 100% AUTO-PILOTÉ
 
 ---
 
-## 🎯 ARCHITECTURE SYSTÈME
+## 🎯 ARCHITECTURE SYSTÈME RÉVOLUTIONNAIRE
+
+### 🚀 **NOUVEAUTÉS SYSTÈME (28 Sept 2025) :**
+- **🔄 Migrations DB 100% automatiques** : Détection + génération + application sans intervention
+- **📱 Interface mobile corrigée** : Boutons connexion/business parfaitement visibles
+- **📁 Organisation PS1 sécurisée** : Scripts isolés, jamais déployés en production
+- **🛡️ Exclusions renforcées** : Dossier `_sql` et fichiers sensibles automatiquement exclus
+- **🎨 CSS mobile optimisé** : Responsive design complet avec media queries renforcées
 
 ---
 
@@ -71,19 +78,53 @@
 
 ### API M---
 
-## 🚨 **CORRECTION CRITIQUE API MOBILE (27 Sept 2025)**
+## 🚨 **CORRECTIONS CRITIQUES (27-28 Sept 2025)**
 
-### ❌ **PROBLÈME IDENTIFIÉ :**
+### 📱 **CORRECTION INTERFACE MOBILE (28 Sept 2025) :**
+
+#### ❌ **PROBLÈME IDENTIFIÉ :**
+- Boutons "Connexion Particulier" et "Espace Business" invisibles sur mobile
+- Classes CSS `btn-primary`, `btn-secondary`, `full-width` manquantes
+- Menu mobile non fonctionnel sur écrans < 768px
+
+#### ✅ **SOLUTIONS IMPLÉMENTÉES :**
+```css
+/* Styles boutons mobile ajoutés */
+.mobile-menu-auth .btn-primary,
+.mobile-menu-auth .btn-secondary {
+    display: block !important;
+    text-align: center;
+    padding: 16px 20px;
+    border-radius: 12px;
+    font-weight: 700;
+    width: 100% !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Support classes active/open pour menu */
+.mobile-menu.open,
+.mobile-menu.active {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateX(0) !important;
+}
+```
+
+#### 🎯 **RÉSULTAT :**
+- **Boutons parfaitement visibles** sur tous mobiles/tablettes
+- **Menu responsive** fonctionnel avec animations fluides
+- **Design cohérent** avec identité Suzosky (or/bleu)
+
+### 🔧 **CORRECTION API MOBILE (27 Sept 2025) :**
+
+#### ❌ **PROBLÈME IDENTIFIÉ :**
 - L'API `api/get_coursier_data.php` était fonctionnelle pour GET et POST form-data
 - **MAIS** l'app mobile Android utilise POST JSON via `php://input`
 - **Résultat :** Erreur 500 sur toutes les requêtes JSON de l'app
 
-### ✅ **SOLUTION IMPLÉMENTÉE :**
+#### ✅ **SOLUTION IMPLÉMENTÉE :**
 ```php
-// AVANT (incomplet)
-$coursierId = $_GET['coursier_id'] ?? $_POST['coursier_id'] ?? 0;
-
-// APRÈS (complet - support JSON)
+// Support universel GET/POST/JSON
 $coursierId = 0;
 if (isset($_GET['coursier_id'])) {
     $coursierId = intval($_GET['coursier_id']);
