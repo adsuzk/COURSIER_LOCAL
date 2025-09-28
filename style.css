@@ -555,6 +555,50 @@ body {
     opacity: 0.6;
 }
 
+/* Styles pour les boutons du menu mobile */
+.mobile-menu-auth .btn-primary,
+.mobile-menu-auth .btn-secondary {
+    display: block;
+    text-align: center;
+    padding: 16px 20px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.mobile-menu-auth .btn-primary {
+    background: var(--gradient-gold);
+    color: var(--primary-dark);
+}
+
+.mobile-menu-auth .btn-primary:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 24px rgba(212, 168, 83, 0.4);
+}
+
+.mobile-menu-auth .btn-secondary {
+    background: linear-gradient(135deg, var(--secondary-blue) 0%, var(--accent-blue) 100%);
+    color: #fff;
+    border: 1px solid rgba(212, 168, 83, 0.3);
+}
+
+.mobile-menu-auth .btn-secondary:hover {
+    background: var(--gradient-gold);
+    color: var(--primary-dark);
+    border-color: var(--primary-gold);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 24px rgba(212, 168, 83, 0.4);
+}
+
+.mobile-menu-auth .full-width {
+    width: 100%;
+}
+
 /* Styles pour utilisateur connecté mobile */
 .mobile-user-profile {
     display: flex;
