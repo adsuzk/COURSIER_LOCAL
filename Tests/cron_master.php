@@ -1,7 +1,7 @@
 <?php
 /**
  * CRON MASTER - Toutes les tâches automatiques en un seul script
- * À exécuter toutes les 2 minutes : */2 * * * * /usr/bin/php /home/coursier/public_html/Tests/cron_master.php
+ * À exécuter chaque minute : * * * * * /usr/bin/php /home/coursier/public_html/Scripts/Scripts cron/cron_master.php
  */
 
 error_reporting(E_ALL);
