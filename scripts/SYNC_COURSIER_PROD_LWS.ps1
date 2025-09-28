@@ -96,6 +96,20 @@ foreach ($folder in $lwsFolders) {
     }
 }
 
+# Génération automatique des migrations avant synchronisation
+Write-Host "Generation automatique des migrations..." -ForegroundColor Cyan
+try {
+    $migrationGenerator = Join-Path $sourcePath "Scripts\Scripts cron\auto_migration_generator.php"
+    if (Test-Path $migrationGenerator) {
+        & "C:\xampp\php\php.exe" $migrationGenerator
+        Write-Host "Migrations automatiques generees avec succes" -ForegroundColor Green
+    } else {
+        Write-Host "Generateur de migrations introuvable - ignore" -ForegroundColor Yellow
+    }
+} catch {
+    Write-Host "Erreur generation migrations: $($_.Exception.Message)" -ForegroundColor Yellow
+}
+
 # Copier explicitement le dossier Scripts avec sa structure complète
 $scriptsSource = Join-Path $sourcePath "Scripts"
 $scriptsTarget = Join-Path $targetPath "Scripts" 
