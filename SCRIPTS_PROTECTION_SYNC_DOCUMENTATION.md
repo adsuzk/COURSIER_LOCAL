@@ -1,5 +1,5 @@
 # 🛡️ SCRIPTS DE PROTECTION ET SYNCHRONISATION PROPRE
-**Date : 27 Septembre 2025 | Version : 2.0**
+**Date : 28 Septembre 2025 | Version : 3.0 - Architecture PS1**
 
 ---
 
