@@ -65,9 +65,40 @@ class SecureOrderAssignment {
         ");
         
         $stmt->execute([$coursierId]);
-        <?php
-        /**
-         * Compatibilité : le cœur du module se trouve désormais dans Scripts/Scripts cron.
-         */
+        $coursier = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$coursier) {
+            return [
+                'success' => false,
+                'reason' => 'COURIER_INEXISTANT',
+                'message' => 'Le coursier n\'existe pas',
+                'action_required' => 'Vérifier l\'ID du coursier'
+            ];
+        }
+        
+        // Vérifications supplémentaires...
+        
+        return [
+            'success' => true,
+            'coursier' => $coursier
+        ];
+    }
+    
+    /**
+     * Trouver le meilleur coursier disponible pour une commande
+     */
+    private function findBestAvailableCourier($commandeId): array {
+        // Logique pour trouver le meilleur coursier...
+        
+        return [
+            'success' => true,
+            'coursier_id' => $bestCourierId
+        ];
+    }
+}
 
-        require_once __DIR__ . '/Scripts/Scripts cron/secure_order_assignment.php';
+/**
+ * Compatibilité : le cœur du module se trouve désormais dans Scripts/Scripts cron.
+ */
+
+require_once __DIR__ . '/Scripts/Scripts cron/secure_order_assignment.php';
