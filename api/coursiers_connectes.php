@@ -11,10 +11,10 @@ try {
     $pdo = getDBConnection();
     $coursiers = getConnectedCouriers($pdo);
 
-    $data = array_map(function (array $coursier): array {
-        $statusLight = $coursier['status_light'] ?? getCoursierStatusLight($coursier);
-
-        return [
+    $data = [];
+    foreach ($coursiers as $coursier) {
+        $statusLight = $coursier['status_light'] ?? getCoursierStatusLight($coursier, $pdo);
+        $data[] = [
             'id' => (int)($coursier['id'] ?? 0),
             'nom' => $coursier['nom'] ?? '',
             'prenoms' => $coursier['prenoms'] ?? '',
@@ -25,7 +25,7 @@ try {
             'last_seen_at' => $coursier['connexion_last_seen_at'] ?? null,
             'fcm_tokens' => (int)($coursier['active_fcm_tokens'] ?? 0),
         ];
-    }, $coursiers);
+    }
 
     echo json_encode([
         'success' => true,
