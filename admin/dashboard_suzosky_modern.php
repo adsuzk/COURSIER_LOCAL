@@ -438,12 +438,12 @@ try {
                     </div>
                     <div class="stat-title">Coursiers</div>
                 </div>
-                <div class="stat-value"><?= number_format($stats['coursiers']['total']) ?></div>
+                <div class="stat-value" data-dashboard-total data-total-count="<?= (int) $stats['coursiers']['total'] ?>"><?= number_format((int) $stats['coursiers']['total']) ?></div>
                 <div class="stat-details">
-                    <div class="stat-detail">En ligne: <?= $stats['coursiers']['en_ligne'] ?></div>
-                    <div class="stat-detail">Hors ligne: <?= $stats['coursiers']['hors_ligne'] ?></div>
-                    <div class="stat-detail">Occupés: <?= $stats['coursiers']['occupe'] ?></div>
-                    <div class="stat-detail">Avec token: <?= $stats['coursiers']['avec_token'] ?></div>
+                    <div class="stat-detail">En ligne: <span data-dashboard-online><?= htmlspecialchars($stats['coursiers']['en_ligne']) ?></span></div>
+                    <div class="stat-detail">Hors ligne: <span data-dashboard-offline><?= htmlspecialchars($stats['coursiers']['hors_ligne']) ?></span></div>
+                    <div class="stat-detail">Occupés: <span data-dashboard-busy><?= htmlspecialchars($stats['coursiers']['occupe']) ?></span></div>
+                    <div class="stat-detail">Avec token: <span data-dashboard-tokens><?= htmlspecialchars($stats['coursiers']['avec_token']) ?></span></div>
                 </div>
             </div>
 
