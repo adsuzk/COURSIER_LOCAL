@@ -44,11 +44,13 @@ C:\xampp\htdocs\COURSIER_LOCAL\BAT\PROTECTION_GITHUB.bat
 - ✅ **Réorganisation automatique** pour structure LWS
 - ✅ **Exclusion des fichiers dev** (*.md, *.ps1, debug, tests)
 - ✅ **Déplacement automatique** des tests vers dossier Tests/
-- ✅ **Déplacement des scripts** vers dossier scripts/
+- ✅ **Déplacement des scripts PowerShell** vers dossier `scripts/`
+- ✅ **Préservation du dossier `Scripts/` (cron PHP)** contenant la stack automatisée (`Scripts/Scripts cron/...`).
 - ✅ **Racine propre** sans fichiers de développement
 - ✅ **Configuration LWS** appliquée automatiquement
 - ✅ **Fichiers critiques `diagnostic_logs/*.php`** conservés pour `index.php`
-- ✅ **Scripts de diagnostic en production** (`fcm_daily_diagnostic.php`, `fcm_auto_cleanup.php`, `secure_order_assignment.php`, `fcm_token_security.php`) maintenus à la racine
+- ✅ **Suppression automatique de `default_index.html`** (la page blanche LWS) afin que `index.php` soit servi immédiatement
+- ✅ **Création/actualisation de `FORCE_PRODUCTION_DB`** pour forcer la configuration MySQL de production (CLI & CRON LWS)
 
 ### Utilisation :
 ```batch
@@ -64,8 +66,10 @@ C:\xampp\htdocs\COURSIER_LOCAL\BAT\SYNC_COURSIER_PROD.bat
 coursier_prod/
 ├── 📁 Tests/          ← Tous les fichiers de test/debug
 ├── 📁 scripts/        ← Scripts PowerShell et utilitaires
+├── 📁 Scripts/        ← Scripts PHP d'automatisation (cron, migrations, sécurité)
 ├── 📄 index.php       ← Fichiers de production à la racine
 ├── 📄 config.php      ← Configuration LWS appliquée
+├── 📄 FORCE_PRODUCTION_DB ← Flag généré automatiquement pour LWS (force la configuration production)
 ├── 📄 coursier.php    ← Interface coursier
 ├── 📄 admin.php       ← Interface admin
 └── ... (autres fichiers de production)
