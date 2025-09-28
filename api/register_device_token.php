@@ -2,6 +2,7 @@
 // api/register_device_token.php - Enregistre le token FCM d'un coursier
 header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../lib/coursier_presence.php';
 
 try {
     $pdo = getDBConnection();
@@ -52,6 +53,13 @@ try {
             ON DUPLICATE KEY UPDATE coursier_id = VALUES(coursier_id), token = VALUES(token), updated_at = CURRENT_TIMESTAMP");
         $stmt->execute([$coursierId, $token, $hash]);
     }
+
+    markCourierConnected($pdo, $coursierId, [
+        'source' => 'fcm_token',
+        'details' => $agentId > 0 ? ('legacy-agent ' . $agentId) : 'legacy-register',
+        'ip' => $_SERVER['REMOTE_ADDR'] ?? null,
+        'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? null,
+    ]);
     echo json_encode([
         'success' => true,
         'message' => 'Token enregistré',
