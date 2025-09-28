@@ -1934,6 +1934,8 @@ $newAgentsThisMonth = count(array_filter($agents, fn($a) => isset($a['created_at
         </tbody>
       </table>
     </div>
+    </div>
+</div>
 
 <script>
 // === GESTION DES TABS ===
