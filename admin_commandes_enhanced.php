@@ -1014,6 +1014,11 @@ body.admin-commandes-page {
     color: white;
 }
 
+.fcm-status-indicator.neutral {
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--text-muted);
+}
+
 .light-indicator {
     width: 20px;
     height: 20px;
