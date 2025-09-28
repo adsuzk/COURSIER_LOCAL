@@ -60,8 +60,11 @@ if (file_exists(__DIR__ . '/diagnostic_logs/logging_hooks.php')) {
 $coursiersDisponibles = false;
 $messageIndisponibilite = '';
 try {
-    if (file_exists(__DIR__ . '/fcm_token_security.php')) {
-        require_once __DIR__ . '/fcm_token_security.php';
+    $fcmSecurityPath = __DIR__ . '/fcm_token_security.php';
+    $fcmSecurityPathCron = __DIR__ . '/Scripts/Scripts cron/fcm_token_security.php';
+    
+    if (file_exists($fcmSecurityPath)) {
+        require_once $fcmSecurityPath;
         $tokenSecurity = new FCMTokenSecurity();
         
         // Nettoyage automatique des tokens obsolètes
@@ -73,6 +76,38 @@ try {
         
         if (!$coursiersDisponibles) {
             $messageIndisponibilite = $tokenSecurity->getUnavailabilityMessage();
+        }
+    } elseif (file_exists($fcmSecurityPathCron)) {
+        require_once $fcmSecurityPathCron;
+        $tokenSecurity = new FCMTokenSecurity();
+        
+        // Nettoyage automatique des tokens obsolètes
+        $tokenSecurity->enforceTokenSecurity();
+        
+        // Vérifier disponibilité pour nouvelles commandes
+        $disponibilite = $tokenSecurity->canAcceptNewOrders();
+        $coursiersDisponibles = $disponibilite['can_accept_orders'];
+        
+        if (!$coursiersDisponibles) {
+            $messageIndisponibilite = $tokenSecurity->getUnavailabilityMessage();
+        }
+    } else {
+        // Fallback: vérification basique DB si FCM Security absent
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM agents_suzosky WHERE statut_connexion = 'en_ligne' AND TIMESTAMPDIFF(MINUTE, last_login_at, NOW()) <= 30");
+        $stmt->execute();
+        $coursiersConnectes = $stmt->fetchColumn();
+        $coursiersDisponibles = $coursiersConnectes > 0;
+        
+        if (!$coursiersDisponibles) {
+            $messageIndisponibilite = "Service temporairement indisponible. Aucun coursier connecté.";
+        }
+        
+        if (function_exists('logDeploymentError')) {
+            logDeploymentError("FCM Security module missing", [
+                'expected_paths' => [$fcmSecurityPath, $fcmSecurityPathCron],
+                'fallback_used' => true,
+                'coursiers_connectes' => $coursiersConnectes
+            ]);
         }
     }
 } catch (Exception $e) {

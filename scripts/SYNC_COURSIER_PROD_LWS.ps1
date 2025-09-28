@@ -96,6 +96,17 @@ foreach ($folder in $lwsFolders) {
     }
 }
 
+# Copier explicitement le dossier Scripts avec sa structure complète
+$scriptsSource = Join-Path $sourcePath "Scripts"
+$scriptsTarget = Join-Path $targetPath "Scripts" 
+if (Test-Path $scriptsSource) {
+    Write-Host "Copie du dossier Scripts complet..." -ForegroundColor Cyan
+    & robocopy $scriptsSource $scriptsTarget /E /R:1 /W:1
+    Write-Host "Dossier Scripts copie avec toute sa structure" -ForegroundColor Green
+} else {
+    Write-Host "ATTENTION: Dossier Scripts source introuvable" -ForegroundColor Yellow
+}
+
 # Déplacement des fichiers de test/debug vers Tests/
 Write-Host "Deplacement fichiers test/debug vers Tests/..." -ForegroundColor Cyan
 $testFiles = Get-ChildItem -Path . -File | Where-Object { 
