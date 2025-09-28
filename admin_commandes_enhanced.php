@@ -249,33 +249,6 @@ function renderStatsContent(array $stats): string
 function renderCoursiersStatusContent(array $coursiers): string
 {
     ob_start();
-    $pdo = getDBConnection();
-    $fcmStatus = getFCMGlobalStatus($pdo);
-    $coursiersConnectes = getConnectedCouriers($pdo);
-
-    $vertsCount = 0;
-    $orangesCount = 0;
-    $rougesCount = 0;
-
-    foreach ($coursiersConnectes as &$coursierConnecte) {
-        $statusLight = $coursierConnecte['status_light'] ?? getCoursierStatusLight($coursierConnecte, $pdo);
-        $coursierConnecte['status_light'] = $statusLight;
-
-        switch ($statusLight['color']) {
-            case 'green':
-                $vertsCount++;
-                break;
-            case 'orange':
-                $orangesCount++;
-                break;
-            case 'red':
-                $rougesCount++;
-                break;
-        }
-    }
-    unset($coursierConnecte);
-
-    $totalCoursiers = count($coursiersConnectes);
     ?>
     
     <div class="suzosky-coursiers-panel">
@@ -283,44 +256,26 @@ function renderCoursiersStatusContent(array $coursiers): string
             <div class="panel-title">
                 <i class="fas fa-motorcycle"></i>
                 <span>Coursiers Connectés</span>
-                <span class="badge-total"><?= $totalCoursiers ?></span>
+                <span class="badge-total" data-connected-total>--</span>
                 
                 <!-- Indicateur FCM Global -->
-                <div class="fcm-status-indicator <?= $fcmStatus['status'] ?>" title="FCM: <?= $fcmStatus['with_fcm'] ?>/<?= $fcmStatus['total_connected'] ?> (<?= $fcmStatus['fcm_rate'] ?>%)">
+                <div class="fcm-status-indicator neutral" data-fcm-indicator title="FCM : synchronisation en cours">
                     <i class="fas fa-bell"></i>
-                    <span><?= $fcmStatus['fcm_rate'] ?>%</span>
+                    <span data-fcm-rate>--%</span>
                 </div>
             </div>
             <div class="lights-summary">
-                <div class="light-indicator green" title="Disponibles"><?= $vertsCount ?></div>
-                <div class="light-indicator orange" title="Limités"><?= $orangesCount ?></div>
-                <div class="light-indicator red" title="Indisponibles"><?= $rougesCount ?></div>
+                <div class="light-indicator green" title="Disponibles" data-count-green>0</div>
+                <div class="light-indicator orange" title="Limités" data-count-orange>0</div>
+                <div class="light-indicator red" title="Indisponibles" data-count-red>0</div>
             </div>
         </div>
         
-        <div class="coursiers-scrollable">
-            <?php foreach ($coursiersConnectes as $coursier): ?>
-                <div class="coursier-item" onclick="showCoursierDetails(<?= $coursier['id'] ?>)" data-coursier-id="<?= $coursier['id'] ?>">
-                    <div class="status-dot <?= $coursier['status_light']['color'] ?>"></div>
-                    <div class="coursier-info">
-                        <div class="coursier-name"><?= htmlspecialchars($coursier['nom'] . ' ' . $coursier['prenoms']) ?></div>
-                        <div class="coursier-status"><?= htmlspecialchars($coursier['status_light']['label']) ?></div>
-                    </div>
-                    <div class="coursier-badges">
-                        <?php if (!empty($coursier['current_session_token'])): ?>
-                            <i class="fas fa-mobile-alt app-badge" title="App connectée"></i>
-                        <?php endif; ?>
-                        <i class="fas fa-chevron-right arrow-icon"></i>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-            
-            <?php if (empty($coursiersConnectes)): ?>
-                <div class="empty-state">
-                    <i class="fas fa-motorcycle"></i>
-                    <div>Aucun coursier connecté</div>
-                </div>
-            <?php endif; ?>
+        <div class="coursiers-scrollable" data-coursiers-list>
+            <div class="empty-state" data-empty-state>
+                <i class="fas fa-spinner fa-spin"></i>
+                <div>Chargement des coursiers...</div>
+            </div>
         </div>
     </div>
 
