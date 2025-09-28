@@ -30,6 +30,153 @@ if (!function_exists('autoCleanExpiredStatuses')) {
     }
 }
 
+if (!function_exists('ensureCourierConnectivityColumns')) {
+    function ensureCourierConnectivityColumns(PDO $pdo): void
+    {
+        static $columnsEnsured = false;
+        if ($columnsEnsured) {
+            return;
+        }
+
+        try {
+            $stmt = $pdo->query('SHOW COLUMNS FROM agents_suzosky');
+            $existing = [];
+            while ($col = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $existing[$col['Field']] = true;
+            }
+        } catch (Throwable $e) {
+            $existing = [];
+        }
+
+        $alterStatements = [];
+        if (!isset($existing['statut_connexion'])) {
+            $alterStatements[] = "ALTER TABLE agents_suzosky ADD COLUMN statut_connexion ENUM('en_ligne','hors_ligne') DEFAULT 'hors_ligne'";
+        }
+        if (!isset($existing['current_session_token'])) {
+            $alterStatements[] = "ALTER TABLE agents_suzosky ADD COLUMN current_session_token VARCHAR(100) NULL";
+        }
+        if (!isset($existing['last_login_at'])) {
+            $alterStatements[] = "ALTER TABLE agents_suzosky ADD COLUMN last_login_at DATETIME NULL";
+        }
+        if (!isset($existing['last_login_ip'])) {
+            $alterStatements[] = "ALTER TABLE agents_suzosky ADD COLUMN last_login_ip VARCHAR(64) NULL";
+        }
+        if (!isset($existing['last_login_user_agent'])) {
+            $alterStatements[] = "ALTER TABLE agents_suzosky ADD COLUMN last_login_user_agent VARCHAR(255) NULL";
+        }
+        if (!isset($existing['connexion_source'])) {
+            $alterStatements[] = "ALTER TABLE agents_suzosky ADD COLUMN connexion_source VARCHAR(50) NULL";
+        }
+        if (!isset($existing['connexion_source_details'])) {
+            $alterStatements[] = "ALTER TABLE agents_suzosky ADD COLUMN connexion_source_details VARCHAR(255) NULL";
+        }
+        if (!isset($existing['connexion_last_seen_at'])) {
+            $alterStatements[] = "ALTER TABLE agents_suzosky ADD COLUMN connexion_last_seen_at DATETIME NULL";
+        }
+
+        foreach ($alterStatements as $sql) {
+            try {
+                $pdo->exec($sql);
+            } catch (Throwable $e) {
+                // best-effort: ignorer si colonne déjà existante ou erreur de compatibilité
+            }
+        }
+
+        $columnsEnsured = true;
+    }
+}
+
+if (!function_exists('markCourierConnected')) {
+    function markCourierConnected(PDO $pdo, int $coursierId, array $context = []): void
+    {
+        if ($coursierId <= 0) {
+            return;
+        }
+
+        ensureCourierConnectivityColumns($pdo);
+
+        $fields = [
+            "statut_connexion = 'en_ligne'",
+            'connexion_last_seen_at = NOW()'
+        ];
+        $params = ['id' => $coursierId];
+
+        if (!empty($context['session_token'])) {
+            $fields[] = 'current_session_token = :session_token';
+            $params['session_token'] = substr($context['session_token'], 0, 100);
+        }
+
+        if (!empty($context['ip'])) {
+            $fields[] = 'last_login_ip = :ip';
+            $params['ip'] = substr($context['ip'], 0, 60);
+        }
+
+        if (!empty($context['user_agent'])) {
+            $fields[] = 'last_login_user_agent = :ua';
+            $params['ua'] = substr($context['user_agent'], 0, 240);
+        }
+
+        if (!empty($context['source'])) {
+            $fields[] = 'connexion_source = :source';
+            $params['source'] = substr($context['source'], 0, 40);
+        }
+
+        if (!empty($context['details'])) {
+            $fields[] = 'connexion_source_details = :details';
+            $params['details'] = substr($context['details'], 0, 240);
+        }
+
+        if (!empty($context['touch_last_login'])) {
+            $fields[] = 'last_login_at = NOW()';
+        }
+
+        $sql = 'UPDATE agents_suzosky SET ' . implode(', ', $fields) . ' WHERE id = :id';
+
+        try {
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+        } catch (Throwable $e) {
+            // silent fail to avoid breaking API calls
+        }
+    }
+}
+
+if (!function_exists('markCourierDisconnected')) {
+    function markCourierDisconnected(PDO $pdo, int $coursierId, array $context = []): void
+    {
+        if ($coursierId <= 0) {
+            return;
+        }
+
+        ensureCourierConnectivityColumns($pdo);
+
+        $fields = [
+            "statut_connexion = 'hors_ligne'",
+            'current_session_token = NULL'
+        ];
+        $params = ['id' => $coursierId];
+
+        if (!empty($context['source'])) {
+            $fields[] = 'connexion_source = :source';
+            $params['source'] = substr($context['source'], 0, 40);
+        }
+
+        if (!empty($context['details'])) {
+            $fields[] = 'connexion_source_details = :details';
+            $params['details'] = substr($context['details'], 0, 240);
+        }
+
+        $sql = 'UPDATE agents_suzosky SET ' . implode(', ', $fields) . ' WHERE id = :id';
+
+        try {
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+        } catch (Throwable $e) {
+            // best-effort
+        }
+    }
+}
+
 if (!function_exists('getAgentsSchemaInfo')) {
     function getAgentsSchemaInfo(PDO $pdo): array
     {
@@ -95,13 +242,14 @@ if (!function_exists('getAllCouriers')) {
                        " . $info['status_expression'] . " AS statut_connexion,
                        a.current_session_token,
                        a.last_login_at,
-                       (a.last_login_at > DATE_SUB(NOW(), INTERVAL 30 MINUTE)) AS is_recent_activity,
+                       a.connexion_last_seen_at,
+                       (COALESCE(a.connexion_last_seen_at, a.last_login_at) > DATE_SUB(NOW(), INTERVAL 30 MINUTE)) AS is_recent_activity,
                        COUNT(CASE WHEN dt.is_active = 1 THEN dt.id END) AS active_fcm_tokens
                 FROM agents_suzosky a
                 LEFT JOIN device_tokens dt ON dt.coursier_id = a." . $info['join_column'] . " AND dt.is_active = 1
                 $filter
                 GROUP BY a." . $info['join_column'] . ", a.nom, a.prenoms, a.telephone, a.email, a.type_poste, a.solde_wallet,
-                         a.current_session_token, a.last_login_at, " . $info['status_expression'] . "
+                         a.current_session_token, a.last_login_at, a.connexion_last_seen_at, " . $info['status_expression'] . "
                 ORDER BY " . $info['status_expression'] . " DESC, a.last_login_at DESC
             ";
             $stmt = $pdo->query($query);
@@ -142,7 +290,8 @@ if (!function_exists('getCoursierStatusLight')) {
         $hasSufficientBalance = true; // TODO: Vérifier le solde réel selon la logique métier
         $status['conditions']['balance'] = $hasSufficientBalance;
 
-        $lastActivity = strtotime($coursier['last_login_at'] ?? '0');
+        $lastActivitySource = $coursier['connexion_last_seen_at'] ?? $coursier['last_login_at'] ?? null;
+        $lastActivity = strtotime($lastActivitySource ?? '0');
         $isRecentActivity = $lastActivity > (time() - 300);
         if (isset($coursier['is_recent_activity'])) {
             $isRecentActivity = (bool) $coursier['is_recent_activity'];
@@ -239,7 +388,7 @@ if (!function_exists('getConnectedCouriers')) {
             $isOnline = ($coursier['statut_connexion'] ?? '') === 'en_ligne';
             $isRecentActivity = isset($coursier['is_recent_activity'])
                 ? (bool) $coursier['is_recent_activity']
-                : (strtotime($coursier['last_login_at'] ?? '0') > (time() - 1800));
+                : (strtotime(($coursier['connexion_last_seen_at'] ?? $coursier['last_login_at'] ?? '0')) > (time() - 1800));
 
             if ($hasToken && $isOnline && $isRecentActivity) {
                 $connected[] = $coursier + [
