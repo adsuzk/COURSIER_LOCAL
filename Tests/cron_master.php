@@ -95,6 +95,12 @@ try {
         // 6. Nettoyage automatique FCM
         executeScript($base_path . '/fcm_auto_cleanup.php', 'Nettoyage FCM');
         
+        // 7. Migration automatique BDD
+        executeScript($base_path . '/Scripts/db_schema_migrations.php', 'Migration BDD');
+        
+        // 8. Diagnostic FCM quotidien
+        executeScript($base_path . '/Scripts/Scripts cron/fcm_daily_diagnostic.php', 'Diagnostic FCM');
+        
         // 7. Vérification système
         executeScript($base_path . '/system_health.php', 'Vérification système');
     }
