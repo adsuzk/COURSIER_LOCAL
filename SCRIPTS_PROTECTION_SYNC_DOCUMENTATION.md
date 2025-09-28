@@ -17,11 +17,11 @@
 
 #### Usage :
 ```powershell
-# Via script PowerShell
-.\scripts\PROTECTION_GITHUB_AVEC_SYNC_PROPRE.ps1
+# Via script PowerShell (nouvelle localisation PS1/)
+.\PS1\PROTECTION_GITHUB_AVEC_SYNC_PROPRE.ps1
 
 # Via fichier BAT (recommandé)
-.\BAT\PROTECTION_AUTO.bat
+.\BAT\PROTECTION_GITHUB.bat
 ```
 
 ### 2. **SYNC_COURSIER_PROD_SIMPLE.ps1**
@@ -35,13 +35,10 @@
 
 #### Usage :
 ```powershell
-# Synchronisation simple
-.\scripts\SYNC_COURSIER_PROD_SIMPLE.ps1
+# Synchronisation simple (nouvelle localisation PS1/)
+.\PS1\SYNC_COURSIER_PROD_LWS.ps1
 
-# Avec nettoyage automatique
-.\scripts\SYNC_COURSIER_PROD_SIMPLE.ps1 -Force
-
-# Via fichier BAT
+# Via fichier BAT (recommandé - inclut auto-migration)
 .\BAT\SYNC_COURSIER_PROD.bat
 ```
 
@@ -50,12 +47,14 @@
 ## 🚫 EXCLUSIONS AUTOMATIQUES
 
 ### Dossiers exclus :
+- `PS1/` - **TOUS les scripts PowerShell (sécurité maximale)**
 - `.git` - Repository Git
 - `.vscode` - Configuration VS Code
-- `Tests/` - **TOUS les fichiers de test**
-- `diagnostic_logs/` - Logs de diagnostic
+- `Tests/` - Tous les fichiers de test
+- `BAT/` - Scripts batch locaux
+- `Applications/` - Apps mobiles
+- `DOCUMENTATION_FINALE/` - Documentation développement
 - `node_modules/` - Dépendances Node.js
-- `vendor\phpunit/` - Tests PHPUnit
 
 ### Patterns de fichiers exclus :
 ```
@@ -88,11 +87,11 @@
 
 ## 🎯 AVANTAGES DE LA NOUVELLE APPROCHE
 
-### ✅ **Correction automatique des erreurs précédentes :**
-1. **Plus jamais de fichiers de test dans `coursier_prod`**
-2. **Structure de production toujours optimisée**
-3. **Exclusions exhaustives et automatiques**
-4. **Vérification post-synchronisation systématique**
+### ✅ **Révolution architecture Version 3.0 :**
+1. **Isolation PS1/** : Aucun script PowerShell déployé en production
+2. **Auto-migrations** : Détection automatique changements DB + génération sans code
+3. **Structure optimale** : Production 100% propre automatiquement
+4. **Sécurité renforcée** : Séparation complète développement/production
 
 ### ✅ **Sécurité renforcée :**
 - Utilisation de Git Credential Manager (pas de tokens exposés)
