@@ -198,44 +198,42 @@ if (isset($_GET['coursier_id'])) {
 - **Lecture correcte :** `agents_suzosky.solde_wallet`
 - **FCM intégré :** Notifications temps réel
 
+## � **CONFIGURATION SYSTÈME ACTUELLE**
+
+### 🎛️ **INSTALLATION CRON LWS :**
+1. **Panel LWS** → Section "Tâches CRON"
+2. **Fréquence :** `* * * * *` (chaque minute)  
+3. **URL :** `https://coursier.conciergerie-privee-suzosky.com/Scripts/Scripts%20cron/cron_master.php`
+4. **Activation** → Le système démarre automatiquement !
+
+### 📊 **MONITORING DISPONIBLE :**
+- **Logs CRON :** `diagnostic_logs/cron_master.log`
+- **Tests système :** `Tests/test_cron_lws.php`
+- **Guide installation :** `Tests/install_cron_master.php`
+- **Diagnostic prod :** `Tests/diagnostic_coursiers_disponibilite.php`
+
+### 🗂️ **ORGANISATION FICHIERS :**
+- **Racine :** Fichiers production uniquement (propre)
+- **Tests/ :** 72+ outils diagnostic et debug
+- **Scripts/Scripts cron/ :** CRON Master et tâches automatiques
+- **Exclusions PS1 :** Scripts développement jamais déployés
+
 ---
 
-## 🔧 FONCTIONS PRINCIPALES AUTO-PILOTÉES
+## 🔧 **API & INTÉGRATIONS**
 
-### 🔄 Auto-Migration System
+### 📱 **API Mobile Universelle :**
+- **Endpoint :** `api/get_coursier_data.php`
+- **Support :** GET, POST form-data, POST JSON (php://input)
+- **Réponse :** Profil + Solde + Commandes + Statut + FCM
+- **Compatibilité :** 100% Android app + tests cURL
+
+### 🔍 **Système FCM Sécurisé :**
 ```php
-// GÉNÉRATEUR (auto_migration_generator.php)
-class AutoMigrationGenerator {
-    public function detectChanges() {
-        // 1. Analyse INFORMATION_SCHEMA actuelle
-        // 2. Compare avec snapshot sauvegardé
-        // 3. Génère ID migration horodaté
-        // 4. Sauvegarde nouveau snapshot
-    }
-}
-
-// APPLICATEUR LWS (automated_db_migration.php)
-class DatabaseMigrator {
-    public function applyMigrations() {
-        // 1. Verrouillage MySQL GET_LOCK('db_migration', 10)
-        // 2. Application séquentielle des migrations
-        // 3. Logging détaillé + gestion erreurs
-        // 4. Libération verrou
-    }
-}
-```
-
-### 🔍 Surveillance Automatique
-```php
-// FCM Security (fcm_token_security.php)
-class FCMTokenSecurity {
-    public function enforceTokenSecurity() {
-        // 1. autoCleanExpiredStatuses() → Nettoie statuts expirés
-        // 2. Filtrage intelligent : token + statut + activité < 30min
-        // 3. Désactivation tokens coursiers déconnectés
-        // 4. Retour : Coursiers réellement disponibles uniquement
-    }
-}
+// Auto-nettoyage intégré
+FCMTokenSecurity::autoCleanExpiredStatuses();
+// Filtrage coursiers réellement disponibles
+FCMTokenSecurity::getAvailableCouriers();
 ```
 
 ---
