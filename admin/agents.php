@@ -866,8 +866,11 @@ $newAgentsThisMonth = count(array_filter($agents, fn($a) => isset($a['created_at
             box-shadow: var(--glass-shadow);
             display: flex;
             flex-direction: column;
-            position: relative;
-            z-index: 20;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1000;
         }
 
         .sidebar::before {
@@ -1055,7 +1058,10 @@ $newAgentsThisMonth = count(array_filter($agents, fn($a) => isset($a['created_at
             flex-direction: column;
             background: var(--gradient-dark);
             position: relative;
-            overflow: hidden;
+            margin-left: 300px;
+            min-height: 100vh;
+            overflow-x: hidden;
+            overflow-y: auto;
         }
 
         .main-content::before {
