@@ -18,95 +18,37 @@ function getDashboardStats() {
         FROM commandes
     ")->fetch(PDO::FETCH_ASSOC);
     
-    // Statistiques des coursiers - UTILISER LA LOGIQUE UNIFIÉE
-    require_once __DIR__ . '/../lib/coursier_presence.php';
-    $coursiersConnectes = getConnectedCouriers($pdo);
-    $totalCoursiers = count(getAllCouriers($pdo));
-    
+    // Statistiques des coursiers (compteur total uniquement ici, présence gérée côté API)
+    try {
+        $totalCoursiers = (int) $pdo->query('SELECT COUNT(*) FROM agents_suzosky')->fetchColumn();
+    } catch (Throwable $ignored) {
+        $totalCoursiers = 0;
+    }
+
     $coursiersStats = [
         'total' => $totalCoursiers,
-        'en_ligne' => count($coursiersConnectes),  // LOGIQUE UNIFIÉE
-        'hors_ligne' => $totalCoursiers - count($coursiersConnectes),
-        'occupe' => 0,  // Peut être calculé séparément si nécessaire
-        'avec_token' => array_sum(array_map(fn($c) => !empty($c['current_session_token']) ? 1 : 0, getAllCouriers($pdo)))
+        'en_ligne' => '--',
+        'hors_ligne' => '--',
+        'occupe' => '--',
+        'avec_token' => '--'
     ];
     
     // Revenus du jour
     $revenus = $pdo->query("
         SELECT 
             COALESCE(SUM(prix_total), 0) as revenus_jour,
-            COUNT(*) as commandes_jour
-        FROM commandes 
-        WHERE DATE(created_at) = CURDATE() AND statut = 'livree'
-    ")->fetch(PDO::FETCH_ASSOC);
-    
+            return [
+                'commandes' => $commandesStats ?: ['total' => 0, 'nouvelles' => 0, 'assignees' => 0, 'en_cours' => 0, 'livrees' => 0, 'aujourdhui' => 0],
+                'coursiers' => $coursiersStats,
+                'revenus' => $revenus ?: ['revenus_jour' => 0, 'commandes_jour' => 0]
+            ];
     return [
-        'commandes' => $commandesStats ?: ['total' => 0, 'nouvelles' => 0, 'assignees' => 0, 'en_cours' => 0, 'livrees' => 0, 'aujourdhui' => 0],
-        'coursiers' => $coursiersStats ?: ['total' => 0, 'en_ligne' => 0, 'hors_ligne' => 0, 'occupe' => 0, 'avec_token' => 0],
-        'revenus' => $revenus ?: ['revenus_jour' => 0, 'commandes_jour' => 0]
-    ];
-}
-
-function getCoursierStatus($coursier) {
-    // Système de feux : Vert, Orange, Rouge
-    $status = [
-        'color' => 'red',
-        'label' => 'Non disponible',
-        'conditions' => []
-    ];
-    
-    // Condition 1: Token présent (connexion technique)
-    $hasToken = !empty($coursier['current_session_token']);
-    $status['conditions']['token'] = $hasToken;
-    
-    // Condition 2: Statut en ligne
-    $isOnline = $coursier['statut_connexion'] === 'en_ligne';
-    $status['conditions']['online'] = $isOnline;
-    
-    // Condition 3: Solde suffisant (simulation - à adapter selon votre logique)
-    $hasSufficientBalance = true; // TODO: Implémenter la vérification du solde
-    $status['conditions']['balance'] = $hasSufficientBalance;
-    
-    // Condition 4: Dernière activité récente
-    $lastActivity = strtotime($coursier['last_login_at'] ?? '0');
-    $isRecentActivity = $lastActivity > (time() - 300); // 5 minutes
-    $status['conditions']['activity'] = $isRecentActivity;
-    
-    // Déterminer la couleur du feu
-    if ($hasToken && $isOnline && $isRecentActivity) {
-        if ($hasSufficientBalance) {
-            $status['color'] = 'green';
-            $status['label'] = 'Disponible pour courses';
-        } else {
-            $status['color'] = 'orange';
-            $status['label'] = 'Solde insuffisant';
-        }
-    } else {
-        $status['color'] = 'red';
-        if (!$hasToken) {
-            $status['label'] = 'Token app manquant';
-        } elseif (!$isOnline) {
-            $status['label'] = 'Hors ligne';
-        } else {
-            $status['label'] = 'Inactif';
-        }
-    }
-    
-    return $status;
-}
-
-function getCoursiersList() {
-    $pdo = getDBConnection();
-    $coursiers = $pdo->query("
-        SELECT 
-            id, matricule, nom, prenoms, telephone, 
-            statut_connexion, current_session_token,
             last_login_at, last_login_ip
         FROM agents_suzosky 
-        WHERE status = 'actif'
+            $coursiers = [];
         ORDER BY statut_connexion DESC, last_login_at DESC
     ")->fetchAll(PDO::FETCH_ASSOC);
-    
+            $stats = ['commandes' => ['total' => 0, 'nouvelles' => 0, 'assignees' => 0, 'en_cours' => 0, 'livrees' => 0, 'aujourdhui' => 0], 'coursiers' => ['total' => 0, 'en_ligne' => '--', 'hors_ligne' => '--', 'occupe' => '--', 'avec_token' => '--'], 'revenus' => ['revenus_jour' => 0, 'commandes_jour' => 0]];
     foreach ($coursiers as &$coursier) {
         $coursier['status_info'] = getCoursierStatus($coursier);
     }
