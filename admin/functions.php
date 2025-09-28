@@ -974,32 +974,6 @@ function renderHeader() {
                 font-weight: 600;
             }
 
-            /* === MAIN CONTENT === */
-            .main-content {
-                flex: 1;
-                display: flex;
-                flex-direction: column;
-                background: var(--gradient-dark);
-                position: relative;
-                margin-left: 300px;
-                min-height: 100vh;
-                overflow-x: hidden;
-                overflow-y: auto;
-            }
-
-            .main-content::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: 
-                    radial-gradient(circle at 30% 70%, rgba(212, 168, 83, 0.05) 0%, transparent 50%),
-                    radial-gradient(circle at 70% 30%, rgba(15, 52, 96, 0.08) 0%, transparent 50%);
-                pointer-events: none;
-            }
-
             /* === TOP BAR === */
             .top-bar {
                 background: var(--glass-bg);
