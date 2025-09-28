@@ -1,28 +1,33 @@
 # 📚 DOCUMENTATION TECHNIQUE FINALE - SUZOSKY COURSIER
-## Version: 3.0 - Date: 28 Septembre 2025 - SYSTÈME 100% AUTO-PILOTÉ
+## Version: 4.0 - Date: 28 Septembre 2025 - SYSTÈME 100% AUTOMATISÉ
 
 ---
 
-## 🎯 ARCHITECTURE SYSTÈME RÉVOLUTI## 📱 **INTÉGRATION APP MOBILE CONSOLIDÉE**
+## 🚀 **SYSTÈME CRON MASTER - AUTOMATION COMPLÈTE**
 
-### 🎨 **INTERFACE UTILISATEUR MOBILE :**
-- **Menu mobile corrigé** : Boutons connexion/business parfaitement visibles
-- **Responsive design** : Media queries optimisées pour tous écrans
-- **Navigation fluide** : Animations CSS avec classes `active`/`open`
-- **Design premium** : Gradient or/bleu, effets glass morphism
+### ⚡ **CRON UNIQUE ULTRA-RAPIDE :**
+- **Fréquence :** Chaque minute (60 secondes maximum entre commande et assignation)
+- **Fichier :** `Scripts/Scripts cron/cron_master.php`
+- **URL LWS :** `https://coursier.conciergerie-privee-suzosky.com/Scripts/Scripts%20cron/cron_master.php`
+- **Configuration :** `* * * * *` (une seule tâche CRON pour tout gérer)
 
-### 🚀 **API MOBILE UNIVERSELLE :**
-- **Endpoint principal :** `api/get_coursier_data.php`
-- **Support complet :** GET, POST form-data, POST JSON (php://input)
-- **Données consolidées :** Profil + Solde + Commandes + Statut
-- **FCM intégré :** Notifications temps réel sécuriséesIRE
+### 🎯 **TÂCHES AUTOMATISÉES :**
+- **Chaque minute :** Assignation automatique + Surveillance temps réel + Assignation sécurisée
+- **Toutes les 5min :** MAJ statuts coursiers
+- **Toutes les 15min :** Nettoyage statuts
+- **Chaque heure :** Sécurité FCM + Nettoyage tokens + Vérifications système + Migrations BDD
+- **Quotidien (2h)** : Nettoyage BDD + Rotation logs
 
-### 🚀 **NOUVEAUTÉS SYSTÈME (28 Sept 2025) :**
-- **🔄 Migrations DB 100% automatiques** : Détection + génération + application sans intervention
-- **📱 Interface mobile corrigée** : Boutons connexion/business parfaitement visibles
-- **📁 Organisation PS1 sécurisée** : Scripts isolés, jamais déployés en production
-- **🛡️ Exclusions renforcées** : Dossier `_sql` et fichiers sensibles automatiquement exclus
-- **🎨 CSS mobile optimisé** : Responsive design complet avec media queries renforcées
+### 📱 **INTERFACE MOBILE CORRIGÉE :**
+- **Menu mobile optimisé** : Boutons connexion/business parfaitement visibles
+- **CSS responsive** : Media queries pour tous écrans (768px, 992px, 1280px)
+- **Navigation fluide** : Animations CSS avec transitions smoothes
+- **Design premium** : Gradient or/bleu, glass morphism effects
+
+### 🛡️ **ARCHITECTURE SÉCURISÉE :**
+- **Scripts PS1 isolés** : Jamais déployés en production
+- **Exclusions automatiques** : Fichiers debug/test dans dossier `Tests/`
+- **Structure optimisée** : Racine propre, outils dans sous-dossiers
 
 ---
 
