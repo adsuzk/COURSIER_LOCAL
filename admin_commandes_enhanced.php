@@ -251,7 +251,7 @@ function renderCoursiersStatusContent(array $coursiers): string
     ob_start();
     ?>
     
-    <div class="suzosky-coursiers-panel">
+    <div class="suzosky-coursiers-panel" data-connectivity-panel>
         <div class="panel-header">
             <div class="panel-title">
                 <i class="fas fa-motorcycle"></i>
