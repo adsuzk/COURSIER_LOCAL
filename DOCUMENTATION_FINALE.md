@@ -424,10 +424,13 @@ $stmt = $pdo->prepare("SELECT solde_wallet FROM agents_suzosky WHERE id = ?");
     3. Uploadez sur LWS → application automatique via CRON
 - **Traçabilité :** Logs dans `diagnostic_logs/db_migrations.log` et table `schema_migrations`
 
-#### **Configuration CRON recommandée :**
+#### **Configuration CRON pour LWS (à configurer une seule fois) :**
 ```bash
+# Migration automatique BDD (détecte et applique vos changements locaux)
+0 2 * * * /usr/bin/php '/path/to/Scripts/Scripts cron/automated_db_migration.php'
+
 # Nettoyage sécurité FCM toutes les 5 minutes
-*/5 * * * * /usr/bin/php /path/to/fcm_auto_cleanup.php
+*/5 * * * * /usr/bin/php '/path/to/Scripts/Scripts cron/fcm_auto_cleanup.php'
 
 # Diagnostic complet quotidien
 0 6 * * * /usr/bin/php '/path/to/Scripts/Scripts cron/fcm_daily_diagnostic.php'
@@ -447,19 +450,20 @@ $stmt = $pdo->prepare("SELECT solde_wallet FROM agents_suzosky WHERE id = ?");
 
 ### 🎯 **KPIs à surveiller :**
 
-- **Sécurité FCM** : 0 violation = conforme (critique légal)
-- **Coursiers disponibles** : > 0 = service opérationnel
-- Taux FCM global (> 80% = excellent)
-- Nombre de coursiers avec solde > 0
-- Temps moyen de livraison
-- Taux d'acceptation des commandes
+- **🤖 Migrations automatiques** : Succès = structure DB synchronisée sans intervention
+- **🛡️ Sécurité FCM** : 0 violation = conforme (critique légal)
+- **📱 Coursiers disponibles** : > 0 = service opérationnel
+- **📊 Taux FCM global** : > 80% = excellent
+- **💰 Soldes positifs** : Nombre de coursiers avec solde > 0
+- **🚀 Performance** : Temps moyen de livraison + taux d'acceptation
 
 ### ⚠️ **Alertes Critiques :**
 
-- **Tokens orphelins** : Tokens actifs sur coursiers déconnectés
-- **Service indisponible** : Aucun coursier connecté 
-- **Violations sécurité** : Assignations à coursiers hors ligne
-- **Erreurs API mobile** : Échecs synchronisation wallet
+- **🔄 Échec migration** : Migration automatique échouée (voir logs `db_migrations.log`)
+- **🔗 Tokens orphelins** : Tokens actifs sur coursiers déconnectés
+- **⛔ Service indisponible** : Aucun coursier connecté 
+- **🚨 Violations sécurité** : Assignations à coursiers hors ligne
+- **📱 Erreurs API mobile** : Échecs synchronisation wallet
 
 ---
 
