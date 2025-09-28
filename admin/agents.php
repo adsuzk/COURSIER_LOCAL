@@ -1177,32 +1177,11 @@ $newAgentsThisMonth = count(array_filter($agents, fn($a) => isset($a['created_at
             z-index: 1;
         }
 
-        /* Ajustement latéral spécifique à la page agents pour compenser la marge du menu principal */
+        /* Conteneur principal aligné sur la zone de contenu globale */
         .agents-content-wrapper {
             position: relative;
-            margin-left: -140px;
-            width: calc(100% + 140px);
-        }
-
-        @media (max-width: 1280px) {
-            .agents-content-wrapper {
-                margin-left: -100px;
-                width: calc(100% + 100px);
-            }
-        }
-
-        @media (max-width: 1100px) {
-            .agents-content-wrapper {
-                margin-left: -60px;
-                width: calc(100% + 60px);
-            }
-        }
-
-        @media (max-width: 992px) {
-            .agents-content-wrapper {
-                margin-left: 0;
-                width: 100%;
-            }
+            margin-left: 0;
+            width: 100%;
         }
 
         /* === DESIGN SYSTEM AGENTS === */
