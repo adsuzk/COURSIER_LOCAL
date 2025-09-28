@@ -1414,51 +1414,49 @@ $newAgentsThisMonth = count(array_filter($agents, fn($a) => isset($a['created_at
             backdrop-filter: var(--glass-blur);
             border: 1px solid var(--glass-border);
             border-radius: 16px;
-            overflow: auto;
+            overflow-x: auto;
+            overflow-y: visible;
             box-shadow: var(--glass-shadow);
-            max-width: 100%;
+            width: 100%;
+            margin: 20px 0;
         }
 
         .data-table {
             width: 100%;
             border-collapse: collapse;
-            table-layout: fixed;
+            table-layout: auto;
+            min-width: 1000px;
         }
 
         .data-table th {
             background: rgba(212, 168, 83, 0.15);
             color: var(--primary-gold);
-            padding: var(--space-4) var(--space-3);
+            padding: var(--space-4) var(--space-4);
             text-align: left;
             font-weight: 700;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         .data-table td {
-            padding: var(--space-3) var(--space-3);
+            padding: var(--space-4) var(--space-4);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             color: rgba(255, 255, 255, 0.9);
             transition: all var(--duration-normal) var(--ease-standard);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 0;
+            vertical-align: middle;
         }
 
-        /* Largeurs spécifiques pour chaque colonne */
-        .data-table th:nth-child(1), .data-table td:nth-child(1) { width: 60px; } /* ID */
-        .data-table th:nth-child(2), .data-table td:nth-child(2) { width: 120px; } /* Matricule */
-        .data-table th:nth-child(3), .data-table td:nth-child(3) { width: 200px; } /* Nom complet */
-        .data-table th:nth-child(4), .data-table td:nth-child(4) { width: 130px; } /* Téléphone */
-        .data-table th:nth-child(5), .data-table td:nth-child(5) { width: 130px; } /* Type de poste */
-        .data-table th:nth-child(6), .data-table td:nth-child(6) { width: 110px; } /* Date création */
-        .data-table th:nth-child(7), .data-table td:nth-child(7) { width: 180px; } /* Actions */
+        /* Largeurs optimisées pour l'espace disponible (écran - sidebar 300px) */
+        .data-table th:nth-child(1), .data-table td:nth-child(1) { width: 70px; } /* ID */
+        .data-table th:nth-child(2), .data-table td:nth-child(2) { width: 150px; } /* Matricule */
+        .data-table th:nth-child(3), .data-table td:nth-child(3) { width: 250px; } /* Nom complet */
+        .data-table th:nth-child(4), .data-table td:nth-child(4) { width: 150px; } /* Téléphone */
+        .data-table th:nth-child(5), .data-table td:nth-child(5) { width: 160px; } /* Type de poste */
+        .data-table th:nth-child(6), .data-table td:nth-child(6) { width: 130px; } /* Date création */
+        .data-table th:nth-child(7), .data-table td:nth-child(7) { width: 200px; } /* Actions */
 
         .data-table tr:hover td {
             background: rgba(255, 255, 255, 0.05);
@@ -2207,8 +2205,4 @@ document.addEventListener('DOMContentLoaded', function(){
         }, index * 100);
     });
 
-    // Charger immédiatement à l'ouverture
-    refreshAgents();
-});
-</script>
-
+    // Charger immédiate
