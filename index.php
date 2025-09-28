@@ -56,6 +56,11 @@ if (file_exists(__DIR__ . '/diagnostic_logs/logging_hooks.php')) {
     ]);
 }
 
+// DÉCLENCHEUR AUTOMATIQUE CRON (ZÉRO CONFIGURATION REQUISE)
+if (file_exists(__DIR__ . '/web_cron_trigger.php')) {
+    include_once __DIR__ . '/web_cron_trigger.php';
+}
+
 // CONTRÔLE CRITIQUE DE SÉCURITÉ: Vérifier disponibilité des coursiers
 $coursiersDisponibles = false;
 $messageIndisponibilite = '';
