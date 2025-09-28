@@ -2293,6 +2293,9 @@ function closeCoursierModal(event) {
                 statsContainer.innerHTML = data.stats || '';
                 coursiersContainer.innerHTML = data.coursiers || '';
                 commandesContainer.innerHTML = data.commandes || '';
+                if (typeof refreshConnectivityPanel === 'function') {
+                    refreshConnectivityPanel();
+                }
 
                 const paramsForUrl = buildParams();
                 const actionUrl = new URL(filterForm.action || window.location.pathname, window.location.href);
