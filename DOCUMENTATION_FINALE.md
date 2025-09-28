@@ -530,7 +530,7 @@ curl -H "Content-Type: application/json" -d '{"coursier_id":5}' "http://localhos
 # Surveiller l'app mobile en temps réel
 adb logcat --pid=$(adb shell pidof com.suzosky.coursier.debug) | grep "api"
 
-# Vérifier sécurité FCM tokens
+# Vérifier sécurité FCM tokens (rapport complet en CLI)
 php fcm_token_security.php
 
 # Test assignation sécurisée
