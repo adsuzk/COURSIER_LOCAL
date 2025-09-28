@@ -72,9 +72,14 @@ SQL;
 
 function tableExists(PDO $pdo, string $table): bool
 {
-    $stmt = $pdo->prepare('SHOW TABLES LIKE ?');
+    $stmt = $pdo->prepare("
+        SELECT COUNT(*) 
+        FROM INFORMATION_SCHEMA.TABLES 
+        WHERE TABLE_SCHEMA = DATABASE() 
+        AND TABLE_NAME = ?
+    ");
     $stmt->execute([$table]);
-    return (bool) $stmt->fetchColumn();
+    return (int) $stmt->fetchColumn() > 0;
 }
 
 function columnExists(PDO $pdo, string $table, string $column): bool
