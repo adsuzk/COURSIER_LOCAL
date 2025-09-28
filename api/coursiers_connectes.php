@@ -10,6 +10,7 @@ require_once __DIR__ . '/../lib/coursier_presence.php';
 try {
     $pdo = getDBConnection();
     $coursiers = getConnectedCouriers($pdo);
+    $fcmSummary = getFCMGlobalStatus($pdo);
 
     $data = [];
     foreach ($coursiers as $coursier) {
@@ -32,6 +33,7 @@ try {
         'meta' => [
             'total' => count($data),
             'generated_at' => date('c'),
+            'fcm_summary' => $fcmSummary,
         ],
         'data' => $data,
     ]);
