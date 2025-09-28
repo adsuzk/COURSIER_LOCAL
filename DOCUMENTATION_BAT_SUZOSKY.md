@@ -25,7 +25,7 @@ C:\xampp\htdocs\COURSIER_LOCAL\BAT\PROTECTION_GITHUB.bat
 ```
 
 ### Script PowerShell associé :
-`scripts\PROTECTION_GITHUB_SIMPLE.ps1`
+`PS1\PROTECTION_GITHUB_SIMPLE.ps1`
 
 ### Comportement :
 - **Mode continu** : Reste actif jusqu'à CTRL+C
@@ -59,27 +59,29 @@ C:\xampp\htdocs\COURSIER_LOCAL\BAT\SYNC_COURSIER_PROD.bat
 ```
 
 ### Script PowerShell associé :
-`scripts\SYNC_COURSIER_PROD_LWS.ps1`
+`PS1\SYNC_COURSIER_PROD_LWS.ps1`
 
 ### Structure finale dans coursier_prod :
 ```
 coursier_prod/
 ├── 📁 Tests/          ← Tous les fichiers de test/debug
-├── 📁 scripts/        ← Scripts PowerShell et utilitaires
-├── 📁 Scripts/        ← Scripts PHP d'automatisation (cron, migrations, sécurité)
+├── 📁 Scripts/        ← Scripts PHP d'automatisation UNIQUEMENT (cron, migrations, sécurité)
 ├── 📄 index.php       ← Fichiers de production à la racine
 ├── 📄 config.php      ← Configuration LWS appliquée
-├── 📄 FORCE_PRODUCTION_DB ← Flag généré automatiquement pour LWS (force la configuration production)
+├── 📄 FORCE_PRODUCTION_DB ← Flag généré automatiquement pour LWS
 ├── 📄 coursier.php    ← Interface coursier
 ├── 📄 admin.php       ← Interface admin
 └── ... (autres fichiers de production)
+
+❌ EXCLUS : PS1/ (tous les .ps1 isolés pour sécurité)
 
 > 📦 **Déploiement LWS :** transférer ces éléments individuellement (contenu du dossier `coursier_prod`, pas le dossier parent) vers le répertoire web distant.
 ```
 
 ### Exclusions automatiques :
 - **Fichiers :** `*.md`, `*.ps1`, `*.log`, `*debug*`, `*test*`
-- **Dossiers :** `Applications/`, `CoursierAppV7/`, `BAT/`, `DOCUMENTATION_FINALE/`
+- **Dossiers :** `PS1/`, `Applications/`, `CoursierAppV7/`, `BAT/`, `DOCUMENTATION_FINALE/`, `Tests/`
+- **Sécurité :** Dossier `PS1/` complètement exclu - aucun script PowerShell sur LWS
 
 ---
 
