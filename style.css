@@ -218,14 +218,14 @@ body {
 /* Afficher le toggle et gérer l'ouverture du menu sur mobile */
 @media (max-width: 768px) {
     .mobile-menu-toggle {
-        display: block;
+        display: block !important;
     }
     .mobile-menu.open,
     .mobile-menu.active {
-        opacity: 1;
-        visibility: visible;
-        transform: translateX(0);
-        pointer-events: auto;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: translateX(0) !important;
+        pointer-events: auto !important;
     }
 }
 /* ============================================================================
@@ -1255,12 +1255,19 @@ body {
 /* RESPONSIVE DESIGN */
 @media (max-width: 1024px) {
     .nav-menu {
-        display: none;
+        display: none !important;
     }
     
     .mobile-menu-toggle {
-        display: block;
+        display: block !important;
     }
+    
+    /* Assurer que les boutons mobile sont visibles sur tablette aussi */
+    .mobile-menu.open .mobile-menu-auth,
+    .mobile-menu.active .mobile-menu-auth {
+        display: block !important;
+    }
+}
     
     .hero-title {
         font-size: 2.8rem;
