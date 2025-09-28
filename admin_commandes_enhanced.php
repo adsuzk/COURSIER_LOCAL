@@ -1940,33 +1940,181 @@ document.addEventListener('DOMContentLoaded', () => {
         setInterval(refreshSyncStatus, 45000);
     }
 
-    // Auto-rafraîchissement des feux coursiers toutes les 30 secondes
-    async function refreshCoursiersStatus() {
-        if (!coursiersContainer) return;
-        
+    const connectivityApiUrl = 'api/coursiers_connectes.php';
+
+    const formatRelativeTime = (value) => {
+        if (!value) {
+            return 'Dernière activité inconnue';
+        }
+
+        const normalized = String(value).replace(' ', 'T');
+        const timestamp = Date.parse(normalized);
+        if (Number.isNaN(timestamp)) {
+            return 'Dernière activité inconnue';
+        }
+
+        const diffMs = Date.now() - timestamp;
+        if (diffMs <= 0) {
+            return "Dernière activité : à l'instant";
+        }
+
+        const diffSec = Math.floor(diffMs / 1000);
+        if (diffSec < 60) {
+            return "Dernière activité : à l'instant";
+        }
+        if (diffSec < 3600) {
+            const minutes = Math.floor(diffSec / 60);
+            return `Dernière activité : il y a ${minutes} minute${minutes > 1 ? 's' : ''}`;
+        }
+        if (diffSec < 86400) {
+            const hours = Math.floor(diffSec / 3600);
+            return `Dernière activité : il y a ${hours} heure${hours > 1 ? 's' : ''}`;
+        }
+        const days = Math.floor(diffSec / 86400);
+        return `Dernière activité : il y a ${days} jour${days > 1 ? 's' : ''}`;
+    };
+
+    async function refreshConnectivityPanel() {
+        if (!coursiersContainer) {
+            return;
+        }
+
+        const panel = coursiersContainer.querySelector('[data-connectivity-panel]');
+        if (!panel) {
+            return;
+        }
+
+        const listEl = panel.querySelector('[data-coursiers-list]');
+        const totalEl = panel.querySelector('[data-connected-total]');
+        const greenEl = panel.querySelector('[data-count-green]');
+        const orangeEl = panel.querySelector('[data-count-orange]');
+        const redEl = panel.querySelector('[data-count-red]');
+        const fcmIndicator = panel.querySelector('[data-fcm-indicator]');
+        const fcmRateEl = panel.querySelector('[data-fcm-rate]');
+
         try {
-            const params = new URLSearchParams(new FormData(filterForm));
-            params.set('ajax', '1');
-            
-            const response = await fetch('?' + params.toString(), {
-                method: 'GET',
-                credentials: 'same-origin'
+            const response = await fetch(connectivityApiUrl, { cache: 'no-store' });
+            if (!response.ok) {
+                throw new Error('HTTP ' + response.status);
+            }
+
+            const payload = await response.json();
+            const couriers = Array.isArray(payload.data) ? payload.data : [];
+
+            if (totalEl) {
+                const total = payload.meta && typeof payload.meta.total === 'number'
+                    ? payload.meta.total
+                    : couriers.length;
+                totalEl.textContent = total;
+            }
+
+            const counts = { green: 0, orange: 0, red: 0 };
+            const fragment = document.createDocumentFragment();
+
+            couriers.forEach((coursier) => {
+                const id = Number.parseInt(coursier.id, 10) || 0;
+                const statusLight = coursier.status_light || {};
+                let color = String(statusLight.color || '').toLowerCase();
+                if (!['green', 'orange', 'red'].includes(color)) {
+                    color = 'red';
+                }
+                counts[color] += 1;
+
+                const nameParts = [coursier.nom || '', coursier.prenoms || '']
+                    .map(part => part ? String(part).trim() : '')
+                    .filter(Boolean);
+                const displayName = nameParts.join(' ') || `Coursier #${id}`;
+                const statusLabel = statusLight.label || 'Statut inconnu';
+                const lastSeenRaw = coursier.last_seen_at || coursier.last_login_at || null;
+                const lastSeenText = formatRelativeTime(lastSeenRaw);
+                const fcmTokens = Number.parseInt(coursier.fcm_tokens, 10) || 0;
+
+                const item = document.createElement('div');
+                item.className = 'coursier-item';
+                item.dataset.coursierId = String(id);
+                item.innerHTML = `
+                    <div class="status-dot ${color}"></div>
+                    <div class="coursier-info">
+                        <div class="coursier-name">${escapeHtml(displayName)}</div>
+                        <div class="coursier-status">${escapeHtml(statusLabel)}</div>
+                        <div class="coursier-meta">${escapeHtml(lastSeenText)}</div>
+                    </div>
+                    <div class="coursier-badges">
+                        ${fcmTokens > 0 ? '<i class="fas fa-mobile-alt app-badge" title="Token FCM actif"></i>' : ''}
+                        <i class="fas fa-chevron-right arrow-icon"></i>
+                    </div>
+                `;
+                item.addEventListener('click', () => showCoursierDetails(id));
+                fragment.appendChild(item);
             });
-            
-            if (response.ok) {
-                const data = await response.json();
-                if (data.success && data.coursiers) {
-                    coursiersContainer.innerHTML = data.coursiers;
+
+            if (listEl) {
+                listEl.innerHTML = '';
+                if (couriers.length === 0) {
+                    const empty = document.createElement('div');
+                    empty.className = 'empty-state';
+                    empty.innerHTML = `
+                        <i class="fas fa-motorcycle"></i>
+                        <div>Aucun coursier connecté</div>
+                    `;
+                    listEl.appendChild(empty);
+                } else {
+                    listEl.appendChild(fragment);
+                }
+            }
+
+            if (greenEl) greenEl.textContent = counts.green;
+            if (orangeEl) orangeEl.textContent = counts.orange;
+            if (redEl) redEl.textContent = counts.red;
+
+            if (fcmIndicator && fcmRateEl) {
+                const summary = payload.meta && payload.meta.fcm_summary ? payload.meta.fcm_summary : null;
+                fcmIndicator.classList.remove('excellent', 'correct', 'critique', 'erreur', 'neutral');
+
+                if (summary && summary.status) {
+                    fcmIndicator.classList.add(summary.status);
+                    const rate = typeof summary.fcm_rate === 'number' ? summary.fcm_rate : 0;
+                    fcmRateEl.textContent = `${rate}%`;
+                    const tooltip = `FCM : ${(summary.with_fcm ?? 0)}/${(summary.total_connected ?? 0)} (${rate}%)`;
+                    fcmIndicator.setAttribute('title', tooltip);
+                } else {
+                    fcmIndicator.classList.add('neutral');
+                    fcmRateEl.textContent = '--%';
+                    fcmIndicator.setAttribute('title', 'FCM : données indisponibles');
                 }
             }
         } catch (error) {
-            console.log('Coursiers auto-refresh failed:', error);
+            console.warn('Coursiers connectivity refresh failed:', error);
+
+            if (totalEl) totalEl.textContent = '??';
+            if (greenEl) greenEl.textContent = '0';
+            if (orangeEl) orangeEl.textContent = '0';
+            if (redEl) redEl.textContent = '0';
+
+            if (listEl) {
+                listEl.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-wifi"></i>
+                        <div>Impossible de charger les coursiers</div>
+                    </div>
+                `;
+            }
+
+            if (fcmIndicator && fcmRateEl) {
+                fcmIndicator.classList.remove('excellent', 'correct', 'critique', 'neutral');
+                fcmIndicator.classList.add('erreur');
+                fcmIndicator.setAttribute('title', 'FCM : erreur de chargement');
+                fcmRateEl.textContent = '--%';
+            }
         }
     }
 
     if (coursiersContainer) {
-        setInterval(refreshCoursiersStatus, 30000); // 30 secondes
+        refreshConnectivityPanel();
+        setInterval(refreshConnectivityPanel, 30000);
     }
+
+    window.refreshConnectivityPanel = refreshConnectivityPanel;
 }
 
 // Fonctions pour le modal coursier
