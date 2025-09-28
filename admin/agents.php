@@ -1468,18 +1468,6 @@ $newAgentsThisMonth = count(array_filter($agents, fn($a) => isset($a['created_at
             margin-right: 5px;
         }
 
-        /* CORRECTION SPÉCIALE POUR LA PAGE AGENTS - Annuler le margin-left global */
-        .main-content {
-            margin-left: 0 !important;
-        }
-
-        /* Repositionner la sidebar pour cette page */
-        .sidebar {
-            position: relative !important;
-            width: 100% !important;
-            height: auto !important;
-        }
-
         .btn-sm {
             padding: 6px 12px;
             font-size: 0.75rem;
