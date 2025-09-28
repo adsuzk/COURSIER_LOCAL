@@ -495,22 +495,18 @@ include __DIR__ . '/../functions.php';
                                     📱 <?= htmlspecialchars($coursier['telephone'] ?? 'N/A') ?>
                                 </div>
                             </div>
-                            <div>
-                                <?php
-                                // UTILISER LA LOGIQUE UNIFIÉE - SOURCE UNIQUE DE VÉRITÉ
-                                $isReallyConnected = false;
-                                foreach ($coursiersConnectes as $connected) {
-                                    if ($connected['id'] == $coursier['id']) {
-                                        $isReallyConnected = true;
-                                        break;
-                                    }
-                                }
-                                ?>
-                                <div class="status-badge <?= $isReallyConnected ? 'status-online' : 'status-offline' ?>">
-                                    <?= $isReallyConnected ? '🟢 En ligne' : '⚫ Hors ligne' ?>
+                            <div class="status-wrapper"
+                                 data-status-panel
+                                 data-coursier-id="<?= (int) $coursier['id'] ?>">
+                                <div class="status-badge status-pending">
+                                    <span class="status-icon" data-status-icon>⏳</span>
+                                    <span class="status-text" data-status-text>Synchronisation…</span>
                                 </div>
-                                <div class="fcm-indicator <?= $coursier['fcm_tokens'] > 0 ? 'fcm-ok' : 'fcm-warning' ?>">
-                                    🔔 FCM: <?= $coursier['fcm_tokens'] ?> token(s)
+                                <div class="status-meta">
+                                    <div class="status-last-seen" data-last-seen>Dernière activité inconnue</div>
+                                    <div class="fcm-indicator <?= $coursier['fcm_tokens'] > 0 ? 'fcm-ok' : 'fcm-warning' ?>" data-fcm-indicator>
+                                        🔔 FCM: <span data-fcm-count><?= $coursier['fcm_tokens'] ?></span> token(s)
+                                    </div>
                                 </div>
                             </div>
                         </div>
