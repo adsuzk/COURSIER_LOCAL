@@ -630,6 +630,34 @@ body {
     gap: 12px;
 }
 
+/* Force l'affichage correct des boutons d'authentification mobile */
+@media (max-width: 768px) {
+    .mobile-menu-auth {
+        display: block !important;
+        visibility: visible !important;
+        position: relative !important;
+        width: 100% !important;
+    }
+    
+    .mobile-menu-auth .btn-primary,
+    .mobile-menu-auth .btn-secondary {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        position: relative !important;
+        z-index: 10 !important;
+    }
+    
+    .mobile-menu-auth .auth-state {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+        width: 100% !important;
+    }
+}
+
 /* Styles pour utilisateur connecté mobile */
 .mobile-user-profile {
     display: flex;
