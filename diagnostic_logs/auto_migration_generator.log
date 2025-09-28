@@ -4,3 +4,7 @@
 [2025-09-28 05:43:25] ✅ Structure analysée : 77 tables trouvées
 [2025-09-28 05:43:25] 📸 Snapshot de structure sauvegardé dans db_structure_snapshot.json
 [2025-09-28 05:43:25] ✅ Aucun changement détecté - pas de migration nécessaire
+[2025-09-28 05:49:14] 🔄 Génération automatique des migrations...
+[2025-09-28 05:49:14] 🔍 Analyse de la structure actuelle de la base de données...
+[2025-09-28 05:49:16] ✅ Structure analysée : 77 tables trouvées
+[2025-09-28 05:49:16] ✅ Aucun changement détecté - pas de migration nécessaire
