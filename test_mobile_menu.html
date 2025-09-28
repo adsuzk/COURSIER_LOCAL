@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Menu Mobile - Suzosky</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { padding-top: 100px; background: #1A1A2E; }
+        .debug-info {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.8);
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 9999;
+        }
+        .test-content {
+            padding: 20px;
+            color: #fff;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-info">
+        <div>Largeur écran: <span id="screenWidth"></span>px</div>
+        <div>Mode: <span id="modeDisplay"></span></div>
+        <div>Menu toggle visible: <span id="toggleVisible"></span></div>
+        <div>Menu mobile existe: <span id="menuExists"></span></div>
+    </div>
+
+    <!-- Header simulé -->
+    <header class="site-header" id="accueil">
+        <nav class="main-nav">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <div class="logo-text">
+                        <span class="brand-name">SUZOSKY</span>
+                        <span class="brand-tagline">TEST MOBILE</span>
+                    </div>
+                </div>
+                <div class="nav-menu">
+                    <a href="#" class="nav-link">Desktop Menu</a>
+                    <div class="nav-auth">
+                        <div class="auth-state">
+                            <a href="#" class="nav-login">Connexion Bureau</a>
+                            <a href="#" class="nav-login">Business Bureau</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="mobile-menu-toggle" role="button" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+
+            <div class="mobile-menu" id="mobileMenu">
+                <div class="mobile-menu-content">
+                    <div class="mobile-menu-header">
+                        <div class="mobile-logo">
+                            <span class="mobile-brand">SUZOSKY TEST</span>
+                        </div>
+                        <div class="mobile-menu-close" onclick="toggleMobileMenu()">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    </div>
+                    <div class="mobile-menu-links">
+                        <a href="#" class="mobile-nav-link" onclick="toggleMobileMenu()">🏠 Test Link</a>
+                    </div>
+                    <div class="mobile-menu-auth" id="mobileNavAuth">
+                        <div class="auth-state">
+                            <a href="#" class="btn-primary full-width" onclick="alert('Connexion Particulier cliqué!'); return false;">Connexion Particulier</a>
+                            <a href="#" class="btn-secondary full-width" onclick="alert('Espace Business cliqué!'); return false;">Espace Business</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="test-content">
+        <h1>Test Menu Mobile</h1>
+        <p>Réduisez la largeur de votre navigateur ou utilisez les outils développeur pour simuler un mobile.</p>
+        <p>Cliquez sur le bouton menu (☰) en haut à droite pour tester.</p>
+        <button onclick="toggleMobileMenu()" style="padding: 10px 20px; margin: 10px; background: #D4A853; border: none; border-radius: 5px;">
+            Ouvrir Menu Mobile Manuellement
+        </button>
+        <button onclick="testResponsive()" style="padding: 10px 20px; margin: 10px; background: #16213E; color: #fff; border: none; border-radius: 5px;">
+            Test Responsive
+        </button>
+    </div>
+
+    <script>
+        // Fonction de debug
+        function updateDebugInfo() {
+            const width = window.innerWidth;
+            document.getElementById('screenWidth').textContent = width;
+            document.getElementById('modeDisplay').textContent = width <= 768 ? 'MOBILE' : 'DESKTOP';
+            
+            const toggle = document.querySelector('.mobile-menu-toggle');
+            const toggleVisible = toggle ? getComputedStyle(toggle).display !== 'none' : false;
+            document.getElementById('toggleVisible').textContent = toggleVisible ? 'OUI' : 'NON';
+            
+            const menu = document.getElementById('mobileMenu');
+            document.getElementById('menuExists').textContent = menu ? 'OUI' : 'NON';
+        }
+
+        // Fonction toggleMobileMenu simplifiée
+        window.toggleMobileMenu = function(forceState) {
+            console.log('📱 toggleMobileMenu() appelée');
+            const mobileMenu = document.getElementById('mobileMenu');
+            if (!mobileMenu) {
+                console.error('❌ Element mobileMenu introuvable');
+                alert('Erreur: Menu mobile introuvable!');
+                return false;
+            }
+            const isOpen = mobileMenu.classList.contains('active') || mobileMenu.classList.contains('open');
+            const nextOpen = typeof forceState === 'boolean' ? forceState : !isOpen;
+            mobileMenu.classList.toggle('active', nextOpen);
+            mobileMenu.classList.toggle('open', nextOpen);
+            document.body.style.overflow = nextOpen ? 'hidden' : '';
+            console.log(`📱 Menu mobile ${nextOpen ? 'ouvert' : 'fermé'}`);
+            
+            // Debug visuel
+            if (nextOpen) {
+                console.log('🔍 Classes du menu:', mobileMenu.classList.toString());
+                console.log('🔍 Style computed:', getComputedStyle(mobileMenu).opacity, getComputedStyle(mobileMenu).visibility);
+            }
+            return nextOpen;
+        };
+
+        function testResponsive() {
+            const authButtons = document.querySelectorAll('.mobile-menu-auth .btn-primary, .mobile-menu-auth .btn-secondary');
+            console.log('🔍 Boutons auth trouvés:', authButtons.length);
+            authButtons.forEach((btn, index) => {
+                console.log(`Bouton ${index + 1}:`, btn.textContent.trim(), getComputedStyle(btn).display);
+            });
+        }
+
+        // Event listeners
+        window.addEventListener('resize', updateDebugInfo);
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDebugInfo();
+            setInterval(updateDebugInfo, 1000);
+        });
+    </script>
+</body>
+</html>
