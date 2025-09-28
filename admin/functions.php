@@ -45,16 +45,13 @@ function renderLoginForm($error = '') {
                 box-sizing: border-box;
             }
 
+            /* Body de base (mode login: l'alignement est géré par .auth-screen, pas par body) */
             body {
                 font-family: 'Montserrat', sans-serif;
                 background: var(--gradient-dark);
                 color: white;
                 min-height: 100vh;
                 overflow-x: hidden;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 20px;
             }
 
             /* === STYLES CONNEXION/INSCRIPTION IDENTIQUE À COURSIER.PHP === */
