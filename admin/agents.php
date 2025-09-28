@@ -846,16 +846,7 @@ $newAgentsThisMonth = count(array_filter($agents, fn($a) => isset($a['created_at
             box-sizing: border-box;
         }
 
-        body {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 400;
-            line-height: 1.6;
-            background: var(--gradient-dark);
-            color: #FFFFFF;
-            display: flex;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+        /* Le layout global gère déjà le body; on évite de le surcharger ici */
 
         /* === SIDEBAR SUZOSKY === */
         .sidebar {
