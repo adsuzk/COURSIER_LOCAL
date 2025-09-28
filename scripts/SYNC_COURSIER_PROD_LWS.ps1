@@ -159,11 +159,23 @@ if (Test-Path $diagnosticSource) {
 
     foreach ($fileName in $essentialDiagnosticFiles) {
         $sourceFile = Join-Path $diagnosticSource $fileName
+        $targetFile = Join-Path $diagnosticTarget $fileName
+
         if (Test-Path $sourceFile) {
-            Copy-Item -Path $sourceFile -Destination $diagnosticTarget -Force
+            Copy-Item -Path $sourceFile -Destination $targetFile -Force
             Write-Host "  -> diagnostic_logs/$fileName" -ForegroundColor Gray
+        } else {
+            Write-Host "ATTENTION: $fileName introuvable dans diagnostic_logs source" -ForegroundColor Yellow
         }
     }
+
+    # Vérifier explicitement que le détecteur d'erreurs est bien présent
+    $detectorTarget = Join-Path $diagnosticTarget "deployment_error_detector.php"
+    if (-not (Test-Path $detectorTarget)) {
+        Write-Host "ATTENTION CRITIQUE: deployment_error_detector.php absent de la cible LWS !" -ForegroundColor Red
+    }
+} else {
+    Write-Host "ATTENTION: dossier diagnostic_logs introuvable dans la source (aucun détecteur copié)." -ForegroundColor Yellow
 }
 
 # Configuration de production dans config.php (si nécessaire)
