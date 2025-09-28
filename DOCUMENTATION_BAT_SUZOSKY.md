@@ -48,6 +48,7 @@ C:\xampp\htdocs\COURSIER_LOCAL\BAT\PROTECTION_GITHUB.bat
 - ✅ **Racine propre** sans fichiers de développement
 - ✅ **Configuration LWS** appliquée automatiquement
 - ✅ **Fichiers critiques `diagnostic_logs/*.php`** conservés pour `index.php`
+- ✅ **Scripts de diagnostic en production** (`fcm_daily_diagnostic.php`, `fcm_auto_cleanup.php`, `secure_order_assignment.php`, `fcm_token_security.php`) maintenus à la racine
 
 ### Utilisation :
 ```batch
