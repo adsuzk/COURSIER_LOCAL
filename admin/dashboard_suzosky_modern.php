@@ -481,24 +481,202 @@ try {
     </div>
 
     <!-- Bouton Refresh -->
-    <button class="refresh-btn" onclick="location.reload()" title="Actualiser">
+    <button class="refresh-btn" id="dashboardRefreshBtn" type="button" title="Actualiser">
         <i class="fas fa-sync-alt"></i>
     </button>
 
     <script>
-        // Auto-refresh toutes les 30 secondes
-        setInterval(() => {
-            location.reload();
-        }, 30000);
+        const connectivityEndpoint = '../api/coursiers_connectes.php';
 
-        // Animation des feux
-        document.addEventListener('DOMContentLoaded', function() {
-            const lights = document.querySelectorAll('.status-light');
-            lights.forEach(light => {
-                if (light.classList.contains('green')) {
-                    light.style.animation = 'pulse 2s infinite';
+        const htmlEscape = (value) => {
+            if (value === undefined || value === null) {
+                return '';
+            }
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        };
+
+        const formatRelativeTime = (value) => {
+            if (!value) {
+                return 'Dernière activité inconnue';
+            }
+            const normalized = String(value).replace(' ', 'T');
+            const timestamp = Date.parse(normalized);
+            if (Number.isNaN(timestamp)) {
+                return 'Dernière activité inconnue';
+            }
+            const diffMs = Date.now() - timestamp;
+            if (diffMs <= 0) {
+                return "Dernière activité : à l'instant";
+            }
+            const diffSec = Math.floor(diffMs / 1000);
+            if (diffSec < 60) {
+                return "Dernière activité : à l'instant";
+            }
+            if (diffSec < 3600) {
+                const minutes = Math.floor(diffSec / 60);
+                return `Dernière activité : il y a ${minutes} minute${minutes > 1 ? 's' : ''}`;
+            }
+            if (diffSec < 86400) {
+                const hours = Math.floor(diffSec / 3600);
+                return `Dernière activité : il y a ${hours} heure${hours > 1 ? 's' : ''}`;
+            }
+            const days = Math.floor(diffSec / 86400);
+            return `Dernière activité : il y a ${days} jour${days > 1 ? 's' : ''}`;
+        };
+
+        async function refreshDashboardConnectivity() {
+            const grid = document.querySelector('[data-coursiers-grid]');
+            const emptyPlaceholder = document.querySelector('[data-coursiers-empty]');
+            const totalEl = document.querySelector('[data-dashboard-total]');
+            const onlineEl = document.querySelector('[data-dashboard-online]');
+            const offlineEl = document.querySelector('[data-dashboard-offline]');
+            const busyEl = document.querySelector('[data-dashboard-busy]');
+            const tokensEl = document.querySelector('[data-dashboard-tokens]');
+
+            if (!grid) {
+                return;
+            }
+
+            try {
+                if (emptyPlaceholder) {
+                    emptyPlaceholder.innerHTML = `
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <h3>Chargement des coursiers…</h3>
+                        <p>Les coursiers apparaîtront ici dès qu'ils seront connectés.</p>
+                    `;
                 }
-            });
+
+                const response = await fetch(connectivityEndpoint, { cache: 'no-store' });
+                if (!response.ok) {
+                    throw new Error('HTTP ' + response.status);
+                }
+
+                const payload = await response.json();
+                const couriers = Array.isArray(payload.data) ? payload.data : [];
+                const summary = payload.meta && payload.meta.fcm_summary ? payload.meta.fcm_summary : null;
+
+                const fragment = document.createDocumentFragment();
+                let orangeCount = 0;
+
+                couriers.forEach((coursier) => {
+                    const id = Number.parseInt(coursier.id, 10) || 0;
+                    const statusLight = coursier.status_light || {};
+                    let color = String(statusLight.color || '').toLowerCase();
+                    if (!['green', 'orange', 'red'].includes(color)) {
+                        color = 'red';
+                    }
+                    if (color === 'orange') {
+                        orangeCount += 1;
+                    }
+
+                    const nameParts = [coursier.nom || '', coursier.prenoms || '']
+                        .map((part) => part ? String(part).trim() : '')
+                        .filter(Boolean);
+                    const displayName = nameParts.join(' ') || `Coursier #${id}`;
+                    const statusLabel = statusLight.label || 'Statut inconnu';
+                    const lastSeen = coursier.last_seen_at || coursier.last_login_at || null;
+                    const telephone = coursier.telephone ? String(coursier.telephone).trim() : 'N/A';
+                    const typePoste = coursier.type_poste ? String(coursier.type_poste).replace(/_/g, ' ').toUpperCase() : 'TYPE INCONNU';
+                    const fcmTokens = Number.parseInt(coursier.fcm_tokens, 10) || 0;
+
+                    const card = document.createElement('div');
+                    card.className = `coursier-card status-${color}`;
+                    card.innerHTML = `
+                        <div class="coursier-header">
+                            <div class="coursier-info">
+                                <h3>${htmlEscape(displayName)}</h3>
+                                <div class="coursier-matricule">ID #${htmlEscape(id)}</div>
+                            </div>
+                            <div class="status-light ${color}"></div>
+                        </div>
+                        <div class="coursier-details">
+                            <div class="detail-item">
+                                <i class="fas fa-phone"></i>
+                                ${htmlEscape(telephone)}
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-clock"></i>
+                                ${htmlEscape(formatRelativeTime(lastSeen))}
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-bell"></i>
+                                ${fcmTokens} token${fcmTokens > 1 ? 's' : ''}
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-briefcase"></i>
+                                ${htmlEscape(typePoste)}
+                            </div>
+                        </div>
+                        <div class="status-label ${color}">
+                            ${htmlEscape(statusLabel)}
+                        </div>
+                    `;
+                    fragment.appendChild(card);
+                });
+
+                grid.innerHTML = '';
+                if (couriers.length === 0) {
+                    const empty = document.createElement('div');
+                    empty.className = 'empty-state';
+                    empty.innerHTML = `
+                        <i class="fas fa-motorcycle"></i>
+                        <h3>Aucun coursier actif</h3>
+                        <p>Les coursiers apparaîtront ici lorsqu'ils se connecteront à l'application.</p>
+                    `;
+                    grid.appendChild(empty);
+                } else {
+                    grid.appendChild(fragment);
+                }
+
+                const totalCount = totalEl ? Number.parseInt(totalEl.dataset.totalCount || totalEl.textContent, 10) || 0 : 0;
+                if (onlineEl) onlineEl.textContent = couriers.length;
+                if (offlineEl) offlineEl.textContent = totalCount > 0 ? Math.max(totalCount - couriers.length, 0) : '--';
+                if (busyEl) busyEl.textContent = orangeCount;
+                if (tokensEl) {
+                    const withTokens = summary && typeof summary.with_fcm === 'number' ? summary.with_fcm : couriers.filter(c => Number.parseInt(c.fcm_tokens, 10) > 0).length;
+                    tokensEl.textContent = withTokens;
+                    if (summary && typeof summary.fcm_rate === 'number') {
+                        tokensEl.setAttribute('title', `FCM actif : ${summary.fcm_rate}% (${withTokens}/${summary.total_connected ?? couriers.length})`);
+                    } else {
+                        tokensEl.removeAttribute('title');
+                    }
+                }
+
+                const lights = grid.querySelectorAll('.status-light.green');
+                lights.forEach((light) => {
+                    light.style.animation = 'pulse 2s infinite';
+                });
+            } catch (error) {
+                console.error('Dashboard connectivity error:', error);
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-wifi"></i>
+                        <h3>Impossible de charger les coursiers</h3>
+                        <p>Vérifiez votre connexion réseau et réessayez.</p>
+                    </div>
+                `;
+                if (onlineEl) onlineEl.textContent = '--';
+                if (offlineEl) offlineEl.textContent = '--';
+                if (busyEl) busyEl.textContent = '--';
+                if (tokensEl) tokensEl.textContent = '--';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const refreshBtn = document.getElementById('dashboardRefreshBtn');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', () => {
+                    refreshDashboardConnectivity();
+                });
+            }
+
+            refreshDashboardConnectivity();
+            setInterval(refreshDashboardConnectivity, 30000);
         });
     </script>
 </body>
