@@ -755,11 +755,10 @@ function renderHeader() {
                 flex-direction: column;
                 background: var(--gradient-dark);
                 position: relative;
-                margin-left: 0;
+                margin-left: 300px;
                 min-height: 100vh;
                 overflow-x: hidden;
                 overflow-y: auto;
-                width: 100%;
             }
 
             .main-content::before {
