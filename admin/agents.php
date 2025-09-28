@@ -1790,7 +1790,7 @@ $newAgentsThisMonth = count(array_filter($agents, fn($a) => isset($a['created_at
         <!-- header local supprimé, on utilise renderHeader() global -->
         <div class="content-area fade-in">
 
-        <div id="agents" class="content-section">
+    <div id="agents" class="content-section agents-content-wrapper">
         <!-- HEADER AVEC ACTIONS (inline) -->
         <div class="section-header">
                 <div class="header-actions">
@@ -1911,8 +1911,8 @@ $newAgentsThisMonth = count(array_filter($agents, fn($a) => isset($a['created_at
   </div>
 
   <!-- TABLEAU COURSIEURS -->
-  <div id="coursiers" class="tab-content active">
-    <div class="table-container" style="width: calc(100% + 200px); margin-left: -200px;">
+    <div id="coursiers" class="tab-content active">
+        <div class="table-container">
       <table class="data-table" id="coursiersTable">
         <thead>
           <tr>
@@ -1947,8 +1947,8 @@ $newAgentsThisMonth = count(array_filter($agents, fn($a) => isset($a['created_at
   </div>
 
   <!-- TABLEAU CONCIÈRGES -->
-  <div id="concierges" class="tab-content">
-    <div class="table-container" style="width: calc(100% + 200px); margin-left: -200px;">
+    <div id="concierges" class="tab-content">
+        <div class="table-container">
       <table class="data-table" id="conciergesTable">
         <thead>
           <tr>
