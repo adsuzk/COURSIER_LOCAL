@@ -469,56 +469,14 @@ try {
                 <i class="fas fa-traffic-light"></i>
                 Statut des Coursiers en Temps Réel
             </h2>
-            
-            <?php if (empty($coursiers)): ?>
-                <div class="empty-state">
-                    <i class="fas fa-motorcycle"></i>
-                    <h3>Aucun coursier actif</h3>
-                    <p>Les coursiers apparaîtront ici lorsqu'ils se connecteront à l'application.</p>
+
+            <div class="coursiers-grid" data-coursiers-grid>
+                <div class="empty-state" data-coursiers-empty>
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <h3>Chargement des coursiers…</h3>
+                    <p>Les coursiers apparaîtront ici dès qu'ils seront connectés.</p>
                 </div>
-            <?php else: ?>
-                <div class="coursiers-grid">
-                    <?php foreach ($coursiers as $coursier): ?>
-                        <div class="coursier-card status-<?= $coursier['status_info']['color'] ?>">
-                            <div class="coursier-header">
-                                <div class="coursier-info">
-                                    <h3><?= htmlspecialchars($coursier['nom'] . ' ' . $coursier['prenoms']) ?></h3>
-                                    <div class="coursier-matricule"><?= htmlspecialchars($coursier['matricule']) ?></div>
-                                </div>
-                                <div class="status-light <?= $coursier['status_info']['color'] ?>"></div>
-                            </div>
-
-                            <div class="coursier-details">
-                                <div class="detail-item">
-                                    <i class="fas fa-phone"></i>
-                                    <?= htmlspecialchars($coursier['telephone'] ?: 'N/A') ?>
-                                </div>
-                                <div class="detail-item">
-                                    <i class="fas fa-clock"></i>
-                                    <?= $coursier['last_login_at'] ? date('H:i', strtotime($coursier['last_login_at'])) : 'Jamais' ?>
-                                </div>
-                                <div class="detail-item">
-                                    <i class="fas fa-globe"></i>
-                                    <?= htmlspecialchars(substr($coursier['last_login_ip'] ?: 'N/A', 0, 12)) ?>
-                                </div>
-                                <div class="detail-item">
-                                    <i class="fas fa-wifi"></i>
-                                    <?= ucfirst($coursier['statut_connexion']) ?>
-                                </div>
-                            </div>
-
-                            <div class="token-indicator">
-                                <div class="token-dot <?= $coursier['current_session_token'] ? 'active' : 'inactive' ?>"></div>
-                                Token: <?= $coursier['current_session_token'] ? 'Actif (' . substr($coursier['current_session_token'], 0, 8) . '...)' : 'Absent' ?>
-                            </div>
-
-                            <div class="status-label <?= $coursier['status_info']['color'] ?>">
-                                <?= $coursier['status_info']['label'] ?>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
+            </div>
         </div>
     </div>
 
