@@ -8,9 +8,19 @@ require_once 'config.php';
 
 class FCMTokenSecurity {
     private $pdo;
+    private $verbose;
     
-    public function __construct() {
+    public function __construct(array $options = []) {
         $this->pdo = getDBConnection();
+        $this->verbose = $options['verbose'] ?? (PHP_SAPI === 'cli');
+    }
+    
+    private function logMessage(string $message): void {
+        if (!$this->verbose) {
+            return;
+        }
+        echo $message;
+    }
     }
     
     /**
@@ -61,6 +71,8 @@ class FCMTokenSecurity {
                     echo "      ⚠️ {$violation['nom']} {$violation['prenoms']} (M:{$matricule})\n";
                     echo "         Status: {$violation['statut_connexion']}\n";
                     echo "         Tokens actifs: {$violation['tokens_actifs']}\n";
+                    $this->logMessage("🚨 SÉCURITÉ FCM TOKENS - NETTOYAGE CRITIQUE\n");
+                    $this->logMessage("=" . str_repeat("=", 60) . "\n");
                     echo "         Inactif depuis: {$violation['minutes_inactif']} min\n";
                     echo "         Session: " . ($violation['current_session_token'] ? '✅' : '❌') . "\n\n";
                     
@@ -71,7 +83,7 @@ class FCMTokenSecurity {
                         'statut' => $violation['statut_connexion'],
                         'tokens_actifs' => $violation['tokens_actifs'],
                         'minutes_inactif' => $violation['minutes_inactif']
-                    ];
+                        $this->logMessage("\n🔍 1. DÉTECTION VIOLATIONS SÉCURITÉ\n");
                 }
             }
             
@@ -93,17 +105,17 @@ class FCMTokenSecurity {
             
             $stmt->execute();
             $results['tokens_disabled'] = $stmt->rowCount();
-            
+                            $this->logMessage("   ✅ Aucune violation détectée - Sécurité conforme\n");
             echo "   ✅ {$results['tokens_disabled']} tokens désactivés\n";
-            
+                            $this->logMessage("   🚨 " . count($violations) . " VIOLATIONS CRITIQUES détectées!\n\n");
             // 3. Nettoyer les sessions expirées
             echo "\n🧹 3. NETTOYAGE SESSIONS EXPIRÉES\n";
             
-            $stmt = $this->pdo->prepare("
-                UPDATE agents_suzosky 
-                SET statut_connexion = 'hors_ligne',
-                    current_session_token = NULL,
-                    updated_at = NOW()
+                                $this->logMessage("      ⚠️ {$violation['nom']} {$violation['prenoms']} (M:{$matricule})\n");
+                                $this->logMessage("         Status: {$violation['statut_connexion']}\n");
+                                $this->logMessage("         Tokens actifs: {$violation['tokens_actifs']}\n");
+                                $this->logMessage("         Inactif depuis: {$violation['minutes_inactif']} min\n");
+                                $this->logMessage("         Session: " . ($violation['current_session_token'] ? '✅' : '❌') . "\n\n");
                 WHERE statut_connexion = 'en_ligne' 
                 AND (
                     last_login_at IS NULL 
@@ -116,7 +128,7 @@ class FCMTokenSecurity {
             
             echo "   ✅ {$results['sessions_cleaned']} sessions nettoyées\n";
             
-            // 4. Rapport final de sécurité
+                        $this->logMessage("🔒 2. CORRECTION AUTOMATIQUE\n");
             echo "\n📊 4. RAPPORT SÉCURITÉ FINAL\n";
             
             // Coursiers connectés avec tokens actifs (état normal)
@@ -134,10 +146,10 @@ class FCMTokenSecurity {
             // Tokens orphelins (ne devraient pas exister)
             $stmt = $this->pdo->query("
                 SELECT COUNT(*) as count
-                FROM device_tokens dt
+                        $this->logMessage("   ✅ {$results['tokens_disabled']} tokens désactivés\n");
                 LEFT JOIN agents_suzosky a ON dt.coursier_id = a.id
                 WHERE dt.is_active = 1 
-                AND (a.id IS NULL OR a.statut_connexion != 'en_ligne')
+                        $this->logMessage("\n🧹 3. NETTOYAGE SESSIONS EXPIRÉES\n");
             ");
             $tokensOrphelins = $stmt->fetchColumn();
             
@@ -154,10 +166,10 @@ class FCMTokenSecurity {
         }
         
         return $results;
-    }
+                        $this->logMessage("   ✅ {$results['sessions_cleaned']} sessions nettoyées\n");
     
     /**
-     * Vérifier si le système peut accepter de nouvelles commandes
+                        $this->logMessage("\n📊 4. RAPPORT SÉCURITÉ FINAL\n");
      */
     public function canAcceptNewOrders(): array {
         $stmt = $this->pdo->query("
@@ -181,15 +193,15 @@ class FCMTokenSecurity {
                 : "⚠️ AUCUN COURSIER DISPONIBLE - Service temporairement suspendu"
         ];
     }
-    
-    /**
+                        $this->logMessage("   ✅ Coursiers sécurisés (connectés + tokens): {$coursiersSecurises}\n");
+                        $this->logMessage("   " . ($tokensOrphelins > 0 ? '🚨' : '✅') . " Tokens orphelins: {$tokensOrphelins}\n");
      * Message commercial pour l'index quand aucun coursier disponible
      */
     public function getUnavailabilityMessage(): string {
         return "
         <div style='background: linear-gradient(135deg, #ff6b6b, #ffa500); color: white; padding: 20px; border-radius: 10px; text-align: center; margin: 20px 0;'>
             <h3>🚚 Service Temporairement Indisponible</h3>
-            <p>Nos coursiers Suzosky sont actuellement tous en mission ou hors service.</p>
+                        $this->logMessage("   ❌ Erreur sécurité: " . $e->getMessage() . "\n");
             <p><strong>Veuillez réessayer dans quelques minutes</strong></p>
             <p style='font-size: 0.9em; opacity: 0.8;'>Nous garantissons la sécurité et la qualité de nos services</p>
         </div>
@@ -197,8 +209,8 @@ class FCMTokenSecurity {
     }
 }
 
-// Exécution si appelé directement
-if (basename(__FILE__) == basename($_SERVER['SCRIPT_NAME'])) {
+            if (basename(__FILE__) == basename($_SERVER['SCRIPT_NAME'])) {
+                $security = new FCMTokenSecurity(['verbose' => true]);
     $security = new FCMTokenSecurity();
     $results = $security->enforceTokenSecurity();
     
