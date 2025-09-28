@@ -422,7 +422,11 @@ $stmt = $pdo->prepare("SELECT solde_wallet FROM agents_suzosky WHERE id = ?");
     1. Travaillez normalement en local (créez tables, colonnes avec phpMyAdmin)
     2. Lancez `BAT/SYNC_COURSIER_PROD.bat` → détection + génération automatiques
     3. Uploadez sur LWS → application automatique via CRON
-- **Traçabilité :** Logs dans `diagnostic_logs/db_migrations.log` et table `schema_migrations`
+- **Traçabilité complète :** 
+    - `diagnostic_logs/db_migrations.log` : Journal d'exécution sur LWS
+    - `diagnostic_logs/auto_migration_generator.log` : Détection en local
+    - `diagnostic_logs/db_structure_snapshot.json` : Photo de votre DB
+    - Table `schema_migrations` : Historique des applications sur LWS
 
 #### **Configuration CRON pour LWS (à configurer une seule fois) :**
 ```bash
@@ -533,8 +537,9 @@ curl "http://192.168.1.5/COURSIER_LOCAL/api/get_coursier_data.php?coursier_id=5"
 3. **Récupération commandes** : `api/get_coursier_orders.php` - Liste commandes du coursier
 4. **Update statut** : `api/update_order_status.php` - Progression commandes
 
-⚠️ **APIs supprimées (obsolètes) :**
-- `api/get_wallet_balance.php` → Remplacée par `get_coursier_data.php` (wallet intégré)
+✅ **APIs consolidées et optimisées :**
+- `api/get_coursier_data.php` : Endpoint principal (wallet intégré, support complet GET/POST/JSON)
+- Toutes les APIs anciennes redirigées ou supprimées pour éviter confusion
 
 ### 🔄 **Synchronisation temps réel :**
 
@@ -550,25 +555,24 @@ curl "http://192.168.1.5/COURSIER_LOCAL/api/get_coursier_data.php?coursier_id=5"
 4. **Fallback cohérent** : Si `agents_suzosky` indisponible, utiliser le même ordre de fallback dans toutes les APIs
 5. **Documentation API** : Maintenir la liste des endpoints utilisés par l'app mobile
 
-### 🛠️ **Commandes de diagnostic rapide :**
+### 🛠️ **Commandes de diagnostic et maintenance :**
 
 ```bash
-# Tester l'API principal (utilisée par l'app) - Tous les formats supportés
+# 🔄 MIGRATIONS AUTOMATIQUES
+php Scripts/Scripts\ cron/auto_migration_generator.php  # Générer migrations (local)
+php Scripts/Scripts\ cron/automated_db_migration.php     # Appliquer migrations (LWS)
+
+# 📱 API MOBILE - Tests tous formats
 curl "http://localhost/COURSIER_LOCAL/api/get_coursier_data.php?coursier_id=5"  # GET
 curl -d "coursier_id=5" "http://localhost/COURSIER_LOCAL/api/get_coursier_data.php"  # POST form
 curl -H "Content-Type: application/json" -d '{"coursier_id":5}' "http://localhost/COURSIER_LOCAL/api/get_coursier_data.php"  # POST JSON
 
-# Surveiller l'app mobile en temps réel
+# 🛡️ SÉCURITÉ FCM
+php Scripts/Scripts\ cron/fcm_token_security.php         # Audit sécurité
+php Scripts/Scripts\ cron/secure_order_assignment.php    # Test assignations
+
+# 📊 MONITORING MOBILE
 adb logcat --pid=$(adb shell pidof com.suzosky.coursier.debug) | grep "api"
-
-# Vérifier sécurité FCM tokens (rapport complet en CLI)
-php fcm_token_security.php
-
-# Test assignation sécurisée
-php secure_order_assignment.php
-
-# Test complet des corrections
-php test_corrections_critiques.php
 ```
 
 ---
