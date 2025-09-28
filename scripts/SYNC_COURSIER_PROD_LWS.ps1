@@ -96,22 +96,12 @@ foreach ($folder in $lwsFolders) {
     }
 }
 
-# Fichiers critiques qui restent à la racine même s'ils ressemblent à des outils de diagnostic
-$productionSafeRootFiles = @(
-    "fcm_daily_diagnostic.php",
-    "fcm_auto_cleanup.php",
-    "secure_order_assignment.php",
-    "fcm_token_security.php"
-)
-
 # Déplacement des fichiers de test/debug vers Tests/
 Write-Host "Deplacement fichiers test/debug vers Tests/..." -ForegroundColor Cyan
 $testFiles = Get-ChildItem -Path . -File | Where-Object { 
     $_.Name -match "(test|debug|diagnostic|check|find|fix|search)_" -or
     $_.Name -match "^(test|debug)" -or
     $_.Extension -eq ".log"
-} | Where-Object {
-    -not ($productionSafeRootFiles -contains $_.Name)
 }
 
 foreach ($file in $testFiles) {
