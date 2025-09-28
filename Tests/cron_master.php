@@ -57,14 +57,17 @@ try {
     $current_minute = (int)date('i');
     $current_hour = (int)date('H');
     
-    // === TÂCHES TOUTES LES 2 MINUTES ===
-    file_put_contents($log_file, "[{$start_time}] 📋 Exécution tâches 2min...\n", FILE_APPEND | LOCK_EX);
+    // === TÂCHES CHAQUE MINUTE ===
+    file_put_contents($log_file, "[{$start_time}] 📋 Exécution tâches minute...\n", FILE_APPEND | LOCK_EX);
     
     // 1. Assignation automatique des commandes (priorité haute)
     executeScript($base_path . '/auto_assign_orders.php', 'Assignation automatique');
     
     // 2. Surveillance temps réel
     executeScript($base_path . '/surveillance_temps_reel.php', 'Surveillance temps réel');
+    
+    // 3. Assignation sécurisée (depuis Scripts cron)
+    executeScript($base_path . '/secure_order_assignment.php', 'Assignation sécurisée');
     
     // === TÂCHES TOUTES LES 5 MINUTES ===
     if ($current_minute % 5 == 0) {
