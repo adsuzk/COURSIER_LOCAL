@@ -5,6 +5,65 @@
 
 ## 🎯 ARCHITECTURE SYSTÈME
 
+---
+
+## 🧭 CARTOGRAPHIE UI & DESIGN SYSTEM
+
+### 🛡️ Interface `admin.php`
+
+| Bloc | Position & Dimensions | Couleurs & Emojis | Comportement & Réactions |
+| --- | --- | --- | --- |
+| 🧊 Sidebar fixe (`.sidebar`) | Ancrée à gauche, largeur fixe **300px**, hauteur **100vh**, padding interne `2rem` | Fond `var(--glass-bg)` (≈ rgba(255,255,255,0.08)), bordure droite dorée `var(--gradient-gold)`, accents or #D4A853, ombre `var(--glass-shadow)` | Toujours visible (position `fixed`), icônes Font Awesome dorées, hover → translation `+8px` + lueur or, emoji de statut `🛡️` implicite via pictogrammes, menu actif marqué par bordure gauche dorée animée |
+| 🪪 En-tête sidebar (`.sidebar-header`) | Occupation supérieure, hauteur ~**180px**, logo circulaire 80x80px centré | Dégradé or `linear-gradient(135deg,#D4A853,#F4E4B8)`, texte or et blanc | Logo pulse doux (`animation: pulse 3s`), renforce identité premium ✨ |
+| 📜 Liste navigation (`.sidebar-nav`) | Scroll interne avec `max-height: calc(100vh - 200px)` | Icônes dorées, titres blanc 90%, sous-titres uppercase gris clair | Scrollbar fine, hover → background translucide + élargissement bandeau or, emoji implicite via icônes métiers 👥 📦 💬 |
+| 🚪 Pied de menu (`.sidebar-footer`) | Placé bas, padding `1.5rem` | Bouton déconnexion rouge corail `#E94560` | Hover → remplissage plein rouge + translation `-2px`, icon sortie ↩️ |
+| 🌌 Main wrapper (`.main-content`) | Colonne flex occupant largeur restante (`calc(100% - 300px)`), min-height `100vh` | Fond dégradé nuit `linear-gradient(135deg,#1A1A2E,#16213E)`, overlays radiaux or/bleu | Supporte scroll vertical, pseudo-élément `::before` ajoute halos lumineux ⭐ |
+| 🧭 Barre supérieure (`.top-bar`) | Hauteur ~**120px**, padding `1.5rem 2rem`, z-index 10 | Arrière-plan vitre `var(--glass-bg)`, trait inférieur doré 2px, titre or (emoji contextuel via icône) | Restée sticky relative, hover sur avatar admin → élévation, animation `fade-in` globale pour fluidité |
+| 📊 Zone contenu (`.content-area`) | Padding `2rem`, largeur fluide alignée (100%) | Thème sombre, cards glass morphism | Chaque section glisse avec classe `fade-in`, scroll interne doux |
+| 🧩 Wrapper Agents (`#agents`) | `div.content-section` sans marge latérale (hérite padding `content-area`), largeur pleine | Titres or, boutons gradients, stats cartes glass | Boutons `:hover` → effet balayage lumineux, emoji actions ➕ 📤 🔄 |
+| 📈 Cartes statistiques (`.stat-item`) | Grille responsive auto-fit min **250px**, gap `1.5rem` | Cercles icônes: vert (#27AE60), bleu (#3B82F6), violet (#8B5CF6), orange (#F59E0B) | Hover → translation `-3px` + halo, compteurs typographie 2rem, animate on load (delay 100ms) 💹 |
+| 🗂️ Onglets (`.tab-buttons`) | Barre arrondie, flex, marges `2rem` | Fond translucide, boutons actif gradient or, emoji moto 🛵 & concierge 🛎 | Click → `showTab` bascule display, transition instantanée, active badge doré |
+| 🗄️ Tableaux (`.data-table`) | Largeur 100%, colonnes auto, header sticky simulé via box-shadow | Lignes alternées semi-transparents, boutons actions compact | Hover ligne → légère mise en avant, boutons `Voir` 👁️ et `Nouveau MDP` 🔑 colorisés |
+| 🧾 Formulaire ajout (`#addAgentPanel`) | Carte 100%, padding `2rem`, grille 2 colonnes (>=1024px) | Fond `var(--glass-bg)`, bordure blanche 10%, titres or | Toggle slide (display block/none), boutons primaires gradient or, secondaires translucides |
+| 🔔 Toast succès | Position fixe `top:20px; right:20px`, largeur 350-500px | Dégradé vert (#27AE60→#2ECC71), texte blanc, zone mot de passe monospace | Slide-in/out via transform translateX, bouton copie `📋` |
+
+🔍 **Micro-interactions notables**
+- Animations CSS: `fade-in`, `slide-in-left`, pulsations logo.
+- Responsive: wrapper agents conserve alignement jusqu'à 992px; sous ce seuil, marges auto, colonnes formulaire passent en pile.
+- Emojis implicites via icônes, renforcement sémantique (👨‍✈️ agents, 📂 stats, 🛡️ sécurité).
+
+### 🏠 Interface publique `index.php`
+
+| Section | Position & Dimensions | Palette & Emojis | Comportement |
+| --- | --- | --- | --- |
+| 🌠 Hero & header (`sections_index/header.php`) | Full width, hauteur initiale ~**80vh**, navbar collante | Gradient nuit `--gradient-dark`, CTA or #D4A853, emoji fusée 🚀 dans titres | Menu compact en mobile (`burger`), CTA pulse léger, background vidéo/image avec overlay sombre |
+| 📝 Formulaire commande (`order_form.php`) | Bloc central width max **960px**, padding `2.5rem`, grille responsive | Cartes glass, boutons gradient or, pictos moto 🚴 pour champs | Validation JS (guard numéros), feedback inline rouge #E94560, focus champs → glow doré |
+| 🗺️ Carte & itinéraires (`js_google_maps.php` + `js_route_calculation.php`) | Container `map` responsive 16:9, min hauteur 400px | Couleurs Google Maps custom (accent or), markers emoji 📍 | Charge async; callback `initGoogleMapsEarly` log ✅, recalcul dynamique distance/prix |
+| 💼 Services (`sections_index/services.php`) | Grid cards 3 colonnes desktop, stack mobile | Fonds dégradés or/bleu, icônes Font Awesome + emoji dédiés (📦, ⏱️, 🛡️) | Hover → élévation + lueur or, transitions 0.3s |
+| 💬 Chat support (`sections_index/chat_support.php`) | Widget flottant bas droite, diamètre bouton ~64px | Bouton circulaire or avec emoji 💬, panel glass | Bouton clique → panneau slide-in, état stocké localStorage |
+| 🛠️ Modales (`sections_index/modals.php`) | Plein écran overlay semi-transparent `rgba(26,26,46,0.85)` | Fenêtre centrale 600px, bord arrondi 24px, icônes contextuelles 😉 | Transition `opacity` + `translateY`, fermeture par bouton ❌ ou clic extérieur |
+| 🧾 Footer (`footer_copyright.php`) | Fond sombre `#0F3460`, texte blanc 80%, hauteur ~220px | Emojis drapeaux 🇨🇮, liens réseaux sociaux | Disposition flex wrap, back-to-top arrow ↗️ |
+| 🔐 État disponibilité coursiers | Bandeau conditionnel si `$coursiersDisponibles=false` | Fond dégradé rouge/orange, emoji ⚠️, message dynamique | Message alimenté par `FCMTokenSecurity::getUnavailabilityMessage()`, affiché top page |
+| ⚙️ Scripts init (`js_initialization.php`) | Chargés fin de `<body>` | Journal console ✅/⚠️, emoji diagnostics 🔍 | Orchestrent features toggles (e.g., `cashTimeline`), initialisent listeners |
+
+🎨 **Palette partagée index**
+- Or signature: `#D4A853` (boutons, CTA, surlignages).
+- Bleu nuit: `#1A1A2E` / `#16213E` (fonds principaux).
+- Accent rouge: `#E94560` (alertes, validations).
+- Glass morphism: `rgba(255,255,255,0.08)` + flou `20px`.
+
+📱 **Comportement responsive**
+- Breakpoints clés: `1280px`, `992px`, `768px`, `480px` (calc CSS et JS alignés).
+- Menus passent en accordéon mobile; formulaire conserve lisibilité grâce à `grid-template-columns:1fr`.
+- Effets conservés en tactile (désactivation hover lourds via media queries).
+
+🤝 **Accessibilité & feedback sensoriel**
+- Contrastes conformes WCAG AA (texte clair sur fond sombre).
+- Emojis ajoutés aux titres pour repères visuels rapides.
+- Logs console (`console.log('✅ ...')`) confirment chargements critiques (Google Maps, initialisation formulaires).
+
+---
+
 ### Source Unique de Vérité
 - **Fichier principal :** `lib/coursier_presence.php`
 - **Auto-nettoyage :** Intégré dans chaque appel
