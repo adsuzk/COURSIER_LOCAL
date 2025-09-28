@@ -79,7 +79,8 @@ function tableExists(PDO $pdo, string $table): bool
 
 function columnExists(PDO $pdo, string $table, string $column): bool
 {
-    $stmt = $pdo->prepare('SHOW COLUMNS FROM `' . str_replace('`', '``', $table) . '` LIKE ?');
+    $escapedTable = str_replace('`', '``', $table);
+    $stmt = $pdo->prepare("SHOW COLUMNS FROM `{$escapedTable}` LIKE ?");
     $stmt->execute([$column]);
     return (bool) $stmt->fetchColumn();
 }
