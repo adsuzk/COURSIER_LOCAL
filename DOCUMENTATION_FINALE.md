@@ -203,6 +203,7 @@ agents_suzosky:
 - **Bonnes pratiques** :
     - Pour afficher ou filtrer la présence, consommer l'API `api/coursiers_connectes.php` (retour JSON avec `data[]`, `meta.total`, `meta.fcm_summary`).
 	- Ne plus appeler directement d'anciennes routes comme `check_table_agents.php`, `check_coursier_debug.php`, etc. → elles sont conservées uniquement pour diagnostic ponctuel.
+    - `meta.fcm_summary` expose `total_connected`, `with_fcm`, `without_fcm`, `fcm_rate` et un `status` (`excellent|correct|critique|erreur`) prêt à être relié au design system.
 
 ---
 
