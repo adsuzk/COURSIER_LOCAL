@@ -157,7 +157,18 @@ fun PaymentWebViewDialog(
 
                                     override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
                                         super.onReceivedError(view, request, error)
-                                        errorMessage = error?.description?.toString()
+                                        // getDescription()/description is available from API 23 (M).
+                                        // Guard it and provide a fallback message for older devices (minSdk 21).
+                                        errorMessage = if (error == null) {
+                                            "Erreur inconnue"
+                                        } else {
+                                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                                                error.description?.toString() ?: "Erreur de chargement"
+                                            } else {
+                                                // On API < 23 we don't have description; use toString() as fallback
+                                                error.toString()
+                                            }
+                                        }
                                         isLoading = false
                                     }
                                 }
