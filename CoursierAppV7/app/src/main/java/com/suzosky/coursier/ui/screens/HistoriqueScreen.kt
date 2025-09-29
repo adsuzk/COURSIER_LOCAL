@@ -58,7 +58,7 @@ fun HistoriqueScreen() {
                 colors = FilterChipDefaults.filterChipColors(selectedContainerColor = PrimaryGold.copy(alpha = 0.2f), selectedLabelColor = PrimaryGold))
             FilterChip(onClick = {}, label = { Text("Tri secondaire: Statut") }, selected = false,
                 colors = FilterChipDefaults.filterChipColors(selectedContainerColor = PrimaryGold, selectedLabelColor = PrimaryDark))
-            IconButton(onClick = {}) { Icon(Icons.AutoMirrored.Filled.ArrowDownward, contentDescription = null, tint = PrimaryGold) }
+            IconButton(onClick = {}) { Icon(Icons.Filled.ArrowDownward, contentDescription = null, tint = PrimaryGold) }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
