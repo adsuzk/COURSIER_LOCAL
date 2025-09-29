@@ -100,6 +100,11 @@ data class HistoriqueCommande(
                             value = filtered.count { it.statut == "livree" }.toString(),
                             label = "Livrées", 
                             color = Color.Green
+                            @Composable
+                            fun HistoriqueScreen(/* add parameters as needed */) {
+                                // Place your state declarations and UI logic here
+                                // ...existing code for FilterChip, IconButton, etc. should be moved here...
+                            }
                         )
                         HistoryStatItem(
                             value = formatFcfa(filtered.filter { it.statut == "livree" }.sumOf { it.prix }.toInt()),
