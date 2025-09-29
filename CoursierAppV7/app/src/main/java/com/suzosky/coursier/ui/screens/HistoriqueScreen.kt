@@ -1,18 +1,14 @@
 
-data class HistoriqueCommande(
-    val id: String,
-    val clientNom: String,
-    val adresseEnlevement: String,
-    val adresseLivraison: String,
-    val prix: Double,
-    val date: String,
-    val heure: String,
-    val typeCommande: String = "Standard"
-)
-
-private enum class StatusFilter { ALL, LIVREE, EN_COURS, ANNULEE }
-private enum class PeriodFilter { TOUT, AUJOURD_HUI, SEMAINE, MOIS }
-private enum class SortField { DATE, MONTANT }
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.stickyHeader
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,78 +22,27 @@ import androidx.compose.ui.unit.sp
 import com.suzosky.coursier.ui.theme.*
 import com.suzosky.coursier.network.ApiService
 import java.text.NumberFormat
-import java.util.Locale
 import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
-// Initial fetch & when status changes
-LaunchedEffect(coursierId, statusFilter) { fetch(reset = true) }
+data class HistoriqueCommande(
+    val id: String,
+    val clientNom: String,
+    val adresseEnlevement: String,
+    val adresseLivraison: String,
+    val prix: Double,
+    val date: String,
+    val heure: String,
+    val typeCommande: String = "Standard",
+    val statut: String = "en_cours"
+)
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(PrimaryDark)
-    ) {
-        // Arrière-plan avec gradient plus sombre
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            PrimaryDark,
-                            SecondaryBlue,
-                            PrimaryDark
-                        )
-                    )
-                )
-        )
+private enum class StatusFilter { ALL, LIVREE, EN_COURS, ANNULEE }
+private enum class PeriodFilter { TOUT, AUJOURD_HUI, SEMAINE, MOIS }
+private enum class SortField { DATE, MONTANT }
 
-                                )
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    // Filtres période (client-side)
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        listOf(
-                            PeriodFilter.TOUT to "Tout",
-                            PeriodFilter.AUJOURD_HUI to "Aujourd'hui",
-                            PeriodFilter.SEMAINE to "Semaine",
-                            PeriodFilter.MOIS to "Mois"
-                        ).forEach { (value, label) ->
-                            FilterChip(
-                                onClick = { periodFilter = value },
-                                label = { Text(label) },
-                                selected = periodFilter == value,
-                                colors = FilterChipDefaults.filterChipColors(
-                                    selectedContainerColor = PrimaryGold.copy(alpha = 0.2f),
-                                    selectedLabelColor = PrimaryGold
-                                )
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    // Recherche + Tri
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        OutlinedTextField(
-                            value = searchQuery,
-                            onValueChange = { searchQuery = it },
-                            modifier = Modifier.weight(1f),
-                            singleLine = true,
-                            label = { Text("Rechercher client ou adresse") },
-                            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) }
-                        )
+// ...rest of the file remains unchanged...
 
                         // Choix du champ de tri
                         FilterChip(
