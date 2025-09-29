@@ -33,14 +33,27 @@ VALUES ('TestAgent', 'Demo', 'test@demo.com', '+22501020304', 'hors_ligne', NOW(
 ```
 
 
-### 🔎 Nouvelle logique de détection de disponibilité (index.php)
 
-- Le formulaire de commande sur l’index **n’est affiché que si au moins un coursier possède un token FCM actif** (présence d’au moins un enregistrement `device_tokens` avec `is_active=1`).
-- La détection ne dépend plus du statut de connexion, du solde ou de la date de dernière activité.
-- Si aucun token FCM actif n’est trouvé, le formulaire est masqué et un message d’indisponibilité s’affiche.
+### 🔎 Nouvelle logique de présence temps réel (FCM-only) — Index & Admin
+
+- **La présence des coursiers (connectés) dans toutes les interfaces (index, dashboard admin, finances, commandes) est STRICTEMENT et UNIQUEMENT basée sur la présence d’au moins un token FCM actif** (`device_tokens.is_active=1`).
+- **Aucune autre donnée (statut_connexion, last_login, solde, etc.) n’est prise en compte pour la disponibilité.**
+- **Synchronisation temps réel** : toute connexion/déconnexion FCM est reflétée instantanément dans toutes les interfaces (index, dashboard, finances, commandes).
+- **Si aucun token FCM actif n’est trouvé,** le formulaire de commande est masqué côté client, et les interfaces admin affichent « Aucun coursier connecté » ou équivalent.
 
 **Résumé :**
-- La disponibilité des coursiers côté index est strictement basée sur la présence d’au moins un token FCM actif.
+- La disponibilité et la présence des coursiers sont 100% synchronisées sur la base FCM (device_tokens actifs).
+
+#### Interfaces concernées :
+- **Index public** : formulaire affiché uniquement si ≥1 FCM actif
+- **Dashboard admin** : section « Coursiers connectés » = FCM only
+- **Finances** : carte « Connectés » = FCM only
+- **Commandes** : panneau « Coursiers connectés » = FCM only
+
+**API centrale :** `/api/coursiers_connectes.php` (source unique de vérité, utilisée par toutes les interfaces)
+
+**Obsolète :**
+- Les anciennes logiques basées sur `statut_connexion`, `last_login_at`, ou solde sont supprimées pour la présence/connexion.
 
 ---
 
@@ -49,7 +62,7 @@ VALUES ('TestAgent', 'Demo', 'test@demo.com', '+22501020304', 'hors_ligne', NOW(
 - **Solution :** Création de la table, insertion d’un agent test, restauration du flux normal.
 - **À faire en production :**
         - Maintenir la table à jour (statuts, sessions, soldes)
-        - S’assurer que les scripts d’authentification et de présence mettent bien à jour `statut_connexion` et `last_login_at`.
+    - S’assurer que les scripts d’authentification et de présence mettent bien à jour les tokens FCM (`device_tokens.is_active`).
 
 ---
 
@@ -180,23 +193,21 @@ Le script peut être intégré au `cron_master.php` pour une consolidation quoti
 
 ## 🧭 CARTOGRAPHIE UI & DESIGN SYSTEM
 
-### 🛡️ Interface `admin.php`
+### 🛡️ Interface `admin.php` (Dashboard, Finances, Commandes)
+
 
 | Bloc | Position & Dimensions | Couleurs & Emojis | Comportement & Réactions |
 | --- | --- | --- | --- |
-| 🧊 Sidebar fixe (`.sidebar`) | Ancrée à gauche, largeur fixe **300px**, hauteur **100vh**, padding interne `2rem` | Fond `var(--glass-bg)` (≈ rgba(255,255,255,0.08)), bordure droite dorée `var(--gradient-gold)`, accents or #D4A853, ombre `var(--glass-shadow)` | Toujours visible (position `fixed`), icônes Font Awesome dorées, hover → translation `+8px` + lueur or, emoji de statut `🛡️` implicite via pictogrammes, menu actif marqué par bordure gauche dorée animée |
-| 🪪 En-tête sidebar (`.sidebar-header`) | Occupation supérieure, hauteur ~**180px**, logo circulaire 80x80px centré | Dégradé or `linear-gradient(135deg,#D4A853,#F4E4B8)`, texte or et blanc | Logo pulse doux (`animation: pulse 3s`), renforce identité premium ✨ |
-| 📜 Liste navigation (`.sidebar-nav`) | Scroll interne avec `max-height: calc(100vh - 200px)` | Icônes dorées, titres blanc 90%, sous-titres uppercase gris clair | Scrollbar fine, hover → background translucide + élargissement bandeau or, emoji implicite via icônes métiers 👥 📦 💬 |
-| 🚪 Pied de menu (`.sidebar-footer`) | Placé bas, padding `1.5rem` | Bouton déconnexion rouge corail `#E94560` | Hover → remplissage plein rouge + translation `-2px`, icon sortie ↩️ |
-| 🌌 Main wrapper (`.main-content`) | Colonne flex occupant largeur restante (`calc(100% - 300px)`), min-height `100vh` | Fond dégradé nuit `linear-gradient(135deg,#1A1A2E,#16213E)`, overlays radiaux or/bleu | Supporte scroll vertical, pseudo-élément `::before` ajoute halos lumineux ⭐ |
-| 🧭 Barre supérieure (`.top-bar`) | Hauteur ~**120px**, padding `1.5rem 2rem`, z-index 10 | Arrière-plan vitre `var(--glass-bg)`, trait inférieur doré 2px, titre or (emoji contextuel via icône) | Restée sticky relative, hover sur avatar admin → élévation, animation `fade-in` globale pour fluidité |
-| 📊 Zone contenu (`.content-area`) | Padding `2rem`, largeur fluide alignée (100%) | Thème sombre, cards glass morphism | Chaque section glisse avec classe `fade-in`, scroll interne doux |
-| 🧩 Wrapper Agents (`#agents`) | `div.content-section` sans marge latérale (hérite padding `content-area`), largeur pleine | Titres or, boutons gradients, stats cartes glass | Boutons `:hover` → effet balayage lumineux, emoji actions ➕ 📤 🔄 |
-| 📈 Cartes statistiques (`.stat-item`) | Grille responsive auto-fit min **250px**, gap `1.5rem` | Cercles icônes: vert (#27AE60), bleu (#3B82F6), violet (#8B5CF6), orange (#F59E0B) | Hover → translation `-3px` + halo, compteurs typographie 2rem, animate on load (delay 100ms) 💹 |
-| 🗂️ Onglets (`.tab-buttons`) | Barre arrondie, flex, marges `2rem` | Fond translucide, boutons actif gradient or, emoji moto 🛵 & concierge 🛎 | Click → `showTab` bascule display, transition instantanée, active badge doré |
-| 🗄️ Tableaux (`.data-table`) | Largeur 100%, colonnes auto, header sticky simulé via box-shadow | Lignes alternées semi-transparents, boutons actions compact | Hover ligne → légère mise en avant, boutons `Voir` 👁️ et `Nouveau MDP` 🔑 colorisés |
-| 🧾 Formulaire ajout (`#addAgentPanel`) | Carte 100%, padding `2rem`, grille 2 colonnes (>=1024px) | Fond `var(--glass-bg)`, bordure blanche 10%, titres or | Toggle slide (display block/none), boutons primaires gradient or, secondaires translucides |
-| 🔔 Toast succès | Position fixe `top:20px; right:20px`, largeur 350-500px | Dégradé vert (#27AE60→#2ECC71), texte blanc, zone mot de passe monospace | Slide-in/out via transform translateX, bouton copie `📋` |
+| 🧊 Sidebar fixe (`.sidebar`) | ...existing code... |
+| ...existing code... |
+| 📊 Zone contenu (`.content-area`) | ...existing code... |
+| 🧩 Wrapper Agents (`#agents`) | ...existing code... |
+| 📈 Cartes statistiques (`.stat-item`) | ...existing code... |
+| 🗂️ Onglets (`.tab-buttons`) | ...existing code... |
+| 🗄️ Tableaux (`.data-table`) | ...existing code... |
+| 🧾 Formulaire ajout (`#addAgentPanel`) | ...existing code... |
+| 🔔 Toast succès | ...existing code... |
+| **Coursiers connectés (toutes sections)** | Affichage dans dashboard, finances, commandes | Badge vert/orange/rouge selon FCM, nombre exact de connectés = nombre de tokens FCM actifs | **Synchronisation parfaite avec FCM : toute connexion/déconnexion FCM est reflétée instantanément.** |
 
 🔍 **Micro-interactions notables**
 - Animations CSS: `fade-in`, `slide-in-left`, pulsations logo.
@@ -214,7 +225,7 @@ Le script peut être intégré au `cron_master.php` pour une consolidation quoti
 | 💬 Chat support (`sections_index/chat_support.php`) | Widget flottant bas droite, diamètre bouton ~64px | Bouton circulaire or avec emoji 💬, panel glass | Bouton clique → panneau slide-in, état stocké localStorage |
 | 🛠️ Modales (`sections_index/modals.php`) | Plein écran overlay semi-transparent `rgba(26,26,46,0.85)` | Fenêtre centrale 600px, bord arrondi 24px, icônes contextuelles 😉 | Transition `opacity` + `translateY`, fermeture par bouton ❌ ou clic extérieur |
 | 🧾 Footer (`footer_copyright.php`) | Fond sombre `#0F3460`, texte blanc 80%, hauteur ~220px | Emojis drapeaux 🇨🇮, liens réseaux sociaux | Disposition flex wrap, back-to-top arrow ↗️ |
-| 🔐 État disponibilité coursiers | Bandeau conditionnel si `$coursiersDisponibles=false` | Fond dégradé rouge/orange, emoji ⚠️, message dynamique | Message alimenté par `FCMTokenSecurity::getUnavailabilityMessage()`, affiché top page |
+| 🔐 État disponibilité coursiers | Bandeau conditionnel si `$coursiersDisponibles=false` | Fond dégradé rouge/orange, emoji ⚠️, message dynamique | **Affiché si aucun token FCM actif n’est trouvé (FCM-only).** |
 | ⚙️ Scripts init (`js_initialization.php`) | Chargés fin de `<body>` | Journal console ✅/⚠️, emoji diagnostics 🔍 | Orchestrent features toggles (e.g., `cashTimeline`), initialisent listeners |
 
 🎨 **Palette partagée index**
