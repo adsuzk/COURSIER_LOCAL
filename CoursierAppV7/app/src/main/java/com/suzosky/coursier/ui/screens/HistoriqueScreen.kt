@@ -165,7 +165,6 @@ private fun CommandeHistoriqueCard(
         "annulee" -> "Annulée"
         "en_cours" -> "En cours"
         else -> "Inconnue"
-    }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
