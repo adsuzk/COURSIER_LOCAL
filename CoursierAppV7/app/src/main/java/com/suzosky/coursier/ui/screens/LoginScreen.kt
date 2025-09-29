@@ -1,3 +1,5 @@
+import androidx.core.content.FileProvider
+import androidx.compose.foundation.border
 
 package com.suzosky.coursier.ui.screens
 
@@ -8,6 +10,7 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.platform.LocalContext
 import java.io.File
 import java.io.FileOutputStream
@@ -187,7 +190,7 @@ fun DropdownMenuBox(selected: String, onTypeChange: (String) -> Unit) {
 @Composable
 fun LoginScreen(onLoginSuccess: () -> Unit) {
     val snackbarHostState = remember { SnackbarHostState() }
-    var tab by remember { mutableStateOf(0) } // 0 = Connexion, 1 = Inscription
+    var tab by remember { mutableIntStateOf(0) } // 0 = Connexion, 1 = Inscription
     var identifier by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
