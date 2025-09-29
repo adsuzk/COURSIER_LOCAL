@@ -112,7 +112,7 @@ fun FilePickerRow(label: String, file: java.io.File?, onFilePicked: (java.io.Fil
             onFilePicked(file)
         }
     }
-    var tempPhotoFile by rememberSaveable(stateSaver = androidx.compose.runtime.saveable.Saver<File?, Any>({ it }, { it as File? })) { mutableStateOf<File?>(null) }
+    var tempPhotoFile by rememberSaveable { mutableStateOf<File?>(null) }
     val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success: Boolean ->
         if (success && tempPhotoFile != null) {
             onFilePicked(tempPhotoFile)
