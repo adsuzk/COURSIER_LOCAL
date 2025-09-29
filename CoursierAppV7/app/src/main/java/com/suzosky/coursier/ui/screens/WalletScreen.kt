@@ -96,6 +96,7 @@ fun WalletScreen(
                             id = (m["id"] as? String) ?: "",
                             clientNom = (m["clientNom"] as? String) ?: (m["client_nom"] as? String ?: ""),
                             adresseEnlevement = (m["adresseEnlevement"] as? String) ?: (m["adresse_depart"] as? String ?: ""),
+                            adresseLivraison = (m["adresseLivraison"] as? String) ?: (m["adresse_livraison"] as? String ?: ""),
                             prix = (m["prix"] as? Number)?.toDouble() ?: 0.0,
                             statut = (m["statut"] as? String) ?: "",
                             dateCommande = (m["dateCommande"] as? String) ?: (m["date_creation"] as? String ?: "").split(" ").firstOrNull() ?: "",
