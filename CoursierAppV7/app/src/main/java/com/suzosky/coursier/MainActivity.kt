@@ -288,13 +288,12 @@ fun ErrorFallbackScreen(error: String) {
 fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
     // Affichage du dialog de mise à jour si besoin
     val updateInfo = updateInfoToShow[0]
+    val uriHandler = androidx.compose.ui.platform.LocalUriHandler.current
     if (updateInfo != null) {
-        BasicAlertDialog(
+        AlertDialog(
             onDismissRequest = { updateInfoToShow[0] = null },
             confirmButton = {
                 TextButton(onClick = {
-                    // Ouvre le lien de mise à jour
-                    val uriHandler = androidx.compose.ui.platform.LocalUriHandler.current
                     uriHandler.openUri(updateInfo.downloadUrl)
                     updateInfoToShow[0] = null
                 }) { Text("Mettre à jour") }
