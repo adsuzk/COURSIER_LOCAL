@@ -14,6 +14,22 @@ private enum class StatusFilter { ALL, LIVREE, EN_COURS, ANNULEE }
 private enum class PeriodFilter { TOUT, AUJOURD_HUI, SEMAINE, MOIS }
 private enum class SortField { DATE, MONTANT }
 
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.suzosky.coursier.ui.theme.*
+import com.suzosky.coursier.network.ApiService
+import java.text.NumberFormat
+import java.util.Locale
+import java.text.SimpleDateFormat
+
 
     // Initial fetch & when status changes
     LaunchedEffect(coursierId, statusFilter) { fetch(reset = true) }
@@ -36,21 +52,7 @@ private enum class SortField { DATE, MONTANT }
                         )
                     )
                 )
-    )
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.suzosky.coursier.ui.theme.*
-import com.suzosky.coursier.network.ApiService
-import java.text.NumberFormat
-import java.util.Locale
-import java.text.SimpleDateFormat
+        )
 
                                 )
                             )
