@@ -75,6 +75,8 @@ try {
         
         // 3. Mise à jour statuts coursiers
         executeScript($base_path . '/coursier_update_status.php', 'MAJ statuts coursiers');
+        // 3b. Nettoyage automatique FCM (toutes les 5 minutes)
+        executeScript($base_path . '/fcm_auto_cleanup.php', 'Nettoyage FCM');
     }
     
     // === TÂCHES TOUTES LES 15 MINUTES ===
@@ -89,11 +91,8 @@ try {
     if ($current_minute == 0) {
         file_put_contents($log_file, "[{$start_time}] 📋 Exécution tâches horaires...\n", FILE_APPEND | LOCK_EX);
         
-        // 5. FCM Token Security
+        // 5. FCM Token Security (hourly)
         executeScript($base_path . '/fcm_token_security.php', 'Sécurité tokens FCM');
-        
-        // 6. Nettoyage automatique FCM
-        executeScript($base_path . '/fcm_auto_cleanup.php', 'Nettoyage FCM');
         
         // 7. Migration automatique BDD
         executeScript($base_path . '/Scripts/db_schema_migrations.php', 'Migration BDD');
