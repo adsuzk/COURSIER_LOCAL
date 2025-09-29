@@ -1,3 +1,23 @@
+
+data class HistoriqueCommande(
+    val id: String,
+    val clientNom: String,
+    val adresseEnlevement: String,
+    val adresseLivraison: String,
+    val prix: Double,
+    val statut: String,
+    val date: String,
+    val heure: String,
+    val typeCommande: String = "Standard"
+)
+
+private enum class StatusFilter { ALL, LIVREE, EN_COURS, ANNULEE }
+private enum class PeriodFilter { TOUT, AUJOURD_HUI, SEMAINE, MOIS }
+private enum class SortField { DATE, MONTANT }
+private enum class SortOrder { ASC, DESC }
+
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.suzosky.coursier.ui.screens
 
 import androidx.compose.foundation.background
@@ -26,23 +46,6 @@ import java.text.NumberFormat
 import java.util.Locale
 import java.text.SimpleDateFormat
 import java.util.Calendar
-
-data class HistoriqueCommande(
-    val id: String,
-    val clientNom: String,
-    val adresseEnlevement: String,
-    val adresseLivraison: String,
-    val prix: Double,
-    val statut: String,
-    val date: String,
-    val heure: String,
-    val typeCommande: String = "Standard"
-)
-
-private enum class StatusFilter { ALL, LIVREE, EN_COURS, ANNULEE }
-private enum class PeriodFilter { TOUT, AUJOURD_HUI, SEMAINE, MOIS }
-private enum class SortField { DATE, MONTANT }
-private enum class SortOrder { ASC, DESC }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
