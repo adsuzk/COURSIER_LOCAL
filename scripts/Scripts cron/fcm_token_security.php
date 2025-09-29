@@ -1,9 +1,9 @@
 <?php
 /**
- * Minimal implementation of FCMTokenSecurity
- * - Immediate detection: any device_tokens row with is_active = 1 is considered available
+ * FCMTokenSecurity
+ * - Combines `is_active = 1` + freshness of `last_ping` to determine availability (default 120s)
+ * - Supports optional immediate detection mode via env `FCM_IMMEDIATE_DETECTION` or constructor option
  * - Returns an array compatible with the shim used by index.php
- * - Safe, minimal, and suitable as a replacement when the original implementation is missing
  */
 require_once __DIR__ . '/../../config.php';
 // Optional: use validator/helper if available
