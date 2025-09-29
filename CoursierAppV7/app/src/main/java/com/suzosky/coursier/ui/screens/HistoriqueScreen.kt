@@ -148,7 +148,6 @@ private fun HistoryStatItem(
             color = Color.White.copy(alpha = 0.7f),
             fontSize = 12.sp
         )
-    }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
