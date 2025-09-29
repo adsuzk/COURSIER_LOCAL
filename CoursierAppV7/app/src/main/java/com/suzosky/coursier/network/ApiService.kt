@@ -934,7 +934,7 @@ object ApiService {
             put("commande_id", commandeId.toIntOrNull() ?: 0)
             put("active", active)
         }.toString()
-        val body = RequestBody.create("application/json; charset=utf-8".toMediaTypeOrNull(), payload)
+    val body = payload.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
         executeWithFallback(
             buildRequest = { base ->
                 val url = buildApi(base, "set_active_order.php")
@@ -974,7 +974,7 @@ object ApiService {
         }
         
         val json = com.google.gson.Gson().toJson(parameters)
-        val body = RequestBody.create("application/json; charset=utf-8".toMediaTypeOrNull(), json)
+    val body = json.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
         
         executeWithFallback(
             buildRequest = { base ->
@@ -1008,7 +1008,7 @@ object ApiService {
             put("action", action)
             put("ttl_seconds", ttlSeconds)
         }.toString()
-        val body = RequestBody.create("application/json; charset=utf-8".toMediaTypeOrNull(), payload)
+    val body = payload.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
         executeWithFallback(
             buildRequest = { base ->
                 val url = buildApi(base, "assign_with_lock.php")
@@ -1046,7 +1046,7 @@ object ApiService {
             put("length", length)
             put("ttl_seconds", ttlSeconds)
         }.toString()
-        val body = RequestBody.create("application/json; charset=utf-8".toMediaTypeOrNull(), payload)
+    val body = payload.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
         executeWithFallback(
             buildRequest = { base ->
                 val url = buildApi(base, "generate_delivery_otp.php")
@@ -1089,7 +1089,7 @@ object ApiService {
             if (cashCollected) put("cash_collected", true)
             if (cashAmount != null) put("cash_amount", cashAmount)
         }.toString()
-        val body = RequestBody.create("application/json; charset=utf-8".toMediaTypeOrNull(), payload)
+    val body = payload.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
         executeWithFallback(
             buildRequest = { base ->
                 val url = buildApi(base, "confirm_delivery.php")
