@@ -290,7 +290,6 @@ private fun CommandeHistoriqueCard(
             }
         }
     }
-}
 
 private fun formatFcfa(amount: Int): String {
     val nf = NumberFormat.getInstance(Locale("fr", "FR"))
