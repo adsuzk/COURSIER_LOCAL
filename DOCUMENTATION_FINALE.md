@@ -9,6 +9,8 @@
 - Comportement client renforcé : en cas d'absence de coursiers le formulaire affiche désormais un message commercial convivial (injecté dans `sections_index/order_form.php`) et propose un bouton « Actualiser ».
 - Documentation consolidée : suppression/archivage des anciennes instructions obsolètes concernant la détection de présence non-FCM. Les sections marquées "Obsolète" doivent être ignorées (voir section "Changements récents").
 
+**Note migration DB :** La colonne `last_ping` a été ajoutée à la table `device_tokens` (migration appliquée). Les scripts de nettoyage FCM utilisent désormais `last_ping` quand disponible, sinon retombent sur `updated_at`.
+
 
 ## 🆕 [29 Sept 2025] — AJOUT TABLE `agents_suzosky` & LOGIQUE DISPONIBILITÉ COURSIER
 
