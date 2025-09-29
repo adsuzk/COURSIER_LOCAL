@@ -98,6 +98,13 @@ function sendFCMNotificationV1($token, $message, $data = [], $options = [])
             return ['success' => false, 'error' => 'Impossible d\'obtenir access token'];
         }
 
+        // Ensure data values are strings (FCM expects string values in data)
+        $stringData = [];
+        foreach ($data as $k => $v) {
+            $stringData[$k] = is_string($v) ? $v : json_encode($v);
+        }
+        $stringData['timestamp'] = (string)time();
+
         $payload = [
             'message' => [
                 'token' => $token,
@@ -105,15 +112,14 @@ function sendFCMNotificationV1($token, $message, $data = [], $options = [])
                     'title' => $options['title'] ?? '🚚 Suzosky Coursier',
                     'body' => $message
                 ],
-                'data' => array_merge($data, [
-                    'timestamp' => (string)time()
-                ]),
+                'data' => $stringData,
                 'android' => [
                     'notification' => [
                         'channel_id' => $options['channel_id'] ?? 'commandes_channel',
-                        'sound' => $options['sound'] ?? 'suzosky_notification.mp3',
-                        'priority' => 'high'
-                    ]
+                        'sound' => $options['sound'] ?? 'suzosky_notification.mp3'
+                    ],
+                    // set priority at android level
+                    'priority' => $options['priority'] ?? 'high'
                 ]
             ]
         ];
