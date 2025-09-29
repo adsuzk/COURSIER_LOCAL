@@ -36,17 +36,23 @@ function clog($msg) {
 try {
     $pdo = getPDO();
 
-    // Find stale tokens
-    $sql = "SELECT id, token, coursier_id, agent_id, updated_at, last_ping
-            FROM device_tokens
-            WHERE is_active = 1
-              AND (last_ping IS NULL OR last_ping < DATE_SUB(NOW(), INTERVAL :mins MINUTE))
-              AND token NOT LIKE 'emergency_%' AND token NOT LIKE 'debug_%' AND token NOT LIKE 'local_test_%'
-            LIMIT 1000";
+        // Find stale tokens
+        // Detect whether the table has a 'last_ping' column; fall back to 'updated_at' if absent.
+        $colStmt = $pdo->prepare("SELECT COUNT(*) as c FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'device_tokens' AND COLUMN_NAME = :col");
+        $colStmt->execute([':col' => 'last_ping']);
+        $hasLastPing = ($colStmt->fetchColumn(0) > 0);
+        $timeCol = $hasLastPing ? 'last_ping' : 'updated_at';
 
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([':mins' => $staleMinutes]);
-    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $sql = "SELECT id, token, coursier_id, agent_id, updated_at, {$timeCol} as time_col
+                        FROM device_tokens
+                        WHERE is_active = 1
+                            AND ({$timeCol} IS NULL OR {$timeCol} < DATE_SUB(NOW(), INTERVAL :mins MINUTE))
+                            AND token NOT LIKE 'emergency_%' AND token NOT LIKE 'debug_%' AND token NOT LIKE 'local_test_%'
+                        LIMIT 1000";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':mins' => $staleMinutes]);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $count = count($rows);
     $modeLabel = $isDryRun ? 'DRY RUN' : 'APPLY';
