@@ -5,7 +5,7 @@
 
 ## ⚙️ Mise à jour rapide — 29 Sept 2025 (actions appliquées)
 
-- Seuil de nettoyage des tokens FCM existe toujours (`Scripts/Scripts cron/fcm_auto_cleanup.php`) mais la détection d'un token actif côté index est désormais immédiate : toute ligne `device_tokens` avec `is_active = 1` est considérée disponible par `FCMTokenSecurity`.
+ - Seuil de nettoyage des tokens FCM existe toujours (`Scripts/Scripts cron/fcm_auto_cleanup.php`). La détection d'un token actif côté index est configurable : par défaut `FCMTokenSecurity` combine `is_active = 1` et fraîcheur `last_ping` (120s), ou peut être forcée en mode immédiat via `FCM_IMMEDIATE_DETECTION`.
 - Comportement client : en cas d'absence de coursiers le formulaire affiche un message d'indisponibilité (injecté via `index.php`) et propose un bouton « Actualiser ».
 - Documentation consolidée : suppression/archivage des anciennes instructions obsolètes concernant la détection de présence non-FCM. Les sections marquées "Obsolète" doivent être ignorées (voir section "Changements récents").
 
