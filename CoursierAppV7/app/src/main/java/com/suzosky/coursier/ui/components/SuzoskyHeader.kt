@@ -66,7 +66,7 @@ fun SuzoskyHeader(
                 
                 IconButton(onClick = onNotificationClick) {
                     Icon(
-                        imageVector = Icons.AutoMirrored.Filled.Notifications,
+                            imageVector = Icons.Filled.Notifications,
                         contentDescription = "Notifications",
                         tint = Color.White
                     )
@@ -102,8 +102,8 @@ fun SuzoskyHeader(
                     },
                     textOn = "En ligne",
                     textOff = "Hors ligne",
-                    iconOn = Icons.AutoMirrored.Filled.RadioButtonChecked,
-                    iconOff = Icons.AutoMirrored.Filled.RadioButtonUnchecked
+                    iconOn = Icons.Filled.RadioButtonChecked,
+                    iconOff = Icons.Filled.RadioButtonUnchecked
                 )
             }
         }
