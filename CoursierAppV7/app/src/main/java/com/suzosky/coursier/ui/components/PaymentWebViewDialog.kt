@@ -213,6 +213,7 @@ private fun LoadingOverlay(progress: Float) {
         }
     }
 }
+}
 
 @Composable
 private fun ErrorOverlay(message: String, onRetry: () -> Unit) {
