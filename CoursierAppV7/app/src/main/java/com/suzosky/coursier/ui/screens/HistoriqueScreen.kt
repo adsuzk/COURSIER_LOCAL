@@ -304,7 +304,6 @@ private fun filterBySearch(list: List<HistoriqueCommande>, query: String): List<
         c.adresseLivraison.lowercase(Locale.getDefault()).contains(q) ||
         c.id.lowercase(Locale.getDefault()).contains(q)
     }
-}
 
 private fun sortCommandes(
     list: List<HistoriqueCommande>,
