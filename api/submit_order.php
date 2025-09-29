@@ -31,5 +31,34 @@ if (function_exists('logMessage')) {
 	logMessage('diagnostics_errors.log', 'submit_order.php appelé');
 }
 
-// Réponse de test
-echo json_encode(["success" => true, "message" => "submit_order.php SQUELETTE + dépendances OK"]);
+// Lecture des données POST (JSON ou x-www-form-urlencoded)
+$rawInput = file_get_contents('php://input');
+$data = null;
+if (!empty($rawInput)) {
+	$data = json_decode($rawInput, true);
+	if (json_last_error() !== JSON_ERROR_NONE) {
+		// Si ce n'est pas du JSON, tenter x-www-form-urlencoded
+		parse_str($rawInput, $data);
+	}
+} else {
+	$data = $_POST;
+}
+
+// Validation minimale (exemple: champ obligatoire 'client_id')
+$errors = [];
+if (empty($data['client_id'])) {
+	$errors[] = "Le champ 'client_id' est obligatoire.";
+}
+
+// Log des données reçues
+if (function_exists('logMessage')) {
+	logMessage('diagnostics_errors.log', 'submit_order.php DATA: ' . json_encode($data));
+}
+
+if (!empty($errors)) {
+	echo json_encode(["success" => false, "message" => "Erreur de validation", "errors" => $errors, "debug" => $data]);
+	exit;
+}
+
+// Réponse de test avec données reçues
+echo json_encode(["success" => true, "message" => "Données reçues et validées", "data" => $data]);
