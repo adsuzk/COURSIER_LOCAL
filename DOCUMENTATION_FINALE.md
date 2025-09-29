@@ -949,53 +949,44 @@ adb logcat --pid=$(adb shell pidof com.suzosky.coursier.debug) | grep "api"
 0 2 * * * /usr/bin/php /path/to/Scripts/Scripts\ cron/automated_db_migration.php
 ```
 
-### 📊 **Supervision** :
-- **Logs** : `diagnostic_logs/db_migrations.log` pour suivre l'activité automatique
-- **Alertes** : Le système vous notifie en cas de problème
-- **Monitoring** : Interface admin pour voir l'état en temps réel
 
----
+### � Application mobile Suzosky Coursier — Documentation à jour (2025)
 
----
+#### Endpoints principaux utilisés par l'app :
 
-# 🏆 **SYSTÈME 100% AUTOMATISÉ - COURSIER SUZOSKY v4.0**
+| Fonction                | Endpoint API                        | Méthode | Description principale |
+|-------------------------|-------------------------------------|---------|-----------------------|
+| Authentification        | `api/agent_auth.php`                | POST    | Login coursier, session, token |
+| Données coursier       | `api/get_coursier_data.php`         | GET/POST/JSON | Profil, solde, commandes, FCM |
+| Liste commandes        | `api/get_coursier_orders.php`       | GET/POST| Toutes les commandes du coursier |
+| Statut commande        | `api/update_order_status.php`       | POST    | Mise à jour progression commande |
+| Déconnexion FCM        | `deactivate_device_token.php`       | POST    | Désactive le token FCM à la déconnexion |
 
----
+**Seul `get_coursier_data.php` est utilisé pour la synchronisation du solde et du profil.**
 
-## 🗄️ **RÉFÉRENCE DES TABLES DE BASE DE DONNÉES (PRODUCTION)**
+#### Synchronisation et notifications :
+- **FCM Push** : Toute notification (nouvelle commande, recharge, etc.) déclenche un refresh automatique de l'app.
+- **Polling** : L'app effectue un polling toutes les 30s pour garantir la mise à jour même sans FCM.
+- **WebSocket** : (prévu) pour la synchronisation instantanée à l'avenir.
 
-### Tables principales utilisées par le système :
+#### Bonnes pratiques (2025) :
+- **Source unique de vérité** : Toutes les APIs lisent `agents_suzosky.solde_wallet` pour le solde.
+- **FCM strict** : Aucun token actif pour un coursier déconnecté (auto-nettoyage).
+- **Monitoring** : Utiliser ADB/logcat pour diagnostiquer la sync mobile.
+- **Fallback** : Si `agents_suzosky` indisponible, fallback cohérent dans toutes les APIs.
+- **Endpoints obsolètes** : Toutes les anciennes APIs non listées ci-dessus sont supprimées ou redirigées.
 
-| Table              | Champ ID (clé primaire) | Description principale |
-|--------------------|------------------------|-----------------------|
-| agents_suzosky     | id (int, auto incr.)   | Coursiers/agents principaux |
-| commandes          | id (int, auto incr.)   | Commandes clients (livraisons) |
-| device_tokens      | id (int, auto incr.)   | Tokens FCM pour présence temps réel |
-
-#### Extraits de structure (MySQL) :
-
-```sql
-CREATE TABLE `agents_suzosky` (
-    `id` int(11) NOT NULL AUTO_INCREMENT,
-    `matricule` varchar(20) NOT NULL,
-    `nom` varchar(100) NOT NULL,
-    `prenoms` varchar(100) NOT NULL,
-    `date_naissance` date NOT NULL,
-    `lieu_naissance` varchar(100) NOT NULL,
-    `type_poste` enum('chauffeur','coursier_moto','coursier_cargo','agent_conciergerie') NOT NULL,
-    `telephone` varchar(20) NOT NULL,
-    `email` varchar(100) NOT NULL,
-    `piece_identite` enum('cni','passeport') NOT NULL,
-    `numero_piece` varchar(50) NOT NULL,
-    `contact_urgence_nom` varchar(100) NOT NULL,
-    `contact_urgence_tel` varchar(20) NOT NULL,
-    `contact_urgence_residence` varchar(200) NOT NULL,
-    `status` enum('actif','inactif','suspendu') DEFAULT 'actif',
-    `shipday_id` varchar(50) DEFAULT NULL,
-    `created_at` timestamp NULL DEFAULT current_timestamp(),
+#### Diagnostic rapide :
+```bash
+# Test API mobile (solde, profil, commandes)
     `password` varchar(255) DEFAULT NULL,
+# Vérifier la désactivation FCM à la déconnexion
     `password_plain` varchar(50) DEFAULT NULL,
+# Monitoring live
     `first_login_done` tinyint(1) DEFAULT 0,
+```
+
+---
     `password_changed_at` timestamp NULL DEFAULT NULL,
     `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
     `plain_password` varchar(5) NOT NULL DEFAULT '',
