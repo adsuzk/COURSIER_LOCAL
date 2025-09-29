@@ -3,6 +3,13 @@
 
 ---
 
+## ⚙️ Mise à jour rapide — 29 Sept 2025 (actions appliquées)
+
+- Seuil de nettoyage des tokens FCM réduit à 2 minutes pour permettre au serveur CRON de désactiver rapidement les tokens orphelins (`Scripts/Scripts cron/fcm_auto_cleanup.php`).
+- Comportement client renforcé : en cas d'absence de coursiers le formulaire affiche désormais un message commercial convivial (injecté dans `sections_index/order_form.php`) et propose un bouton « Actualiser ».
+- Documentation consolidée : suppression/archivage des anciennes instructions obsolètes concernant la détection de présence non-FCM. Les sections marquées "Obsolète" doivent être ignorées (voir section "Changements récents").
+
+
 ## 🆕 [29 Sept 2025] — AJOUT TABLE `agents_suzosky` & LOGIQUE DISPONIBILITÉ COURSIER
 
 ### 📋 Création de la table `agents_suzosky`
