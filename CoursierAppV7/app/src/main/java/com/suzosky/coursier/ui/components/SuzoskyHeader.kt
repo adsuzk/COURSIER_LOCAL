@@ -51,7 +51,7 @@ fun SuzoskyHeader(
                 ) {
                     IconButton(onClick = onMenuClick) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.Menu,
+                            imageVector = Icons.Filled.Menu,
                             contentDescription = "Menu",
                             tint = Color.White
                         )
