@@ -1,8 +1,9 @@
 import androidx.compose.foundation.background
+package com.suzosky.coursier.ui.screens
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.stickyHeader
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -22,6 +23,11 @@ import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+
+// Small enums used by this screen (moved here to avoid missing reference errors)
+enum class SortField { DATE, MONTANT }
+enum class SortOrder { ASC, DESC }
+enum class PeriodFilter { TOUT, AUJOURD_HUI, SEMAINE, MOIS }
 
 // Data
 data class HistoriqueCommande(
