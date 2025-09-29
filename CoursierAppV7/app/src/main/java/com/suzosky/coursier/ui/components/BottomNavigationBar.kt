@@ -40,22 +40,22 @@ fun BottomNavigationBar(
         BottomNavItem(
             tab = NavigationTab.COURSES,
             title = "Mes Courses",
-            icon = Icons.AutoMirrored.Filled.DeliveryDining
+            icon = Icons.Filled.DeliveryDining
         ),
         BottomNavItem(
             tab = NavigationTab.WALLET,
             title = "Portefeuille",
-            icon = Icons.AutoMirrored.Filled.Wallet
+            icon = Icons.Filled.Wallet
         ),
         BottomNavItem(
             tab = NavigationTab.CHAT,
             title = "Support",
-            icon = Icons.AutoMirrored.Filled.Chat
+            icon = Icons.Filled.Chat
         ),
         BottomNavItem(
             tab = NavigationTab.PROFILE,
             title = "Mon Profil",
-            icon = Icons.AutoMirrored.Filled.AccountCircle
+            icon = Icons.Filled.AccountCircle
         )
     )
 
