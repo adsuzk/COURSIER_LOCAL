@@ -541,7 +541,7 @@ if ($sessionSenderPhoneRaw !== '') {
                         <div class="service-unavailable-alert">
                             <?php
                             // Ensure a friendly commercial message is shown if $messageIndisponibilite is empty.
-                            $commercialText = "Nous sommes désolés, aucun coursier n'est disponible pour le moment. Inscrivez-vous pour être informé des prochaines disponibilités — livraison rapide, sécurisée et suivie en temps réel. Vous pouvez actualiser la page ou réessayer dans quelques minutes. Merci de votre confiance.";
+                            $commercialText = "En raison d'une forte demande, tous nos coursiers sont momentanément occupés. De nouveaux coursiers seront disponibles très prochainement et le formulaire se rouvrira automatiquement — merci de rester sur cette page, nous vous servons au plus vite.";
                             $displayMessage = trim((string)($messageIndisponibilite ?? '')) !== '' ? $messageIndisponibilite : $commercialText;
                             echo '<div style="padding:12px; border-radius:8px; background: rgba(255,255,255,0.03);">' . $displayMessage . '</div>';
                             ?>
