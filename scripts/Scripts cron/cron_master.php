@@ -52,68 +52,46 @@ try {
         return $success;
     }
     
-    // Obtenir le timestamp actuel
-    $current_time = time();
-    $current_minute = (int)date('i');
-    $current_hour = (int)date('H');
-    
-    // === TÂCHES CHAQUE MINUTE ===
-    file_put_contents($log_file, "[{$start_time}] 📋 Exécution tâches minute...\n", FILE_APPEND | LOCK_EX);
-    
-    // 1. Assignation automatique des commandes (priorité haute)
+    // === NOUVEAU: Exécuter toutes les tâches à chaque minute ===
+    // Par demande explicite, toutes les tâches listées ci-dessous sont exécutées à chaque minute.
+    file_put_contents($log_file, "[{$start_time}] 📋 Exécution complète des tâches (mode every-minute)...\n", FILE_APPEND | LOCK_EX);
+
+    // Assignation automatique des commandes (priorité haute)
     executeScript($base_path . '/auto_assign_orders.php', 'Assignation automatique');
-    
-    // 2. Surveillance temps réel
+
+    // Surveillance temps réel
     executeScript($base_path . '/surveillance_temps_reel.php', 'Surveillance temps réel');
-    
-    // 3. Assignation sécurisée (depuis Scripts cron)
+
+    // Assignation sécurisée
     executeScript($base_path . '/secure_order_assignment.php', 'Assignation sécurisée');
-    
-    // === TÂCHES TOUTES LES 5 MINUTES ===
-    if ($current_minute % 5 == 0) {
-        file_put_contents($log_file, "[{$start_time}] 📋 Exécution tâches 5min...\n", FILE_APPEND | LOCK_EX);
-        
-        // 3. Mise à jour statuts coursiers
-        executeScript($base_path . '/coursier_update_status.php', 'MAJ statuts coursiers');
-        // 3b. Nettoyage automatique FCM (toutes les 5 minutes)
-        executeScript($base_path . '/fcm_auto_cleanup.php', 'Nettoyage FCM');
-    }
-    
-    // === TÂCHES TOUTES LES 15 MINUTES ===
-    if ($current_minute % 15 == 0) {
-        file_put_contents($log_file, "[{$start_time}] 📋 Exécution tâches 15min...\n", FILE_APPEND | LOCK_EX);
-        
-        // 4. Nettoyage statuts coursiers
-        executeScript($base_path . '/coursier_status_cleanup.php', 'Nettoyage statuts');
-    }
-    
-    // === TÂCHES TOUTES LES HEURES ===
-    if ($current_minute == 0) {
-        file_put_contents($log_file, "[{$start_time}] 📋 Exécution tâches horaires...\n", FILE_APPEND | LOCK_EX);
-        
-        // 5. FCM Token Security (hourly)
-        executeScript($base_path . '/fcm_token_security.php', 'Sécurité tokens FCM');
-        
-        // 7. Migration automatique BDD
-        executeScript($base_path . '/Scripts/db_schema_migrations.php', 'Migration BDD');
-        
-        // 8. Diagnostic FCM quotidien
-        executeScript($base_path . '/Scripts/Scripts cron/fcm_daily_diagnostic.php', 'Diagnostic FCM');
-        
-        // 7. Vérification système
-        executeScript($base_path . '/system_health.php', 'Vérification système');
-    }
-    
-    // === TÂCHES QUOTIDIENNES ===
-    if ($current_hour == 2 && $current_minute == 0) {
-        file_put_contents($log_file, "[{$start_time}] 📋 Exécution tâches quotidiennes...\n", FILE_APPEND | LOCK_EX);
-        
-        // 8. Nettoyage approfondi base de données
-        executeScript($base_path . '/database/cleanup_old_data.php', 'Nettoyage BDD quotidien');
-        
-        // 9. Sauvegarde logs
-        executeScript($base_path . '/diagnostic_logs/rotate_logs.php', 'Rotation logs');
-    }
+
+    // Mise à jour statuts coursiers
+    executeScript($base_path . '/coursier_update_status.php', 'MAJ statuts coursiers');
+
+    // Nettoyage automatique FCM
+    executeScript($base_path . '/fcm_auto_cleanup.php', 'Nettoyage FCM');
+
+    // Nettoyage statuts coursiers
+    executeScript($base_path . '/coursier_status_cleanup.php', 'Nettoyage statuts');
+
+    // Sécurité tokens FCM (token security)
+    executeScript($base_path . '/fcm_token_security.php', 'Sécurité tokens FCM');
+
+    // Validation active des tokens (dry-run par défaut)
+    executeScript($base_path . '/Scripts/Scripts cron/fcm_validate_tokens.php', 'Validation active tokens (dry-run)');
+
+    // Migrations BDD (safe to include)
+    executeScript($base_path . '/Scripts/db_schema_migrations.php', 'Migration BDD');
+
+    // Diagnostic FCM
+    executeScript($base_path . '/Scripts/Scripts cron/fcm_daily_diagnostic.php', 'Diagnostic FCM');
+
+    // Vérification système
+    executeScript($base_path . '/system_health.php', 'Vérification système');
+
+    // Nettoyage quotidien/backup (également appelé chaque minute par demande)
+    executeScript($base_path . '/database/cleanup_old_data.php', 'Nettoyage BDD quotidien');
+    executeScript($base_path . '/diagnostic_logs/rotate_logs.php', 'Rotation logs');
     
     $end_time = date('Y-m-d H:i:s');
     $total_duration = round((microtime(true) - strtotime($start_time)) * 1000, 2);
