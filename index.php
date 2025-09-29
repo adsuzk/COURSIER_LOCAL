@@ -59,27 +59,33 @@ if (file_exists(__DIR__ . '/web_cron_trigger.php')) {
     include_once __DIR__ . '/web_cron_trigger.php';
 }
 
-// CONTRÔLE DISPONIBILITÉ STRICTEMENT PAR TOKEN FCM ACTIF
+// CONTRÔLE DISPONIBILITÉ : utiliser la logique centralisée FCMTokenSecurity
+// (évite le SQL hardcodé et permet d'utiliser la logique CRON / security centralisée)
 $coursiersDisponibles = false;
 $messageIndisponibilite = '';
 try {
-    $pdo = getDBConnection();
-    // On considère un coursier disponible s'il a un token FCM actif (device_tokens.is_active=1)
-    $stmt = $pdo->prepare("SELECT COUNT(DISTINCT coursier_id) FROM device_tokens WHERE is_active = 1");
-    $stmt->execute();
-    $coursiersAvecFCM = (int)$stmt->fetchColumn();
-    $coursiersDisponibles = $coursiersAvecFCM > 0;
-    if (!$coursiersDisponibles) {
-        $messageIndisponibilite = "<div style='background: linear-gradient(135deg, #ff6b6b, #ffa500); color: white; padding: 20px; border-radius: 10px; text-align: center; margin: 20px 0;'>"
-            . "<h3>🚚 Tous nos coursiers sont actuellement en mission</h3>"
-            . "<p>En raison d'une forte activité, nos équipes sont mobilisées pour servir nos clients le plus rapidement possible.</p>"
-            . "<p><strong>Le formulaire de commande sera disponible dans quelques instants.<br>Merci de votre patience et de votre confiance.</strong></p>"
-            . "<p style='font-size: 0.9em; opacity: 0.8;'>Notre équipe met tout en œuvre pour vous garantir un service rapide et de qualité.</p>"
-            . "</div>";
+    // Charger le shim / implémentation centrale (Scripts/Scripts cron/fcm_token_security.php)
+    require_once __DIR__ . '/fcm_token_security.php';
+
+    // Instancier en mode non-verbose (web) pour éviter les flashs visuels
+    $fcmSec = new FCMTokenSecurity(['verbose' => false]);
+    $canAccept = $fcmSec->canAcceptNewOrders();
+    if (is_array($canAccept)) {
+        $coursiersDisponibles = !empty($canAccept['can_accept_orders']);
+        if (!$coursiersDisponibles) {
+            // Prefer using the class provided message when available
+            $messageIndisponibilite = method_exists($fcmSec, 'getUnavailabilityMessage') ? $fcmSec->getUnavailabilityMessage() : "Service momentanément indisponible.";
+        }
+    } else {
+        // Fallback conservateur
+        $coursiersDisponibles = false;
+        $messageIndisponibilite = "Service momentanément indisponible.";
     }
 } catch (Exception $e) {
-    error_log('[SECURITY] Erreur vérification disponibilité coursiers (FCM): ' . $e->getMessage());
+    error_log('[SECURITY] Erreur vérification disponibilité coursiers (FCMTokenSecurity): ' . $e->getMessage());
+    // En cas d'erreur, bloquer la prise de commande pour éviter surbooking
     $coursiersDisponibles = false;
+    $messageIndisponibilite = "Service momentanément indisponible.";
 }
 
 // Enregistrement du heartbeat pour le frontend public
