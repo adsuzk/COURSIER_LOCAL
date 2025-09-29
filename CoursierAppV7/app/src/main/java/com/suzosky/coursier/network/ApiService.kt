@@ -607,10 +607,24 @@ object ApiService {
                 }
 
                 val trimmed = body.trim()
-                if (!(trimmed.startsWith("{") || trimmed.startsWith("["))) {
-                    println("❌ Réponse non JSON détectée pour getCoursierData: $trimmed")
-                    callback(null, "Réponse serveur inattendue")
-                    return@executeWithFallback
+                // If response doesn't start with JSON, try to recover by finding the first
+                // JSON token ('{' or '[') and parsing from there. This handles cases where
+                // server emits HTML wrappers, debug prints, or BOMs before the JSON payload.
+                val effectiveJson = if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
+                    trimmed
+                } else {
+                    val idxObj = trimmed.indexOf('{')
+                    val idxArr = trimmed.indexOf('[')
+                    val idx = listOf(idxObj, idxArr).filter { it >= 0 }.minOrNull() ?: -1
+                    if (idx >= 0) {
+                        val candidate = trimmed.substring(idx)
+                        println("⚠️ getCoursierData: JSON trouvé au milieu de la réponse, extracting substring starting at $idx")
+                        candidate
+                    } else {
+                        println("❌ Réponse non JSON détectée pour getCoursierData (no '{' or '['): ${trimmed.take(200)}")
+                        callback(null, "Réponse serveur inattendue")
+                        return@executeWithFallback
+                    }
                 }
 
                 try {
