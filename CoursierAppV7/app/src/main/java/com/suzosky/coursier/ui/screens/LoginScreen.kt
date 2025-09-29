@@ -1,9 +1,8 @@
-import androidx.core.content.FileProvider
-import androidx.compose.foundation.border
 
 package com.suzosky.coursier.ui.screens
 
-
+import androidx.core.content.FileProvider
+import androidx.compose.foundation.border
 import android.app.Activity
 import android.content.Context
 import android.net.Uri
@@ -15,7 +14,6 @@ import androidx.compose.ui.platform.LocalContext
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
