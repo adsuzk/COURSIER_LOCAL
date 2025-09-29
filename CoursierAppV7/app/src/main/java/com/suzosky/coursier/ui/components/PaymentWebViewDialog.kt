@@ -48,9 +48,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import java.text.NumberFormat
-import java.util.Locale
-
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun PaymentWebViewDialog(
@@ -76,9 +73,7 @@ fun PaymentWebViewDialog(
 
     AlertDialog(
         onDismissRequest = {
-            if (!hasCompleted) {
-                onCompleted(false, "cancelled")
-            }
+            if (!hasCompleted) onCompleted(false, "cancelled")
             onDismiss()
         },
         title = {
@@ -123,9 +118,7 @@ fun PaymentWebViewDialog(
                                 webChromeClient = object : WebChromeClient() {
                                     override fun onProgressChanged(view: WebView?, newProgress: Int) {
                                         progress = newProgress / 100f
-                                        if (newProgress >= 95) {
-                                            isLoading = false
-                                        }
+                                        if (newProgress >= 95) isLoading = false
                                     }
                                 }
                                 webViewClient = object : WebViewClient() {
@@ -158,11 +151,7 @@ fun PaymentWebViewDialog(
                                         isLoading = false
                                     }
 
-                                    override fun onReceivedError(
-                                        view: WebView?,
-                                        request: WebResourceRequest?,
-                                        error: WebResourceError?
-                                    ) {
+                                    override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
                                         super.onReceivedError(view, request, error)
                                         errorMessage = error?.description?.toString()
                                         isLoading = false
@@ -174,9 +163,7 @@ fun PaymentWebViewDialog(
                         }
                     )
 
-                    if (isLoading) {
-                        LoadingOverlay(progress)
-                    }
+                    if (isLoading) LoadingOverlay(progress)
 
                     errorMessage?.let { message ->
                         ErrorOverlay(message = message) {
@@ -185,19 +172,20 @@ fun PaymentWebViewDialog(
                         }
                     }
                 }
+
                 SupportHint()
             }
-        }
-    },
-    confirmButton = {
-        TextButton(onClick = {
-            if (!hasCompleted) {
-                onCompleted(false, "cancelled")
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                if (!hasCompleted) onCompleted(false, "cancelled")
+                onDismiss()
+            }) {
+                Text("Fermer")
             }
-            onDismiss()
-        }) {
-            Text("Fermer")
         }
+    )
+}
     }
 )
 }
