@@ -135,7 +135,7 @@ private fun StatusBadge(status: String, type: String) {
         // Badge type
         Icon(
             imageVector = when (type.lowercase()) {
-                "classique" -> Icons.AutoMirrored.Filled.DirectionsBike
+                "classique" -> Icons.Filled.DirectionsBike
                 "business" -> Icons.AutoMirrored.Filled.Business
                 else -> Icons.AutoMirrored.Filled.LocalShipping
             },
@@ -157,7 +157,7 @@ private fun ClientInfoSection(commande: CommandeData) {
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.Person,
+                imageVector = Icons.Filled.Person,
                 contentDescription = "Client",
                 tint = Color.suzoskyGold(),
                 modifier = Modifier.size(18.dp)
@@ -175,7 +175,7 @@ private fun ClientInfoSection(commande: CommandeData) {
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.Phone,
+                imageVector = Icons.Filled.Phone,
                 contentDescription = "Téléphone",
                 tint = Color.suzoskyGold(),
                 modifier = Modifier.size(18.dp)
@@ -196,7 +196,7 @@ private fun DeliveryDetailsSection(commande: CommandeData) {
     ) {
         // Adresse de récupération
         AdresseRow(
-            icon = Icons.AutoMirrored.Filled.LocationOn,
+            icon = Icons.Filled.LocationOn,
             label = "Récupération",
             adresse = commande.adresseRecuperation,
             iconColor = Color.suzoskySuccess()
@@ -221,7 +221,7 @@ private fun DeliveryDetailsSection(commande: CommandeData) {
         
         // Adresse de livraison
         AdresseRow(
-            icon = Icons.AutoMirrored.Filled.Flag,
+            icon = Icons.Filled.Flag,
             label = "Livraison",
             adresse = commande.adresseLivraison,
             iconColor = AccentRed
@@ -234,7 +234,7 @@ private fun DeliveryDetailsSection(commande: CommandeData) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.Info,
+                    imageVector = Icons.Filled.Info,
                     contentDescription = "Instructions",
                     tint = Color.suzoskyWarning(),
                     modifier = Modifier.size(18.dp)
@@ -370,7 +370,7 @@ private fun ActionButtonsSection(
                     text = "Refuser",
                     onClick = onRefuser,
                     style = SuzoskyButtonStyle.Danger,
-                    icon = Icons.AutoMirrored.Filled.Close,
+                    icon = Icons.Filled.Close,
                     modifier = Modifier.weight(1f)
                 )
                 
@@ -379,7 +379,7 @@ private fun ActionButtonsSection(
                     text = "En attente",
                     onClick = onMettreEnAttente,
                     style = SuzoskyButtonStyle.Warning,
-                    icon = Icons.AutoMirrored.Filled.Schedule,
+                    icon = Icons.Filled.Schedule,
                     modifier = Modifier.weight(1f)
                 )
                 
@@ -388,7 +388,7 @@ private fun ActionButtonsSection(
                     text = "Accepter",
                     onClick = onAccepter,
                     style = SuzoskyButtonStyle.Success,
-                    icon = Icons.AutoMirrored.Filled.Check,
+                    icon = Icons.Filled.Check,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -403,7 +403,7 @@ private fun ActionButtonsSection(
                     text = "Refuser",
                     onClick = onRefuser,
                     style = SuzoskyButtonStyle.Danger,
-                    icon = Icons.AutoMirrored.Filled.Close,
+                    icon = Icons.Filled.Close,
                     modifier = Modifier.weight(1f)
                 )
                 
@@ -411,7 +411,7 @@ private fun ActionButtonsSection(
                     text = "Accepter",
                     onClick = onAccepter,
                     style = SuzoskyButtonStyle.Success,
-                    icon = Icons.AutoMirrored.Filled.Check,
+                    icon = Icons.Filled.Check,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -422,7 +422,7 @@ private fun ActionButtonsSection(
                 text = "Voir détails",
                 onClick = onVoirDetails,
                 style = SuzoskyButtonStyle.Primary,
-                icon = Icons.AutoMirrored.Filled.Visibility,
+                icon = Icons.Filled.Visibility,
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -432,7 +432,7 @@ private fun ActionButtonsSection(
                 text = "Voir détails",
                 onClick = onVoirDetails,
                 style = SuzoskyButtonStyle.Secondary,
-                icon = Icons.AutoMirrored.Filled.Info,
+                icon = Icons.Filled.Info,
                 modifier = Modifier.fillMaxWidth()
             )
         }
