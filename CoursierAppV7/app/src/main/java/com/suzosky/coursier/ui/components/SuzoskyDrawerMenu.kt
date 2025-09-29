@@ -63,7 +63,7 @@ fun SuzoskyDrawerMenu(
                     }
                     IconButton(onClick = onDismiss) {
                         Icon(
-                            imageVector = Icons.Default.Close,
+                            imageVector = Icons.AutoMirrored.Filled.Close,
                             contentDescription = "Fermer",
                             tint = Color.White
                         )
@@ -74,7 +74,7 @@ fun SuzoskyDrawerMenu(
                 
                 // Options du menu
                 MenuOption(
-                    icon = Icons.Default.Person,
+                    icon = Icons.AutoMirrored.Filled.Person,
                     text = "Mon Profil",
                     onClick = {
                         onNavigateToProfile()
@@ -83,7 +83,7 @@ fun SuzoskyDrawerMenu(
                 )
                 
                 MenuOption(
-                    icon = Icons.Default.History,
+                    icon = Icons.AutoMirrored.Filled.History,
                     text = "Historique",
                     onClick = {
                         onNavigateToHistorique()
@@ -92,7 +92,7 @@ fun SuzoskyDrawerMenu(
                 )
                 
                 MenuOption(
-                    icon = Icons.Default.AccountBalance,
+                    icon = Icons.AutoMirrored.Filled.AccountBalance,
                     text = "Mes Gains",
                     onClick = {
                         onNavigateToGains()
@@ -105,7 +105,7 @@ fun SuzoskyDrawerMenu(
                 Spacer(modifier = Modifier.height(16.dp))
                 
                 MenuOption(
-                    icon = Icons.Default.ExitToApp,
+                    icon = Icons.AutoMirrored.Filled.ExitToApp,
                     text = "Déconnexion",
                     onClick = onLogout,
                     isDestructive = true

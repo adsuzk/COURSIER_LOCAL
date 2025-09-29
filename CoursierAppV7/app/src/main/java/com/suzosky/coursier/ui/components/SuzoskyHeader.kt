@@ -51,7 +51,7 @@ fun SuzoskyHeader(
                 ) {
                     IconButton(onClick = onMenuClick) {
                         Icon(
-                            imageVector = Icons.Default.Menu,
+                            imageVector = Icons.AutoMirrored.Filled.Menu,
                             contentDescription = "Menu",
                             tint = Color.White
                         )
@@ -66,7 +66,7 @@ fun SuzoskyHeader(
                 
                 IconButton(onClick = onNotificationClick) {
                     Icon(
-                        imageVector = Icons.Default.Notifications,
+                        imageVector = Icons.AutoMirrored.Filled.Notifications,
                         contentDescription = "Notifications",
                         tint = Color.White
                     )
@@ -102,8 +102,8 @@ fun SuzoskyHeader(
                     },
                     textOn = "En ligne",
                     textOff = "Hors ligne",
-                    iconOn = Icons.Default.RadioButtonChecked,
-                    iconOff = Icons.Default.RadioButtonUnchecked
+                    iconOn = Icons.AutoMirrored.Filled.RadioButtonChecked,
+                    iconOff = Icons.AutoMirrored.Filled.RadioButtonUnchecked
                 )
             }
         }
