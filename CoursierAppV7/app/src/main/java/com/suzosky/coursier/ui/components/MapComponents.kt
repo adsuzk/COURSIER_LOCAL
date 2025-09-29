@@ -172,7 +172,7 @@ fun GoogleMapView(
                             }
                         }
                         if (prediction != uiState.searchResults.last()) {
-                            HorizontalDivider(thickness = 0.5.dp)
+                            Divider(thickness = 0.5.dp)
                         }
                     }
                 }
