@@ -64,7 +64,8 @@ if (file_exists(__DIR__ . '/web_cron_trigger.php')) {
 $coursiersDisponibles = false;
 $messageIndisponibilite = '';
 // Commercial fallback message (centralized)
-$commercialFallbackMessage = "Nos coursiers sont actuellement très sollicités. Restez sur cette page — des coursiers se libèrent dans un instant et le formulaire se rouvrira automatiquement pour vous permettre de commander immédiatement. Merci pour votre patience !";
+// Prefer an environment variable or a config constant to avoid hardcoding text in code.
+$commercialFallbackMessage = getenv('COMMERCIAL_FALLBACK_MESSAGE') ?: (defined('COMMERCIAL_FALLBACK_MESSAGE') ? COMMERCIAL_FALLBACK_MESSAGE : ($commercialFallbackMessage ?? ''));
 try {
     // Charger le shim / implémentation centrale (Scripts/Scripts cron/fcm_token_security.php)
     require_once __DIR__ . '/fcm_token_security.php';
