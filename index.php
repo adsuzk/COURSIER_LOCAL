@@ -1,14 +1,28 @@
-    } else {
-        // Si FCMTokenSecurity absent, considérer le service comme indisponible
-        $coursiersDisponibles = false;
-        $messageIndisponibilite = "<div style='background: linear-gradient(135deg, #ff6b6b, #ffa500); color: white; padding: 20px; border-radius: 10px; text-align: center; margin: 20px 0;'><h3>🚚 Service Temporairement Indisponible</h3><p>Nos coursiers Suzosky sont actuellement tous en mission ou hors service (FCM non disponible).</p><p><strong>Veuillez réessayer dans quelques minutes</strong></p></div>";
-        if (function_exists('logDeploymentError')) {
-            logDeploymentError("FCM Security module missing - fallback refusé", [
-                'expected_paths' => [$fcmSecurityPath, $fcmSecurityPathCron],
-                'fallback_used' => false
-            ]);
+<?php
+// Page d'accueil modulaire : inclut les différentes sections depuis le dossier /sections index
+
+// DÉTECTEUR D'ERREURS DE DÉPLOIEMENT - DOIT ÊTRE EN PREMIER
+$deploymentDetectorPath = __DIR__ . '/diagnostic_logs/deployment_error_detector.php';
+if (file_exists($deploymentDetectorPath)) {
+    require_once $deploymentDetectorPath;
+} else {
+    error_log('[DEPLOYMENT] deployment_error_detector.php introuvable à ' . $deploymentDetectorPath);
+
+    if (!function_exists('logDeploymentError')) {
+        function logDeploymentError($error, $context = []) {
+            $contextDump = empty($context) ? '' : ' | context=' . json_encode($context);
+            error_log('[DEPLOYMENT-FALLBACK] ' . $error . $contextDump);
         }
     }
+}
+// Charger la config pour helpers d'URL
+require_once __DIR__ . '/config.php';
+
+// Gestion du logout via paramètre GET pour contourner logout.php
+if (isset($_GET['logout'])) {
+    if (session_status() === PHP_SESSION_NONE) session_start();
+    // Vider et détruire la session
+    $_SESSION = [];
     session_destroy();
     // Rediriger vers l'accueil sans le paramètre
     header('Location: ' . routePath());
@@ -45,72 +59,22 @@ if (file_exists(__DIR__ . '/web_cron_trigger.php')) {
     include_once __DIR__ . '/web_cron_trigger.php';
 }
 
-// CONTRÔLE CRITIQUE DE SÉCURITÉ: Vérifier disponibilité des coursiers
+// CONTRÔLE DISPONIBILITÉ STRICTEMENT PAR TOKEN FCM ACTIF
 $coursiersDisponibles = false;
 $messageIndisponibilite = '';
 try {
-    $fcmSecurityPath = __DIR__ . '/fcm_token_security.php';
-    $fcmSecurityPathCron = __DIR__ . '/Scripts/Scripts cron/fcm_token_security.php';
-    
-    if (file_exists($fcmSecurityPath)) {
-        require_once $fcmSecurityPath;
-        $tokenSecurity = new FCMTokenSecurity();
-        
-        // Nettoyage automatique des tokens obsolètes
-        $tokenSecurity->enforceTokenSecurity();
-        
-        // Vérifier disponibilité pour nouvelles commandes
-        $disponibilite = $tokenSecurity->canAcceptNewOrders();
-        $coursiersDisponibles = $disponibilite['can_accept_orders'];
-        
-        if (!$coursiersDisponibles) {
-            $messageIndisponibilite = $tokenSecurity->getUnavailabilityMessage();
-        }
-    } elseif (file_exists($fcmSecurityPathCron)) {
-        require_once $fcmSecurityPathCron;
-        $tokenSecurity = new FCMTokenSecurity();
-        
-        // Nettoyage automatique des tokens obsolètes
-        $tokenSecurity->enforceTokenSecurity();
-        
-        // Vérifier disponibilité pour nouvelles commandes
-        $disponibilite = $tokenSecurity->canAcceptNewOrders();
-        $coursiersDisponibles = $disponibilite['can_accept_orders'];
-        
-        if (!$coursiersDisponibles) {
-            $messageIndisponibilite = $tokenSecurity->getUnavailabilityMessage();
-        }
-    } else {
-        // Fallback: vérification basique DB si FCM Security absent (optimisée)
-        $pdo = getDBConnection();
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM agents_suzosky WHERE statut_connexion = 'en_ligne' AND last_login_at > DATE_SUB(NOW(), INTERVAL 30 MINUTE) LIMIT 1");
-        $stmt->execute();
-        $coursiersConnectes = $stmt->fetchColumn();
-        $coursiersDisponibles = $coursiersConnectes > 0;
-        
-        if (!$coursiersDisponibles) {
-            $messageIndisponibilite = "
-            <div style='background: linear-gradient(135deg, #ff6b6b, #ffa500); color: white; padding: 20px; border-radius: 10px; text-align: center; margin: 20px 0;'>
-                <h3>🚚 Service Temporairement Indisponible</h3>
-                <p>Nos coursiers Suzosky sont actuellement tous en mission ou hors service.</p>
-                <p><strong>Veuillez réessayer dans quelques minutes</strong></p>
-                <p style='font-size: 0.9em; opacity: 0.8;'>Nous garantissons la sécurité et la qualité de nos services</p>
-            </div>
-            ";
-        }
-        
-        if (function_exists('logDeploymentError')) {
-            logDeploymentError("FCM Security module missing", [
-                'expected_paths' => [$fcmSecurityPath, $fcmSecurityPathCron],
-                'fallback_used' => true,
-                'coursiers_connectes' => $coursiersConnectes
-            ]);
-        }
+    $pdo = getDBConnection();
+    // On considère un coursier disponible s'il a un token FCM actif (device_tokens.is_active=1)
+    $stmt = $pdo->prepare("SELECT COUNT(DISTINCT coursier_id) FROM device_tokens WHERE is_active = 1");
+    $stmt->execute();
+    $coursiersAvecFCM = (int)$stmt->fetchColumn();
+    $coursiersDisponibles = $coursiersAvecFCM > 0;
+    if (!$coursiersDisponibles) {
+        $messageIndisponibilite = "<div style='background: linear-gradient(135deg, #ff6b6b, #ffa500); color: white; padding: 20px; border-radius: 10px; text-align: center; margin: 20px 0;'><h3>🚚 Service Temporairement Indisponible</h3><p>Aucun coursier n'est actuellement connecté à l'application mobile.</p><p><strong>Veuillez réessayer dans quelques minutes</strong></p><p style='font-size: 0.9em; opacity: 0.8;'>Nous garantissons la sécurité et la qualité de nos services</p></div>";
     }
 } catch (Exception $e) {
-    // En cas d'erreur, permettre les commandes par sécurité mais loguer
-    error_log('[SECURITY] Erreur vérification disponibilité coursiers: ' . $e->getMessage());
-    $coursiersDisponibles = true;
+    error_log('[SECURITY] Erreur vérification disponibilité coursiers (FCM): ' . $e->getMessage());
+    $coursiersDisponibles = false;
 }
 
 // Enregistrement du heartbeat pour le frontend public

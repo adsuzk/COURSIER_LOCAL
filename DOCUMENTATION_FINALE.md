@@ -33,25 +33,23 @@ VALUES ('TestAgent', 'Demo', 'test@demo.com', '+22501020304', 'hors_ligne', NOW(
 ```
 
 
-### 🔎 Logique de détection de disponibilité (index.php) — [MAJ 29/09/2025]
+### 🔎 Nouvelle logique de détection de disponibilité (index.php)
 
-- Le formulaire de commande sur l’index **n’est affiché que si au moins un coursier possède un token FCM actif**.
-- La détection s’effectue exclusivement via la classe `FCMTokenSecurity` :
-    - `canAcceptNewOrders()` retourne `true` si au moins un token FCM valide est présent (coursier connecté sur l’appli).
-    - Si aucun token FCM n’est actif, le formulaire est masqué et un message d’indisponibilité s’affiche.
-- **Aucun fallback sur la base agents_suzosky/statut_connexion n’est utilisé.**
-- Si le module FCM est absent, le service est considéré comme indisponible.
+- Le formulaire de commande sur l’index **n’est affiché que si au moins un coursier possède un token FCM actif** (présence d’au moins un enregistrement `device_tokens` avec `is_active=1`).
+- La détection ne dépend plus du statut de connexion, du solde ou de la date de dernière activité.
+- Si aucun token FCM actif n’est trouvé, le formulaire est masqué et un message d’indisponibilité s’affiche.
 
 **Résumé :**
-- L’index ne se base que sur la présence de tokens FCM valides pour afficher le formulaire de commande.
+- La disponibilité des coursiers côté index est strictement basée sur la présence d’au moins un token FCM actif.
 
+---
 
 ### 🛠️ Correction apportée (29/09/2025)
 - **Problème :** Table absente → impossible de détecter les coursiers connectés, formulaire masqué de façon imprévisible.
 - **Solution :** Création de la table, insertion d’un agent test, restauration du flux normal.
 - **À faire en production :**
-
-    - S’assurer que les applications mobiles mettent bien à jour/suppriment les tokens FCM lors des connexions/déconnexions.
+        - Maintenir la table à jour (statuts, sessions, soldes)
+        - S’assurer que les scripts d’authentification et de présence mettent bien à jour `statut_connexion` et `last_login_at`.
 
 ---
 
@@ -107,10 +105,6 @@ VALUES ('TestAgent', 'Demo', 'test@demo.com', '+22501020304', 'hors_ligne', NOW(
 
 ---
 # 📚 DOCUMENTATION TECHNIQUE FINALE - SUZOSKY COURSIER
-
-## [MAJ 29/09/2025] — Suppression des infos obsolètes
-- Toute référence à la détection par `statut_connexion`, `last_login_at`, ou fallback DB a été supprimée.
-- Seule la présence de tokens FCM actifs (via FCMTokenSecurity) fait foi pour la disponibilité des coursiers.
 ## Version: 4.0 - Date: 28 Septembre 2025 - SYSTÈME 100% AUTOMATISÉ
 
 ---
