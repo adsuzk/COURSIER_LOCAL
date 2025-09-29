@@ -24,32 +24,10 @@ set_exception_handler(function($e) {
     echo json_encode(['success' => false, 'message' => $e->getMessage(), 'debug' => 'Exception logged']);
     exit;
 });
+
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../logger.php';
 require_once __DIR__ . '/../lib/db_maintenance.php';
-
-        // Nettoyer toute sortie parasite
-        ob_end_clean();
-        echo json_encode(['success' => false, 'message' => $e->getMessage(), 'debug' => 'Exception logged']);
-        exit;
-    {
-        if (is_numeric($distance)) {
-            return max(0.0, (float) $distance);
-        }
-        if (!is_string($distance)) {
-            return 0.0;
-        }
-        $distance = trim($distance);
-        if ($distance === '') {
-            return 0.0;
-        }
-        if (preg_match('/([0-9]+(?:[.,][0-9]+)?)/', $distance, $matches)) {
-            $normalized = str_replace(',', '.', $matches[1]);
-            return max(0.0, (float) $normalized);
-        }
-        return 0.0;
-    }
-}
 
 if (!function_exists('submitOrderLoadPricingConfig')) {
     function submitOrderLoadPricingConfig(\PDO $pdo): array
