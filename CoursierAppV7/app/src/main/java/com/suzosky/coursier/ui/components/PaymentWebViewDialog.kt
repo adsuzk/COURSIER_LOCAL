@@ -182,15 +182,12 @@ fun PaymentWebViewDialog(
                 onDismiss()
             }) {
                 Text("Fermer")
+                }
             }
-        }
-    )
-}
+        )
     }
-)
-}
 
-@Composable
+    @Composable
 private fun SummaryCard(label: String, value: String) {
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
