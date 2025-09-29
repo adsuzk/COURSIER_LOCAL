@@ -6,16 +6,34 @@
  * - Safe, minimal, and suitable as a replacement when the original implementation is missing
  */
 require_once __DIR__ . '/../../config.php';
+// Optional: use validator/helper if available
+require_once __DIR__ . '/../../lib/fcm_helper.php';
 
 class FCMTokenSecurity {
     private bool $verbose;
-    // Threshold is not used for immediate detection, but kept for compatibility
-    private int $thresholdSeconds = 2;
+    // By default require a recent ping to consider a token available (in seconds)
+    // Default: 120 seconds (2 minutes). Can be overridden via constructor option
+    // or environment variable FCM_AVAILABILITY_THRESHOLD_SECONDS.
+    private int $thresholdSeconds = 120;
+    // If true, ignore freshness and consider any is_active=1 token immediately available.
+    private bool $immediateDetection = false;
 
     public function __construct(array $options = []) {
         $this->verbose = (bool)($options['verbose'] ?? false);
         if (isset($options['threshold_seconds'])) {
             $this->thresholdSeconds = (int)$options['threshold_seconds'];
+        }
+        // immediate detection option via constructor or env var
+        if (isset($options['immediate_detection'])) {
+            $this->immediateDetection = (bool)$options['immediate_detection'];
+        }
+        $envThreshold = getenv('FCM_AVAILABILITY_THRESHOLD_SECONDS');
+        if ($envThreshold !== false) {
+            $this->thresholdSeconds = (int)$envThreshold;
+        }
+        $envImmediate = getenv('FCM_IMMEDIATE_DETECTION');
+        if ($envImmediate !== false) {
+            $this->immediateDetection = in_array(strtolower($envImmediate), ['1', 'true', 'yes'], true);
         }
     }
 
@@ -27,16 +45,30 @@ class FCMTokenSecurity {
     public function canAcceptNewOrders(): array {
         try {
             $pdo = getDBConnection();
-            $sql = "SELECT COUNT(*) AS cnt FROM device_tokens WHERE is_active = 1";
-            $stmt = $pdo->query($sql);
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            $count = isset($row['cnt']) ? (int)$row['cnt'] : 0;
+            if ($this->immediateDetection) {
+                // Legacy immediate mode: any active token counts
+                $sql = "SELECT COUNT(*) AS cnt FROM device_tokens WHERE is_active = 1";
+                $stmt = $pdo->query($sql);
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                $count = isset($row['cnt']) ? (int)$row['cnt'] : 0;
+            } else {
+                // Require recent last_ping (or updated_at fallback) within threshold
+                // Use a safe SQL expression to compare timestamps in seconds
+                $threshold = (int)$this->thresholdSeconds;
+                $sql = "SELECT COUNT(*) AS cnt FROM device_tokens WHERE is_active = 1 AND UNIX_TIMESTAMP(COALESCE(last_ping, updated_at)) >= UNIX_TIMESTAMP(NOW()) - ?";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([$threshold]);
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                $count = isset($row['cnt']) ? (int)$row['cnt'] : 0;
+            }
 
             $result = [
                 'can_accept_orders' => $count > 0,
                 'available_coursiers' => $count,
                 'checked_at' => date('Y-m-d H:i:s'),
-                'fallback_mode' => false,
+                    'fallback_mode' => false,
+                    'detection_mode' => $this->immediateDetection ? 'immediate' : 'freshness',
+                    'threshold_seconds' => $this->thresholdSeconds,
             ];
 
             if ($this->verbose) {
