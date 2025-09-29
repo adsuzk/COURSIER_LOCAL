@@ -200,9 +200,6 @@ fun PaymentWebViewDialog(
         }
     }
 )
-}
-
-@Composable
 private fun SummaryCard(label: String, value: String) {
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
@@ -214,8 +211,6 @@ private fun SummaryCard(label: String, value: String) {
             Text(text = value, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
         }
     }
-}
-
 @Composable
 private fun LoadingOverlay(progress: Float) {
     Box(
