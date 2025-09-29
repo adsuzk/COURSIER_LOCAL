@@ -383,6 +383,7 @@ private fun filterByPeriod(list: List<HistoriqueCommande>, period: PeriodFilter)
             }
         } catch (_: Exception) { false }
     }
+}
 
 @Composable
 private fun AddressRow(
