@@ -1978,3 +1978,48 @@
         }
     ]
 }
+{
+    "system": {
+        "timestamp": "2025-09-29 02:58:14.000000",
+        "microtime": 1759107494.748454,
+        "memory_usage": "2 MB",
+        "peak_memory": "2 MB",
+        "interface": "EXCEPTION",
+        "level": "CRITICAL",
+        "pid": 13348,
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/140.0.0.0 Safari\/537.36 Edg\/140.0.0.0",
+        "ip_address": "::1",
+        "request_uri": "\/COURSIER_LOCAL\/api\/submit_order.php",
+        "request_method": "POST",
+        "session_id": "no_session",
+        "execution_time": 0.1076,
+        "file": "advanced_logger.php",
+        "line": 388,
+        "function": "logCritical",
+        "class": ""
+    },
+    "message": "Exception non gérée: Call to undefined function ensureLegacyClientsTable()",
+    "context": {
+        "exception_class": "Error",
+        "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\api\\submit_order.php",
+        "line": 153,
+        "trace": "#0 {main}"
+    },
+    "stack_trace": [
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 330,
+            "function": "log",
+            "class": "AdvancedLogger",
+            "type": "->"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+            "line": 388,
+            "function": "logCritical"
+        },
+        {
+            "function": "{closure}"
+        }
+    ]
+}
