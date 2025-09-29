@@ -50,7 +50,7 @@ fun BottomNavigationBar(
         BottomNavItem(
             tab = NavigationTab.CHAT,
             title = "Support",
-            icon = Icons.Filled.Chat
+            icon = Icons.AutoMirrored.Filled.Chat
         ),
         BottomNavItem(
             tab = NavigationTab.PROFILE,
