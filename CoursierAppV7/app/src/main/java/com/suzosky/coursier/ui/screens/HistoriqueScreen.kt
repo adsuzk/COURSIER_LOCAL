@@ -23,6 +23,7 @@ import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import androidx.compose.material3.ExperimentalMaterial3Api
 
 // Small enums used by this screen (moved here to avoid missing reference errors)
 enum class SortField { DATE, MONTANT }
@@ -43,6 +44,7 @@ data class HistoriqueCommande(
 )
 
 // Screen
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoriqueScreen() {
     Column(modifier = Modifier
