@@ -1,0 +1,17 @@
+
+[2025-09-29 23:59:07] 🚀 CRON MASTER - Démarrage
+[2025-09-29 23:59:07] 📋 Exécution complète des tâches (mode every-minute)...
+[2025-09-29 23:59:07] ❌ Script manquant: Assignation automatique (C:\xampp\htdocs\COURSIER_LOCAL\scripts/auto_assign_orders.php)
+[2025-09-29 23:59:07] ❌ Script manquant: Surveillance temps réel (C:\xampp\htdocs\COURSIER_LOCAL\scripts/surveillance_temps_reel.php)
+[2025-09-29 23:59:07] ❌ Script manquant: Assignation sécurisée (C:\xampp\htdocs\COURSIER_LOCAL\scripts/secure_order_assignment.php)
+[2025-09-29 23:59:07] ❌ Script manquant: MAJ statuts coursiers (C:\xampp\htdocs\COURSIER_LOCAL\scripts/coursier_update_status.php)
+[2025-09-29 23:59:07] ❌ Script manquant: Nettoyage FCM (C:\xampp\htdocs\COURSIER_LOCAL\scripts/fcm_auto_cleanup.php)
+[2025-09-29 23:59:07] ❌ Script manquant: Nettoyage statuts (C:\xampp\htdocs\COURSIER_LOCAL\scripts/coursier_status_cleanup.php)
+[2025-09-29 23:59:07] ❌ Script manquant: Sécurité tokens FCM (C:\xampp\htdocs\COURSIER_LOCAL\scripts/fcm_token_security.php)
+[2025-09-29 23:59:07] ❌ Script manquant: Validation active tokens (dry-run) (C:\xampp\htdocs\COURSIER_LOCAL\scripts/Scripts/Scripts cron/fcm_validate_tokens.php)
+[2025-09-29 23:59:07] ❌ Script manquant: Migration BDD (C:\xampp\htdocs\COURSIER_LOCAL\scripts/Scripts/db_schema_migrations.php)
+[2025-09-29 23:59:07] ❌ Script manquant: Diagnostic FCM (C:\xampp\htdocs\COURSIER_LOCAL\scripts/Scripts/Scripts cron/fcm_daily_diagnostic.php)
+[2025-09-29 23:59:07] ❌ Script manquant: Vérification système (C:\xampp\htdocs\COURSIER_LOCAL\scripts/system_health.php)
+[2025-09-29 23:59:07] ❌ Script manquant: Nettoyage BDD quotidien (C:\xampp\htdocs\COURSIER_LOCAL\scripts/database/cleanup_old_data.php)
+[2025-09-29 23:59:07] ❌ Script manquant: Rotation logs (C:\xampp\htdocs\COURSIER_LOCAL\scripts/diagnostic_logs/rotate_logs.php)
+[2025-09-29 23:59:07] ✅ CRON MASTER terminé (996.88ms)
