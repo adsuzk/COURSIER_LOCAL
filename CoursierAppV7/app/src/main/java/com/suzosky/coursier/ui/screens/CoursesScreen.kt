@@ -162,7 +162,7 @@ fun CoursesScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            Icons.AutoMirrored.Filled.MyLocation,
+                            Icons.Filled.MyLocation,
                             contentDescription = null,
                             tint = PrimaryGold,
                             modifier = Modifier.size(20.dp)
@@ -193,7 +193,7 @@ fun CoursesScreen(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Icon(
-                                Icons.AutoMirrored.Filled.Schedule,
+                                Icons.Filled.Schedule,
                                 contentDescription = null,
                                 tint = PrimaryGold,
                                 modifier = Modifier.size(32.dp)
