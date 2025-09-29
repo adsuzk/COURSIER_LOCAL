@@ -1,28 +1,14 @@
-<?php
-// Page d'accueil modulaire : inclut les différentes sections depuis le dossier /sections index
-
-// DÉTECTEUR D'ERREURS DE DÉPLOIEMENT - DOIT ÊTRE EN PREMIER
-$deploymentDetectorPath = __DIR__ . '/diagnostic_logs/deployment_error_detector.php';
-if (file_exists($deploymentDetectorPath)) {
-    require_once $deploymentDetectorPath;
-} else {
-    error_log('[DEPLOYMENT] deployment_error_detector.php introuvable à ' . $deploymentDetectorPath);
-
-    if (!function_exists('logDeploymentError')) {
-        function logDeploymentError($error, $context = []) {
-            $contextDump = empty($context) ? '' : ' | context=' . json_encode($context);
-            error_log('[DEPLOYMENT-FALLBACK] ' . $error . $contextDump);
+    } else {
+        // Si FCMTokenSecurity absent, considérer le service comme indisponible
+        $coursiersDisponibles = false;
+        $messageIndisponibilite = "<div style='background: linear-gradient(135deg, #ff6b6b, #ffa500); color: white; padding: 20px; border-radius: 10px; text-align: center; margin: 20px 0;'><h3>🚚 Service Temporairement Indisponible</h3><p>Nos coursiers Suzosky sont actuellement tous en mission ou hors service (FCM non disponible).</p><p><strong>Veuillez réessayer dans quelques minutes</strong></p></div>";
+        if (function_exists('logDeploymentError')) {
+            logDeploymentError("FCM Security module missing - fallback refusé", [
+                'expected_paths' => [$fcmSecurityPath, $fcmSecurityPathCron],
+                'fallback_used' => false
+            ]);
         }
     }
-}
-// Charger la config pour helpers d'URL
-require_once __DIR__ . '/config.php';
-
-// Gestion du logout via paramètre GET pour contourner logout.php
-if (isset($_GET['logout'])) {
-    if (session_status() === PHP_SESSION_NONE) session_start();
-    // Vider et détruire la session
-    $_SESSION = [];
     session_destroy();
     // Rediriger vers l'accueil sans le paramètre
     header('Location: ' . routePath());
