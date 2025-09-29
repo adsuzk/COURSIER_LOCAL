@@ -21,26 +21,31 @@ if (file_exists($newPath)) {
             }
             
             public function enforceTokenSecurity(): array {
-                return [
-                    'tokens_disabled' => 0,
-                    'sessions_cleaned' => 0,
-                    'security_violations' => [],
-                    'timestamp' => date('Y-m-d H:i:s'),
-                    'fallback_mode' => true
-                ];
-            }
+                    return [
+                        'tokens_disabled' => 0,
+                        'sessions_cleaned' => 0,
+                        'security_violations' => [],
+                        'timestamp' => date('Y-m-d H:i:s'),
+                        'fallback_mode' => true
+                    ];
+                }
             
-            public function canAcceptNewOrders(): array {
-                return [
-                    'can_accept_orders' => true,
-                    'available_coursiers' => 0,
-                    'fallback_mode' => true
-                ];
-            }
+                /**
+                 * Fallback conservative behavior: when the full security script is missing,
+                 * deny accepting new orders by default to avoid accepting orders while
+                 * we cannot verify token health.
+                 */
+                public function canAcceptNewOrders(): array {
+                    return [
+                        'can_accept_orders' => false,
+                        'available_coursiers' => 0,
+                        'fallback_mode' => true
+                    ];
+                }
             
-            public function getUnavailabilityMessage(): string {
-                return 'Service en maintenance technique.';
-            }
+                public function getUnavailabilityMessage(): string {
+                    return 'Service momentanément indisponible pour maintenance. Merci de votre patience.';
+                }
         }
     }
 }
