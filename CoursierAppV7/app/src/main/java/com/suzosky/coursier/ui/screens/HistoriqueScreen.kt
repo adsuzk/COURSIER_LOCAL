@@ -66,66 +66,36 @@ import java.text.SimpleDateFormat
     import androidx.compose.ui.graphics.vector.ImageVector
     import androidx.compose.ui.text.font.FontWeight
     import androidx.compose.ui.text.style.TextOverflow
+@file:OptIn(ExperimentalMaterial3Api::class)
 
-import java.util.Calendar
+package com.suzosky.coursier.ui.screens
 
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun HistoriqueScreen(coursierId: Int = 1) {
-    // States
-    var loading by remember { mutableStateOf(true) }
-    var loadingMore by remember { mutableStateOf(false) }
-    var error by remember { mutableStateOf<String?>(null) }
-    var allCommandes by remember { mutableStateOf(listOf<HistoriqueCommande>()) }
-    var lastFetchCount by remember { mutableStateOf(0) }
-    val limit = 50
-    var offset by remember { mutableStateOf(0) }
+import androidx.compose.foundation.background
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.suzosky.coursier.ui.theme.*
+import com.suzosky.coursier.network.ApiService
+import java.text.NumberFormat
+import java.util.Locale
+import java.text.SimpleDateFormat
 
-    var statusFilter by remember { mutableStateOf(StatusFilter.ALL) }
-    var periodFilter by remember { mutableStateOf(PeriodFilter.TOUT) }
-    var sortField by remember { mutableStateOf(SortField.DATE) }
-    var sortOrder by remember { mutableStateOf(SortOrder.DESC) }
-    var secondaryByStatus by remember { mutableStateOf(false) }
-    var searchQuery by remember { mutableStateOf("") }
-
-    fun mapStatusToParam(filter: StatusFilter): String = when (filter) {
-        StatusFilter.ALL -> "all"
-        StatusFilter.LIVREE -> "livree"
-        StatusFilter.EN_COURS -> "en_cours"
-        StatusFilter.ANNULEE -> "annulee"
-    }
-
-    fun fetch(reset: Boolean) {
-        if (reset) {
-            loading = true
-            error = null
-            allCommandes = emptyList()
-            offset = 0
-        } else {
-            loadingMore = true
-        }
-
-        ApiService.getCoursierOrders(
-            coursierId = coursierId,
-            status = mapStatusToParam(statusFilter),
-            limit = limit,
-            offset = offset
-        ) { data, err ->
-            if (data == null) {
-                error = err ?: "Erreur inconnue"
-                loading = false
-                loadingMore = false
-                return@getCoursierOrders
-            }
-            try {
-                val list = (data["commandes"] as? List<*>)?.mapNotNull { m ->
-                    val map = m as? Map<*, *> ?: return@mapNotNull null
-                    HistoriqueCommande(
-                        id = (map["id"] as? String) ?: "",
-                        clientNom = (map["clientNom"] as? String) ?: "",
-                        adresseEnlevement = (map["adresseEnlevement"] as? String) ?: "",
-                        adresseLivraison = (map["adresseLivraison"] as? String) ?: "",
-                        prix = (map["prix"] as? Number)?.toDouble() ?: 0.0,
                         statut = (map["statut"] as? String) ?: "",
                         date = (map["dateCommande"] as? String) ?: "",
                         heure = (map["heureCommande"] as? String) ?: "",
