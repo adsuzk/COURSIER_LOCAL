@@ -1,4 +1,6 @@
 <?php
+// Protection anti-sortie parasite : buffer de sortie
+ob_start();
 // VERSION CORRIGÉE 2025-09-04 21:00 - PROTECTION CLIENT_ID FOREIGN KEY
 // Unified JSON response and error handling
 ini_set('display_errors', '0');
@@ -6,9 +8,7 @@ header('Content-Type: application/json');
 header('Access-Control-Allow-Origin', '*');
 // Handle CORS preflight
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    <?php
-    // Protection anti-sortie parasite : buffer de sortie
-    ob_start();
+    exit(0);
 }
 // Convert errors to exceptions
 set_error_handler(function($severity, $message, $file, $line) {
