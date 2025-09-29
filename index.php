@@ -70,7 +70,12 @@ try {
     $coursiersAvecFCM = (int)$stmt->fetchColumn();
     $coursiersDisponibles = $coursiersAvecFCM > 0;
     if (!$coursiersDisponibles) {
-        $messageIndisponibilite = "<div style='background: linear-gradient(135deg, #ff6b6b, #ffa500); color: white; padding: 20px; border-radius: 10px; text-align: center; margin: 20px 0;'><h3>🚚 Service Temporairement Indisponible</h3><p>Aucun coursier n'est actuellement connecté à l'application mobile.</p><p><strong>Veuillez réessayer dans quelques minutes</strong></p><p style='font-size: 0.9em; opacity: 0.8;'>Nous garantissons la sécurité et la qualité de nos services</p></div>";
+        $messageIndisponibilite = "<div style='background: linear-gradient(135deg, #ff6b6b, #ffa500); color: white; padding: 20px; border-radius: 10px; text-align: center; margin: 20px 0;'>"
+            . "<h3>🚚 Tous nos coursiers sont actuellement en mission</h3>"
+            . "<p>En raison d'une forte activité, nos équipes sont mobilisées pour servir nos clients le plus rapidement possible.</p>"
+            . "<p><strong>Le formulaire de commande sera disponible dans quelques instants.<br>Merci de votre patience et de votre confiance.</strong></p>"
+            . "<p style='font-size: 0.9em; opacity: 0.8;'>Notre équipe met tout en œuvre pour vous garantir un service rapide et de qualité.</p>"
+            . "</div>";
     }
 } catch (Exception $e) {
     error_log('[SECURITY] Erreur vérification disponibilité coursiers (FCM): ' . $e->getMessage());
