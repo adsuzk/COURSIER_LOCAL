@@ -221,6 +221,7 @@ class MainActivity : ComponentActivity() {
         }
     }
     // Callback de permission notifications (Android 13+)
+    @Suppress("DEPRECATION")
     @Deprecated("Use ActivityResultContracts for permissions in new code")
     override fun onRequestPermissionsResult(
         requestCode: Int,

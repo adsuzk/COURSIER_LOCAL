@@ -79,7 +79,7 @@ class OrderRingService : Service() {
                 startForeground(NOTIF_ID, notif)
             }
             stopRinging()
-            try { stopForeground(true) } catch (_: Exception) {}
+            try { stopForeground(STOP_FOREGROUND_REMOVE) } catch (_: Exception) {}
             stopSelf()
             return START_NOT_STICKY
         }
@@ -153,7 +153,7 @@ class OrderRingService : Service() {
 
     override fun onDestroy() {
         stopRinging()
-        try { stopForeground(true) } catch (_: Exception) {}
+            try { stopForeground(STOP_FOREGROUND_REMOVE) } catch (_: Exception) {}
         super.onDestroy()
     }
 }
