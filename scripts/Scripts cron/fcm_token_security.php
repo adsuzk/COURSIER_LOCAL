@@ -16,7 +16,8 @@ class FCMTokenSecurity {
     // or environment variable FCM_AVAILABILITY_THRESHOLD_SECONDS.
     private int $thresholdSeconds = 120;
     // If true, ignore freshness and consider any is_active=1 token immediately available.
-    private bool $immediateDetection = false;
+    // Default: true (immediate detection) to consider a token active as soon as the app registers it.
+    private bool $immediateDetection = true;
 
     public function __construct(array $options = []) {
         $this->verbose = (bool)($options['verbose'] ?? false);
