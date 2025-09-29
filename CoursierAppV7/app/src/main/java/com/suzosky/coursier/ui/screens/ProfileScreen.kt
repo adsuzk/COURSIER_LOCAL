@@ -89,7 +89,7 @@ fun ProfileScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Person,
+                            imageVector = Icons.AutoMirrored.Filled.Person,
                             contentDescription = "Photo de profil",
                             modifier = Modifier.size(60.dp),
                             tint = PrimaryDark
@@ -157,7 +157,7 @@ fun ProfileScreen(
                     modifier = Modifier.weight(1f),
                     title = "Commandes",
                     value = totalCommandes.toString(),
-                    icon = Icons.Default.Assignment,
+                    icon = Icons.AutoMirrored.Filled.Assignment,
                     color = PrimaryGold
                 )
                 
@@ -165,7 +165,7 @@ fun ProfileScreen(
                     modifier = Modifier.weight(1f),
                     title = "Note",
                     value = "${noteGlobale}/5",
-                    icon = Icons.Default.Star,
+                    icon = Icons.AutoMirrored.Filled.Star,
                     color = Color(0xFFFFD700)
                 )
             }
@@ -175,25 +175,25 @@ fun ProfileScreen(
             // Informations personnelles
             ProfileSection(
                 title = "Informations personnelles",
-                icon = Icons.Default.Person
+                icon = Icons.AutoMirrored.Filled.Person
             ) {
                 ProfileInfoItem(
-                    icon = Icons.Default.Work,
+                    icon = Icons.AutoMirrored.Filled.Work,
                     label = "Fonction",
                     value = "Coursier — ${if (coursierNom.isNotBlank()) coursierNom else ""}"
                 )
                 ProfileInfoItem(
-                    icon = Icons.Default.Email,
+                    icon = Icons.AutoMirrored.Filled.Email,
                     label = "Email",
                     value = if (coursierEmail.isNotBlank()) coursierEmail else "—"
                 )
                 ProfileInfoItem(
-                    icon = Icons.Default.Phone,
+                    icon = Icons.AutoMirrored.Filled.Phone,
                     label = "Téléphone", 
                     value = if (coursierTelephone.isNotBlank()) coursierTelephone else "—"
                 )
                 ProfileInfoItem(
-                    icon = Icons.Default.DateRange,
+                    icon = Icons.AutoMirrored.Filled.DateRange,
                     label = "Member depuis",
                     value = if (dateInscription.isNotBlank()) dateInscription else "—"
                 )
@@ -204,24 +204,24 @@ fun ProfileScreen(
             // Paramètres du compte
             ProfileSection(
                 title = "Paramètres",
-                icon = Icons.Default.Settings
+                icon = Icons.AutoMirrored.Filled.Settings
             ) {
                 ProfileActionItem(
-                    icon = Icons.Default.Notifications,
+                    icon = Icons.AutoMirrored.Filled.Notifications,
                     title = "Notifications",
                     subtitle = "Gérer les notifications",
                     onClick = {}
                 )
                 
                 ProfileActionItem(
-                    icon = Icons.Default.Security,
+                    icon = Icons.AutoMirrored.Filled.Security,
                     title = "Sécurité",
                     subtitle = "Mot de passe et sécurité",
                     onClick = {}
                 )
                 
                 ProfileActionItem(
-                    icon = Icons.Default.Help,
+                    icon = Icons.AutoMirrored.Filled.Help,
                     title = "Aide",
                     subtitle = "Centre d'aide et support",
                     onClick = {}
@@ -238,7 +238,7 @@ fun ProfileScreen(
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     ProfileActionItem(
-                        icon = Icons.Default.ExitToApp,
+                        icon = Icons.AutoMirrored.Filled.ExitToApp,
                         title = "Déconnexion",
                         subtitle = "Se déconnecter de l'application",
                         titleColor = AccentRed,
@@ -260,7 +260,7 @@ fun ProfileScreen(
             onDismissRequest = { showLogoutDialog = false },
             icon = {
                 Icon(
-                    Icons.Default.ExitToApp,
+                    Icons.AutoMirrored.Filled.ExitToApp,
                     contentDescription = null,
                     tint = AccentRed,
                     modifier = Modifier.size(32.dp)
@@ -473,7 +473,7 @@ private fun ProfileActionItem(
                 )
             }
             Icon(
-                imageVector = Icons.Default.ChevronRight,
+                imageVector = Icons.AutoMirrored.Filled.ChevronRight,
                 contentDescription = null,
                 tint = Color.White.copy(alpha = 0.4f),
                 modifier = Modifier.size(20.dp)
