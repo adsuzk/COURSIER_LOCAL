@@ -266,12 +266,24 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                 if (tab == 0) {
                     // Formulaire de connexion
                     Column {
+                        val passwordFocusRequester = remember { androidx.compose.ui.focus.FocusRequester() }
                         OutlinedTextField(
                             value = identifier,
                             onValueChange = { identifier = it },
                             label = { Text("Matricule, Téléphone ou Email") },
                             placeholder = { Text("Votre matricule ou numéro") },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .focusRequester(androidx.compose.ui.focus.FocusRequester.Default),
+                            singleLine = true,
+                            keyboardOptions = androidx.compose.ui.text.input.KeyboardOptions.Default.copy(
+                                imeAction = androidx.compose.ui.text.input.ImeAction.Next
+                            ),
+                            keyboardActions = androidx.compose.foundation.text.KeyboardActions(
+                                onNext = {
+                                    passwordFocusRequester.requestFocus()
+                                }
+                            )
                         )
                         Spacer(Modifier.height(12.dp))
                         OutlinedTextField(
@@ -286,7 +298,31 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                                     Icon(imageVector = image, contentDescription = if (passwordVisible) "Cacher" else "Afficher")
                                 }
                             },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .focusRequester(passwordFocusRequester),
+                            singleLine = true,
+                            keyboardOptions = androidx.compose.ui.text.input.KeyboardOptions.Default.copy(
+                                imeAction = androidx.compose.ui.text.input.ImeAction.Done
+                            ),
+                            keyboardActions = androidx.compose.foundation.text.KeyboardActions(
+                                onDone = {
+                                    if (identifier.isBlank() || password.isBlank()) {
+                                        error = "Veuillez remplir tous les champs"
+                                    } else if (!loading) {
+                                        loading = true
+                                        error = null
+                                        ApiService.login(identifier, password) { successLogin, errMsg ->
+                                            loading = false
+                                            if (successLogin) {
+                                                onLoginSuccess()
+                                            } else {
+                                                error = errMsg ?: "Erreur de connexion"
+                                            }
+                                        }
+                                    }
+                                }
+                            )
                         )
                         Spacer(Modifier.height(8.dp))
                         // Ligne d'options allégée (suppression test serveur)
