@@ -1,3 +1,4 @@
+
 package com.suzosky.coursier
 
 import android.os.Bundle
@@ -38,12 +39,13 @@ import com.suzosky.coursier.ui.components.PaymentWebViewDialog
 import com.suzosky.coursier.ui.screens.CoursierScreenNew
 import com.suzosky.coursier.ui.screens.LoginScreen
 import com.suzosky.coursier.ui.theme.SuzoskyTheme
-
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.*
 import java.io.IOException
+import dagger.hilt.android.AndroidEntryPoint
+import com.google.firebase.messaging.FirebaseMessaging
 
 // Fonction utilitaire pour désactiver le token FCM côté serveur
 fun deactivateFcmTokenOnServer(context: android.content.Context) {
@@ -70,9 +72,6 @@ fun deactivateFcmTokenOnServer(context: android.content.Context) {
         }
     }
 }
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
-import com.google.firebase.messaging.FirebaseMessaging
 
 /**
  * MainActivity - Point d'entrée de l'app Suzosky Coursier
