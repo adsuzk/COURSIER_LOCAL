@@ -15,6 +15,23 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+package com.suzosky.coursier.ui.components
+
+import android.annotation.SuppressLint
+import android.graphics.Bitmap
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.webkit.WebChromeClient
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,6 +46,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -50,6 +68,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import java.text.NumberFormat
 import java.util.Locale
+
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun PaymentWebViewDialog(
@@ -184,12 +203,12 @@ fun PaymentWebViewDialog(
                 onDismiss()
             }) {
                 Text("Fermer")
-                }
             }
-        )
-    }
+        }
+    )
+}
 
-    @Composable
+@Composable
 private fun SummaryCard(label: String, value: String) {
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
@@ -201,6 +220,8 @@ private fun SummaryCard(label: String, value: String) {
             Text(text = value, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
         }
     }
+}
+
 @Composable
 private fun LoadingOverlay(progress: Float) {
     Box(
@@ -214,7 +235,6 @@ private fun LoadingOverlay(progress: Float) {
             Text("Chargement du module CinetPay… ${(progress * 100).toInt()}%", style = MaterialTheme.typography.bodySmall)
         }
     }
-}
 }
 
 @Composable
