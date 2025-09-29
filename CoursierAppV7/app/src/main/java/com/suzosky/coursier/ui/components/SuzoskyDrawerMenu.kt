@@ -74,7 +74,7 @@ fun SuzoskyDrawerMenu(
                 
                 // Options du menu
                 MenuOption(
-                    icon = Icons.AutoMirrored.Filled.Person,
+                    icon = Icons.Filled.Person,
                     text = "Mon Profil",
                     onClick = {
                         onNavigateToProfile()
@@ -83,7 +83,7 @@ fun SuzoskyDrawerMenu(
                 )
                 
                 MenuOption(
-                    icon = Icons.AutoMirrored.Filled.History,
+                    icon = Icons.Filled.History,
                     text = "Historique",
                     onClick = {
                         onNavigateToHistorique()
@@ -92,7 +92,7 @@ fun SuzoskyDrawerMenu(
                 )
                 
                 MenuOption(
-                    icon = Icons.AutoMirrored.Filled.AccountBalance,
+                    icon = Icons.Filled.AccountBalance,
                     text = "Mes Gains",
                     onClick = {
                         onNavigateToGains()
@@ -105,7 +105,7 @@ fun SuzoskyDrawerMenu(
                 Spacer(modifier = Modifier.height(16.dp))
                 
                 MenuOption(
-                    icon = Icons.AutoMirrored.Filled.ExitToApp,
+                    icon = Icons.Filled.ExitToApp,
                     text = "Déconnexion",
                     onClick = onLogout,
                     isDestructive = true
