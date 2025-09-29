@@ -44,7 +44,7 @@ if (file_exists($newPath)) {
                 }
             
                 public function getUnavailabilityMessage(): string {
-                    return 'Service momentanément indisponible pour maintenance. Merci de votre patience.';
+                    return 'Nos coursiers sont actuellement très sollicités. Restez sur cette page — des coursiers se libèrent dans un instant et le formulaire se rouvrira automatiquement pour vous permettre de commander immédiatement. Merci pour votre patience !';
                 }
         }
     }
