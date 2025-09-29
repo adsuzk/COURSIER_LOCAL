@@ -103,6 +103,20 @@ INSERT INTO device_tokens VALUES (
 ### Message affiché quand aucun coursier n'est disponible
 
 "Nos coursiers sont actuellement très sollicités. Restez sur cette page — des coursiers se libèrent dans un instant et le formulaire se rouvrira automatiquement pour vous permettre de commander immédiatement. Merci pour votre patience !"
+
+### Nouveaux composants (Sept 2025)
+
+- `lib/fcm_helper.php` : centralise la logique d'obtention d'un access token OAuth2 via le service account et l'envoi d'un message FCM v1 (fonction `sendFCMNotificationV1`). Réutilisé par `test_fcm_direct_sender.php` et par les scripts de maintenance.
+- `Scripts/Scripts cron/fcm_validate_tokens.php` : parcourt les tokens `is_active = 1`, envoie un ping léger via FCM et désactive (`is_active = 0`) les tokens qui renvoient des erreurs permanentes (NOT_REGISTERED / INVALID_REGISTRATION). Le script est en dry-run par défaut ; passez `--apply` pour écrire en base.
+
+### Détection de disponibilité (rappel et configuration)
+
+La logique de disponibilité côté serveur utilise désormais une combinaison `is_active = 1` + fraîcheur de `last_ping` (par défaut 120 secondes). Vous pouvez :
+
+- Changer la fenêtre via `FCM_AVAILABILITY_THRESHOLD_SECONDS` (secondes)
+- Forcer la détection immédiate (ignorer la fraîcheur) via `FCM_IMMEDIATE_DETECTION=true`
+
+Le script de validation active (`fcm_validate_tokens.php`) aide à garder la table `device_tokens` propre en désactivant automatiquement les tokens définitivement invalides.
 ```
 
 ### 🔧 API FCM Backend
