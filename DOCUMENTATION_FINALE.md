@@ -265,7 +265,49 @@ Le script peut être intégré au `cron_master.php` pour une consolidation quoti
 
 ### API M---
 
-## 🚨 **CORRECTIONS CRITIQUES (27-28 Sept 2025)**
+
+## 🚨 **CORRECTIONS CRITIQUES (27-29 Sept 2025)**
+
+### 🐞 **RÉSOLUTION DU BUG « Erreur de validation » lors de la commande (29 Sept 2025)**
+
+#### ❌ **PROBLÈME**
+- Le bouton « Commander » sur l’index affichait systématiquement « Erreur de validation ».
+- Aucun log d’erreur JS dans la console, mais l’API refusait la commande.
+- Diagnostic : le schéma SQL de la table `commandes` ne contenait pas tous les champs attendus par `/api/submit_order.php` (ex : `departure`, `destination`, `senderPhone`, etc.).
+
+#### 🔎 **DIAGNOSTIC & PROCÉDURE**
+1. Vérification du schéma avec :
+    ```sql
+    SHOW COLUMNS FROM commandes;
+    ```
+2. Constat : seuls `id`, `client_id`, `date_creation` étaient présents.
+3. Correction automatique :
+    ```sql
+    ALTER TABLE commandes
+      ADD COLUMN departure VARCHAR(255),
+      ADD COLUMN destination VARCHAR(255),
+      ADD COLUMN senderPhone VARCHAR(32),
+      ADD COLUMN receiverPhone VARCHAR(32),
+      ADD COLUMN packageDescription TEXT,
+      ADD COLUMN priority VARCHAR(32),
+      ADD COLUMN paymentMethod VARCHAR(32),
+      ADD COLUMN price INT,
+      ADD COLUMN distance VARCHAR(32),
+      ADD COLUMN duration VARCHAR(32),
+      ADD COLUMN departure_lat DOUBLE,
+      ADD COLUMN departure_lng DOUBLE,
+      ADD COLUMN destination_lat DOUBLE,
+      ADD COLUMN destination_lng DOUBLE;
+    ```
+4. Nouvelle vérification : tous les champs sont désormais présents.
+
+#### ✅ **RÉSULTAT**
+- L’API `/api/submit_order.php` accepte et insère toutes les commandes du frontend sans erreur de validation.
+- Le flux complet (formulaire → API → base) fonctionne.
+- Documentation et logs mis à jour.
+
+---
+
 
 ### 📱 **CORRECTION INTERFACE MOBILE (28 Sept 2025) :**
 
