@@ -744,12 +744,7 @@ if ($sessionSenderPhoneRaw !== '') {
     </div>
 
     <style>
-    /* Searching indicator styles */
-    .searching-indicator { margin: 12px 0; text-align: center; }
-    .searching-wrap { display: inline-flex; align-items: center; gap: 12px; padding: 12px 16px; background: rgba(255,255,255,0.04); border-radius: 12px; border: 1px solid rgba(255,255,255,0.06); }
-    .spinner { width: 28px; height: 28px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.15); border-top-color: #D4A853; animation: spin 1s linear infinite; }
-    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    .searching-text { color: #fff; font-weight: 600; }
+    /* Spinner/indicator removed - original styles retained elsewhere */
     /* CSS pour layout formulaire à gauche, carte à droite avec scroll synchronisé */
     .hero-content-wrapper {
         width: 100%;
