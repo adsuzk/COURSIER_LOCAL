@@ -80,6 +80,15 @@ Les scripts de maintenance peuvent par ailleurs valider activement les tokens vi
 
 ---
 
+### ✅ Nettoyage tokens FCM — Exécution & sauvegarde
+
+- Avant nettoyage, export des tokens actifs vers `scripts/../logs/device_tokens_backup_YYYYmmdd_HHis.json` (fichier créé lors de l'opération). Exemple : `scripts/../logs/device_tokens_backup_20250929_230953.json`.
+- Exécution du script `Scripts/Scripts cron/fcm_validate_tokens.php --apply` : run effectué, tokens vérifiés = 1, tokens désactivés = 0 (aucune désactivation nécessaire lors de cette exécution).
+
+Le script est safe-by-default (dry-run) : exécutez sans `--apply` pour simuler.
+
+---
+
 
 ## 🔒 [29 Sept 2025] — VERROUILLAGE DU FORMULAIRE APRÈS ACCEPTATION DE COMMANDE
 
