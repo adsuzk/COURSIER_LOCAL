@@ -473,7 +473,7 @@ private fun ProfileActionItem(
                 )
             }
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.ChevronRight,
+                imageVector = Icons.Filled.ChevronRight,
                 contentDescription = null,
                 tint = Color.White.copy(alpha = 0.4f),
                 modifier = Modifier.size(20.dp)
