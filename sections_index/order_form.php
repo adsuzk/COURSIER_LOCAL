@@ -511,6 +511,9 @@ if ($sessionSenderPhoneRaw !== '') {
             if (orderForm && orderForm.parentNode) orderForm.parentNode.insertBefore(searchingIndicator, orderForm);
         }
 
+        // Message de fallback centralisé injecté depuis index.php
+        const availabilityFallbackMessage = <?php echo json_encode(isset($messageIndisponibilite) ? $messageIndisponibilite : ($commercialFallbackMessage ?? 'Nos coursiers sont actuellement très sollicités. Restez sur cette page — des coursiers se libèrent dans un instant.'), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT); ?>;
+
         async function checkCoursierDispo() {
             try {
                 const res = await fetch('/api/check_coursier_disponible_vrai.php', {cache: 'no-store'});
@@ -520,11 +523,17 @@ if ($sessionSenderPhoneRaw !== '') {
                         // hide form, show searching indicator
                         if (formSection) formSection.style.display = 'none';
                         if (searchingIndicator) {
+                            // Accessibility: role=status + aria-live so screen readers announce updates
+                            searchingIndicator.setAttribute('role', 'status');
+                            searchingIndicator.setAttribute('aria-live', 'polite');
                             searchingIndicator.innerHTML = `
                                 <div class="searching-wrap">
                                     <div class="spinner" aria-hidden="true"></div>
-                                    <div class="searching-text">Nos coursiers se libèrent dans un instant — nous recherchons un coursier disponible...</div>
+                                    <div class="searching-text"></div>
                                 </div>`;
+                            // set the text content separately to avoid HTML injection
+                            const txt = searchingIndicator.querySelector('.searching-text');
+                            if (txt) txt.textContent = availabilityFallbackMessage;
                             searchingIndicator.style.display = '';
                         }
                         lastAvailable = false;
