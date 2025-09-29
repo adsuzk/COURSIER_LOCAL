@@ -143,19 +143,32 @@ class MainActivity : ComponentActivity() {
                     SuzoskyCoursierApp()
                 }
             }
-            // Récupérer et enregistrer le token FCM dès le démarrage
+            // FORCER l'enregistrement FCM dès le démarrage - VERSION ROBUSTE
             try {
+                Log.d("MainActivity", "🔥 DÉBUT forçage enregistrement FCM au démarrage")
+                println("🔥 DÉBUT forçage enregistrement FCM au démarrage")
+                
                 FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val token = task.result
+                        Log.d("MainActivity", "✅ Token FCM récupéré: ${token.substring(0, 20)}...")
+                        println("✅ Token FCM récupéré: ${token.substring(0, 20)}...")
+                        
+                        // Sauvegarder localement
+                        prefs.edit().putString("fcm_token", token).apply()
+                        
                         val existingId = prefs.getInt("coursier_id", -1)
                         if (existingId > 0) {
+                            Log.d("MainActivity", "🚀 Enregistrement immédiat pour coursier $existingId")
+                            println("🚀 Enregistrement immédiat pour coursier $existingId")
                             ApiService.registerDeviceToken(this, existingId, token)
                         } else {
-                            Log.d("MainActivity", "registerDeviceToken skipped at startup: no coursier_id yet")
+                            Log.d("MainActivity", "⏸️ Token sauvé, en attente de connexion coursier")
+                            println("⏸️ Token sauvé, en attente de connexion coursier")
                         }
                     } else {
-                        Log.w("MainActivity", "FCM token fetch failed: ${'$'}{task.exception?.message}")
+                        Log.w("MainActivity", "❌ FCM token fetch failed: ${'$'}{task.exception?.message}")
+                        println("❌ FCM token fetch failed: ${'$'}{task.exception?.message}")
                     }
                 }
             } catch (e: Exception) {
@@ -327,15 +340,37 @@ fun SuzoskyCoursierApp() {
                 if ((id ?: 0) > 0) {
                     coursierId = id!!
                     try { prefs.edit { putInt("coursier_id", coursierId) } } catch (_: Exception) {}
-                    // Enregistrer token FCM avec l'ID réel
+                    // FORCER l'enregistrement token FCM après connexion - VERSION ROBUSTE  
                     try {
+                        Log.d("MainActivity", "🔥 Post-connexion: Forçage FCM pour coursier $coursierId")
+                        println("🔥 Post-connexion: Forçage FCM pour coursier $coursierId")
+                        
+                        // Essayer d'abord le token sauvé
+                        val savedToken = prefs.getString("fcm_token", null)
+                        if (savedToken != null) {
+                            Log.d("MainActivity", "🎯 Utilisation token sauvé")
+                            println("🎯 Utilisation token sauvé")
+                            ApiService.registerDeviceToken(context, coursierId, savedToken)
+                        }
+                        
+                        // Puis récupérer un nouveau token pour être sûr
                         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
                             if (task.isSuccessful) {
                                 val token = task.result
+                                Log.d("MainActivity", "✨ Nouveau token post-connexion: ${token.substring(0, 20)}...")
+                                println("✨ Nouveau token post-connexion: ${token.substring(0, 20)}...")
+                                
+                                prefs.edit().putString("fcm_token", token).apply()
                                 ApiService.registerDeviceToken(context, coursierId, token)
+                            } else {
+                                Log.e("MainActivity", "❌ Erreur récupération token post-connexion")
+                                println("❌ Erreur récupération token post-connexion")
                             }
                         }
-                    } catch (_: Exception) {}
+                    } catch (e: Exception) {
+                        Log.e("MainActivity", "💥 Exception FCM post-connexion", e)
+                        println("💥 Exception FCM post-connexion: ${e.message}")
+                    }
                 } else {
                     println("⚠️ check_session a échoué: ${'$'}err")
                 }

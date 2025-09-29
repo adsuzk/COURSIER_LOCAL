@@ -24,7 +24,8 @@ echo Appuyez sur ENTREE pour demarrer la protection...
 pause > nul
 
 cd /d "C:\xampp\htdocs\COURSIER_LOCAL"
-powershell -ExecutionPolicy Bypass -File "scripts\PROTECTION_GITHUB_SIMPLE.ps1"
+REM Correction: chemin vers le script PowerShell dans le bon dossier PS1
+powershell -ExecutionPolicy Bypass -File "PS1\PROTECTION_GITHUB_SIMPLE.ps1"
 
 echo.
 echo Protection GitHub arretee. Appuyez sur une touche pour fermer.

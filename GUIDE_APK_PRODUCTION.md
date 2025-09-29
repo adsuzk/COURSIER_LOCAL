@@ -24,20 +24,21 @@ public static final String BASE_URL = "https://coursier.conciergerie-privee-suzo
 // URL de base
 private static final String BASE_URL = "https://coursier.conciergerie-privee-suzosky.com/";
 
-// Endpoints principaux
+// Endpoints principaux  
 public static final String LOGIN_ENDPOINT = BASE_URL + "api/index.php";
 public static final String GET_ORDERS_ENDPOINT = BASE_URL + "api/get_coursier_orders.php";
 public static final String GET_DATA_ENDPOINT = BASE_URL + "api/get_coursier_data.php";
 public static final String UPDATE_STATUS_ENDPOINT = BASE_URL + "api/update_coursier_status.php";
-public static final String FCM_REGISTER_ENDPOINT = BASE_URL + "api/register_device_token.php";
+public static final String MOBILE_SYNC_API = BASE_URL + "mobile_sync_api.php"; // FCM + sync mobile
 ```
 
-### 3. **Test de connectivité :**
-Ajouter dans l'app un test de ping pour vérifier la connexion :
+### 3. **Configuration FCM corrigée :**
+L'application utilise maintenant Firebase correctement configuré :
 ```java
-// Test si l'API production répond
-String testUrl = BASE_URL + "api/index.php?action=ping";
-// Doit retourner un JSON avec success=true
+// Configuration automatique via google-services.json corrigé
+// Initialisation dans SuzoskyCoursierApplication.onCreate()
+FirebaseApp.initializeApp(this);
+// Token FCM généré automatiquement et envoyé via mobile_sync_api.php
 ```
 
 ### 4. **Gestion des certificats SSL :**

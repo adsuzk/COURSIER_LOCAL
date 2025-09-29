@@ -55,7 +55,12 @@ if (file_exists($__envOverride)) {
  * @return bool
  */
 function isProductionEnvironment(): bool {
-    // 0) Explicit overrides first
+    // 0) Force local mode has absolute priority
+    if (getenv('FORCE_LOCAL')) {
+        return false;  // Force development mode
+    }
+    
+    // 1) Explicit overrides first
     if (getenv('FORCE_DB') === 'production') {
         return true;
     }

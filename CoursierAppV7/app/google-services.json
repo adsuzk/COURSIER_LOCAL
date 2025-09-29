@@ -15,31 +15,16 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBqWqKwcyj9Bn4Ktit72gm2cow1glmuFJY"
+          "current_key": "AIzaSyDvU3SBMpcbatjlg4t3QPt66wfTGpd8LMw"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:55677959036:android:releaseplaceholder000000",
-        "android_client_info": {
-          "package_name": "com.suzosky.coursier"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBqWqKwcyj9Bn4Ktit72gm2cow1glmuFJY"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
+        },
+        "firebase_messaging": {
+          "enabled": true,
+          "sender_id": "55677959036"
         }
       }
     }

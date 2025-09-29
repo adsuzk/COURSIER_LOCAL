@@ -2,7 +2,7 @@
 # Test de la fonction de synchronisation
 
 # Importer la fonction du script principal
-$mainScript = Get-Content "C:\xampp\htdocs\COURSIER_LOCAL\scripts\PROTECTION_GITHUB_AVEC_SYNC_PROPRE.ps1" -Raw
+$mainScript = Get-Content "C:\xampp\htdocs\COURSIER_LOCAL\PS1\PROTECTION_GITHUB_AVEC_SYNC_PROPRE.ps1" -Raw
 
 # Extraire et définir la fonction Sync-ToCoursierProd
 $functionStart = $mainScript.IndexOf("function Sync-ToCoursierProd")

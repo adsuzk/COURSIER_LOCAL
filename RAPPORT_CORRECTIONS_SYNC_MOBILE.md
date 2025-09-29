@@ -104,10 +104,11 @@ curl "http://localhost/COURSIER_LOCAL/mobile_sync_api.php?action=accept_commande
 # ✅ Résultat: Commande acceptée avec succès
 ```
 
-### 2️⃣ Système FCM préparé
-- Token FCM configuré et actif
-- Notifications enregistrées dans `notifications_log_fcm`
-- Payload FCM formaté selon standards Firebase
+### 2️⃣ Système FCM fonctionnel ✅ MISE À JOUR 2025-09-28
+- Token FCM réels générés par application Android
+- API FCM v1 avec OAuth2 implémentée (test_fcm_direct_sender.php)
+- Interface diagnostic complète (test_fcm_direct_interface.html)
+- Notifications livrées sur téléphone avec Suzosky ringtone
 
 ## 🎯 **ÉTAT ACTUEL DU SYSTÈME**
 
@@ -140,7 +141,7 @@ curl "http://localhost/COURSIER_LOCAL/mobile_sync_api.php?action=accept_commande
 5. **`test_sync_temps_reel.php`** - Test synchronisation complète
 6. **`mobile_sync_api.php`** - API mobile fonctionnelle
 7. **`simulateur_fcm_test.php`** - Simulateur FCM pour tests
-8. **`fcm_manager.php`** - Gestionnaire Firebase (préparé)
+8. **`test_fcm_direct_sender.php`** - API FCM v1 avec OAuth2 (fonctionnel)
 9. **`TEST_ADB_SYNC.bat`** - Script batch test ADB Windows
 10. **`test_sync_mobile.sh`** - Script bash test ADB Linux/Mac
 
@@ -158,10 +159,11 @@ adb shell am start -n com.suzosky.coursier/.MainActivity
 adb logcat -s FirebaseMessaging:* FCM:* SuzoskyCoursier:*
 ```
 
-### 2️⃣ Configuration Firebase réelle
-- Remplacer server key de test par vraie clé Firebase
-- Configurer project ID correct
-- Tester notifications push réelles
+### 2️⃣ Configuration Firebase réelle ✅ TERMINÉ 2025-09-28
+- ✅ Service account OAuth2 configuré (coursier-suzosky-firebase-adminsdk-*.json)
+- ✅ Project ID correct: coursier-suzosky
+- ✅ Notifications push réelles fonctionnelles avec Suzosky ringtone
+- ✅ Application Android génère vrais tokens FCM
 
 ### 3️⃣ Tests depuis l'application mobile
 1. Se connecter avec matricule: **CM20250001**

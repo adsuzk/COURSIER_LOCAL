@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Notification FCM Directe</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        button { padding: 15px 25px; margin: 10px 0; background: #007cba; color: white; border: none; cursor: pointer; font-size: 16px; }
+        button:hover { background: #005a87; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 3px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .log-output { background: #f8f9fa; padding: 10px; border-radius: 3px; font-family: monospace; white-space: pre-wrap; max-height: 400px; overflow-y: auto; }
+        input, select { padding: 8px; margin: 5px 0; width: 300px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔔 Test Notification FCM DIRECTE</h1>
+        
+        <div class="section">
+            <h3>📱 Status Système</h3>
+            <div id="systemStatus"></div>
+            <button onclick="checkSystemStatus()">🔍 Vérifier Système</button>
+        </div>
+
+        <div class="section">
+            <h3>🚀 Test Direct FCM</h3>
+            <p><strong>Token trouvé :</strong> <span id="currentToken">Vérification...</span></p>
+            
+            <div>
+                <label>Coursier ID :</label><br>
+                <input type="number" id="coursierId" value="5" min="1">
+            </div>
+            
+            <div>
+                <label>Message de test :</label><br>
+                <input type="text" id="testMessage" value="🧪 Test notification directe FCM" placeholder="Message à envoyer">
+            </div>
+            
+            <button onclick="testDirectFCM()">🔔 ENVOYER NOTIFICATION DIRECTE</button>
+            <button onclick="testWithNewOrder()">📦 Créer Commande + Notification</button>
+        </div>
+
+        <div class="section">
+            <h3>📊 Diagnostic</h3>
+            <button onclick="checkFCMLogs()">📋 Logs FCM</button>
+            <button onclick="checkTokens()">🎫 Tokens Actifs</button>
+            <button onclick="checkOrders()">📦 Dernières Commandes</button>
+            <button onclick="testFCMConfig()">🔥 Test Config Firebase</button>
+        </div>
+
+        <div class="section">
+            <h3>📋 Résultats</h3>
+            <div id="statusContainer"></div>
+            <div id="logOutput" class="log-output"></div>
+        </div>
+    </div>
+
+    <script>
+        let logOutput = '';
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            logOutput = `[${timestamp}] ${message}\n` + logOutput;
+            document.getElementById('logOutput').textContent = logOutput;
+            showStatus(message, type);
+        }
+
+        function showStatus(message, type = 'info') {
+            const container = document.getElementById('statusContainer');
+            const statusDiv = document.createElement('div');
+            statusDiv.className = `status ${type}`;
+            statusDiv.textContent = message;
+            container.insertBefore(statusDiv, container.firstChild);
+            
+            setTimeout(() => {
+                if (statusDiv.parentNode) {
+                    statusDiv.parentNode.removeChild(statusDiv);
+                }
+            }, 8000);
+        }
+
+        async function checkSystemStatus() {
+            log('🔍 Vérification status système...', 'info');
+            
+            try {
+                // Vérifier tokens
+                const tokensResp = await fetch('mobile_sync_api.php?action=get_tokens');
+                const tokens = await tokensResp.json();
+                
+                if (tokens.success && tokens.tokens.length > 0) {
+                    const token = tokens.tokens[0];
+                    document.getElementById('currentToken').textContent = `${token.token.substring(0, 30)}... (Coursier ${token.coursier_id})`;
+                    log(`✅ Token FCM trouvé: Coursier ${token.coursier_id}`, 'success');
+                } else {
+                    document.getElementById('currentToken').textContent = 'Aucun token trouvé !';
+                    log('❌ Aucun token FCM actif trouvé', 'error');
+                }
+                
+            } catch (error) {
+                log(`❌ Erreur vérification système: ${error.message}`, 'error');
+            }
+        }
+
+        async function testDirectFCM() {
+            const coursierId = document.getElementById('coursierId').value;
+            const message = document.getElementById('testMessage').value;
+            
+            log(`🔔 Envoi notification directe à coursier ${coursierId}...`, 'info');
+            
+            try {
+                const formData = new FormData();
+                formData.append('action', 'test_direct_fcm');
+                formData.append('coursier_id', coursierId);
+                formData.append('message', message);
+                
+                const response = await fetch('test_fcm_direct_sender.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    log(`✅ Notification envoyée! Status: ${result.fcm_status}`, 'success');
+                    if (result.fcm_response) {
+                        log(`   Réponse FCM: ${JSON.stringify(result.fcm_response)}`, 'info');
+                    }
+                } else {
+                    log(`❌ Erreur envoi notification: ${result.message}`, 'error');
+                }
+                
+                // Vérifier logs immédiatement après
+                setTimeout(checkFCMLogs, 1000);
+                
+            } catch (error) {
+                log(`❌ Erreur envoi: ${error.message}`, 'error');
+            }
+        }
+
+        async function testWithNewOrder() {
+            log('📦 Création commande test + notification...', 'info');
+            
+            try {
+                const formData = new FormData();
+                formData.append('action', 'create_test_order');
+                formData.append('coursier_id', document.getElementById('coursierId').value);
+                
+                const response = await fetch('test_fcm_direct_sender.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    log(`✅ Commande créée: ${result.order_code}`, 'success');
+                    log(`   Notification: ${result.notification_sent ? 'Envoyée' : 'Échoué'}`, result.notification_sent ? 'success' : 'error');
+                } else {
+                    log(`❌ Erreur création commande: ${result.message}`, 'error');
+                }
+                
+                setTimeout(checkFCMLogs, 1000);
+                
+            } catch (error) {
+                log(`❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+
+        async function checkFCMLogs() {
+            log('📋 Vérification logs FCM...', 'info');
+            
+            try {
+                const response = await fetch('test_fcm_direct_sender.php?action=get_fcm_logs');
+                const result = await response.json();
+                
+                if (result.success) {
+                    log(`📊 Logs FCM: ${result.logs.length} entrées`, 'success');
+                    result.logs.forEach(logEntry => {
+                        log(`   ${logEntry.created_at}: ${logEntry.message} (${logEntry.status})`, 'info');
+                    });
+                } else {
+                    log('❌ Erreur récupération logs FCM', 'error');
+                }
+                
+            } catch (error) {
+                log(`❌ Erreur logs: ${error.message}`, 'error');
+            }
+        }
+
+        async function checkTokens() {
+            log('🎫 Vérification tokens actifs...', 'info');
+            await checkSystemStatus();
+        }
+
+        async function checkOrders() {
+            log('📦 Vérification dernières commandes...', 'info');
+            
+            try {
+                const response = await fetch('test_fcm_direct_sender.php?action=get_recent_orders');
+                const result = await response.json();
+                
+                if (result.success) {
+                    log(`📦 Commandes récentes: ${result.orders.length}`, 'success');
+                    result.orders.forEach(order => {
+                        log(`   ${order.code_commande}: ${order.statut} (Coursier ${order.coursier_id})`, 'info');
+                    });
+                }
+                
+            } catch (error) {
+                log(`❌ Erreur commandes: ${error.message}`, 'error');
+            }
+        }
+
+        async function testFCMConfig() {
+            log('🔥 Test configuration Firebase...', 'info');
+            
+            try {
+                const response = await fetch('test_fcm_direct_sender.php?action=test_firebase_config');
+                const result = await response.json();
+                
+                if (result.success) {
+                    log('✅ Configuration Firebase OK', 'success');
+                    log(`   Project ID: ${result.project_id}`, 'info');
+                    log(`   Service Account: ${result.service_account ? 'OK' : 'Manquant'}`, result.service_account ? 'success' : 'error');
+                } else {
+                    log(`❌ Configuration Firebase: ${result.message}`, 'error');
+                }
+                
+            } catch (error) {
+                log(`❌ Erreur config: ${error.message}`, 'error');
+            }
+        }
+
+        // Auto-check au chargement
+        window.addEventListener('load', function() {
+            log('🚀 Interface test FCM chargée', 'success');
+            checkSystemStatus();
+        });
+    </script>
+</body>
+</html>

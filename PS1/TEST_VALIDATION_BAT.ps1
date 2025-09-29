@@ -24,8 +24,8 @@ if (Test-Path $bat2) {
 
 # Test 2: Vérification existence des scripts PowerShell associés
 Write-Host "`nTEST 2: Verification scripts PowerShell associes..." -ForegroundColor Yellow
-$ps1_1 = "C:\xampp\htdocs\COURSIER_LOCAL\scripts\PROTECTION_GITHUB_SIMPLE.ps1"
-$ps1_2 = "C:\xampp\htdocs\COURSIER_LOCAL\scripts\SYNC_COURSIER_PROD_LWS.ps1"
+$ps1_1 = "C:\xampp\htdocs\COURSIER_LOCAL\PS1\PROTECTION_GITHUB_SIMPLE.ps1"
+$ps1_2 = "C:\xampp\htdocs\COURSIER_LOCAL\PS1\SYNC_COURSIER_PROD_LWS.ps1"
 
 if (Test-Path $ps1_1) {
     Write-Host "  ✅ PROTECTION_GITHUB_SIMPLE.ps1 existe" -ForegroundColor Green

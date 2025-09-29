@@ -140,8 +140,8 @@ if (isset($_POST['login'])) {
     if ($username === 'admin' && $password === 'suzosky2024') {
         $_SESSION['admin_logged_in'] = true;
         $_SESSION['admin_username'] = $username;
-        // Redirect to admin dashboard at root
-        header('Location: /admin.php?section=dashboard');
+        // Redirect to admin dashboard with correct path
+        header('Location: ' . routePath('admin.php?section=dashboard'));
         exit;
     } else {
         renderLoginForm('Identifiants incorrects');

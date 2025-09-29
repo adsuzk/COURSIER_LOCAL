@@ -1033,3 +1033,49 @@
 [2025-09-28 05:19:50] DEPLOYMENT ERROR: MISSING FUNCTIONS DETECTED - Context: {"missing_functions":["logInfo","logError","initLogging","logDebug"],"current_file":"C:\/xampp\/htdocs\/COURSIER_LOCAL\/index.php"}
 [2025-09-28 06:08:02] DEPLOYMENT ERROR: DEPLOYMENT ERROR DETECTOR ACTIVATED - Context: {"timestamp":"2025-09-28 06:08:02","php_version":"8.2.12","server":"localhost"}
 [2025-09-28 06:08:02] DEPLOYMENT ERROR: MISSING FUNCTIONS DETECTED - Context: {"missing_functions":["logInfo","logError","initLogging","logDebug"],"current_file":"C:\/xampp\/htdocs\/COURSIER_LOCAL\/index.php"}
+[2025-09-28 11:42:47] DEPLOYMENT ERROR: DEPLOYMENT ERROR DETECTOR ACTIVATED - Context: {"timestamp":"2025-09-28 11:42:47","php_version":"8.2.12","server":"localhost"}
+[2025-09-28 11:42:47] DEPLOYMENT ERROR: MISSING FUNCTIONS DETECTED - Context: {"missing_functions":["logInfo","logError","initLogging","logDebug"],"current_file":"C:\/xampp\/htdocs\/COURSIER_LOCAL\/index.php"}
+[2025-09-28 11:43:18] DEPLOYMENT ERROR: DEPLOYMENT ERROR DETECTOR ACTIVATED - Context: {"timestamp":"2025-09-28 11:43:18","php_version":"8.2.12","server":"localhost"}
+[2025-09-28 11:43:18] DEPLOYMENT ERROR: MISSING FUNCTIONS DETECTED - Context: {"missing_functions":["logInfo","logError","initLogging","logDebug"],"current_file":"C:\/xampp\/htdocs\/COURSIER_LOCAL\/index.php"}
+[2025-09-28 17:42:44] DEPLOYMENT ERROR: DEPLOYMENT ERROR DETECTOR ACTIVATED - Context: {"timestamp":"2025-09-28 17:42:44","php_version":"8.2.12","server":"localhost"}
+[2025-09-28 17:42:44] DEPLOYMENT ERROR: MISSING FUNCTIONS DETECTED - Context: {"missing_functions":["logInfo","logError","initLogging","logDebug"],"current_file":"C:\/xampp\/htdocs\/COURSIER_LOCAL\/index.php"}
+[2025-09-28 23:55:56] DEPLOYMENT ERROR: DEPLOYMENT ERROR DETECTOR ACTIVATED - Context: {"timestamp":"2025-09-28 23:55:56","php_version":"8.2.12","server":"localhost"}
+[2025-09-28 23:55:56] DEPLOYMENT ERROR: MISSING FUNCTIONS DETECTED - Context: {"missing_functions":["logInfo","logError","initLogging","logDebug"],"current_file":"C:\/xampp\/htdocs\/COURSIER_LOCAL\/index.php"}
+[2025-09-28 23:58:19] DEPLOYMENT ERROR: DEPLOYMENT ERROR DETECTOR ACTIVATED - Context: {"timestamp":"2025-09-28 23:58:19","php_version":"8.2.12","server":"192.168.1.4"}
+[2025-09-28 23:58:19] DEPLOYMENT ERROR: MISSING FUNCTIONS DETECTED - Context: {"missing_functions":["logInfo","logError","initLogging","logDebug"],"current_file":"C:\/xampp\/htdocs\/COURSIER_LOCAL\/index.php"}
+[2025-09-29 00:17:17] DEPLOYMENT ERROR: DEPLOYMENT ERROR DETECTOR ACTIVATED - Context: {"timestamp":"2025-09-29 00:17:17","php_version":"8.2.12","server":"192.168.1.4"}
+[2025-09-29 00:17:17] DEPLOYMENT ERROR: MISSING FUNCTIONS DETECTED - Context: {"missing_functions":["logInfo","logError","initLogging","logDebug"],"current_file":"C:\\xampp\\htdocs\\COURSIER_LOCAL\\index.php"}
+[2025-09-29 00:17:37] DEPLOYMENT ERROR: DEPLOYMENT ERROR DETECTOR ACTIVATED - Context: {"timestamp":"2025-09-29 00:17:37","php_version":"8.2.12","server":"localhost"}
+[2025-09-29 00:17:37] DEPLOYMENT ERROR: MISSING FUNCTIONS DETECTED - Context: {"missing_functions":["logInfo","logError","initLogging","logDebug"],"current_file":"C:\/xampp\/htdocs\/COURSIER_LOCAL\/index.php"}
+[2025-09-29 00:20:43] DEPLOYMENT ERROR: DEPLOYMENT ERROR DETECTOR ACTIVATED - Context: {"timestamp":"2025-09-29 00:20:43","php_version":"8.2.12","server":"localhost"}
+[2025-09-29 00:20:43] DEPLOYMENT ERROR: MISSING FUNCTIONS DETECTED - Context: {"missing_functions":["logInfo","logError","initLogging","logDebug"],"current_file":"C:\/xampp\/htdocs\/COURSIER_LOCAL\/index.php"}
+[2025-09-29 00:21:04] DEPLOYMENT ERROR: DEPLOYMENT ERROR DETECTOR ACTIVATED - Context: {"timestamp":"2025-09-29 00:21:04","php_version":"8.2.12","server":"192.168.1.4"}
+[2025-09-29 00:21:04] DEPLOYMENT ERROR: MISSING FUNCTIONS DETECTED - Context: {"missing_functions":["logInfo","logError","initLogging","logDebug"],"current_file":"C:\\xampp\\htdocs\\COURSIER_LOCAL\\index.php"}
+[2025-09-29 00:28:23] DEPLOYMENT ERROR: DEPLOYMENT ERROR DETECTOR ACTIVATED - Context: {"timestamp":"2025-09-29 00:28:23","php_version":"8.2.12","server":"localhost"}
+[2025-09-29 00:28:23] DEPLOYMENT ERROR: MISSING FUNCTIONS DETECTED - Context: {"missing_functions":["logInfo","logError","initLogging","logDebug"],"current_file":"C:\/xampp\/htdocs\/COURSIER_LOCAL\/index.php"}
+[2025-09-29 00:29:34] DEPLOYMENT ERROR: DEPLOYMENT ERROR DETECTOR ACTIVATED - Context: {"timestamp":"2025-09-29 00:29:34","php_version":"8.2.12","server":"localhost"}
+[2025-09-29 00:29:34] DEPLOYMENT ERROR: MISSING FUNCTIONS DETECTED - Context: {"missing_functions":["logInfo","logError","initLogging","logDebug"],"current_file":"C:\/xampp\/htdocs\/COURSIER_LOCAL\/index.php"}
+[2025-09-29 00:52:38] DEPLOYMENT ERROR: DEPLOYMENT ERROR DETECTOR ACTIVATED - Context: {"timestamp":"2025-09-29 00:52:38","php_version":"8.2.12","server":"127.0.0.1"}
+[2025-09-29 00:52:38] DEPLOYMENT ERROR: MISSING FUNCTIONS DETECTED - Context: {"missing_functions":["logInfo","logError","initLogging","logDebug"],"current_file":"C:\\xampp\\htdocs\\COURSIER_LOCAL\\index.php"}
+[2025-09-29 00:53:12] DEPLOYMENT ERROR: DEPLOYMENT ERROR DETECTOR ACTIVATED - Context: {"timestamp":"2025-09-29 00:53:12","php_version":"8.2.12","server":"localhost"}
+[2025-09-29 00:53:12] DEPLOYMENT ERROR: MISSING FUNCTIONS DETECTED - Context: {"missing_functions":["logInfo","logError","initLogging","logDebug"],"current_file":"C:\/xampp\/htdocs\/COURSIER_LOCAL\/index.php"}
+[2025-09-29 01:28:05] DEPLOYMENT ERROR: DEPLOYMENT ERROR DETECTOR ACTIVATED - Context: {"timestamp":"2025-09-29 01:28:05","php_version":"8.2.12","server":"localhost"}
+[2025-09-29 01:28:05] DEPLOYMENT ERROR: MISSING FUNCTIONS DETECTED - Context: {"missing_functions":["logInfo","logError","initLogging","logDebug"],"current_file":"C:\/xampp\/htdocs\/COURSIER_LOCAL\/index.php"}
+[2025-09-29 01:28:17] DEPLOYMENT ERROR: DEPLOYMENT ERROR DETECTOR ACTIVATED - Context: {"timestamp":"2025-09-29 01:28:17","php_version":"8.2.12","server":"localhost"}
+[2025-09-29 01:28:17] DEPLOYMENT ERROR: MISSING FUNCTIONS DETECTED - Context: {"missing_functions":["logInfo","logError","initLogging","logDebug"],"current_file":"C:\/xampp\/htdocs\/COURSIER_LOCAL\/index.php"}
+[2025-09-29 01:40:28] DEPLOYMENT ERROR: DEPLOYMENT ERROR DETECTOR ACTIVATED - Context: {"timestamp":"2025-09-29 01:40:28","php_version":"8.2.12","server":"localhost"}
+[2025-09-29 01:40:28] DEPLOYMENT ERROR: MISSING FUNCTIONS DETECTED - Context: {"missing_functions":["logInfo","logError","initLogging","logDebug"],"current_file":"C:\/xampp\/htdocs\/COURSIER_LOCAL\/index.php"}
+[2025-09-29 01:44:33] DEPLOYMENT ERROR: DEPLOYMENT ERROR DETECTOR ACTIVATED - Context: {"timestamp":"2025-09-29 01:44:33","php_version":"8.2.12","server":"localhost"}
+[2025-09-29 01:44:33] DEPLOYMENT ERROR: MISSING FUNCTIONS DETECTED - Context: {"missing_functions":["logInfo","logError","initLogging","logDebug"],"current_file":"C:\/xampp\/htdocs\/COURSIER_LOCAL\/index.php"}
+[2025-09-29 01:45:33] DEPLOYMENT ERROR: DEPLOYMENT ERROR DETECTOR ACTIVATED - Context: {"timestamp":"2025-09-29 01:45:33","php_version":"8.2.12","server":"localhost"}
+[2025-09-29 01:45:33] DEPLOYMENT ERROR: MISSING FUNCTIONS DETECTED - Context: {"missing_functions":["logInfo","logError","initLogging","logDebug"],"current_file":"C:\/xampp\/htdocs\/COURSIER_LOCAL\/index.php"}
+[2025-09-29 01:48:35] DEPLOYMENT ERROR: DEPLOYMENT ERROR DETECTOR ACTIVATED - Context: {"timestamp":"2025-09-29 01:48:35","php_version":"8.2.12","server":"unknown"}
+[2025-09-29 01:48:35] DEPLOYMENT ERROR: MISSING FUNCTIONS DETECTED - Context: {"missing_functions":["logInfo","logError","initLogging","logDebug"],"current_file":"C:\/xampp\/htdocs\/COURSIER_LOCAL\/index.php"}
+[2025-09-29 01:54:23] DEPLOYMENT ERROR: DEPLOYMENT ERROR DETECTOR ACTIVATED - Context: {"timestamp":"2025-09-29 01:54:23","php_version":"8.2.12","server":"unknown"}
+[2025-09-29 01:54:23] DEPLOYMENT ERROR: MISSING FUNCTIONS DETECTED - Context: {"missing_functions":["logInfo","logError","initLogging","logDebug"],"current_file":"C:\/xampp\/htdocs\/COURSIER_LOCAL\/debug_index_modules.php"}
+[2025-09-29 02:00:42] DEPLOYMENT ERROR: DEPLOYMENT ERROR DETECTOR ACTIVATED - Context: {"timestamp":"2025-09-29 02:00:42","php_version":"8.2.12","server":"unknown"}
+[2025-09-29 02:00:42] DEPLOYMENT ERROR: MISSING FUNCTIONS DETECTED - Context: {"missing_functions":["logInfo","logError","initLogging","logDebug"],"current_file":"C:\/xampp\/htdocs\\COURSIER_LOCAL\\simulate_index.php"}
+[2025-09-29 02:00:42] DEPLOYMENT ERROR: WARNING: session_start(): Session cannot be started after headers have already been sent - Context: {"file":"C:\\xampp\\htdocs\\COURSIER_LOCAL\\simulate_index.php","line":22,"error_number":2}
+[2025-09-29 02:03:51] DEPLOYMENT ERROR: DEPLOYMENT ERROR DETECTOR ACTIVATED - Context: {"timestamp":"2025-09-29 02:03:51","php_version":"8.2.12","server":"unknown"}
+[2025-09-29 02:03:51] DEPLOYMENT ERROR: MISSING FUNCTIONS DETECTED - Context: {"missing_functions":["logInfo","logError","initLogging","logDebug"],"current_file":"C:\/xampp\/htdocs\/COURSIER_LOCAL\/index.php"}
+[2025-09-29 02:03:51] DEPLOYMENT ERROR: UNCAUGHT EXCEPTION: Call to undefined function logInfo() - Context: {"file":"C:\\xampp\\htdocs\\COURSIER_LOCAL\\index.php","line":432,"trace":"#0 {main}"}

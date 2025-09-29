@@ -373,6 +373,74 @@ try {
             ];
             break;
             
+        case 'register_token':
+        case 'register_fcm_token':
+            // Enregistrer token FCM
+            if (!$token) {
+                $response = ['success' => false, 'message' => 'Token FCM requis'];
+                break;
+            }
+            
+            $device_model = $_REQUEST['device_model'] ?? 'Unknown';
+            $app_version = $_REQUEST['app_version'] ?? '1.0';
+            
+            // Désactiver anciens tokens du même coursier
+            if ($coursier_id > 0) {
+                $stmt = $pdo->prepare("UPDATE device_tokens SET is_active = 0 WHERE coursier_id = ?");
+                $stmt->execute([$coursier_id]);
+            }
+            
+            // Insérer nouveau token
+            $stmt = $pdo->prepare("
+                INSERT INTO device_tokens 
+                (token, coursier_id, device_model, app_version, is_active, created_at, updated_at)
+                VALUES (?, ?, ?, ?, 1, NOW(), NOW())
+                ON DUPLICATE KEY UPDATE 
+                coursier_id = VALUES(coursier_id),
+                device_model = VALUES(device_model),
+                app_version = VALUES(app_version),
+                is_active = 1,
+                updated_at = NOW()
+            ");
+            
+            if ($stmt->execute([$token, $coursier_id, $device_model, $app_version])) {
+                $token_id = $pdo->lastInsertId() ?: $pdo->query("SELECT id FROM device_tokens WHERE token = '$token'")->fetchColumn();
+                
+                $response = [
+                    'success' => true,
+                    'status' => 'success',
+                    'message' => 'Token FCM enregistré avec succès',
+                    'token_id' => $token_id,
+                    'coursier_id' => $coursier_id
+                ];
+            } else {
+                $response = ['success' => false, 'message' => 'Erreur lors de l\'enregistrement du token'];
+            }
+            break;
+            
+        case 'get_tokens':
+            // Récupérer tous les tokens actifs
+            $stmt = $pdo->prepare("
+                SELECT dt.id, dt.token, dt.coursier_id, dt.device_model, dt.app_version,
+                       dt.is_active, dt.created_at, dt.updated_at,
+                       CONCAT(a.nom, ' ', a.prenoms) as coursier_nom
+                FROM device_tokens dt
+                LEFT JOIN agents_suzosky a ON dt.coursier_id = a.id
+                WHERE dt.is_active = 1
+                ORDER BY dt.updated_at DESC
+                LIMIT 20
+            ");
+            $stmt->execute();
+            $tokens = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            $response = [
+                'success' => true,
+                'status' => 'success',
+                'tokens' => $tokens,
+                'count' => count($tokens)
+            ];
+            break;
+            
         default:
             $response = [
                 'success' => false,
@@ -380,7 +448,7 @@ try {
                 'available_actions' => [
                     'ping', 'auth_coursier', 'get_profile', 'get_commandes',
                     'accept_commande', 'refuse_commande', 'update_position',
-                    'register_fcm_token', 'test_notification', 'get_statistics'
+                    'register_token', 'register_fcm_token', 'get_tokens', 'test_notification', 'get_statistics'
                 ]
             ];
     }

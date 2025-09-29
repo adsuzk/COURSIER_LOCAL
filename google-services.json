@@ -21,6 +21,10 @@
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": []
+        },
+        "firebase_messaging": {
+          "enabled": true,
+          "sender_id": "55677959036"
         }
       }
     }

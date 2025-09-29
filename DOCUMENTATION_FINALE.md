@@ -31,6 +31,47 @@
 
 ---
 
+## 📚 **SYSTÈME DE CONSOLIDATION AUTOMATIQUE DE DOCUMENTATION**
+
+### 🤖 **SCRIPT DE COLLECTE AUTOMATIQUE :**
+- **Fichier :** `consolidate_docs.php`
+- **Fonction :** Collecte tous les fichiers `.md` du projet et les consolide avec horodatage
+- **Exécution :** CLI, Web ou Cron automatique
+- **Sortie :** `DOCUMENTATION_FINALE/CONSOLIDATED_DOCS_[TIMESTAMP].md`
+
+### 📋 **FONCTIONNALITÉS :**
+- ✅ **Scan récursif** : Trouve tous les `.md` dans le projet
+- ✅ **Horodatage complet** : Date de modification + génération automatique
+- ✅ **Table des matières** : Navigation facilitée avec ancres
+- ✅ **Exclusions intelligentes** : Ignore `.git`, `node_modules`, `Tests`
+- ✅ **Nettoyage automatique** : Garde les 5 versions les plus récentes
+- ✅ **Log détaillé** : Traçabilité complète des opérations
+
+### 🔄 **UTILISATION :**
+```bash
+# Exécution manuelle CLI
+php consolidate_docs.php
+
+# Exécution web
+https://localhost/COURSIER_LOCAL/consolidate_docs.php
+
+# Cron automatique (quotidien à 2h)
+0 2 * * * php /path/to/consolidate_docs.php
+```
+
+### 📁 **FICHIERS DÉTECTÉS (36 fichiers .md) :**
+- `DOCUMENTATION_FINALE.md` - Documentation principale
+- `DATABASE_VERSIONING.md` - Système de versioning DB
+- `DOCUMENTATION_FCM_FIREBASE_FINAL.md` - Configuration FCM
+- `RAPPORT_FINAL_SYSTEME.md` - Rapports système
+- `GUIDE_APK_PRODUCTION.md` - Guide production APK
+- Et 31 autres fichiers `.md` dans le projet...
+
+### 🎯 **AUTOMATISATION COMPLÈTE :**
+Le script peut être intégré au `cron_master.php` pour une consolidation quotidienne automatique de toute la documentation du projet.
+
+---
+
 ## 🧭 CARTOGRAPHIE UI & DESIGN SYSTEM
 
 ### 🛡️ Interface `admin.php`
@@ -61,7 +102,7 @@
 | Section | Position & Dimensions | Palette & Emojis | Comportement |
 | --- | --- | --- | --- |
 | 🌠 Hero & header (`sections_index/header.php`) | Full width, hauteur initiale ~**80vh**, navbar collante | Gradient nuit `--gradient-dark`, CTA or #D4A853, emoji fusée 🚀 dans titres | Menu compact en mobile (`burger`), CTA pulse léger, background vidéo/image avec overlay sombre |
-| 📝 Formulaire commande (`order_form.php`) | Bloc central width max **960px**, padding `2.5rem`, grille responsive | Cartes glass, boutons gradient or, pictos moto 🚴 pour champs | Validation JS (guard numéros), feedback inline rouge #E94560, focus champs → glow doré |
+| 📝 Formulaire commande (`order_form.php`) | Colonne gauche `.hero-left` max-width **600px**; carte à droite sticky. Bloc `.order-form` width 100% max **500px**, padding `40px` | Cartes glass, boutons gradient or, pictos moto 🚴 pour champs | Validation JS (guard numéros), feedback inline rouge #E94560, focus champs → glow doré |
 | 🗺️ Carte & itinéraires (`js_google_maps.php` + `js_route_calculation.php`) | Container `map` responsive 16:9, min hauteur 400px | Couleurs Google Maps custom (accent or), markers emoji 📍 | Charge async; callback `initGoogleMapsEarly` log ✅, recalcul dynamique distance/prix |
 | 💼 Services (`sections_index/services.php`) | Grid cards 3 colonnes desktop, stack mobile | Fonds dégradés or/bleu, icônes Font Awesome + emoji dédiés (📦, ⏱️, 🛡️) | Hover → élévation + lueur or, transitions 0.3s |
 | 💬 Chat support (`sections_index/chat_support.php`) | Widget flottant bas droite, diamètre bouton ~64px | Bouton circulaire or avec emoji 💬, panel glass | Bouton clique → panneau slide-in, état stocké localStorage |
@@ -80,6 +121,105 @@
 - Breakpoints clés: `1280px`, `992px`, `768px`, `480px` (calc CSS et JS alignés).
 - Menus passent en accordéon mobile; formulaire conserve lisibilité grâce à `grid-template-columns:1fr`.
 - Effets conservés en tactile (désactivation hover lourds via media queries).
+
+#### 📐 Spécifications visuelles précises (conformes au cloud)
+- Colonne gauche `.hero-left`: `flex: 0 0 50%`, `max-width: 600px` (desktop), 100% ≤ 1024px.
+- Carte `.map-right .map-container-sticky`: `position: sticky; top: 100px; height: 70vh; min-height: 500px;` → relative 50vh/40vh sous 1024px/768px.
+- Bloc `.order-form`: `max-width: 500px; width: 100%; padding: 40px;` avec glass/ombres.
+- Rangée adresses `.address-row`: flex `gap:16px` + séparateur `→` via `.route-arrow`.
+    - Champs: `.form-group { flex:1; min-width:200px; }` → desktop: ~230–240px chacun (dans 500px), pile sous 768px.
+- Inputs: padding `16px 16px 16px 48px`, icônes `.input-with-icon::before` (📍 départ, 🎯 destination, 📞 téléphones).
+
+#### 🧠 Comportements UI/UX du formulaire
+- Affiche `#paymentMethods` dès que départ+arrivée sont renseignés (`checkFormCompleteness`, `displayTripInfo`).
+- Estimation: distance/temps Google Maps + prix dynamique client (`calculateDynamicPrice`) dans `#estimatedPrice`.
+- Soumission inline: POST JSON → timeline/badge mis à jour en temps réel; pas de navigation.
+- Paiement non-cash: ouverture inline via `window.showPaymentModal(url)` si présent, sinon `openPaymentInline(url)`.
+
+---
+
+## 🔄 Flux de commande (front → back)
+
+1) Saisie client (départ, arrivée, téléphones, priorité, description optionnelle).
+     - Affichage immédiat des moyens de paiement + estimation quand départ+arrivée présents.
+2) Envoi JSON → `/api/submit_order.php` (coords départ auto-géocodées en amont si vides).
+3) Réponse succès → timeline locale (« Commande créée », « Recherche coursier »), démarrage polling `/api/timeline_sync.php`.
+     - Paiement électronique: ouverture `payment_url` inline; sinon badge « Paiement à finaliser ».
+     - Erreur: message dans timeline + bouton « Réessayer ».
+4) Polling toutes 5s avec `order_id`/`code_commande` + `last_check` pour mises à jour.
+
+---
+
+## 🧩 Endpoints et contrats API (index et suivi)
+
+### POST `/api/submit_order.php`
+- Méthode: POST JSON (`application/json`). CORS OK; 405 sinon.
+- Requis: `departure`, `destination`, `senderPhone`, `receiverPhone`, `priority` (`normale|urgente|express`), `paymentMethod` (`cash|orange_money|mobile_money|mtn_money|moov_money|card|wave|credit_business`).
+- Optionnels: `packageDescription`, `price` (num), `distance` (ex: "12.3 km"), `duration` (ex: "25 min"), `departure_lat`, `departure_lng`, `destination_lat`, `destination_lng`.
+- Normalisations: téléphones digits-only; map `priority`; prix fallback serveur via `parametres_tarification` + multiplicateurs; `code_commande` unique si colonne; `client_id` résolu selon FK.
+- Side-effect: attribution automatique via `/api/assign_nearest_coursier.php` si coords départ présentes.
+- Réponse (200) typique:
+```
+{
+    "success": true,
+    "data": {
+        "order_id": 123,
+        "order_number": "SZK20250928A1B2C3",
+        "code_commande": "SZK250928123456",
+        "price": 3500,
+        "payment_method": "orange_money",
+        "payment_url": "https://…",
+        "transaction_id": "CP-…",
+        "coursier_id": 45,
+        "distance_km": 3.7
+    }
+}
+```
+- Erreurs: 400 (données invalides), 405 (méthode), 500 (exception loggée).
+
+### GET `/api/timeline_sync.php`
+- Params: `order_id` OU `code_commande`, `last_check` (timestamp Unix optionnel).
+- Réponse (200) typique:
+```
+{
+    "success": true,
+    "hasUpdates": true,
+    "data": {
+        "order_id": 123,
+        "code_commande": "SZK250928123456",
+        "statut": "en_cours",
+        "coursier": { "id": 45, "nom": "Kouamé", "telephone": "+2250707…" },
+        "timeline": [
+            {"key":"pending","label":"Commande reçue","status":"completed"},
+            {"key":"confirmed","label":"Coursier confirmé","status":"completed"},
+            {"key":"pickup","label":"En route pour collecte","status":"completed"},
+            {"key":"transit","label":"Colis récupéré","status":"active"},
+            {"key":"delivery","label":"Livraison en cours","status":"pending"},
+            {"key":"completed","label":"Commande terminée","status":"pending"}
+        ],
+        "coursier_position": null,
+        "estimated_delivery": "14:35",
+        "messages": [{"type":"success","text":"Votre colis est en route","timestamp":1695890650}],
+        "last_update": 1695890600,
+        "departure": "Cocody",
+        "destination": "Plateau"
+    }
+}
+```
+- Erreurs: 400 (`order_id`/`code_commande` manquant ou commande introuvable).
+
+### POST interne `/api/assign_nearest_coursier.php`
+- Payload: `{ "order_id": 123, "departure_lat": 5.34, "departure_lng": -4.01 }` → renvoie idéalement `{ "success": true, "coursier_id": 45, "distance_km": 2.1 }`.
+
+---
+
+## 🧭 Détails JS pertinents (index)
+
+- Initialisation (`sections_index/js_initialization.php`): stubs sûrs, menu mobile, audit DOM, toggles, globals (`ROOT_PATH`, `googleMapsReady`, `markerA/B`, `directionsService/Renderer`).
+- Cartographie & prix (`sections_index/js_route_calculation.php`): Directions API + trafic, fallback statique; tarification dynamique (`calculateDynamicPrice`) alignée serveur; affichage estimation + moyens de paiement; écouteurs sur champs clés.
+- Flux commande & timeline (`sections_index/order_form.php`): préparation payload, géocodage si besoin, POST JSON, marquage étapes, polling 2s puis 5s, fallback modal paiement `openPaymentInline`.
+
+---
 
 🤝 **Accessibilité & feedback sensoriel**
 - Contrastes conformes WCAG AA (texte clair sur fond sombre).
@@ -318,16 +458,22 @@ agents_suzosky:
 
 ---
 
-## 🔔 **SYSTÈME FCM (Firebase Cloud Messaging)**
+## 🔔 **SYSTÈME FCM (Firebase Cloud Messaging)** ✅ FONCTIONNEL
 
-### � **RÈGLES CRITIQUES DE SÉCURITÉ FCM**
+### 🚀 **ÉTAT ACTUEL (Mise à jour 2025-09-28)**
 
-⚠️ **CONFORMITÉ LÉGALE OBLIGATOIRE** : Pour éviter tout risque judiciaire
+✅ **Application Android** génère vrais tokens FCM depuis recompilation avec google-services.json corrigé  
+✅ **API FCM v1** avec OAuth2 implémentée (remplace legacy server key)  
+✅ **Service Account** configuré : coursier-suzosky-firebase-adminsdk-*.json  
+✅ **Notifications reçues** sur téléphone avec Suzosky ringtone personnalisée  
+✅ **Interface diagnostic** : test_fcm_direct_interface.html pour tests complets  
 
-1. **Token uniquement si connecté** : Un coursier déconnecté ne doit JAMAIS avoir de token actif
-2. **Suppression immédiate** : Dès déconnexion, tous les tokens doivent être désactivés
-3. **Aucune commande si déconnecté** : Système doit refuser toute attribution
-4. **Surveillance temps réel** : Auto-nettoyage obligatoire toutes les 5 minutes
+### 🔧 **CORRECTIFS MAJEURS APPLIQUÉS**
+
+1. **Fichier google-services.json** : Section firebase_messaging ajoutée (était manquante)
+2. **Initialisation Firebase** : FirebaseApp.initializeApp() dans SuzoskyCoursierApplication.kt  
+3. **Configuration réseau** : IP mise à jour 192.168.1.4 (local.properties)
+4. **API moderne** : FCM v1 avec JWT OAuth2 (plus de legacy server key)
 
 ### �📱 **Tables FCM**
 
@@ -351,11 +497,12 @@ notifications_log_fcm:
 └── created_at
 ```
 
-### 🎯 **Types de notifications**
+### 🎯 **Types de notifications fonctionnelles**
 
-1. **Nouvelle commande** : Quand coursier reçoit une assignation
-2. **Rechargement wallet** : Quand admin recharge le compte
-3. **Mise à jour système** : Messages administratifs
+1. **Nouvelle commande** ✅ : Notification reçue sur téléphone avec Suzosky ringtone
+2. **Rechargement wallet** ✅ : Notification instantanée avec montant
+3. **Mise à jour système** ✅ : Messages admin via interface test
+4. **Test direct** ✅ : Interface test_fcm_direct_interface.html pour diagnostic
 
 ---
 

@@ -34,27 +34,25 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Vérifier si le système de logging existe avant de l'utiliser
+// LOGGING TEMPORAIREMENT DÉSACTIVÉ POUR PERFORMANCE
+// Le système de logging causait 627ms de lenteur sur index.php
+// TODO: Optimiser logging_hooks.php pour réduire la latence
+/*
 if (file_exists(__DIR__ . '/diagnostic_logs/logging_hooks.php')) {
-    // Intégrer le système de logging avancé
     require_once __DIR__ . '/diagnostic_logs/logging_hooks.php';
-    
-    // Initialiser le logging pour l'interface INDEX
     $interface_start_time = initLogging('INDEX');
-    
-    // Log du chargement de la page d'accueil
     logInfo("Chargement page d'accueil", [
         'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'unknown',
         'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
         'referer' => $_SERVER['HTTP_REFERER'] ?? 'direct'
     ], 'INDEX');
 } else {
-    // Log d'erreur si le système de logging n'existe pas
     logDeploymentError("CRITICAL: logging_hooks.php not found", [
         'expected_path' => __DIR__ . '/diagnostic_logs/logging_hooks.php',
         'current_script' => $_SERVER['SCRIPT_FILENAME'] ?? 'unknown'
     ]);
 }
+*/
 
 // DÉCLENCHEUR AUTOMATIQUE CRON (ZÉRO CONFIGURATION REQUISE)
 if (file_exists(__DIR__ . '/web_cron_trigger.php')) {
@@ -97,8 +95,9 @@ try {
             $messageIndisponibilite = $tokenSecurity->getUnavailabilityMessage();
         }
     } else {
-        // Fallback: vérification basique DB si FCM Security absent
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM agents_suzosky WHERE statut_connexion = 'en_ligne' AND TIMESTAMPDIFF(MINUTE, last_login_at, NOW()) <= 30");
+        // Fallback: vérification basique DB si FCM Security absent (optimisée)
+        $pdo = getDBConnection();
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM agents_suzosky WHERE statut_connexion = 'en_ligne' AND last_login_at > DATE_SUB(NOW(), INTERVAL 30 MINUTE) LIMIT 1");
         $stmt->execute();
         $coursiersConnectes = $stmt->fetchColumn();
         $coursiersDisponibles = $coursiersConnectes > 0;

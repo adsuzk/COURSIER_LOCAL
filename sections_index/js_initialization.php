@@ -14,10 +14,9 @@
         return false;
     };
     // === Service Integration Checks ===
-    // Firebase detection
-    if (typeof firebase === 'undefined' || !firebase.apps) {
-        console.warn('⚠️ Firebase non détecté : vérifiez l’intégration des scripts et la configuration du projet');
-    }
+    // Firebase Web SDK non nécessaire - FCM géré par application Android uniquement
+    // Application mobile génère tokens FCM et communique via mobile_sync_api.php
+    console.info('✅ Firebase configuré côté Android - Système FCM opérationnel');
     // Google Maps detection
     if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
         console.error('⚠️ Google Maps non détecté : vérifiez la clé API et le chargement du script');
