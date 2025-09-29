@@ -66,6 +66,11 @@ $messageIndisponibilite = '';
 // Commercial fallback message (centralized)
 // Prefer an environment variable or a config constant to avoid hardcoding text in code.
 $commercialFallbackMessage = getenv('COMMERCIAL_FALLBACK_MESSAGE') ?: (defined('COMMERCIAL_FALLBACK_MESSAGE') ? COMMERCIAL_FALLBACK_MESSAGE : ($commercialFallbackMessage ?? ''));
+// Emergency short default to avoid empty alerts on the public page.
+// This is intentionally concise; keep marketing copy in env/config rather than hardcoding long phrases.
+if (trim((string)$commercialFallbackMessage) === '') {
+    $commercialFallbackMessage = 'Service momentanément indisponible. Merci de votre patience.';
+}
 try {
     // Charger le shim / implémentation centrale (Scripts/Scripts cron/fcm_token_security.php)
     require_once __DIR__ . '/fcm_token_security.php';
