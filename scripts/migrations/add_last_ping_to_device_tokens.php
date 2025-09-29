@@ -1,0 +1,36 @@
+<?php
+/**
+ * Migration: add_last_ping_to_device_tokens.php
+ * - Adds `last_ping` TIMESTAMP NULL to `device_tokens` if missing
+ * - Safe: checks information_schema before applying
+ * Usage: php add_last_ping_to_device_tokens.php
+ */
+
+require_once __DIR__ . '/../../config.php';
+
+try {
+    $pdo = getPDO();
+
+    // Check if column exists
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'device_tokens' AND COLUMN_NAME = 'last_ping'");
+    $stmt->execute();
+    $exists = (int)$stmt->fetchColumn(0);
+
+    if ($exists) {
+        echo "Column `last_ping` already exists in device_tokens.\n";
+        exit(0);
+    }
+
+    // Apply migration
+    $sql = "ALTER TABLE device_tokens ADD COLUMN last_ping TIMESTAMP NULL AFTER device_info";
+    $pdo->exec($sql);
+    echo "Column `last_ping` added successfully.\n";
+
+    // Optionally initialize existing rows to NOW() where null (commented by default)
+    // $pdo->exec("UPDATE device_tokens SET last_ping = NOW() WHERE last_ping IS NULL");
+
+    exit(0);
+} catch (Throwable $e) {
+    fwrite(STDERR, "Migration failed: " . $e->getMessage() . "\n");
+    exit(1);
+}
