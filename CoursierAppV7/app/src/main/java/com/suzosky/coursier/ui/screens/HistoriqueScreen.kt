@@ -398,10 +398,7 @@ private fun AddressRow(
             contentDescription = null,
             tint = Color.White.copy(alpha = 0.6f),
             modifier = Modifier.size(14.dp)
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Column {
-            Text(
+        }
                 text = label,
                 color = Color.White.copy(alpha = 0.5f),
                 fontSize = 10.sp
