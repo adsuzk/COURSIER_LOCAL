@@ -6,7 +6,9 @@ header('Content-Type: application/json');
 header('Access-Control-Allow-Origin', '*');
 // Handle CORS preflight
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    exit(0);
+    <?php
+    // Protection anti-sortie parasite : buffer de sortie
+    ob_start();
 }
 // Convert errors to exceptions
 set_error_handler(function($severity, $message, $file, $line) {
@@ -26,8 +28,10 @@ require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../logger.php';
 require_once __DIR__ . '/../lib/db_maintenance.php';
 
-if (!function_exists('submitOrderParseDistanceKm')) {
-    function submitOrderParseDistanceKm($distance): float
+        // Nettoyer toute sortie parasite
+        ob_end_clean();
+        echo json_encode(['success' => false, 'message' => $e->getMessage(), 'debug' => 'Exception logged']);
+        exit;
     {
         if (is_numeric($distance)) {
             return max(0.0, (float) $distance);
@@ -603,6 +607,12 @@ if (!empty($departureLat) && !empty($departureLng) && !empty($orderId)) {
 } else {
     logMessage('diagnostics_errors.log', 'Attribution skipped: missing coordinates or order_id');
 }
+// Nettoyer toute sortie parasite avant d'envoyer la réponse JSON
+$output = ob_get_clean();
+if (trim($output) !== '') {
+    // Loguer la sortie parasite pour debug
+    logMessage('diagnostics_errors.log', '⚠️ Sortie parasite détectée dans submit_order.php : ' . substr($output, 0, 500));
+}
 echo json_encode([
     'success' => true,
     'data' => $responseData
@@ -611,5 +621,6 @@ echo json_encode([
 } catch (Exception $e) {
     logMessage('diagnostics_errors.log', 'Exception submit_order: ' . $e->getMessage() . ' - Trace: ' . $e->getTraceAsString());
     http_response_code(500);
+    ob_end_clean();
     echo json_encode(['success' => false, 'message' => $e->getMessage()]);
 }
