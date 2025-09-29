@@ -579,11 +579,11 @@ fun SuzoskyCoursierApp() {
                                             paymentUrl = url
                                             showPaymentDialog = true
                                         } else {
-                                            Toast.makeText(context, "Erreur paiement : ${error ?: "inconnue"}", Toast.LENGTH_LONG).show()
+                                            // TODO: Show Compose snackbar for payment error
                                         }
                                     }
                                 } else {
-                                    Toast.makeText(context, "Montant invalide", Toast.LENGTH_SHORT).show()
+                                    // TODO: Show Compose snackbar for invalid amount
                                 }
                             }
                         )
@@ -625,22 +625,14 @@ fun SuzoskyCoursierApp() {
                                                 isPollingBalance = false
                                                 if (updated && newBalance != null) {
                                                     soldeReel = newBalance
-                                                    Toast.makeText(
-                                                        context,
-                                                        "Recharge réussie ! Nouveau solde : ${newBalance.toInt()} FCFA",
-                                                        Toast.LENGTH_LONG
-                                                    ).show()
+                                                    // TODO: Show Compose snackbar for recharge success
                                                 } else {
-                                                    Toast.makeText(
-                                                        context,
-                                                        "Paiement reçu. Le solde sera synchronisé sous peu.",
-                                                        Toast.LENGTH_LONG
-                                                    ).show()
+                                                    // TODO: Show Compose snackbar for payment info
                                                 }
                                             }
                                         )
                                     } else {
-                                        Toast.makeText(context, "Recharge non confirmée. Transaction: $transactionId", Toast.LENGTH_LONG).show()
+                                        // TODO: Show Compose snackbar for recharge not confirmed
                                     }
                                 }
                             )
