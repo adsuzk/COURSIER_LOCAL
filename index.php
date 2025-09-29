@@ -421,7 +421,12 @@ try {
     include __DIR__ . '/sections_index/js_route_calculation.php';
     include __DIR__ . '/sections_index/js_geolocation.php';
     include __DIR__ . '/sections_index/js_authentication.php';
-    include __DIR__ . '/sections_index/js_form_handling.php';
+    // Inclusion JS critique du formulaire en script externe pour fiabilité maximale
+    echo '<script src="assets/js/order_form_guard.js"></script>';
+    echo '<script src="assets/js/connexion_modal.js"></script>';
+    echo '<script src="sections_index/js_form_handling.php"></script>';
+    // Contrôle d'erreur si JS non chargé
+    echo '<noscript><div style="background:#E94560;color:white;padding:20px;text-align:center;font-size:1.2em;">ERREUR : JavaScript est désactivé ou non chargé. Le formulaire ne fonctionnera pas.</div></noscript>';
     include __DIR__ . '/sections_index/js_chat_support.php';
     include __DIR__ . '/sections_index/js_payment.php';
     // Price calculation script (affiche estimation de prix) - SPÉCIFIQUE LOCAL AVANCÉ
