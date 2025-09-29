@@ -44,11 +44,36 @@ if (!empty($rawInput)) {
 	$data = $_POST;
 }
 
-// Validation minimale (exemple: champ obligatoire 'client_id')
+
+// Validation complète des champs attendus
+$requiredFields = [
+	'departure', 'destination', 'senderPhone', 'receiverPhone', 'packageDescription', 'priority', 'paymentMethod', 'price'
+];
 $errors = [];
-if (empty($data['client_id'])) {
-	$errors[] = "Le champ 'client_id' est obligatoire.";
+foreach ($requiredFields as $field) {
+	if (empty($data[$field])) {
+		$errors[] = "Le champ '$field' est obligatoire.";
+	}
 }
+
+// Optionnels : distance, duration, lat/lng
+$fields = [
+	'departure' => $data['departure'] ?? '',
+	'destination' => $data['destination'] ?? '',
+	'senderPhone' => $data['senderPhone'] ?? '',
+	'receiverPhone' => $data['receiverPhone'] ?? '',
+	'packageDescription' => $data['packageDescription'] ?? '',
+	'priority' => $data['priority'] ?? 'normale',
+	'paymentMethod' => $data['paymentMethod'] ?? 'cash',
+	'price' => $data['price'] ?? 0,
+	'distance' => $data['distance'] ?? '',
+	'duration' => $data['duration'] ?? '',
+	'departure_lat' => $data['departure_lat'] ?? null,
+	'departure_lng' => $data['departure_lng'] ?? null,
+	'destination_lat' => $data['destination_lat'] ?? null,
+	'destination_lng' => $data['destination_lng'] ?? null,
+	'date_creation' => date('Y-m-d H:i:s'),
+];
 
 // Log des données reçues
 if (function_exists('logMessage')) {
@@ -78,24 +103,36 @@ try {
 }
 
 
-// Insertion réelle en base de données (table 'commandes')
-$commande = [
-	'client_id' => $data['client_id'],
-	'date_creation' => date('Y-m-d H:i:s'),
-	// Ajouter d'autres champs nécessaires ici
-];
 
+// Insertion réelle en base de données (table 'commandes')
 try {
-	$stmt = $pdo->prepare('INSERT INTO commandes (client_id, date_creation) VALUES (?, ?)');
-	$stmt->execute([$commande['client_id'], $commande['date_creation']]);
+	$sql = "INSERT INTO commandes (departure, destination, senderPhone, receiverPhone, packageDescription, priority, paymentMethod, price, distance, duration, departure_lat, departure_lng, destination_lat, destination_lng, date_creation) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	$stmt = $pdo->prepare($sql);
+	$stmt->execute([
+		$fields['departure'],
+		$fields['destination'],
+		$fields['senderPhone'],
+		$fields['receiverPhone'],
+		$fields['packageDescription'],
+		$fields['priority'],
+		$fields['paymentMethod'],
+		$fields['price'],
+		$fields['distance'],
+		$fields['duration'],
+		$fields['departure_lat'],
+		$fields['departure_lng'],
+		$fields['destination_lat'],
+		$fields['destination_lng'],
+		$fields['date_creation']
+	]);
 	$commande_id = $pdo->lastInsertId();
 	if (function_exists('logMessage')) {
-		logMessage('diagnostics_errors.log', 'Commande insérée: ' . json_encode($commande) . ' | id=' . $commande_id);
+		logMessage('diagnostics_errors.log', 'Commande insérée: ' . json_encode($fields) . ' | id=' . $commande_id);
 	}
-	echo json_encode(["success" => true, "message" => "Commande insérée en base", "commande_id" => $commande_id, "commande" => $commande]);
+	echo json_encode(["success" => true, "message" => "Commande insérée en base", "commande_id" => $commande_id, "commande" => $fields]);
 } catch (Throwable $e) {
 	if (function_exists('logMessage')) {
 		logMessage('diagnostics_errors.log', 'Erreur insertion commande: ' . $e->getMessage());
 	}
-	echo json_encode(["success" => false, "message" => "Erreur lors de l'insertion en base", "error" => $e->getMessage(), "commande" => $commande]);
+	echo json_encode(["success" => false, "message" => "Erreur lors de l'insertion en base", "error" => $e->getMessage(), "commande" => $fields]);
 }
