@@ -1,3 +1,4 @@
+import androidx.compose.runtime.Composable
 
 package com.suzosky.coursier.ui.screens
 
