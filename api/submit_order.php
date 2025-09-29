@@ -593,7 +593,8 @@ if (trim($output) !== '') {
 }
 // Ajout d'un header personnalisé pour debug
 header('X-Debug-Api-Submit-Order: OK');
-echo json_encode([
+// Générer la réponse JSON
+$jsonResponse = json_encode([
     'success' => true,
     'data' => $responseData,
     'debug' => [
@@ -602,6 +603,9 @@ echo json_encode([
         'output_buffer' => isset($output) ? substr($output, 0, 200) : null
     ]
 ]);
+// Loguer la réponse JSON pour analyse
+logMessage('diagnostics_errors.log', 'RETOUR_JSON: ' . $jsonResponse);
+echo $jsonResponse;
 
 } catch (Exception $e) {
     logMessage('diagnostics_errors.log', 'Exception submit_order: ' . $e->getMessage() . ' - Trace: ' . $e->getTraceAsString());
