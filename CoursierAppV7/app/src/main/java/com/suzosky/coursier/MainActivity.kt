@@ -343,17 +343,28 @@ fun SuzoskyCoursierApp() {
     println("🔄 SuzoskyCoursierApp - Initialisation")
     
     // État global avec vraies données
-    var coursierNom by remember { mutableStateOf(prefs.getString("coursier_nom", "Coursier") ?: "Coursier") }
-    var coursierId by remember { mutableStateOf(prefs.getInt("coursier_id", -1).takeIf { it > 0 } ?: -1) }
-    var coursierStatut by remember { mutableStateOf("EN_LIGNE") }
-    var soldeReel by remember { mutableStateOf(0.0) }
-    var commandesReelles by remember { mutableStateOf<List<Commande>>(emptyList()) }
-    var gainsDuJour by remember { mutableStateOf(0.0) }
-    var totalCommandes by remember { mutableStateOf(0) }
-    var noteGlobale by remember { mutableStateOf(0.0) }
-    var coursierTelephone by remember { mutableStateOf("") }
-    var coursierEmail by remember { mutableStateOf("") }
-    var dateInscription by remember { mutableStateOf("") }
+        val coursierNomState = remember { mutableStateOf(prefs.getString("coursier_nom", "Coursier") ?: "Coursier") }
+        val coursierIdState = remember { mutableStateOf(prefs.getInt("coursier_id", -1).takeIf { it > 0 } ?: -1) }
+        val coursierStatutState = remember { mutableStateOf("EN_LIGNE") }
+        val soldeReelState = remember { mutableStateOf(0.0) }
+        val commandesReellesState = remember { mutableStateOf(emptyList<Commande>()) }
+        val gainsDuJourState = remember { mutableStateOf(0.0) }
+        val totalCommandesState = remember { mutableStateOf(0) }
+        val noteGlobaleState = remember { mutableStateOf(0.0) }
+        val coursierTelephoneState = remember { mutableStateOf("") }
+        val coursierEmailState = remember { mutableStateOf("") }
+        val dateInscriptionState = remember { mutableStateOf("") }
+        var coursierNom by coursierNomState
+        var coursierId by coursierIdState
+        var coursierStatut by coursierStatutState
+        var soldeReel by soldeReelState
+        var commandesReelles by commandesReellesState
+        var gainsDuJour by gainsDuJourState
+        var totalCommandes by totalCommandesState
+        var noteGlobale by noteGlobaleState
+        var coursierTelephone by coursierTelephoneState
+        var coursierEmail by coursierEmailState
+        var dateInscription by dateInscriptionState
     // Persist login UI state across recompositions/config changes + initialize from prefs
     var isLoggedIn by rememberSaveable { mutableStateOf(prefs.getBoolean("isLoggedIn", false)) }
     if (!isLoggedIn) {
