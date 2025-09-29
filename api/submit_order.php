@@ -10,6 +10,13 @@ header('Access-Control-Allow-Origin', '*');
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit(0);
 }
+// Loguer la méthode, les headers et le corps brut dès le début
+logMessage('diagnostics_errors.log', 'REQUEST_METHOD: ' . ($_SERVER['REQUEST_METHOD'] ?? 'N/A'));
+if (function_exists('getallheaders')) {
+    logMessage('diagnostics_errors.log', 'REQUEST_HEADERS: ' . json_encode(getallheaders()));
+}
+$rawInput = file_get_contents('php://input');
+logMessage('diagnostics_errors.log', 'RAW_INPUT: ' . $rawInput);
 // Convert errors to exceptions
 set_error_handler(function($severity, $message, $file, $line) {
     throw new ErrorException($message, 0, $severity, $file, $line);
