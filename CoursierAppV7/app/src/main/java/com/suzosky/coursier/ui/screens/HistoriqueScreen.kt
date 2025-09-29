@@ -313,7 +313,6 @@ private fun sortCommandes(
         "en_cours" -> 1
         "annulee" -> 2
         else -> 3
-    }
     val comparatorPrimary = when (field) {
         SortField.DATE -> compareBy<HistoriqueCommande> {
             runCatching { sdf.parse("${it.date} ${it.heure}")?.time ?: 0L }.getOrDefault(0L)
