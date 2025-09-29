@@ -40,84 +40,100 @@ data class HistoriqueCommande(
 
 
 
-                        // Choix du champ de tri
-                        FilterChip(
-                            onClick = { sortField = SortField.DATE },
-                            label = { Text("Tri: Date") },
-                            selected = sortField == SortField.DATE,
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = PrimaryGold.copy(alpha = 0.2f),
-                                selectedLabelColor = PrimaryGold
-                            )
-                        )
-                        FilterChip(
-                            onClick = { sortField = SortField.MONTANT },
-                            label = { Text("Tri: Montant") },
-                            selected = sortField == SortField.MONTANT,
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = PrimaryGold.copy(alpha = 0.2f),
-                                selectedLabelColor = PrimaryGold
-                            )
-                        )
-                        FilterChip(
-                            onClick = { secondaryByStatus = !secondaryByStatus },
-                            label = { Text("Tri secondaire: Statut") },
-                            selected = secondaryByStatus,
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = PrimaryGold,
-                                selectedLabelColor = PrimaryDark
-                            )
-                        )
-                        IconButton(onClick = {
-                            sortOrder = if (sortOrder == SortOrder.DESC) SortOrder.ASC else SortOrder.DESC
-                        }) {
-                            if (sortOrder == SortOrder.DESC) {
-                                Icon(Icons.Default.ArrowDownward, contentDescription = "Descendant", tint = PrimaryGold)
-                            } else {
-                                Icon(Icons.Default.ArrowUpward, contentDescription = "Ascendant", tint = PrimaryGold)
-                            }
-                        }
-                    }
+@Composable
+fun HistoriqueScreen(/* add parameters as needed */) {
+    // Place your state declarations and UI logic here
+    // TODO: Add your state variables, e.g.:
+    // var sortField by remember { mutableStateOf(SortField.DATE) }
+    // var sortOrder by remember { mutableStateOf(SortOrder.DESC) }
+    // var secondaryByStatus by remember { mutableStateOf(false) }
+    // var periodFilter by remember { mutableStateOf(PeriodFilter.TOUT) }
+    // var searchQuery by remember { mutableStateOf("") }
+    // var allCommandes by remember { mutableStateOf(listOf<HistoriqueCommande>()) }
+    // var error by remember { mutableStateOf<String?>(null) }
+    // var loading by remember { mutableStateOf(false) }
+    // var loadingMore by remember { mutableStateOf(false) }
+    // var lastFetchCount by remember { mutableStateOf(0) }
+    // val limit = 20
+    // fun fetch(reset: Boolean) { /* ... */ }
 
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Statistiques rapides
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        val filtered = remember(allCommandes, periodFilter, searchQuery, sortField, sortOrder, secondaryByStatus) {
-                            val p = filterByPeriod(allCommandes, periodFilter)
-                            val s = filterBySearch(p, searchQuery)
-                            sortCommandes(s, sortField, sortOrder, secondaryByStatus)
-                        }
-                        HistoryStatItem(
-                            value = filtered.size.toString(),
-                            label = "Total",
-                            color = PrimaryGold
-                        )
-                        HistoryStatItem(
-                            value = filtered.count { it.statut == "livree" }.toString(),
-                            label = "Livrées", 
-                            color = Color.Green
-                            @Composable
-                            fun HistoriqueScreen(/* add parameters as needed */) {
-                                // Place your state declarations and UI logic here
-                                // ...existing code for FilterChip, IconButton, etc. should be moved here...
-                            }
-                        )
-                        HistoryStatItem(
-                            value = formatFcfa(filtered.filter { it.statut == "livree" }.sumOf { it.prix }.toInt()),
-                            label = "Gains",
-                            color = Color(0xFF00BCD4)
-                        )
-                    }
-                }
+    // UI code (move your UI logic here)
+    Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+        // Choix du champ de tri
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+            FilterChip(
+                onClick = { /* sortField = SortField.DATE */ },
+                label = { Text("Tri: Date") },
+                selected = false, // sortField == SortField.DATE
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = PrimaryGold.copy(alpha = 0.2f),
+                    selectedLabelColor = PrimaryGold
+                )
+            )
+            FilterChip(
+                onClick = { /* sortField = SortField.MONTANT */ },
+                label = { Text("Tri: Montant") },
+                selected = false, // sortField == SortField.MONTANT
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = PrimaryGold.copy(alpha = 0.2f),
+                    selectedLabelColor = PrimaryGold
+                )
+            )
+            FilterChip(
+                onClick = { /* secondaryByStatus = !secondaryByStatus */ },
+                label = { Text("Tri secondaire: Statut") },
+                selected = false, // secondaryByStatus
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = PrimaryGold,
+                    selectedLabelColor = PrimaryDark
+                )
+            )
+            IconButton(onClick = {
+                // sortOrder = if (sortOrder == SortOrder.DESC) SortOrder.ASC else SortOrder.DESC
+            }) {
+                // if (sortOrder == SortOrder.DESC) {
+                Icon(Icons.Default.ArrowDownward, contentDescription = "Descendant", tint = PrimaryGold)
+                // } else {
+                //     Icon(Icons.Default.ArrowUpward, contentDescription = "Ascendant", tint = PrimaryGold)
+                // }
             }
+        }
 
-            // Liste des commandes
-            if (error != null) {
-                Text(text = error ?: "", color = Color.Red)
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Statistiques rapides
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            // val filtered = remember(allCommandes, periodFilter, searchQuery, sortField, sortOrder, secondaryByStatus) {
+            //     val p = filterByPeriod(allCommandes, periodFilter)
+            //     val s = filterBySearch(p, searchQuery)
+            //     sortCommandes(s, sortField, sortOrder, secondaryByStatus)
+            // }
+            HistoryStatItem(
+                value = "0", // filtered.size.toString()
+                label = "Total",
+                color = PrimaryGold
+            )
+            HistoryStatItem(
+                value = "0", // filtered.count { it.statut == "livree" }.toString()
+                label = "Livrées",
+                color = Color.Green
+            )
+            HistoryStatItem(
+                value = formatFcfa(0), // formatFcfa(filtered.filter { it.statut == "livree" }.sumOf { it.prix }.toInt())
+                label = "Gains",
+                color = Color(0xFF00BCD4)
+            )
+        }
+
+        // Liste des commandes (example placeholder)
+        // if (error != null) {
+        //     Text(text = error ?: "", color = Color.Red)
+        // }
+    }
+}
             } else if (loading) {
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                     CircularProgressIndicator()
