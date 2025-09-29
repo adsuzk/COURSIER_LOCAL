@@ -1028,10 +1028,47 @@ CREATE TABLE `device_tokens` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ```
 
-### 📦 Nombre de tables principales :
-- **agents_suzosky**
-- **commandes**
-- **device_tokens**
+
+### 📦 Tables principales et notifications :
+- **agents_suzosky** : gestion des coursiers, statuts, tokens de session
+- **commandes** : commandes clients, assignation, suivi
+- **device_tokens** : tokens FCM, gestion présence temps réel
+- **notifications_log_fcm** : journalisation de toutes les notifications push FCM (statut, code retour, message, token utilisé, etc.)
+
+#### Table notifications_log_fcm (structure)
+```sql
+CREATE TABLE IF NOT EXISTS notifications_log_fcm (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    coursier_id INT NULL,
+    commande_id INT NULL,
+    title VARCHAR(255) NULL,
+    message TEXT NULL,
+    status VARCHAR(64) NULL,
+    fcm_response_code INT NULL,
+    fcm_response TEXT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+```
+
+Chaque notification FCM (nouvelle commande, recharge, test, etc.) est loggée ici avec le statut (sent/failed), le code retour, le message d’erreur éventuel, et le token utilisé.
+
+---
+
+## 🔒 Déconnexion sécurisée (logout)
+
+Depuis le 29/09/2025, la déconnexion d’un coursier (site ou app) :
+- Met à jour le champ `statut_connexion` à 'hors_ligne' dans `agents_suzosky`
+- Vide le champ `current_session_token`
+- Désactive tous les tokens FCM (`device_tokens.is_active = 0`)
+- Détruit la session PHP côté serveur
+
+Cela garantit que le formulaire côté client se ferme dès qu’aucun coursier n’est réellement disponible.
+
+**Obsolète supprimé :**
+- Les anciennes logiques de présence basées uniquement sur `statut_connexion` ou la session PHP sont supprimées.
+- Les endpoints ou scripts qui ne mettent pas à jour la base et les tokens FCM sont à proscrire.
+
+---
 
 ### ⚡ Création automatique en production
 
