@@ -46,6 +46,7 @@ if (!function_exists('submitOrderLoadPricingConfig')) {
         ];
         try {
 
+
             header('Content-Type: application/json');
             echo json_encode(["success" => true, "message" => "submit_order.php SQUELETTE OK"]);
                     $config[$row['parametre']] = (float) $row['valeur'];
