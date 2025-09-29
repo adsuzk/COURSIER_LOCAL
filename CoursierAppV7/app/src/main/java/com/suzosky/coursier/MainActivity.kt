@@ -80,7 +80,7 @@ class MainActivity : ComponentActivity() {
             // Initialiser la télémétrie
             val telemetry = TelemetrySDK.initialize(
                 context = this,
-                baseUrl = "https://coursier.conciergerie-privee-suzosky.com",
+                baseUrl = try { com.suzosky.coursier.BuildConfig.PROD_BASE } catch (_: Throwable) { "https://coursier.conciergerie-privee-suzosky.com" },
                 apiKey = "suzosky_telemetry_2025"
             )
             
