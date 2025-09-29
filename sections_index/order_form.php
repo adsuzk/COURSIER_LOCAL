@@ -502,7 +502,7 @@ if ($sessionSenderPhoneRaw !== '') {
         let lastAvailable = true;
         async function checkCoursierDispo() {
             try {
-                const res = await fetch('/api/check_coursier_disponible.php', {cache: 'no-store'});
+                const res = await fetch('/api/check_coursier_disponible_vrai.php', {cache: 'no-store'});
                 const data = await res.json();
                 if (data && typeof data.available !== 'undefined') {
                     if (!data.available) {
