@@ -39,28 +39,28 @@ fun SupportScreen() {
     val supportItems = remember {
         listOf(
             SupportItem(
-                icon = Icons.AutoMirrored.Filled.Phone,
+                icon = Icons.Filled.Phone,
                 title = "Assistance téléphonique",
                 subtitle = "Disponible 24h/7j",
                 action = "+33 1 42 34 56 78",
                 color = Color(0xFF4CAF50)
             ),
             SupportItem(
-                icon = Icons.AutoMirrored.Filled.Email,
+                icon = Icons.Filled.Email,
                 title = "Support par email",
                 subtitle = "Réponse sous 2h",
                 action = "support@suzosky.com",
                 color = Color(0xFF2196F3)
             ),
             SupportItem(
-                icon = Icons.AutoMirrored.Filled.Chat,
+                icon = Icons.Filled.Chat,
                 title = "Chat en direct",
                 subtitle = "Agent disponible",
                 action = "Ouvrir le chat",
                 color = Color(0xFF9C27B0)
             ),
             SupportItem(
-                icon = Icons.AutoMirrored.Filled.Share,
+                icon = Icons.Filled.Share,
                 title = "WhatsApp Business",
                 subtitle = "Réponse rapide",
                 action = "+33 6 12 34 56 78",
@@ -137,7 +137,7 @@ fun SupportScreen() {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
-                        imageVector = Icons.AutoMirrored.Filled.SupportAgent,
+                        imageVector = Icons.Filled.SupportAgent,
                         contentDescription = null,
                         tint = PrimaryGold,
                         modifier = Modifier.size(48.dp)
@@ -209,7 +209,7 @@ fun SupportScreen() {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
-                        imageVector = Icons.AutoMirrored.Filled.Warning,
+                        imageVector = Icons.Filled.Warning,
                         contentDescription = null,
                         tint = Color.Red,
                         modifier = Modifier.size(32.dp)
@@ -241,7 +241,7 @@ fun SupportScreen() {
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.Phone,
+                            imageVector = Icons.Filled.Phone,
                             contentDescription = null,
                             modifier = Modifier.size(20.dp)
                         )
@@ -362,7 +362,7 @@ private fun FAQCard(faqItem: FAQItem) {
                     modifier = Modifier.weight(1f)
                 )
                 Icon(
-                    imageVector = if (expanded) Icons.AutoMirrored.Filled.ExpandLess else Icons.AutoMirrored.Filled.ExpandMore,
+                    imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
                     contentDescription = null,
                     tint = PrimaryGold,
                     modifier = Modifier.size(24.dp)
