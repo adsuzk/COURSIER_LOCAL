@@ -97,11 +97,6 @@ fun PaymentWebViewDialog(
                     SummaryCard(label = "Montant à régler", value = it)
                 }
 
-                    LinearProgressIndicator(
-                        progress = { progress.coerceIn(0f, 1f) },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
                 if (isLoading) {
                     LinearProgressIndicator(
                         progress = progress.coerceIn(0f, 1f),
