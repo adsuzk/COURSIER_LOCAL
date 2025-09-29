@@ -48,6 +48,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import java.text.NumberFormat
+import java.util.Locale
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun PaymentWebViewDialog(
