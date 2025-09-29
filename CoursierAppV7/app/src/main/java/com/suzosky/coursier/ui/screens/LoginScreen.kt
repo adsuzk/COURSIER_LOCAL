@@ -1,19 +1,13 @@
 
 package com.suzosky.coursier.ui.screens
 
-import androidx.compose.foundation.border
 
-import android.Manifest
-import android.os.Build
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.core.content.FileProvider
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
-import android.os.Environment
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
 import java.io.File
 import java.io.FileOutputStream
@@ -76,7 +70,7 @@ fun uriToFile(context: Context, uri: Uri): File? {
         inputStream?.close()
         outputStream.close()
         file
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         null
     }
 }
@@ -271,20 +265,19 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                 if (tab == 0) {
                     // Formulaire de connexion
                     Column {
-                        val passwordFocusRequester = remember { androidx.compose.ui.focus.FocusRequester() }
+                        val passwordFocusRequester = remember { FocusRequester() }
                         OutlinedTextField(
                             value = identifier,
                             onValueChange = { identifier = it },
                             label = { Text("Matricule, Téléphone ou Email") },
                             placeholder = { Text("Votre matricule ou numéro") },
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .focusRequester(androidx.compose.ui.focus.FocusRequester.Default),
+                                .fillMaxWidth(),
                             singleLine = true,
-                            keyboardOptions = androidx.compose.ui.text.input.KeyboardOptions.Default.copy(
-                                imeAction = androidx.compose.ui.text.input.ImeAction.Next
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                imeAction = ImeAction.Next
                             ),
-                            keyboardActions = androidx.compose.foundation.text.KeyboardActions(
+                            keyboardActions = KeyboardActions(
                                 onNext = {
                                     passwordFocusRequester.requestFocus()
                                 }
@@ -307,10 +300,10 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                                 .fillMaxWidth()
                                 .focusRequester(passwordFocusRequester),
                             singleLine = true,
-                            keyboardOptions = androidx.compose.ui.text.input.KeyboardOptions.Default.copy(
-                                imeAction = androidx.compose.ui.text.input.ImeAction.Done
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                imeAction = ImeAction.Done
                             ),
-                            keyboardActions = androidx.compose.foundation.text.KeyboardActions(
+                            keyboardActions = KeyboardActions(
                                 onDone = {
                                     if (identifier.isBlank() || password.isBlank()) {
                                         error = "Veuillez remplir tous les champs"
