@@ -517,7 +517,7 @@ if ($sessionSenderPhoneRaw !== '') {
                 // En cas d'erreur réseau, ne rien faire
             }
         }
-        setInterval(checkCoursierDispo, 10000);
+        setInterval(checkCoursierDispo, 5000);
         checkCoursierDispo();
     });
     </script>
