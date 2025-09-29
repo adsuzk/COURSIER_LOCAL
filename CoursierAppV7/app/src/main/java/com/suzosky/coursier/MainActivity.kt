@@ -500,9 +500,7 @@ fun SuzoskyCoursierApp() {
                                 if (consecutiveErrors >= 2) {
                                     try { prefs.edit { putBoolean("isLoggedIn", false) } } catch (_: Exception) {}
                                     isLoggedIn = false
-                                    android.os.Handler(android.os.Looper.getMainLooper()).post {
-                                        Toast.makeText(context, "Session expirée: connexion depuis un autre appareil", Toast.LENGTH_LONG).show()
-                                    }
+                                    // TODO: Show Compose snackbar for session expiration
                                 }
                             } else {
                                 // Erreur temporaire, on ignore
