@@ -925,9 +925,9 @@ if ($sessionSenderPhoneRaw !== '') {
         window.__cashFlowEnhancedCash = true;
 
         const baseTimeline = [
-            { key: 'pending', icon: '�', label: 'Commande reçue', description: 'Nous confirmons vos informations', status: 'active' },
+            { key: 'pending', icon: '📝', label: 'Commande reçue', description: 'Nous confirmons vos informations', status: 'active' },
             { key: 'confirmed', icon: '✅', label: 'Coursier confirmé', description: 'Assignation du meilleur coursier disponible', status: 'pending' },
-            { key: 'pickup', icon: '�', label: 'En route pour collecte', description: 'Le coursier se dirige vers le point de départ', status: 'pending' },
+            { key: 'pickup', icon: '🛵', label: 'En route pour collecte', description: 'Le coursier se dirige vers le point de départ', status: 'pending' },
             { key: 'transit', icon: '🚚', label: 'Colis récupéré', description: 'Le colis est en chemin vers la destination', status: 'pending' },
             { key: 'delivery', icon: '🏠', label: 'Livraison en cours', description: 'Arrivée imminente à destination', status: 'pending' },
             { key: 'completed', icon: '✨', label: 'Commande terminée', description: 'Livraison confirmée et clôturée', status: 'pending' }
