@@ -260,60 +260,12 @@ class MainActivity : ComponentActivity() {
             }
             
             // Informer l'utilisateur si la localisation n'est pas accordée
-            if (!locationGranted) {
-                android.widget.Toast.makeText(
-                    this, 
-                    "⚠️ La localisation est nécessaire pour recevoir des commandes", 
-                    android.widget.Toast.LENGTH_LONG
-                ).show()
-            } else {
-                android.widget.Toast.makeText(
-                    this, 
-                    "✅ Localisation activée - Vous pouvez recevoir des commandes", 
-                    android.widget.Toast.LENGTH_SHORT
-                ).show()
-            }
+            // TODO: Show Compose snackbar for location permission result
         }
     }
 }
 
-private fun MainActivity.showUpdateDialog(updateInfo: UpdateInfo) {
-    try {
-        val builder = AlertDialog.Builder(this)
-            .setTitle("Mise à jour disponible")
-            .setMessage(
-                buildString {
-                    append("Version: ")
-                    append(updateInfo.versionName)
-                    append("\n\n")
-                    if (!updateInfo.releaseNotes.isNullOrBlank()) {
-                        append(updateInfo.releaseNotes)
-                    } else {
-                        append("Une nouvelle version est disponible.")
-                    }
-                }
-            )
-            .setCancelable(!updateInfo.isMandatory)
-            .setPositiveButton("Mettre à jour") { dialog, _ ->
-                try {
-                    val intent = Intent(Intent.ACTION_VIEW, updateInfo.downloadUrl.toUri())
-                    startActivity(intent)
-                } catch (_: Exception) {
-                    Toast.makeText(this, "Impossible d'ouvrir le lien de mise à jour", Toast.LENGTH_LONG).show()
-                } finally {
-                    dialog.dismiss()
-                }
-            }
-
-        if (!updateInfo.isMandatory) {
-            builder.setNegativeButton("Plus tard") { dialog, _ -> dialog.dismiss() }
-        }
-
-        builder.show()
-    } catch (e: Exception) {
-        println("Erreur affichage mise à jour: ${e.message}")
-    }
-}
+// TODO: Replace with Compose-native UpdateDialog
 
 @Composable
 fun ErrorFallbackScreen(error: String) {
