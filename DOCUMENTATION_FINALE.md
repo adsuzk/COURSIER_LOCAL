@@ -1,6 +1,57 @@
 #
 # 🛠️ MISE EN ÉTAT ET DÉBOGAGE API / SEPTEMBRE 2025
 
+---
+
+## 🆕 [29 Sept 2025] — AJOUT TABLE `agents_suzosky` & LOGIQUE DISPONIBILITÉ COURSIER
+
+### 📋 Création de la table `agents_suzosky`
+
+**But :** Table unique et centrale pour la gestion des coursiers, leur statut de connexion, leur solde, et la détection de disponibilité côté frontend (affichage du formulaire de commande).
+
+**SQL de création :**
+```sql
+CREATE TABLE IF NOT EXISTS agents_suzosky (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(100) NOT NULL,
+    prenoms VARCHAR(100),
+    email VARCHAR(100),
+    telephone VARCHAR(32),
+    statut_connexion VARCHAR(32) DEFAULT 'hors_ligne',
+    current_session_token VARCHAR(255),
+    last_login_at DATETIME,
+    solde_wallet INT DEFAULT 0,
+    mot_de_passe VARCHAR(255),
+    plain_password VARCHAR(255)
+);
+```
+
+**Exemple d’insertion d’un agent test :**
+```sql
+INSERT INTO agents_suzosky (nom, prenoms, email, telephone, statut_connexion, last_login_at, solde_wallet)
+VALUES ('TestAgent', 'Demo', 'test@demo.com', '+22501020304', 'hors_ligne', NOW(), 0);
+```
+
+### 🔎 Logique de détection de disponibilité (index.php)
+
+- Le formulaire de commande sur l’index **n’est affiché que si au moins un coursier est connecté**.
+- La détection s’effectue via une requête sur `agents_suzosky` :
+        - **Critère principal :** `statut_connexion = 'en_ligne'`
+        - **Critères complémentaires (production) :**
+                - `solde_wallet > 0`
+                - `last_login_at` < 30 min
+                - Token FCM actif (voir FCMTokenSecurity)
+- Si aucun coursier n’est détecté comme disponible, le formulaire est masqué et un bandeau d’indisponibilité s’affiche.
+
+### 🛠️ Correction apportée (29/09/2025)
+- **Problème :** Table absente → impossible de détecter les coursiers connectés, formulaire masqué de façon imprévisible.
+- **Solution :** Création de la table, insertion d’un agent test, restauration du flux normal.
+- **À faire en production :**
+        - Maintenir la table à jour (statuts, sessions, soldes)
+        - S’assurer que les scripts d’authentification et de présence mettent bien à jour `statut_connexion` et `last_login_at`.
+
+---
+
 ## Diagnostic et réparation du flux de commande (frontend ↔ backend)
 
 ### 1. Problème initial
