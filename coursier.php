@@ -372,6 +372,18 @@ if ($action === 'login') {
 
 // Traitement déconnexion
 if ($_GET['action'] ?? '' === 'logout') {
+    // Correction : déconnexion propre côté DB
+    require_once __DIR__ . '/config.php';
+    $pdo = getDBConnection();
+    $coursier_id = $_SESSION['coursier_id'] ?? 0;
+    if ($coursier_id) {
+        try {
+            $stmt = $pdo->prepare("UPDATE agents_suzosky SET statut_connexion = 'hors_ligne', current_session_token = NULL WHERE id = ?");
+            $stmt->execute([$coursier_id]);
+            $stmt2 = $pdo->prepare("UPDATE device_tokens SET is_active = 0 WHERE coursier_id = ?");
+            $stmt2->execute([$coursier_id]);
+        } catch (Throwable $e) { /* log ou ignorer */ }
+    }
     session_destroy();
     header('Location: ' . $_SERVER['PHP_SELF']);
     exit;
