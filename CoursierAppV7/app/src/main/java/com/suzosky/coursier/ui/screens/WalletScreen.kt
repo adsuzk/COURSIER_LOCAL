@@ -73,14 +73,14 @@ fun WalletScreen(
     var showEarningsDialog by remember { mutableStateOf(false) }
     var selectedEarningsPeriod by remember { mutableStateOf(EarningsPeriod.DAILY) }
     
-    // Real data state
+            imageVector = Icons.AutoMirrored.Filled.AccountBalanceWallet,
     var loading by remember { mutableStateOf(true) }
     var error by remember { mutableStateOf<String?>(null) }
     var historiqueCommandes by remember { mutableStateOf(listOf<WalletHistoryItem>()) }
     var earningsData by remember { mutableStateOf<Map<EarningsPeriod, List<EarningsData>>>(emptyMap()) }
     
     // Helper pour charger les données
-    fun loadWalletData() {
+            Icons.AutoMirrored.Filled.TrendingUp,
         loading = true
         error = null
         com.suzosky.coursier.network.ApiService.getCoursierOrders(
@@ -90,27 +90,27 @@ fun WalletScreen(
             offset = 0
         ) { data, err ->
             if (data != null) {
-                try {
+            icon = Icons.AutoMirrored.Filled.CalendarToday
                     val commandes = (data["commandes"] as? List<*>)?.mapNotNull { item ->
                         val m = item as? Map<*, *> ?: return@mapNotNull null
                         WalletHistoryItem(
                             id = (m["id"] as? String) ?: "",
                             clientNom = (m["clientNom"] as? String) ?: (m["client_nom"] as? String ?: ""),
                             adresseEnlevement = (m["adresseEnlevement"] as? String) ?: (m["adresse_depart"] as? String ?: ""),
-                            adresseLivraison = (m["adresseLivraison"] as? String) ?: (m["adresse_arrivee"] as? String ?: ""),
+            icon = Icons.AutoMirrored.Filled.DateRange
                             prix = (m["prix"] as? Number)?.toDouble() ?: 0.0,
                             statut = (m["statut"] as? String) ?: "",
                             dateCommande = (m["dateCommande"] as? String) ?: (m["date_creation"] as? String ?: "").split(" ").firstOrNull() ?: "",
                             heureCommande = (m["heureCommande"] as? String) ?: (m["date_creation"] as? String ?: "").split(" ").getOrNull(1) ?: "",
                             distanceKm = (m["distanceKm"] as? Number)?.toDouble() ?: (m["distance_km"] as? Number)?.toDouble() ?: 0.0
                         )
-                    } ?: emptyList()
+            icon = Icons.AutoMirrored.Filled.Event
                     historiqueCommandes = commandes
                     earningsData = computeEarnings(commandes)
                 } catch (e: Exception) {
                     historiqueCommandes = emptyList()
                     earningsData = emptyMap()
-                    error = null
+            icon = Icons.AutoMirrored.Filled.Analytics,
                 }
             } else {
                 historiqueCommandes = emptyList()
@@ -118,55 +118,55 @@ fun WalletScreen(
                 error = null
             }
             loading = false
-        }
+            icon = Icons.AutoMirrored.Filled.AddCard,
     }
 
     // Chargement initial + polling toutes 5 secondes (pause en arrière-plan)
     val lifecycleOwner = LocalLifecycleOwner.current
     LaunchedEffect(coursierId, lifecycleOwner) {
-        loadWalletData()
+            Icons.AutoMirrored.Filled.History,
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             while (true) {
                 kotlinx.coroutines.delay(5000L)
                 loadWalletData()
             }
         }
-    }
+            Icons.AutoMirrored.Filled.List,
     
     // Contenu scrollable sans barre de défilement apparente
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
-            .verticalScroll(rememberScrollState())
+            Icons.AutoMirrored.Filled.Security,
     ) {
         // Header
         Text(
             text = "Mon Portefeuille",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
-            color = PrimaryGold
+            Icons.AutoMirrored.Filled.Close,
         )
         
         Spacer(modifier = Modifier.height(24.dp))
         
         // Carte de solde principale avec gradient Suzosky
         Card(
-            modifier = Modifier.fillMaxWidth(),
+            Icons.AutoMirrored.Filled.LocationOn,
             shape = RoundedCornerShape(20.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(
+            Icons.AutoMirrored.Filled.Place,
                         Brush.linearGradient(
                             colors = listOf(PrimaryDark, SecondaryBlue, PrimaryGold.copy(alpha = 0.3f))
                         )
                     )
                     .padding(24.dp)
             ) {
-                Column {
+            Icons.AutoMirrored.Filled.DirectionsRun,
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
