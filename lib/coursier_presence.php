@@ -376,10 +376,9 @@ if (!function_exists('getConnectedCouriers')) {
     function getConnectedCouriers(?PDO $existingPdo = null): array
     {
         $pdo = $existingPdo ?? getDBConnection();
-        
         // NETTOYAGE AUTOMATIQUE des statuts expirés AVANT de récupérer les données
         autoCleanExpiredStatuses($pdo);
-        
+
         $coursiers = getAllCouriers($pdo);
         $connected = [];
 
@@ -389,8 +388,10 @@ if (!function_exists('getConnectedCouriers')) {
             $isRecentActivity = isset($coursier['is_recent_activity'])
                 ? (bool) $coursier['is_recent_activity']
                 : (strtotime(($coursier['connexion_last_seen_at'] ?? $coursier['last_login_at'] ?? '0')) > (time() - 1800));
+            $hasActiveFCM = isset($coursier['active_fcm_tokens']) && ((int)$coursier['active_fcm_tokens'] > 0);
 
-            if ($hasToken && $isOnline && $isRecentActivity) {
+            // STRICT FCM-ONLY PRESENCE: must have at least one active FCM token
+            if ($hasToken && $isOnline && $isRecentActivity && $hasActiveFCM) {
                 $connected[] = $coursier + [
                     'status_light' => getCoursierStatusLight($coursier, $pdo)
                 ];
