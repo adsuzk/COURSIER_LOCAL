@@ -355,7 +355,6 @@ private fun DateHeader(dateStr: String) {
             )
         }
     }
-}
 
 private fun filterByPeriod(list: List<HistoriqueCommande>, period: PeriodFilter): List<HistoriqueCommande> {
     if (period == PeriodFilter.TOUT) return list
