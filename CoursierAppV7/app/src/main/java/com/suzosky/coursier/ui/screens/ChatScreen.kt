@@ -170,7 +170,7 @@ fun ChatScreen(
                         )
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Send,
+                        imageVector = Icons.AutoMirrored.Filled.Send,
                         contentDescription = "Envoyer",
                         tint = Color.White
                     )
