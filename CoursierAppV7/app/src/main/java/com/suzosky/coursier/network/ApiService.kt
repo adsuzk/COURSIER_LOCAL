@@ -1189,7 +1189,7 @@ object ApiService {
                         if (!points.isNullOrBlank()) {
                             callback(decodePolyline(points), null)
                         } else {
-                            callback(emptyList(), null)
+                            callback(emptyList<LatLng>(), null)
                         }
                     } catch (e: Exception) {
                         callback(null, "Erreur parsing Directions: ${e.message}")
