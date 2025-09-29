@@ -136,8 +136,8 @@ private fun StatusBadge(status: String, type: String) {
         Icon(
             imageVector = when (type.lowercase()) {
                 "classique" -> Icons.Filled.DirectionsBike
-                "business" -> Icons.AutoMirrored.Filled.Business
-                else -> Icons.AutoMirrored.Filled.LocalShipping
+                "business" -> Icons.Filled.Business
+                else -> Icons.Filled.LocalShipping
             },
             contentDescription = type,
             tint = Color.suzoskyGold(),
