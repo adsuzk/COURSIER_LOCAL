@@ -76,14 +76,14 @@ fun SuzoskyDrawerMenu(
                     
                     // Items de navigation identiques au web
                     DrawerMenuItem(
-                        icon = Icons.AutoMirrored.Filled.Dashboard,
+                        icon = Icons.Filled.Dashboard,
                         title = "Dashboard",
                         subtitle = "Commandes en cours",
                         onClick = onDismiss
                     )
                     
                     DrawerMenuItem(
-                        icon = Icons.AutoMirrored.Filled.Person,
+                        icon = Icons.Filled.Person,
                         title = "Mon Profil",
                         subtitle = "Informations personnelles",
                         onClick = {
@@ -93,7 +93,7 @@ fun SuzoskyDrawerMenu(
                     )
                     
                     DrawerMenuItem(
-                        icon = Icons.AutoMirrored.Filled.History,
+                        icon = Icons.Filled.History,
                         title = "Historique",
                         subtitle = "Mes livraisons",
                         onClick = {
@@ -103,7 +103,7 @@ fun SuzoskyDrawerMenu(
                     )
                     
                     DrawerMenuItem(
-                        icon = Icons.AutoMirrored.Filled.AttachMoney,
+                        icon = Icons.Filled.AttachMoney,
                         title = "Mes Gains",
                         subtitle = "Revenus et statistiques",
                         onClick = {
@@ -113,7 +113,7 @@ fun SuzoskyDrawerMenu(
                     )
                     
                     DrawerMenuItem(
-                        icon = Icons.AutoMirrored.Filled.Support,
+                        icon = Icons.Filled.Support,
                         title = "Support",
                         subtitle = "Aide et assistance",
                         onClick = {
@@ -133,7 +133,7 @@ fun SuzoskyDrawerMenu(
                     Spacer(modifier = Modifier.height(16.dp))
                     
                     DrawerMenuItem(
-                        icon = Icons.AutoMirrored.Filled.Logout,
+                        icon = Icons.Filled.Logout,
                         title = "Déconnexion",
                         subtitle = "Quitter l'application",
                         onClick = {
