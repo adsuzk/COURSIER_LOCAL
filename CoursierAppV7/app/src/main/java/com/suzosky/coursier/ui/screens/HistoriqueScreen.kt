@@ -99,66 +99,36 @@ import java.text.SimpleDateFormat
                     )
                 )
         )
+@file:OptIn(ExperimentalMaterial3Api::class)
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
-            // En-tête avec statistiques
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 20.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = SecondaryBlue.copy(alpha = 0.8f)
-                ),
-                shape = RoundedCornerShape(20.dp)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.History,
-                            contentDescription = null,
-                            tint = PrimaryGold,
-                            modifier = Modifier.size(28.dp)
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            text = "Historique des Commandes",
-                            style = SuzoskyTextStyles.sectionTitle,
-                            color = PrimaryGoldLight,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                    
-                    Spacer(modifier = Modifier.height(16.dp))
-                    
-                    // Filtres statut
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        listOf(
-                            StatusFilter.ALL to "Tous",
-                            StatusFilter.LIVREE to "Livrées",
-                            StatusFilter.EN_COURS to "En cours",
-                            StatusFilter.ANNULEE to "Annulées"
-                        ).forEach { (value, label) ->
-                            FilterChip(
-                                onClick = { statusFilter = value },
-                                label = { Text(label) },
-                                selected = statusFilter == value,
-                                colors = FilterChipDefaults.filterChipColors(
-                                    selectedContainerColor = PrimaryGold,
-                                    selectedLabelColor = PrimaryDark
+package com.suzosky.coursier.ui.screens
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.suzosky.coursier.ui.theme.*
+import com.suzosky.coursier.network.ApiService
+import java.text.NumberFormat
+import java.util.Locale
+import java.text.SimpleDateFormat
+
                                 )
                             )
                         }
