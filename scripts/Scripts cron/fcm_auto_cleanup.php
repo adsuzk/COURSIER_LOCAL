@@ -49,7 +49,8 @@ try {
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $count = count($rows);
-    clog("Found {$count} stale active token(s) older than {$staleMinutes} minutes ({$isDryRun ? 'DRY RUN' : 'APPLY'})");
+    $modeLabel = $isDryRun ? 'DRY RUN' : 'APPLY';
+    clog("Found {$count} stale active token(s) older than {$staleMinutes} minutes ({$modeLabel})");
 
     if ($count === 0) {
         exit(0);
