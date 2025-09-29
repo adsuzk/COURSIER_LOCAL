@@ -149,7 +149,6 @@ private fun HistoryStatItem(
             fontSize = 12.sp
         )
     }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
