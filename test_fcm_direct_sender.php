@@ -5,6 +5,7 @@
  */
 
 require_once 'config.php';
+require_once __DIR__ . '/lib/fcm_helper.php';
 
 // Headers API
 header('Content-Type: application/json; charset=utf-8');
@@ -47,7 +48,7 @@ try {
             
             $token = $tokenData['token'];
             
-            // Envoyer notification FCM avec la nouvelle API
+            // Envoyer notification FCM via helper
             $fcmResult = sendFCMNotificationV1($token, $message, [
                 'type' => 'test_direct',
                 'coursier_id' => $coursierId,
