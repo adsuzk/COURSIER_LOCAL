@@ -5,11 +5,11 @@
 
 ## ⚙️ Mise à jour rapide — 29 Sept 2025 (actions appliquées)
 
-- Seuil de nettoyage des tokens FCM réduit à 2 minutes pour permettre au serveur CRON de désactiver rapidement les tokens orphelins (`Scripts/Scripts cron/fcm_auto_cleanup.php`).
-- Comportement client renforcé : en cas d'absence de coursiers le formulaire affiche désormais un message commercial convivial (injecté dans `sections_index/order_form.php`) et propose un bouton « Actualiser ».
+- Seuil de nettoyage des tokens FCM existe toujours (`Scripts/Scripts cron/fcm_auto_cleanup.php`) mais la détection d'un token actif côté index est désormais immédiate : toute ligne `device_tokens` avec `is_active = 1` est considérée disponible par `FCMTokenSecurity`.
+- Comportement client : en cas d'absence de coursiers le formulaire affiche un message d'indisponibilité (injecté via `index.php`) et propose un bouton « Actualiser ».
 - Documentation consolidée : suppression/archivage des anciennes instructions obsolètes concernant la détection de présence non-FCM. Les sections marquées "Obsolète" doivent être ignorées (voir section "Changements récents").
 
-**Note migration DB :** La colonne `last_ping` a été ajoutée à la table `device_tokens` (migration appliquée). Les scripts de nettoyage FCM utilisent désormais `last_ping` quand disponible, sinon retombent sur `updated_at`.
+**Note migration DB :** La colonne `last_ping` a été ajoutée à la table `device_tokens` (migration appliquée). Les scripts de nettoyage FCM utilisent `last_ping` pour évaluer l'ancienneté des tokens, mais l'index considère un token disponible immédiatement si `is_active = 1`.
 
 **Message affiché quand aucun coursier n'est disponible :**
 
