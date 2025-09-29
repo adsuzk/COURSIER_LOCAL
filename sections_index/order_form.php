@@ -911,6 +911,81 @@ if ($sessionSenderPhoneRaw !== '') {
     });
     // Timeline client & suivi amélioré (espèces + paiements électroniques)
     (function(){
+        // Affichage du contact du coursier dans la timeline
+        function renderCourierContact(coursier) {
+            let contactBox = document.getElementById('courier-contact-info');
+            if (!contactBox) {
+                contactBox = document.createElement('div');
+                contactBox.id = 'courier-contact-info';
+                contactBox.className = 'courier-contact-info';
+                // Insérer juste après la timeline
+                const timeline = document.getElementById('client-timeline');
+                if (timeline) {
+                    timeline.parentNode.insertBefore(contactBox, timeline.nextSibling);
+                } else {
+                    document.body.appendChild(contactBox);
+                }
+            }
+            if (!coursier || (!coursier.nom && !coursier.telephone)) {
+                contactBox.style.display = 'none';
+                contactBox.innerHTML = '';
+                return;
+            }
+            contactBox.innerHTML = `
+                <div class="courier-contact-title">Votre coursier</div>
+                <div class="courier-contact-row">
+                    <span class="courier-contact-label">Nom :</span>
+                    <span class="courier-contact-value">${coursier.nom ? coursier.nom : 'Non renseigné'}</span>
+                </div>
+                <div class="courier-contact-row">
+                    <span class="courier-contact-label">Téléphone :</span>
+                    <span class="courier-contact-value"><a href="tel:${coursier.telephone}">${coursier.telephone ? coursier.telephone : 'Non renseigné'}</a></span>
+                </div>
+            `;
+            contactBox.style.display = 'block';
+        }
+
+        // Style pour le bloc contact coursier
+        const style = document.createElement('style');
+        style.innerHTML = `
+            .courier-contact-info {
+                margin: 18px 0 0 0;
+                background: rgba(46,204,113,0.10);
+                border: 1.5px solid rgba(46,204,113,0.35);
+                border-radius: 10px;
+                padding: 14px 18px;
+                color: #1a1a2e;
+                font-size: 1rem;
+                box-shadow: 0 2px 12px rgba(46,204,113,0.08);
+                max-width: 420px;
+            }
+            .courier-contact-title {
+                font-weight: 700;
+                color: #27ae60;
+                margin-bottom: 8px;
+                font-size: 1.08em;
+            }
+            .courier-contact-row {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 4px;
+                align-items: center;
+            }
+            .courier-contact-label {
+                font-weight: 600;
+                color: #145a32;
+                min-width: 80px;
+            }
+            .courier-contact-value {
+                color: #222;
+                font-weight: 500;
+            }
+            .courier-contact-value a {
+                color: #27ae60;
+                text-decoration: underline;
+            }
+        `;
+        document.head.appendChild(style);
         const form = document.getElementById('orderForm');
         if (!form) return;
 
