@@ -63,7 +63,7 @@ fun SuzoskyDrawerMenu(
                     }
                     IconButton(onClick = onDismiss) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.Close,
+                            imageVector = Icons.Filled.Close,
                             contentDescription = "Fermer",
                             tint = Color.White
                         )
