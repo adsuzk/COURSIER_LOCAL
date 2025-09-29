@@ -60,5 +60,38 @@ if (!empty($errors)) {
 	exit;
 }
 
-// Réponse de test avec données reçues
-echo json_encode(["success" => true, "message" => "Données reçues et validées", "data" => $data]);
+
+// Connexion à la base de données (mode développement)
+try {
+	$dbConf = $config['db']['development'];
+	$dsn = sprintf('mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4', $dbConf['host'], $dbConf['port'], $dbConf['name']);
+	$pdo = new PDO($dsn, $dbConf['user'], $dbConf['password'], [
+		PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+		PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+	]);
+} catch (Throwable $e) {
+	if (function_exists('logMessage')) {
+		logMessage('diagnostics_errors.log', 'Erreur connexion DB: ' . $e->getMessage());
+	}
+	echo json_encode(["success" => false, "message" => "Erreur connexion base de données", "error" => $e->getMessage()]);
+	exit;
+}
+
+// Squelette d'insertion d'une commande (simulation)
+// TODO: Adapter les champs selon la structure réelle de la table commandes
+$commande = [
+	'client_id' => $data['client_id'],
+	'date_creation' => date('Y-m-d H:i:s'),
+	// Ajouter d'autres champs nécessaires ici
+];
+
+// Exemple de requête préparée (simulation, pas d'insert réel)
+// $stmt = $pdo->prepare('INSERT INTO commandes (client_id, date_creation) VALUES (?, ?)');
+// $stmt->execute([$commande['client_id'], $commande['date_creation']]);
+
+// Log de la commande simulée
+if (function_exists('logMessage')) {
+	logMessage('diagnostics_errors.log', 'Commande simulée: ' . json_encode($commande));
+}
+
+echo json_encode(["success" => true, "message" => "Commande simulée insérée (non réelle)", "commande" => $commande]);
