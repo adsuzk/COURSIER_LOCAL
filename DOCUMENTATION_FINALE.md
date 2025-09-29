@@ -960,6 +960,116 @@ adb logcat --pid=$(adb shell pidof com.suzosky.coursier.debug) | grep "api"
 
 # 🏆 **SYSTÈME 100% AUTOMATISÉ - COURSIER SUZOSKY v4.0**
 
+---
+
+## 🗄️ **RÉFÉRENCE DES TABLES DE BASE DE DONNÉES (PRODUCTION)**
+
+### Tables principales utilisées par le système :
+
+| Table              | Champ ID (clé primaire) | Description principale |
+|--------------------|------------------------|-----------------------|
+| agents_suzosky     | id (int, auto incr.)   | Coursiers/agents principaux |
+| commandes          | id (int, auto incr.)   | Commandes clients (livraisons) |
+| device_tokens      | id (int, auto incr.)   | Tokens FCM pour présence temps réel |
+
+#### Extraits de structure (MySQL) :
+
+```sql
+CREATE TABLE `agents_suzosky` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `matricule` varchar(20) NOT NULL,
+    `nom` varchar(100) NOT NULL,
+    `prenoms` varchar(100) NOT NULL,
+    `date_naissance` date NOT NULL,
+    `lieu_naissance` varchar(100) NOT NULL,
+    `type_poste` enum('chauffeur','coursier_moto','coursier_cargo','agent_conciergerie') NOT NULL,
+    `telephone` varchar(20) NOT NULL,
+    `email` varchar(100) NOT NULL,
+    `piece_identite` enum('cni','passeport') NOT NULL,
+    `numero_piece` varchar(50) NOT NULL,
+    `contact_urgence_nom` varchar(100) NOT NULL,
+    `contact_urgence_tel` varchar(20) NOT NULL,
+    `contact_urgence_residence` varchar(200) NOT NULL,
+    `status` enum('actif','inactif','suspendu') DEFAULT 'actif',
+    `shipday_id` varchar(50) DEFAULT NULL,
+    `created_at` timestamp NULL DEFAULT current_timestamp(),
+    `password` varchar(255) DEFAULT NULL,
+    `password_plain` varchar(50) DEFAULT NULL,
+    `first_login_done` tinyint(1) DEFAULT 0,
+    `password_changed_at` timestamp NULL DEFAULT NULL,
+    `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+    `plain_password` varchar(5) NOT NULL DEFAULT '',
+    `nationalite` varchar(100) DEFAULT NULL,
+    `lieu_residence` varchar(150) DEFAULT NULL,
+    `cni` varchar(100) DEFAULT NULL,
+    `permis` varchar(100) DEFAULT NULL,
+    `urgence_nom` varchar(100) DEFAULT NULL,
+    `urgence_prenoms` varchar(100) DEFAULT NULL,
+    `urgence_lien` varchar(100) DEFAULT NULL,
+    `urgence_lieu_residence` varchar(150) DEFAULT NULL,
+    `urgence_telephone` varchar(30) DEFAULT NULL,
+    `current_session_token` varchar(100) DEFAULT NULL,
+    `last_login_at` datetime DEFAULT NULL,
+    `last_login_ip` varchar(64) DEFAULT NULL,
+    `last_login_user_agent` varchar(255) DEFAULT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `commandes` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `order_number` varchar(50) NOT NULL,
+    `code_commande` varchar(20) NOT NULL,
+    ...
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `device_tokens` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `coursier_id` int(11) NOT NULL,
+    `token` varchar(255) NOT NULL,
+    `platform` varchar(20) DEFAULT 'android',
+    `app_version` varchar(50) DEFAULT NULL,
+    `created_at` timestamp NULL DEFAULT current_timestamp(),
+    `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+    `last_used` timestamp NULL DEFAULT NULL,
+    `is_active` tinyint(1) DEFAULT 1,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+```
+
+### 📦 Nombre de tables principales :
+- **agents_suzosky**
+- **commandes**
+- **device_tokens**
+
+### ⚡ Création automatique en production
+
+Pour créer toutes les tables en production :
+
+1. **Vérifiez que le fichier SQL complet est bien dans `_sql/` (ex: `_sql/conci2547642_1m4twb.sql`)**
+2. **Uploadez le fichier sur le serveur de production**
+3. **Lancez le script PHP d’installation** :
+
+```bash
+php setup_database.php --db=nom_de_votre_db --dump=_sql/conci2547642_1m4twb.sql --force
+```
+
+**Paramètres importants** :
+- `--db` : nom de la base cible (ex : `coursier_prod`)
+- `--dump` : chemin du fichier SQL à importer
+- `--force` : force la réimportation même si la base existe déjà
+
+**Exemple complet** :
+```bash
+php setup_database.php --db=coursier_prod --dump=_sql/conci2547642_1m4twb.sql --force
+```
+
+Ce script crée la base, toutes les tables, et importe les données nécessaires. Il gère aussi les droits et l’encodage.
+
+**Vérifiez le log de sortie pour toute erreur éventuelle.**
+
+---
+
 ## ✅ **ACCOMPLISSEMENTS :**
 - **🚀 CRON Master :** Une seule tâche, toutes les fonctions automatiques
 - **⚡ Ultra-rapide :** Assignation garantie < 60 secondes  
