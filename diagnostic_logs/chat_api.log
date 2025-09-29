@@ -6098,3 +6098,5 @@
 [2025-09-29 20:48:40] {"endpoint":"get_messages","conversation_id":17,"count":0}
 [2025-09-29 20:48:44] {"endpoint":"get_messages","conversation_id":17,"count":0}
 [2025-09-29 20:48:48] {"endpoint":"get_messages","conversation_id":17,"count":0}
+[2025-09-29 21:03:51] {"endpoint":"get_messages","conversation_id":17,"count":0}
+[2025-09-29 21:03:52] {"endpoint":"get_messages","error":"SQLSTATE[42S02]: Base table or view not found: 1146 Table 'coursier_local.chat_messages' doesn't exist","conversation_id":17}
