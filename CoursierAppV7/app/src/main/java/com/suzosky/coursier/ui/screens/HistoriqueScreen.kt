@@ -128,77 +128,9 @@ fun HistoriqueScreen(/* add parameters as needed */) {
             )
         }
 
-        // Liste des commandes (example placeholder)
-        // if (error != null) {
-        //     Text(text = error ?: "", color = Color.Red)
-        // }
-    }
-}
-            } else if (loading) {
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                    CircularProgressIndicator()
-                }
-            } else {
-                val displayed = remember(allCommandes, periodFilter, searchQuery, sortField, sortOrder, secondaryByStatus) {
-                    val p = filterByPeriod(allCommandes, periodFilter)
-                    val s = filterBySearch(p, searchQuery)
-                    sortCommandes(s, sortField, sortOrder, secondaryByStatus)
-                }
 
-                val groups = remember(displayed) {
-                    // group by date string and sort headers appropriately
-                    val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                    val map = displayed.groupBy { it.date }
-                    val sortedKeys = map.keys.sortedWith { a, b ->
-                        val da = runCatching { sdf.parse(a) }.getOrNull()
-                        val db = runCatching { sdf.parse(b) }.getOrNull()
-                        when (sortOrder) {
-                            SortOrder.DESC -> (db?.time ?: 0L).compareTo(da?.time ?: 0L)
-                            SortOrder.ASC -> (da?.time ?: 0L).compareTo(db?.time ?: 0L)
-                        }
-                    }
-                    sortedKeys.map { key -> key to map[key].orEmpty() }
-                }
-
-                @OptIn(ExperimentalFoundationApi::class)
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    groups.forEach { (dateStr, list) ->
-                        stickyHeader {
-                            DateHeader(dateStr)
-                        }
-                        items(list) { commande ->
-                            CommandeHistoriqueCard(commande = commande)
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                val canLoadMore = lastFetchCount == limit && !loadingMore
-                if (canLoadMore) {
-                    OutlinedButton(
-                        onClick = { fetch(reset = false) },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = PrimaryGold
-                        )
-                    ) {
-                        if (loadingMore) {
-                            CircularProgressIndicator(modifier = Modifier.size(16.dp))
-                            Spacer(Modifier.width(8.dp))
-                        }
-                        Text("Voir plus")
-                    }
-                } else if (loadingMore) {
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                        CircularProgressIndicator()
-                    }
-                }
-            }
-        }
-    }
+    // Liste des commandes (à implémenter dans la fonction HistoriqueScreen)
+    // TODO: Ajoutez ici la logique d'affichage des commandes, erreurs, chargement, etc.
 }
 
 @Composable
