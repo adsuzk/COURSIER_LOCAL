@@ -38,6 +38,38 @@ import com.suzosky.coursier.ui.components.PaymentWebViewDialog
 import com.suzosky.coursier.ui.screens.CoursierScreenNew
 import com.suzosky.coursier.ui.screens.LoginScreen
 import com.suzosky.coursier.ui.theme.SuzoskyTheme
+
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okhttp3.*
+import java.io.IOException
+
+// Fonction utilitaire pour désactiver le token FCM côté serveur
+fun deactivateFcmTokenOnServer(context: android.content.Context) {
+    val prefs = context.getSharedPreferences("suzosky_prefs", android.content.Context.MODE_PRIVATE)
+    val token = prefs.getString("fcm_token", null)
+    if (token.isNullOrBlank()) return
+    val client = OkHttpClient()
+    val formBody = FormBody.Builder().add("token", token).build()
+    val url = "https://coursier.conciergerie-privee-suzosky.com/COURSIER_LOCAL/deactivate_device_token.php"
+    val request = Request.Builder().url(url).post(formBody).build()
+    CoroutineScope(Dispatchers.IO).launch {
+        try {
+            client.newCall(request).enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    Log.w("Logout", "Échec désactivation token côté serveur: ${e.message}")
+                }
+                override fun onResponse(call: Call, response: Response) {
+                    Log.d("Logout", "Token désactivé côté serveur: ${response.code}")
+                    response.close()
+                }
+            })
+        } catch (e: Exception) {
+            Log.w("Logout", "Erreur désactivation token: ${e.message}")
+        }
+    }
+}
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import com.google.firebase.messaging.FirebaseMessaging
@@ -576,7 +608,9 @@ fun SuzoskyCoursierApp() {
                             onNavigateToProfile = { /* TODO: Navigation */ },
                             onNavigateToHistorique = { /* TODO: Navigation */ },
                             onNavigateToGains = { /* TODO: Navigation */ },
+
                             onLogout = {
+                                deactivateFcmTokenOnServer(context)
                                 try { prefs.edit { putBoolean("isLoggedIn", false) } } catch (_: Exception) {}
                                 isLoggedIn = false
                             },
