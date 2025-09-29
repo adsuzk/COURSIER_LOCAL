@@ -1,6 +1,6 @@
-import androidx.compose.foundation.background
 package com.suzosky.coursier.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.items
