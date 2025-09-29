@@ -89,7 +89,7 @@ fun ProfileScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.Person,
+                            imageVector = Icons.Filled.Person,
                             contentDescription = "Photo de profil",
                             modifier = Modifier.size(60.dp),
                             tint = PrimaryDark
@@ -157,7 +157,7 @@ fun ProfileScreen(
                     modifier = Modifier.weight(1f),
                     title = "Commandes",
                     value = totalCommandes.toString(),
-                    icon = Icons.AutoMirrored.Filled.Assignment,
+                    icon = Icons.Filled.Assignment,
                     color = PrimaryGold
                 )
                 
@@ -165,7 +165,7 @@ fun ProfileScreen(
                     modifier = Modifier.weight(1f),
                     title = "Note",
                     value = "${noteGlobale}/5",
-                    icon = Icons.AutoMirrored.Filled.Star,
+                    icon = Icons.Filled.Star,
                     color = Color(0xFFFFD700)
                 )
             }
@@ -175,7 +175,7 @@ fun ProfileScreen(
             // Informations personnelles
             ProfileSection(
                 title = "Informations personnelles",
-                icon = Icons.AutoMirrored.Filled.Person
+                icon = Icons.Filled.Person
             ) {
                 ProfileInfoItem(
                     icon = Icons.AutoMirrored.Filled.Work,
