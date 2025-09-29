@@ -539,7 +539,12 @@ if ($sessionSenderPhoneRaw !== '') {
                         <?php if (!$coursiersDisponibles): ?>
                         <!-- SÉCURITÉ: Aucun coursier disponible -->
                         <div class="service-unavailable-alert">
-                            <?= $messageIndisponibilite ?>
+                            <?php
+                            // Ensure a friendly commercial message is shown if $messageIndisponibilite is empty.
+                            $commercialText = "Nous sommes désolés, aucun coursier n'est disponible pour le moment. Inscrivez-vous pour être informé des prochaines disponibilités — livraison rapide, sécurisée et suivie en temps réel. Vous pouvez actualiser la page ou réessayer dans quelques minutes. Merci de votre confiance.":
+                            $displayMessage = trim((string)($messageIndisponibilite ?? '')) !== '' ? $messageIndisponibilite : $commercialText;
+                            echo '<div style="padding:12px; border-radius:8px; background: rgba(255,255,255,0.03);">' . $displayMessage . '</div>';
+                            ?>
                             <div style="text-align: center; margin-top: 15px;">
                                 <button type="button" onclick="location.reload()" class="refresh-btn">
                                     🔄 Actualiser
