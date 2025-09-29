@@ -13,7 +13,6 @@ data class HistoriqueCommande(
 private enum class StatusFilter { ALL, LIVREE, EN_COURS, ANNULEE }
 private enum class PeriodFilter { TOUT, AUJOURD_HUI, SEMAINE, MOIS }
 private enum class SortField { DATE, MONTANT }
-
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,9 +29,8 @@ import java.text.NumberFormat
 import java.util.Locale
 import java.text.SimpleDateFormat
 
-
-    // Initial fetch & when status changes
-    LaunchedEffect(coursierId, statusFilter) { fetch(reset = true) }
+// Initial fetch & when status changes
+LaunchedEffect(coursierId, statusFilter) { fetch(reset = true) }
 
     Box(
         modifier = Modifier
