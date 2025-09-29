@@ -495,6 +495,32 @@ if ($sessionSenderPhoneRaw !== '') {
             }
         }
     </style>
+    <script>
+    // Rafraîchissement AJAX de la disponibilité des coursiers (FCM)
+    document.addEventListener('DOMContentLoaded', function() {
+        const formSection = document.getElementById('orderFormSection') || document.querySelector('.order-form-section') || document.querySelector('form');
+        let lastAvailable = true;
+        async function checkCoursierDispo() {
+            try {
+                const res = await fetch('/api/check_coursier_disponible.php', {cache: 'no-store'});
+                const data = await res.json();
+                if (data && typeof data.available !== 'undefined') {
+                    if (!data.available) {
+                        if (formSection) formSection.style.display = 'none';
+                        lastAvailable = false;
+                    } else {
+                        if (formSection) formSection.style.display = '';
+                        lastAvailable = true;
+                    }
+                }
+            } catch (e) {
+                // En cas d'erreur réseau, ne rien faire
+            }
+        }
+        setInterval(checkCoursierDispo, 10000);
+        checkCoursierDispo();
+    });
+    </script>
 
     <!-- HERO + COMMANDE + MAP -->
     <div class="hero-section" id="accueil">
