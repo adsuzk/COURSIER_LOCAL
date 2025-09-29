@@ -104,6 +104,8 @@ dependencies {
     implementation("androidx.compose.foundation:foundation:1.7.6")
     // Compose Animation (required for AnimatedVisibility, fadeIn)
     implementation("androidx.compose.animation:animation:1.7.6")
+    // Compose UI Text (required for KeyboardOptions)
+    implementation("androidx.compose.ui:ui-text:1.7.6")
     
     // Navigation Compose
     implementation("androidx.navigation:navigation-compose:2.8.5")
