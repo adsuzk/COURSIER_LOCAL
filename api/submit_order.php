@@ -591,9 +591,16 @@ if (trim($output) !== '') {
     // Loguer la sortie parasite pour debug
     logMessage('diagnostics_errors.log', '⚠️ Sortie parasite détectée dans submit_order.php : ' . substr($output, 0, 500));
 }
+// Ajout d'un header personnalisé pour debug
+header('X-Debug-Api-Submit-Order: OK');
 echo json_encode([
     'success' => true,
-    'data' => $responseData
+    'data' => $responseData,
+    'debug' => [
+        'date' => date('Y-m-d H:i:s'),
+        'php_sapi' => php_sapi_name(),
+        'output_buffer' => isset($output) ? substr($output, 0, 200) : null
+    ]
 ]);
 
 } catch (Exception $e) {
