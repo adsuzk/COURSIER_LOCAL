@@ -190,21 +190,21 @@ fun PaymentWebViewDialog(
                         }
                     }
                 }
-
                 SupportHint()
             }
-        },
-        confirmButton = {
-            TextButton(onClick = {
-                if (!hasCompleted) {
-                    onCompleted(false, "cancelled")
-                }
-                onDismiss()
-            }) {
-                Text("Fermer")
-            }
         }
-    )
+    },
+    confirmButton = {
+        TextButton(onClick = {
+            if (!hasCompleted) {
+                onCompleted(false, "cancelled")
+            }
+            onDismiss()
+        }) {
+            Text("Fermer")
+        }
+    }
+)
 }
 
 @Composable
