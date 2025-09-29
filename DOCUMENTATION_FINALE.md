@@ -145,10 +145,10 @@ Le script est safe-by-default (dry-run) : exécutez sans `--apply` pour simuler.
 
 ---
 
-## 🚀 **SYSTÈME CRON MASTER - AUTOMATION COMPLÈTE**
+-### 🚀 **SYSTÈME CRON MASTER - AUTOMATION COMPLÈTE**
 
 ### ⚡ **CRON UNIQUE ULTRA-RAPIDE :**
-- **Fréquence :** Chaque minute (60 secondes maximum entre commande et assignation)
+- **Fréquence :** Chaque minute (toutes les tâches sont maintenant exécutées chaque minute par décision opérationnelle)
 - **Fichier :** `Scripts/Scripts cron/cron_master.php`
 - **URL LWS :** `https://coursier.conciergerie-privee-suzosky.com/Scripts/Scripts%20cron/cron_master.php`
 - **Configuration :** `* * * * *` (une seule tâche CRON pour tout gérer)
