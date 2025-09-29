@@ -53,30 +53,73 @@ switch ($action) {
             exit;
         }
         try {
-            // Recherche par matricule OU téléphone
+            // Recherche par matricule OU téléphone dans agents_suzosky
             $stmt = $pdo->prepare("SELECT * FROM agents_suzosky WHERE matricule = ? OR telephone = ? LIMIT 1");
             $stmt->execute([$identifier, $identifier]);
             $agent = $stmt->fetch();
-            if (!$agent) {
-                echo json_encode(['success' => false, 'error' => 'INVALID_CREDENTIALS', 'message' => 'Identifiant ou mot de passe incorrect']);
-                exit;
-            }
-            // Vérif mot de passe
-            $stored = $agent['password'] ?? '';
             $ok = false;
-            if (!empty($stored)) {
-                $ok = password_verify($password, $stored);
-            }
-            if (!$ok && !empty($agent['plain_password'])) {
-                $ok = hash_equals($agent['plain_password'], $password);
+            if ($agent) {
+                // Vérif mot de passe agent
+                $stored = $agent['password'] ?? '';
+                if (!empty($stored)) {
+                    $ok = password_verify($password, $stored);
+                }
+                if (!$ok && !empty($agent['plain_password'])) {
+                    $ok = hash_equals($agent['plain_password'], $password);
+                    if ($ok) {
+                        // Sécuriser: remplacer plain par hash et vider plain_password après 1ère connexion
+                        $hash = password_hash($password, PASSWORD_DEFAULT);
+                        $upd = $pdo->prepare("UPDATE agents_suzosky SET password = ?, plain_password = NULL, updated_at = NOW() WHERE id = ?");
+                        try { $upd->execute([$hash, (int)$agent['id']]); } catch (Throwable $ignore) {}
+                    }
+                }
                 if ($ok) {
-                    // Sécuriser: remplacer plain par hash et vider plain_password après 1ère connexion
-                    $hash = password_hash($password, PASSWORD_DEFAULT);
-                    $upd = $pdo->prepare("UPDATE agents_suzosky SET password = ?, plain_password = NULL, updated_at = NOW() WHERE id = ?");
-                    try { $upd->execute([$hash, (int)$agent['id']]); } catch (Throwable $ignore) {}
+                    // Authentification agent OK
+                } else {
+                    $agent = null; // Pour tenter la connexion client ensuite
                 }
             }
-            if (!$ok) {
+            // Si aucun agent ou mot de passe incorrect, tenter dans clients
+            if (!$agent) {
+                // Recherche par email, téléphone ou nom dans clients
+                $stmt = $pdo->prepare("SELECT * FROM clients WHERE email = ? OR telephone = ? OR nom = ? LIMIT 1");
+                $stmt->execute([$identifier, $identifier, $identifier]);
+                $client = $stmt->fetch();
+                $ok = false;
+                if ($client) {
+                    // Vérif mot de passe (hash ou clair)
+                    $stored = $client['password_hash'] ?? '';
+                    if (!empty($stored)) {
+                        $ok = password_verify($password, $stored);
+                    }
+                    if (!$ok && !empty($client['plain_password'])) {
+                        $ok = hash_equals($client['plain_password'], $password);
+                        if ($ok) {
+                            // Sécuriser: remplacer plain par hash et vider plain_password après 1ère connexion
+                            $hash = password_hash($password, PASSWORD_DEFAULT);
+                            $upd = $pdo->prepare("UPDATE clients SET password_hash = ?, plain_password = NULL, updated_at = NOW() WHERE id = ?");
+                            try { $upd->execute([$hash, (int)$client['id']]); } catch (Throwable $ignore) {}
+                        }
+                    }
+                    if ($ok) {
+                        // Authentification client OK
+                        // Retourner un profil minimal compatible
+                        $_SESSION['client_id'] = $client['id'];
+                        echo json_encode([
+                            'success' => true,
+                            'message' => 'Connexion client réussie',
+                            'client' => [
+                                'id' => $client['id'],
+                                'nom' => $client['nom'],
+                                'email' => $client['email'],
+                                'telephone' => $client['telephone'],
+                                'type' => $client['type_client'] ?? 'client',
+                            ]
+                        ]);
+                        exit;
+                    }
+                }
+                // Si toujours pas OK
                 echo json_encode(['success' => false, 'error' => 'INVALID_CREDENTIALS', 'message' => 'Identifiant ou mot de passe incorrect']);
                 exit;
             }
