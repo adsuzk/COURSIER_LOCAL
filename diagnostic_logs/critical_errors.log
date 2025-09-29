@@ -1591,3 +1591,32 @@ Stack Trace: [
     }
 ]
 =====================================
+🚨 ALERTE ERREUR CRITIQUE 🚨
+Timestamp: 2025-09-29 03:02:46.000000
+Interface: EXCEPTION
+Message: Exception non gérée: Call to undefined function ensureLegacyClientsTable()
+Fichier: advanced_logger.php:388
+Contexte: {
+    "exception_class": "Error",
+    "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\api\\submit_order.php",
+    "line": 153,
+    "trace": "#0 {main}"
+}
+Stack Trace: [
+    {
+        "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+        "line": 330,
+        "function": "log",
+        "class": "AdvancedLogger",
+        "type": "->"
+    },
+    {
+        "file": "C:\\xampp\\htdocs\\COURSIER_LOCAL\\diagnostic_logs\\advanced_logger.php",
+        "line": 388,
+        "function": "logCritical"
+    },
+    {
+        "function": "{closure}"
+    }
+]
+=====================================
