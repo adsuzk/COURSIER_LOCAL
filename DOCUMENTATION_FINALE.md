@@ -11,6 +11,10 @@
 
 **Note migration DB :** La colonne `last_ping` a été ajoutée à la table `device_tokens` (migration appliquée). Les scripts de nettoyage FCM utilisent désormais `last_ping` quand disponible, sinon retombent sur `updated_at`.
 
+**Message affiché quand aucun coursier n'est disponible :**
+
+"Nos coursiers sont actuellement très sollicités. Restez sur cette page — des coursiers se libèrent dans un instant et le formulaire se rouvrira automatiquement pour vous permettre de commander immédiatement. Merci pour votre patience !"
+
 
 ## 🆕 [29 Sept 2025] — AJOUT TABLE `agents_suzosky` & LOGIQUE DISPONIBILITÉ COURSIER
 
