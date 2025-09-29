@@ -2,21 +2,12 @@
 package com.suzosky.coursier
 
 import android.os.Bundle
-import android.widget.Toast
-import android.app.AlertDialog
-import android.content.Intent
-import android.net.Uri
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -28,7 +19,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
-import com.suzosky.coursier.data.models.*
+import com.suzosky.coursier.data.models.Commande
 import com.suzosky.coursier.network.ApiService
 import com.suzosky.coursier.services.AutoUpdateService
 import com.suzosky.coursier.services.OrderRingService
@@ -42,7 +33,12 @@ import com.suzosky.coursier.ui.theme.SuzoskyTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.FormBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import java.io.IOException
 import dagger.hilt.android.AndroidEntryPoint
 import com.google.firebase.messaging.FirebaseMessaging
