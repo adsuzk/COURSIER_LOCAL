@@ -1,6 +1,21 @@
 
 
 <?php
+// Log de debug ultra-précoce (toute requête entrante, avant tout traitement)
+if (file_exists(__DIR__ . '/../logger.php')) {
+	$debugLog = __DIR__ . '/../diagnostic_logs/diagnostics_errors.log';
+	$debugHeaders = json_encode(getallheaders() ?: []);
+	$debugBody = file_get_contents('php://input');
+	$debugMeta = [
+		'date' => date('Y-m-d H:i:s'),
+		'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
+		'method' => $_SERVER['REQUEST_METHOD'] ?? '',
+		'uri' => $_SERVER['REQUEST_URI'] ?? '',
+		'headers' => $debugHeaders,
+		'body' => $debugBody
+	];
+	file_put_contents($debugLog, "[DEBUG-REQ] " . json_encode($debugMeta) . "\n", FILE_APPEND);
+}
 // Réactivation progressive du squelette métier
 header('Content-Type: application/json');
 
