@@ -1,3 +1,5 @@
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 
 
 package com.suzosky.coursier.ui.screens
@@ -482,12 +484,12 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
         // Messages et Snackbar
         if (error != null) {
             LaunchedEffect(error) {
-                snackbarHostState.showSnackbar(error!!)
+                snackbarHostState.showSnackbar(error ?: "Erreur inconnue")
             }
         }
         if (success != null) {
             LaunchedEffect(success) {
-                snackbarHostState.showSnackbar(success!!)
+                snackbarHostState.showSnackbar(success ?: "Succès")
             }
         }
         SnackbarHost(hostState = snackbarHostState)
