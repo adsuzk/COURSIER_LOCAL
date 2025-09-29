@@ -133,7 +133,7 @@ fun SuzoskyDrawerMenu(
                     Spacer(modifier = Modifier.height(16.dp))
                     
                     DrawerMenuItem(
-                        icon = Icons.AutoMirrored.Filled.Logout,
+                        icon = Icons.Filled.Logout,
                         title = "Déconnexion",
                         subtitle = "Quitter l'application",
                         onClick = {
@@ -168,7 +168,7 @@ fun DrawerHeader(
             modifier = Modifier.align(Alignment.TopEnd)
         ) {
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.Close,
+                imageVector = Icons.Filled.Close,
                 contentDescription = "Fermer",
                 tint = Color.White
             )
