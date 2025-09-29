@@ -47,26 +47,27 @@ VALUES ('TestAgent', 'Demo', 'test@demo.com', '+22501020304', 'hors_ligne', NOW(
 
 
 
-### 🔎 Nouvelle logique de présence temps réel (FCM-only) — Index & Admin
+### 🔎 Nouvelle logique de présence temps réel — Index & Admin
 
-- **La présence des coursiers (connectés) dans toutes les interfaces (index, dashboard admin, finances, commandes) est STRICTEMENT et UNIQUEMENT basée sur la présence d’au moins un token FCM actif** (`device_tokens.is_active=1`).
-- **Aucune autre donnée (statut_connexion, last_login, solde, etc.) n’est prise en compte pour la disponibilité.**
-- **Synchronisation temps réel** : toute connexion/déconnexion FCM est reflétée instantanément dans toutes les interfaces (index, dashboard, finances, commandes).
-- **Si aucun token FCM actif n’est trouvé,** le formulaire de commande est masqué côté client, et les interfaces admin affichent « Aucun coursier connecté » ou équivalent.
+La présence des coursiers (connectés) est principalement basée sur les entrées FCM dans `device_tokens`.
 
-**Résumé :**
-- La disponibilité et la présence des coursiers sont 100% synchronisées sur la base FCM (device_tokens actifs).
+Par défaut la logique combine deux conditions pour considérer un token comme valide :
 
-#### Interfaces concernées :
-- **Index public** : formulaire affiché uniquement si ≥1 FCM actif
-- **Dashboard admin** : section « Coursiers connectés » = FCM only
-- **Finances** : carte « Connectés » = FCM only
-- **Commandes** : panneau « Coursiers connectés » = FCM only
+- `is_active = 1` (le token n'a pas été explicitement désactivé)
+- `last_ping` (ou `updated_at` si `last_ping` est NULL) doit être récent — la fenêtre par défaut est 120 secondes.
 
-**API centrale :** `/api/coursiers_connectes.php` (source unique de vérité, utilisée par toutes les interfaces)
+Ce comportement est configurable :
+- Variable d'environnement `FCM_AVAILABILITY_THRESHOLD_SECONDS` pour changer la fenêtre (en secondes).
+- Variable d'environnement `FCM_IMMEDIATE_DETECTION=true` (ou option `['immediate_detection'=>true]`) force le mode immédiat où tout `is_active = 1` est considéré disponible.
 
-**Obsolète :**
-- Les anciennes logiques basées sur `statut_connexion`, `last_login_at`, ou solde sont supprimées pour la présence/connexion.
+Les scripts de maintenance peuvent par ailleurs valider activement les tokens via FCM et désactiver automatiquement les tokens définitivement invalides (voir `Scripts/Scripts cron/fcm_validate_tokens.php`).
+
+#### Interfaces concernées :
+- **Index public** : formulaire affiché uniquement si la vérification FCM retourne >=1 token valide
+- **Dashboard admin** : section « Coursiers connectés » fondée sur la même logique
+- **Finances / Commandes** : même source de vérité
+
+**API centrale :** `/api/coursiers_connectes.php` (source unique de vérité pour les interfaces)
 
 ---
 
