@@ -512,7 +512,7 @@ if ($sessionSenderPhoneRaw !== '') {
         }
 
         // Message de fallback centralisé injecté depuis index.php
-        const availabilityFallbackMessage = <?php echo json_encode(isset($messageIndisponibilite) ? $messageIndisponibilite : ($commercialFallbackMessage ?? 'Nos coursiers sont actuellement très sollicités. Restez sur cette page — des coursiers se libèrent dans un instant.'), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT); ?>;
+    const availabilityFallbackMessage = <?php echo json_encode(isset($messageIndisponibilite) ? $messageIndisponibilite : ($commercialFallbackMessage ?? ''), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT); ?>;
 
         async function checkCoursierDispo() {
             try {
