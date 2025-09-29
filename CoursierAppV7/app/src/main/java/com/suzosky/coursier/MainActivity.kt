@@ -65,12 +65,9 @@ fun deactivateFcmTokenOnServer(context: android.content.Context) {
             })
         } catch (e: Exception) {
             Log.w("Logout", "Erreur désactivation token: ${e.message}")
-            import android.os.Bundle
-            import android.util.Log
- * MainActivity - Point d'entrée de l'app Suzosky Coursier
- * Interface 100% identique au design web coursier.php
- * VERSION SÉCURISÉE avec gestion d'erreurs
- */
+        }
+    }
+}
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
