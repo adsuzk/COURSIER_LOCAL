@@ -38,11 +38,7 @@ data class HistoriqueCommande(
     val statut: String = "en_cours"
 )
 
-private enum class StatusFilter { ALL, LIVREE, EN_COURS, ANNULEE }
-private enum class PeriodFilter { TOUT, AUJOURD_HUI, SEMAINE, MOIS }
-private enum class SortField { DATE, MONTANT }
 
-// ...rest of the file remains unchanged...
 
                         // Choix du champ de tri
                         FilterChip(
