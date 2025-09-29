@@ -1,4 +1,5 @@
 <?php
+file_put_contents(__DIR__ . '/../diagnostic_logs/diagnostics_errors.log', date('[Y-m-d H:i:s] ') . "HELLO submit_order.php\n", FILE_APPEND);
 // Protection anti-sortie parasite : buffer de sortie
 ob_start();
 // VERSION CORRIGÉE 2025-09-04 21:00 - PROTECTION CLIENT_ID FOREIGN KEY
