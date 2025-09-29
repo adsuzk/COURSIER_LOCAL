@@ -1,3 +1,33 @@
+#
+# 🛠️ MISE EN ÉTAT ET DÉBOGAGE API / SEPTEMBRE 2025
+
+## Diagnostic et réparation du flux de commande (frontend ↔ backend)
+
+### 1. Problème initial
+- Le bouton « Commander » sur l’index affichait systématiquement « Erreur de validation » ou « Réponse serveur invalide ».
+- L’API `/api/submit_order.php` ne recevait pas ou ne traitait pas correctement les données du formulaire.
+
+### 2. Étapes de résolution
+- **Vérification du serveur PHP** : relance du serveur intégré avec `php -S 127.0.0.1:8080 -t .`.
+- **Tests manuels API** : envoi de requêtes POST via PowerShell/curl pour isoler les erreurs PHP, MySQL ou de validation.
+- **Correction du script backend** :
+    - Suppression des erreurs de syntaxe et des blocs non fermés.
+    - Ajout de la gestion d’erreur, logs détaillés, et forçage du Content-Type JSON.
+    - Validation progressive des champs reçus.
+- **Création de la base de données** :
+    - Création de la base `coursier_local` et de la table `commandes` avec tous les champs attendus par le frontend.
+- **Adaptation du backend** :
+    - Le script `/api/submit_order.php` accepte désormais tous les champs du formulaire (departure, destination, senderPhone, receiverPhone, packageDescription, priority, paymentMethod, price, distance, duration, lat/lng).
+    - Validation complète côté serveur, insertion réelle en base, retour d’un ID de commande.
+- **Vérification du frontend** :
+    - Test du bouton « Commander » sur l’index : la commande est bien enregistrée, la réponse JSON est conforme, plus d’erreur de validation.
+
+### 3. Résultat
+- Le flux complet frontend → backend → base fonctionne.
+- L’API est robuste, accepte tous les champs, et loggue chaque étape.
+- Les tests manuels (API, PowerShell, curl) ont permis d’isoler chaque problème (PHP, MySQL, validation, structure JSON) et de garantir la fiabilité du système.
+
+---
 # 📚 DOCUMENTATION TECHNIQUE FINALE - SUZOSKY COURSIER
 ## Version: 4.0 - Date: 28 Septembre 2025 - SYSTÈME 100% AUTOMATISÉ
 
