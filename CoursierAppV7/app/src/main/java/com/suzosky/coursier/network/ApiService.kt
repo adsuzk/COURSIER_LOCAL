@@ -350,6 +350,98 @@ object ApiService {
             }
         )
     }
+    /**
+     * Désactiver un token FCM côté serveur. Si l'appel échoue et que
+     * reEnqueueOnFailure=true, le token sera enregistré localement pour
+     * réessayer plus tard via processPendingDeactivations(context).
+     */
+    fun deactivateDeviceToken(
+        context: Context,
+        token: String,
+        reEnqueueOnFailure: Boolean = true,
+        onSuccess: () -> Unit = {},
+        onFailure: (String) -> Unit = {}
+    ) {
+        if (token.isBlank()) {
+            onFailure("Token vide")
+            return
+        }
+
+        val form = FormBody.Builder()
+            .add("token", token)
+            .build()
+
+        executeWithFallback(
+            buildRequest = { base ->
+                val url = buildApi(base, "deactivate_device_token.php")
+                logIfUrlInvalid(url)
+                Request.Builder().url(url).post(form).build()
+            },
+            onResponseMain = { response ->
+                try {
+                    val body = response.body?.string()
+                    android.util.Log.d("ApiService", "deactivateDeviceToken -> ${response.code} body=${body}")
+                    if (response.isSuccessful) {
+                        onSuccess()
+                    } else {
+                        val msg = "HTTP ${response.code}"
+                        if (reEnqueueOnFailure) enqueuePendingDeactivation(context, token)
+                        onFailure(msg)
+                    }
+                } catch (e: Exception) {
+                    val msg = e.message ?: "Erreur parsing"
+                    if (reEnqueueOnFailure) enqueuePendingDeactivation(context, token)
+                    onFailure(msg)
+                } finally {
+                    try { response.close() } catch (_: Throwable) {}
+                }
+            },
+            onFailureMain = { err ->
+                if (reEnqueueOnFailure) enqueuePendingDeactivation(context, token)
+                onFailure(err)
+            }
+        )
+    }
+
+    private fun enqueuePendingDeactivation(context: Context, token: String) {
+        try {
+            val prefs = context.getSharedPreferences("suzosky_prefs", Context.MODE_PRIVATE)
+            val set = prefs.getStringSet("pending_deactivations", mutableSetOf())?.toMutableSet() ?: mutableSetOf()
+            if (!set.contains(token)) {
+                set.add(token)
+                prefs.edit().putStringSet("pending_deactivations", set).apply()
+                android.util.Log.d("ApiService", "Token ajouté à la file locale de désactivation")
+            }
+        } catch (e: Exception) {
+            android.util.Log.w("ApiService", "Impossible d'enregistrer la désactivation locale: ${e.message}")
+        }
+    }
+
+    fun processPendingDeactivations(context: Context) {
+        try {
+            val prefs = context.getSharedPreferences("suzosky_prefs", Context.MODE_PRIVATE)
+            val set = prefs.getStringSet("pending_deactivations", emptySet())?.toMutableSet() ?: mutableSetOf()
+            if (set.isEmpty()) return
+            android.util.Log.d("ApiService", "processPendingDeactivations - tokens=${set.size}")
+            val iterator = set.iterator()
+            while (iterator.hasNext()) {
+                val token = iterator.next()
+                deactivateDeviceToken(context, token, reEnqueueOnFailure = false, onSuccess = {
+                    // remove from set
+                    try {
+                        val current = prefs.getStringSet("pending_deactivations", mutableSetOf())?.toMutableSet() ?: mutableSetOf()
+                        current.remove(token)
+                        prefs.edit().putStringSet("pending_deactivations", current).apply()
+                        android.util.Log.d("ApiService", "Token deactivation réussie (queued): removed")
+                    } catch (_: Exception) {}
+                }, onFailure = { err ->
+                    android.util.Log.w("ApiService", "Echec de la désactivation queued token: $err")
+                })
+            }
+        } catch (e: Exception) {
+            android.util.Log.w("ApiService", "Erreur processPendingDeactivations: ${e.message}")
+        }
+    }
     private fun getInitRechargeUrl(): String =
         if (useProd()) "${'$'}{prodBase()}/api/init_recharge.php" else "${'$'}{debugLocalBase()}/api/init_recharge.php"
 
