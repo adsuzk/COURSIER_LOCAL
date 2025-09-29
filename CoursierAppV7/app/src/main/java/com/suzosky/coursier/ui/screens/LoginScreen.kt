@@ -1,16 +1,12 @@
+package com.suzosky.coursier.ui.screens
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-
-
-package com.suzosky.coursier.ui.screens
-
 import android.app.Activity
 import android.content.Context
 import android.net.Uri
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
-
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
