@@ -135,7 +135,7 @@ private fun StatusBadge(status: String, type: String) {
         // Badge type
         Icon(
             imageVector = when (type.lowercase()) {
-                "classique" -> Icons.Filled.DirectionsBike
+                "classique" -> Icons.AutoMirrored.Filled.DirectionsBike
                 "business" -> Icons.Filled.Business
                 else -> Icons.Filled.LocalShipping
             },
