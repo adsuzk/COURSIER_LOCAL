@@ -5,8 +5,8 @@
  * - Marks tokens is_active = 0 when FCM returns permanent error (NOT_REGISTERED...)
  */
 
-require_once dirname(__DIR__, 1) . '/config.php';
-require_once dirname(__DIR__, 1) . '/lib/fcm_helper.php';
+require_once __DIR__ . '/../../config.php';
+require_once __DIR__ . '/../../lib/fcm_helper.php';
 
 $apply = in_array('--apply', $argv ?? []);
 $limit = 50; // max tokens per run
