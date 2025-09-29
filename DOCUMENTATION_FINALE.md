@@ -66,9 +66,9 @@ VALUES ('TestAgent', 'Demo', 'test@demo.com', '+22501020304', 'hors_ligne', NOW(
     - Ajout de la gestion d’erreur, logs détaillés, et forçage du Content-Type JSON.
     - Validation progressive des champs reçus.
 - **Création de la base de données** :
-    - Création de la base `coursier_local` et de la table `commandes` avec tous les champs attendus par le frontend.
+    - Création de la base `coursier_local` et de la table `commandes` avec tous les champs attendus par le frontend (sauf 'Description du colis' qui est désormais optionnelle).
 - **Adaptation du backend** :
-    - Le script `/api/submit_order.php` accepte désormais tous les champs du formulaire (departure, destination, senderPhone, receiverPhone, packageDescription, priority, paymentMethod, price, distance, duration, lat/lng).
+    - Le script `/api/submit_order.php` accepte tous les champs du formulaire (departure, destination, senderPhone, receiverPhone, priority, paymentMethod, price, distance, duration, lat/lng). Le champ 'Description du colis' (`packageDescription`) est optionnel.
     - Validation complète côté serveur, insertion réelle en base, retour d’un ID de commande.
 - **Vérification du frontend** :
     - Test du bouton « Commander » sur l’index : la commande est bien enregistrée, la réponse JSON est conforme, plus d’erreur de validation.
@@ -235,8 +235,8 @@ Le script peut être intégré au `cron_master.php` pour une consolidation quoti
 
 ### POST `/api/submit_order.php`
 - Méthode: POST JSON (`application/json`). CORS OK; 405 sinon.
-- Requis: `departure`, `destination`, `senderPhone`, `receiverPhone`, `priority` (`normale|urgente|express`), `paymentMethod` (`cash|orange_money|mobile_money|mtn_money|moov_money|card|wave|credit_business`).
-- Optionnels: `packageDescription`, `price` (num), `distance` (ex: "12.3 km"), `duration` (ex: "25 min"), `departure_lat`, `departure_lng`, `destination_lat`, `destination_lng`.
+    - Requis: `departure`, `destination`, `senderPhone`, `receiverPhone`, `priority` (`normale|urgente|express`), `paymentMethod` (`cash|orange_money|mobile_money|mtn_money|moov_money|card|wave|credit_business`).
+    - Optionnels: `packageDescription` (description du colis, non obligatoire), `price` (num), `distance` (ex: "12.3 km"), `duration` (ex: "25 min"), `departure_lat`, `departure_lng`, `destination_lat`, `destination_lng`.
 - Normalisations: téléphones digits-only; map `priority`; prix fallback serveur via `parametres_tarification` + multiplicateurs; `code_commande` unique si colonne; `client_id` résolu selon FK.
 - Side-effect: attribution automatique via `/api/assign_nearest_coursier.php` si coords départ présentes.
 - Réponse (200) typique:
