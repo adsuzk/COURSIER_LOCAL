@@ -138,6 +138,7 @@ class NotificationSoundService(private val context: Context) {
                     @Suppress("DEPRECATION")
                     val pattern = longArrayOf(0, 1000, 500)
                     try {
+                        @Suppress("DEPRECATION")
                         vib.vibrate(pattern, 0) // 0 = répéter infiniment
                     } catch (e: Exception) {
                         Log.w("NotificationSound", "Impossible de démarrer la vibration (legacy): ${e.message}")
