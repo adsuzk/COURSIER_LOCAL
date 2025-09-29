@@ -495,65 +495,7 @@ if ($sessionSenderPhoneRaw !== '') {
             }
         }
     </style>
-    <script>
-    // Rafraîchissement AJAX de la disponibilité des coursiers (FCM)
-    document.addEventListener('DOMContentLoaded', function() {
-        const formSection = document.getElementById('orderFormSection') || document.querySelector('.order-form-section') || document.querySelector('form');
-        let lastAvailable = true;
-        // Create or find indicator elements
-        let searchingIndicator = document.querySelector('.searching-indicator');
-        if (!searchingIndicator) {
-            searchingIndicator = document.createElement('div');
-            searchingIndicator.className = 'searching-indicator';
-            searchingIndicator.style.display = 'none';
-            // Insert before the order-form block
-            const orderForm = document.querySelector('.order-form');
-            if (orderForm && orderForm.parentNode) orderForm.parentNode.insertBefore(searchingIndicator, orderForm);
-        }
-
-        // Message de fallback centralisé injecté depuis index.php
-    const availabilityFallbackMessage = <?php echo json_encode(isset($messageIndisponibilite) ? $messageIndisponibilite : ($commercialFallbackMessage ?? ''), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT); ?>;
-
-        async function checkCoursierDispo() {
-            try {
-                const res = await fetch('/api/check_coursier_disponible_vrai.php', {cache: 'no-store'});
-                const data = await res.json();
-                if (data && typeof data.available !== 'undefined') {
-                    if (!data.available) {
-                        // hide form, show searching indicator
-                        if (formSection) formSection.style.display = 'none';
-                        if (searchingIndicator) {
-                            // Accessibility: role=status + aria-live so screen readers announce updates
-                            searchingIndicator.setAttribute('role', 'status');
-                            searchingIndicator.setAttribute('aria-live', 'polite');
-                            searchingIndicator.innerHTML = `
-                                <div class="searching-wrap">
-                                    <div class="spinner" aria-hidden="true"></div>
-                                    <div class="searching-text"></div>
-                                </div>`;
-                            // set the text content separately to avoid HTML injection
-                            const txt = searchingIndicator.querySelector('.searching-text');
-                            if (txt) txt.textContent = availabilityFallbackMessage;
-                            searchingIndicator.style.display = '';
-                        }
-                        lastAvailable = false;
-                    } else {
-                        // show form, hide searching indicator
-                        if (formSection) formSection.style.display = '';
-                        if (searchingIndicator) searchingIndicator.style.display = 'none';
-                        lastAvailable = true;
-                    }
-                }
-            } catch (e) {
-                // En cas d'erreur réseau, afficher un message discret mais ne modifier pas l'UI
-                console.warn('checkCoursierDispo failed', e);
-            }
-        }
-        // Poll every 3 seconds for faster reopening
-        setInterval(checkCoursierDispo, 3000);
-        checkCoursierDispo();
-    });
-    </script>
+    <!-- Polling indicator feature removed per request: original behavior restored -->
 
     <!-- HERO + COMMANDE + MAP -->
     <div class="hero-section" id="accueil">
