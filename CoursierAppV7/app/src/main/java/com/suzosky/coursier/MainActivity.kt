@@ -90,17 +90,20 @@ class MainActivity : ComponentActivity() {
             )
             
             // Vérifier les mises à jour
+            // Utilise une variable globale pour déclencher le dialog dans Compose
+            val updateInfoToShow = arrayOfNulls<UpdateInfo>(1)
             lifecycleScope.launch {
                 try {
                     val updateInfo = telemetry.checkForUpdates()
                     if (updateInfo?.isMandatory == true) {
-                        // Gérer mise à jour obligatoire
-                        showUpdateDialog(updateInfo)
+                        // Déclencher l'affichage du dialog dans Compose
+                        updateInfoToShow[0] = updateInfo
                     }
                 } catch (e: Exception) {
                     println("Erreur vérification mises à jour: ${e.message}")
                 }
             }
+            // Passe updateInfoToShow à setContent pour affichage dans Compose
             
             val prefs = getSharedPreferences("suzosky_prefs", MODE_PRIVATE)
 
@@ -161,7 +164,7 @@ class MainActivity : ComponentActivity() {
             
             setContent {
                 SuzoskyTheme {
-                    SuzoskyCoursierApp()
+                    SuzoskyCoursierApp(updateInfoToShow)
                 }
             }
             // FORCER l'enregistrement FCM dès le démarrage - VERSION ROBUSTE
@@ -282,7 +285,35 @@ fun ErrorFallbackScreen(error: String) {
 }
 
 @Composable
-fun SuzoskyCoursierApp() {
+fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
+    // Affichage du dialog de mise à jour si besoin
+    val updateInfo = updateInfoToShow[0]
+    if (updateInfo != null) {
+        BasicAlertDialog(
+            onDismissRequest = { updateInfoToShow[0] = null },
+            confirmButton = {
+                TextButton(onClick = {
+                    // Ouvre le lien de mise à jour
+                    val uriHandler = androidx.compose.ui.platform.LocalUriHandler.current
+                    uriHandler.openUri(updateInfo.downloadUrl)
+                    updateInfoToShow[0] = null
+                }) { Text("Mettre à jour") }
+            },
+            dismissButton = {
+                if (!updateInfo.isMandatory) {
+                    TextButton(onClick = { updateInfoToShow[0] = null }) { Text("Plus tard") }
+                }
+            },
+            title = { Text("Mise à jour disponible") },
+            text = {
+                Column {
+                    Text("Version: ${updateInfo.versionName}")
+                    Spacer(Modifier.height(8.dp))
+                    Text(updateInfo.releaseNotes ?: "Une nouvelle version est disponible.")
+                }
+            }
+        )
+    }
     val context = LocalContext.current
     // Persist a simple login flag in SharedPreferences to stabilize navigation after login
     val prefs = remember { context.getSharedPreferences("suzosky_prefs", android.content.Context.MODE_PRIVATE) }
