@@ -500,24 +500,48 @@ if ($sessionSenderPhoneRaw !== '') {
     document.addEventListener('DOMContentLoaded', function() {
         const formSection = document.getElementById('orderFormSection') || document.querySelector('.order-form-section') || document.querySelector('form');
         let lastAvailable = true;
+        // Create or find indicator elements
+        let searchingIndicator = document.querySelector('.searching-indicator');
+        if (!searchingIndicator) {
+            searchingIndicator = document.createElement('div');
+            searchingIndicator.className = 'searching-indicator';
+            searchingIndicator.style.display = 'none';
+            // Insert before the order-form block
+            const orderForm = document.querySelector('.order-form');
+            if (orderForm && orderForm.parentNode) orderForm.parentNode.insertBefore(searchingIndicator, orderForm);
+        }
+
         async function checkCoursierDispo() {
             try {
                 const res = await fetch('/api/check_coursier_disponible_vrai.php', {cache: 'no-store'});
                 const data = await res.json();
                 if (data && typeof data.available !== 'undefined') {
                     if (!data.available) {
+                        // hide form, show searching indicator
                         if (formSection) formSection.style.display = 'none';
+                        if (searchingIndicator) {
+                            searchingIndicator.innerHTML = `
+                                <div class="searching-wrap">
+                                    <div class="spinner" aria-hidden="true"></div>
+                                    <div class="searching-text">Nos coursiers se libèrent dans un instant — nous recherchons un coursier disponible...</div>
+                                </div>`;
+                            searchingIndicator.style.display = '';
+                        }
                         lastAvailable = false;
                     } else {
+                        // show form, hide searching indicator
                         if (formSection) formSection.style.display = '';
+                        if (searchingIndicator) searchingIndicator.style.display = 'none';
                         lastAvailable = true;
                     }
                 }
             } catch (e) {
-                // En cas d'erreur réseau, ne rien faire
+                // En cas d'erreur réseau, afficher un message discret mais ne modifier pas l'UI
+                console.warn('checkCoursierDispo failed', e);
             }
         }
-        setInterval(checkCoursierDispo, 5000);
+        // Poll every 3 seconds for faster reopening
+        setInterval(checkCoursierDispo, 3000);
         checkCoursierDispo();
     });
     </script>
@@ -768,6 +792,12 @@ if ($sessionSenderPhoneRaw !== '') {
     </div>
 
     <style>
+    /* Searching indicator styles */
+    .searching-indicator { margin: 12px 0; text-align: center; }
+    .searching-wrap { display: inline-flex; align-items: center; gap: 12px; padding: 12px 16px; background: rgba(255,255,255,0.04); border-radius: 12px; border: 1px solid rgba(255,255,255,0.06); }
+    .spinner { width: 28px; height: 28px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.15); border-top-color: #D4A853; animation: spin 1s linear infinite; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .searching-text { color: #fff; font-weight: 600; }
     /* CSS pour layout formulaire à gauche, carte à droite avec scroll synchronisé */
     .hero-content-wrapper {
         width: 100%;
