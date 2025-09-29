@@ -72,15 +72,14 @@ fun WalletScreen(
     var showHistoryDialog by remember { mutableStateOf(false) }
     var showEarningsDialog by remember { mutableStateOf(false) }
     var selectedEarningsPeriod by remember { mutableStateOf(EarningsPeriod.DAILY) }
-    
-            imageVector = Icons.AutoMirrored.Filled.AccountBalanceWallet,
+
     var loading by remember { mutableStateOf(true) }
     var error by remember { mutableStateOf<String?>(null) }
     var historiqueCommandes by remember { mutableStateOf(listOf<WalletHistoryItem>()) }
     var earningsData by remember { mutableStateOf<Map<EarningsPeriod, List<EarningsData>>>(emptyMap()) }
-    
+
     // Helper pour charger les données
-            Icons.AutoMirrored.Filled.TrendingUp,
+    fun loadWalletData() {
         loading = true
         error = null
         com.suzosky.coursier.network.ApiService.getCoursierOrders(
@@ -88,29 +87,27 @@ fun WalletScreen(
             status = "all",
             limit = 100,
             offset = 0
-        ) { data, err ->
+        ) { data, _err ->
             if (data != null) {
-            icon = Icons.AutoMirrored.Filled.CalendarToday
+                try {
                     val commandes = (data["commandes"] as? List<*>)?.mapNotNull { item ->
                         val m = item as? Map<*, *> ?: return@mapNotNull null
                         WalletHistoryItem(
                             id = (m["id"] as? String) ?: "",
                             clientNom = (m["clientNom"] as? String) ?: (m["client_nom"] as? String ?: ""),
                             adresseEnlevement = (m["adresseEnlevement"] as? String) ?: (m["adresse_depart"] as? String ?: ""),
-            icon = Icons.AutoMirrored.Filled.DateRange
                             prix = (m["prix"] as? Number)?.toDouble() ?: 0.0,
                             statut = (m["statut"] as? String) ?: "",
                             dateCommande = (m["dateCommande"] as? String) ?: (m["date_creation"] as? String ?: "").split(" ").firstOrNull() ?: "",
                             heureCommande = (m["heureCommande"] as? String) ?: (m["date_creation"] as? String ?: "").split(" ").getOrNull(1) ?: "",
                             distanceKm = (m["distanceKm"] as? Number)?.toDouble() ?: (m["distance_km"] as? Number)?.toDouble() ?: 0.0
                         )
-            icon = Icons.AutoMirrored.Filled.Event
+                    } ?: emptyList()
                     historiqueCommandes = commandes
                     earningsData = computeEarnings(commandes)
                 } catch (e: Exception) {
                     historiqueCommandes = emptyList()
                     earningsData = emptyMap()
-            icon = Icons.AutoMirrored.Filled.Analytics,
                 }
             } else {
                 historiqueCommandes = emptyList()
@@ -118,96 +115,90 @@ fun WalletScreen(
                 error = null
             }
             loading = false
-            icon = Icons.AutoMirrored.Filled.AddCard,
+        }
     }
 
     // Chargement initial + polling toutes 5 secondes (pause en arrière-plan)
     val lifecycleOwner = LocalLifecycleOwner.current
     LaunchedEffect(coursierId, lifecycleOwner) {
-            Icons.AutoMirrored.Filled.History,
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             while (true) {
-                kotlinx.coroutines.delay(5000L)
                 loadWalletData()
+                kotlinx.coroutines.delay(5000L)
             }
         }
-            Icons.AutoMirrored.Filled.List,
-    
+    }
+
     // Contenu scrollable sans barre de défilement apparente
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
-            Icons.AutoMirrored.Filled.Security,
     ) {
         // Header
         Text(
             text = "Mon Portefeuille",
             style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            Icons.AutoMirrored.Filled.Close,
+            fontWeight = FontWeight.Bold
         )
-        
+
         Spacer(modifier = Modifier.height(24.dp))
-        
+
         // Carte de solde principale avec gradient Suzosky
         Card(
-            Icons.AutoMirrored.Filled.LocationOn,
             shape = RoundedCornerShape(20.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-            Icons.AutoMirrored.Filled.Place,
+                    .background(
                         Brush.linearGradient(
                             colors = listOf(PrimaryDark, SecondaryBlue, PrimaryGold.copy(alpha = 0.3f))
                         )
                     )
                     .padding(24.dp)
             ) {
-            Icons.AutoMirrored.Filled.DirectionsRun,
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.Top
-                    ) {
-                        Column {
-                            Text(
-                                text = "Solde disponible",
-                                color = Color.White.copy(alpha = 0.8f),
-                                fontSize = 14.sp
-                            )
-                            Text(
-                                text = formatFcfa(balance),
-                                color = Color.White,
-                                fontSize = 32.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                text = "Dernière recharge: ${SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())}",
-                                color = Color.White.copy(alpha = 0.6f),
-                                fontSize = 12.sp
-                            )
-                        }
-                        
-                        Icon(
-                            imageVector = Icons.Default.AccountBalanceWallet,
-                            contentDescription = null,
-                            tint = PrimaryGold,
-                            modifier = Modifier.size(32.dp)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Top
+                ) {
+                    Column {
+                        Text(
+                            text = "Solde disponible",
+                            color = Color.White.copy(alpha = 0.8f),
+                            fontSize = 14.sp
+                        )
+                        Text(
+                            text = formatFcfa(balance),
+                            color = Color.White,
+                            fontSize = 32.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = "Dernière recharge: ${SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())}",
+                            color = Color.White.copy(alpha = 0.6f),
+                            fontSize = 12.sp
                         )
                     }
-                    
-                    Spacer(modifier = Modifier.height(24.dp))
-                    
-                    // Bouton de recharge supprimé - gardé seulement sur l'écran principal
+
+                    Icon(
+                        imageVector = Icons.Default.AccountBalanceWallet,
+                        contentDescription = null,
+                        tint = PrimaryGold,
+                        modifier = Modifier.size(32.dp)
+                    )
                 }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Bouton de recharge supprimé - gardé seulement sur l'écran principal
             }
         }
-        
+
         Spacer(modifier = Modifier.height(24.dp))
-        
+
         // Section Gains avec périodes
         Card(
             modifier = Modifier
@@ -237,7 +228,7 @@ fun WalletScreen(
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                         )
                     }
-                    
+
                     Icon(
                         Icons.Default.TrendingUp,
                         contentDescription = "Voir gains",
@@ -245,9 +236,9 @@ fun WalletScreen(
                         modifier = Modifier.size(32.dp)
                     )
                 }
-                
+
                 Spacer(modifier = Modifier.height(16.dp))
-                
+
                 // Aperçu gains aujourd'hui
                 if (loading) {
                     LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
@@ -290,9 +281,9 @@ fun WalletScreen(
                 }
             }
         }
-        
+
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         // Actions rapides
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -306,7 +297,7 @@ fun WalletScreen(
                 onClick = { showEarningsDialog = true },
                 modifier = Modifier.weight(1f)
             )
-            
+
             // Recharge rapide
             QuickActionCard(
                 title = "Recharger compte",
@@ -316,9 +307,9 @@ fun WalletScreen(
                 modifier = Modifier.weight(1f)
             )
         }
-        
+
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         // Section Historique des courses
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -346,7 +337,7 @@ fun WalletScreen(
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                         )
                     }
-                    
+
                     Icon(
                         Icons.Default.History,
                         contentDescription = null,
@@ -354,9 +345,9 @@ fun WalletScreen(
                         modifier = Modifier.size(28.dp)
                     )
                 }
-                
+
                 Spacer(modifier = Modifier.height(16.dp))
-                
+
                 // Statistiques rapides
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -369,7 +360,7 @@ fun WalletScreen(
                     )
                     HistoryStatItem(
                         value = if (loading) "-" else historiqueCommandes.count { it.statut == "livree" }.toString(),
-                        label = "Livrées", 
+                        label = "Livrées",
                         color = SuccessGreen
                     )
                     HistoryStatItem(
@@ -378,9 +369,9 @@ fun WalletScreen(
                         color = SecondaryBlue
                     )
                 }
-                
+
                 Spacer(modifier = Modifier.height(16.dp))
-                
+
                 // Aperçu inline des dernières courses (5 dernières)
                 if (!loading && error == null && historiqueCommandes.isNotEmpty()) {
                     val latest = historiqueCommandes.take(5)
@@ -462,7 +453,7 @@ fun WalletScreen(
                 }
             }
         }
-        
+
         Spacer(modifier = Modifier.height(16.dp))
 
         // Informations CinetPay
@@ -490,9 +481,9 @@ fun WalletScreen(
                         fontWeight = FontWeight.Bold
                     )
                 }
-                
+
                 Spacer(modifier = Modifier.height(8.dp))
-                
+
                 Text(
                     text = "Vos recharges sont sécurisées et traitées instantanément via CinetPay. Moyens de paiement acceptés : Mobile Money, cartes bancaires.",
                     style = MaterialTheme.typography.bodySmall,
