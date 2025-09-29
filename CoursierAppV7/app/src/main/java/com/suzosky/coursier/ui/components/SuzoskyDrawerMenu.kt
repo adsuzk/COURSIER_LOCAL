@@ -105,7 +105,7 @@ fun SuzoskyDrawerMenu(
                 Spacer(modifier = Modifier.height(16.dp))
                 
                 MenuOption(
-                    icon = Icons.Filled.ExitToApp,
+                    icon = Icons.AutoMirrored.Filled.ExitToApp,
                     text = "Déconnexion",
                     onClick = onLogout,
                     isDestructive = true
