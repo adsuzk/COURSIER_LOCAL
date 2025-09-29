@@ -44,12 +44,7 @@ if (file_exists($newPath)) {
                 }
             
                 public function getUnavailabilityMessage(): string {
-                    // Prefer a centralized message provided by the bootstrap (index.php)
-                    if (isset($GLOBALS['commercialFallbackMessage']) && trim((string)$GLOBALS['commercialFallbackMessage']) !== '') {
-                        return (string)$GLOBALS['commercialFallbackMessage'];
-                    }
-                    // If not provided, return an empty string so the caller can decide the final message
-                    return '';
+                    return 'Nos coursiers sont actuellement très sollicités. Restez sur cette page — des coursiers se libèrent dans un instant et le formulaire se rouvrira automatiquement pour vous permettre de commander immédiatement. Merci pour votre patience !';
                 }
         }
     }
