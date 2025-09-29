@@ -275,9 +275,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                             modifier = Modifier
                                 .fillMaxWidth(),
                             singleLine = true,
-                            keyboardOptions = KeyboardOptions.Default.copy(
-                                imeAction = ImeAction.Next
-                            ),
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                             keyboardActions = KeyboardActions(
                                 onNext = {
                                     passwordFocusRequester.requestFocus()
@@ -301,9 +299,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                                 .fillMaxWidth()
                                 .focusRequester(passwordFocusRequester),
                             singleLine = true,
-                            keyboardOptions = KeyboardOptions.Default.copy(
-                                imeAction = ImeAction.Done
-                            ),
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                             keyboardActions = KeyboardActions(
                                 onDone = {
                                     if (identifier.isBlank() || password.isBlank()) {
