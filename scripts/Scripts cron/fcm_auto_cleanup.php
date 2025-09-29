@@ -12,13 +12,14 @@ ini_set('display_errors', 1);
 
 require_once __DIR__ . '/../../config.php';
 
-$argv = $_SERVER['argv'] ?? [];
+$argv = isset($_SERVER['argv']) ? $_SERVER['argv'] : array();
 $isDryRun = in_array('--dry-run', $argv, true) || in_array('-n', $argv, true);
 $isVerbose = in_array('--verbose', $argv, true) || in_array('-v', $argv, true);
 
 // Threshold in minutes (default 2). Can be overridden with env var FCM_CLEANUP_THRESHOLD_MIN
 // NOTE: reduced to 2 minutes as requested so the server will quickly mark orphan tokens as inactive
-$staleMinutes = (int)(getenv('FCM_CLEANUP_THRESHOLD_MIN') ?: 2);
+$envVal = getenv('FCM_CLEANUP_THRESHOLD_MIN');
+$staleMinutes = (int)(($envVal !== false && $envVal !== '') ? $envVal : 2);
 
 // Log file
 $logDir = __DIR__ . '/../../diagnostic_logs';
@@ -54,12 +55,16 @@ try {
         exit(0);
     }
 
-    $ids = array_map(fn($r) => (int)$r['id'], $rows);
+    $ids = array_map(function($r) { return (int)$r['id']; }, $rows);
 
     if ($isDryRun) {
         foreach ($rows as $r) {
+            $coursier_id = isset($r['coursier_id']) ? $r['coursier_id'] : 'NULL';
+            $agent_id = isset($r['agent_id']) ? $r['agent_id'] : 'NULL';
+            $updated_at = isset($r['updated_at']) ? $r['updated_at'] : 'NULL';
+            $last_ping = isset($r['last_ping']) ? $r['last_ping'] : 'NULL';
             echo sprintf("DRY: id=%d coursier_id=%s agent_id=%s token=%s updated_at=%s last_ping=%s\n",
-                $r['id'], $r['coursier_id'] ?? 'NULL', $r['agent_id'] ?? 'NULL', substr($r['token'],0,40), $r['updated_at'] ?? 'NULL', $r['last_ping'] ?? 'NULL');
+                $r['id'], $coursier_id, $agent_id, substr($r['token'],0,40), $updated_at, $last_ping);
         }
         exit(0);
     }
@@ -74,8 +79,12 @@ try {
         clog("Deactivated {$count} token(s).");
         // Write a short report to STDOUT as well
         foreach ($rows as $r) {
+            $coursier_id = isset($r['coursier_id']) ? $r['coursier_id'] : 'NULL';
+            $agent_id = isset($r['agent_id']) ? $r['agent_id'] : 'NULL';
+            $updated_at = isset($r['updated_at']) ? $r['updated_at'] : 'NULL';
+            $last_ping = isset($r['last_ping']) ? $r['last_ping'] : 'NULL';
             echo sprintf("DEACTIVATED: id=%d coursier_id=%s agent_id=%s token=%s updated_at=%s last_ping=%s\n",
-                $r['id'], $r['coursier_id'] ?? 'NULL', $r['agent_id'] ?? 'NULL', substr($r['token'],0,40), $r['updated_at'] ?? 'NULL', $r['last_ping'] ?? 'NULL');
+                $r['id'], $coursier_id, $agent_id, substr($r['token'],0,40), $updated_at, $last_ping);
         }
         exit(0);
     } else {
