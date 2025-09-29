@@ -1309,6 +1309,27 @@ if ($sessionSenderPhoneRaw !== '') {
             return base.toString();
         };
 
+        // Désactive tous les champs et modes de paiement après acceptation
+        function lockOrderForm() {
+            if (!form) return;
+            // Désactive tous les champs du formulaire
+            Array.from(form.elements).forEach(el => {
+                if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
+                    el.readOnly = true;
+                    el.disabled = true;
+                }
+            });
+            // Désactive tous les boutons radio de paiement
+            const radios = form.querySelectorAll('input[type="radio"][name="paymentMethod"]');
+            radios.forEach(r => { r.disabled = true; });
+            // Désactive le bouton de soumission
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) submitBtn.disabled = true;
+            // Ajoute une classe visuelle si besoin
+            form.classList.add('order-locked');
+        }
+
+        // ...existing code...
         const startPolling = (orderMeta) => {
             if (!orderMeta) return;
             clearPollTimer();
@@ -1373,13 +1394,19 @@ if ($sessionSenderPhoneRaw !== '') {
                                 state.lastOrderMeta.coursier_id = statusData.coursier_id;
                             }
 
-                            // Affichage contact coursier lorsque la course est acceptée/prise/en cours
+
+                            // Affichage contact coursier ET verrouillage du formulaire si commande acceptée ou plus
                             try {
                                 const showContact = ['acceptee','picked_up','en_cours','livree'].includes(statut);
                                 if (showContact && data.coursier && (data.coursier.nom || data.coursier.telephone)) {
                                     renderCourierContact(data.coursier);
+                                    lockOrderForm();
                                 } else {
                                     renderCourierContact(null);
+                                }
+                                // Si la commande est acceptée ou plus, verrouille le formulaire même sans contact
+                                if (showContact) {
+                                    lockOrderForm();
                                 }
                             } catch (e) {}
 

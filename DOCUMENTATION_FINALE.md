@@ -52,6 +52,30 @@ VALUES ('TestAgent', 'Demo', 'test@demo.com', '+22501020304', 'hors_ligne', NOW(
 
 ---
 
+
+## 🔒 [29 Sept 2025] — VERROUILLAGE DU FORMULAIRE APRÈS ACCEPTATION DE COMMANDE
+
+**Comportement :**
+
+- Dès qu’un coursier accepte la commande (statut `acceptee`, `picked_up`, `en_cours`, `livree`),
+    - **Tous les champs du formulaire de commande sont verrouillés** (readonly/disabled)
+    - **Les modes de paiement ne sont plus modifiables**
+    - **Le bouton de soumission est désactivé**
+    - **Aucune modification n’est possible côté client**
+- Cela empêche tout changement de mode de paiement ou de données après acceptation.
+- Le bloc contact du coursier reste visible si applicable.
+
+**Technique :**
+- La logique est gérée côté JS dans `order_form.php` :
+    - Fonction `lockOrderForm()` appelée automatiquement dès que le statut de la commande >= acceptée.
+    - Tous les champs, radios, et boutons sont désactivés.
+
+**Cas d’usage :**
+- Si le client recharge la page après acceptation, le formulaire reste verrouillé.
+- Si le client tente de changer de mode de paiement après acceptation, l’UI l’en empêche.
+
+---
+
 ## Diagnostic et réparation du flux de commande (frontend ↔ backend)
 
 ### 1. Problème initial
