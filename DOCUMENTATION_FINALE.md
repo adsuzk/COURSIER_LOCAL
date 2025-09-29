@@ -503,53 +503,6 @@ FCMTokenSecurity::getAvailableCouriers();
 
 ## 🏗️ **STRUCTURE DES TABLES PRINCIPALES**
 
-#### **Table unique pour les coursiers : `agents_suzosky`**
-- **Décision architecturale** : Une seule table pour éviter les incohérences
-- **Table `coursiers`** : ❌ **DEPRECATED - NE PLUS UTILISER**
-- **Table `agents_suzosky`** : ✅ **TABLE PRINCIPALE UNIQUE**
-
-```sql
--- Structure agents_suzosky (table principale)
-agents_suzosky:
-├── id (PK)
-├── nom, prenoms
-├── email, telephone
-├── statut_connexion (en_ligne/hors_ligne)
-├── current_session_token
-├── last_login_at
-├── solde_wallet (OBLIGATOIRE > 0 pour recevoir commandes)
-└── mot_de_passe (hash + plain_password fallback)
-```
-
-#### **Règles de gestion CRITIQUES :**
-
-1. **SOLDE OBLIGATOIRE** : `solde_wallet > 0` requis pour recevoir commandes
-2. **FCM OBLIGATOIRE** : Token FCM actif requis pour notifications
-3. **SESSION ACTIVE** : `current_session_token` requis pour connexion app
-4. **ACTIVITÉ RÉCENTE** : `last_login_at < 30 minutes` pour être "disponible"
-
-### 🔍 **Système de présence unifié (coursiers actifs)**
-
-- **Source unique** : `lib/coursier_presence.php` centralise toute la logique de présence. Aucune autre page ne doit recalculer ces indicateurs manuellement.
-- **Fonctions clés** :
-	- `getAllCouriers($pdo)` → retourne les coursiers avec indicateurs normalisés (`is_connected`, `has_wallet_balance`, `has_active_token`, etc.).
-	- `getConnectedCouriers($pdo)` → fournit la liste officielle des IDs connectés utilisée par toutes les interfaces.
-	- `getCoursierStatusLight($row)` → prépare le résumé couleur/icône consommé par les vues.
-	- `getFCMGlobalStatus($pdo)` → calcule les KPIs FCM globaux (taux actifs, tokens manquants).
-- **Données utilisées** :
-	- `agents_suzosky` (statut, solde, session, dernier login)
-	- `device_tokens` (token actif obligatoire)
-	- `notifications_log_fcm` (statistiques historiques)
-- **Consommateurs actuels** :
-    - `admin_commandes_enhanced.php` → front-end JS interroge `api/coursiers_connectes.php`
-    - `admin/sections_finances/rechargement_direct.php` → rafraîchissement temps réel via l'API dédiée
-    - `admin/dashboard_suzosky_modern.php` → cartes et compteurs synchronisés avec la même API
-- **Bonnes pratiques** :
-    - Pour afficher ou filtrer la présence, consommer l'API `api/coursiers_connectes.php` (retour JSON avec `data[]`, `meta.total`, `meta.fcm_summary`).
-	- Ne plus appeler directement d'anciennes routes comme `check_table_agents.php`, `check_coursier_debug.php`, etc. → elles sont conservées uniquement pour diagnostic ponctuel.
-    - `meta.fcm_summary` expose `total_connected`, `with_fcm`, `without_fcm`, `fcm_rate` et un `status` (`excellent|correct|critique|erreur`) prêt à être relié au design system.
-
----
 
 ## 💰 **SYSTÈME DE RECHARGEMENT**
 
