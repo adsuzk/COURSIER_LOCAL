@@ -157,8 +157,9 @@ private fun CommandeHistoriqueCard(
     val statutColor = when (commande.statut) {
         "livree" -> Color.Green
         "annulee" -> Color.Red
-    "en_cours" -> WarningYellow
+        "en_cours" -> WarningYellow
         else -> Color.Gray
+    }
     
     val statutText = when (commande.statut) {
         "livree" -> "Livrée"
