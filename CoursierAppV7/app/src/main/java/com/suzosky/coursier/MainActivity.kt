@@ -48,25 +48,20 @@ fun deactivateFcmTokenOnServer(context: android.content.Context) {
     val prefs = context.getSharedPreferences("suzosky_prefs", android.content.Context.MODE_PRIVATE)
     val token = prefs.getString("fcm_token", null)
     if (token.isNullOrBlank()) return
-    val client = OkHttpClient()
-    val formBody = FormBody.Builder().add("token", token).build()
-    val url = "https://coursier.conciergerie-privee-suzosky.com/COURSIER_LOCAL/deactivate_device_token.php"
-    val request = Request.Builder().url(url).post(formBody).build()
-    CoroutineScope(Dispatchers.IO).launch {
+
+    // Use ApiService helper which provides fallback and queuing behavior
+    ApiService.deactivateDeviceToken(context, token, reEnqueueOnFailure = true, onSuccess = {
+        Log.d("Logout", "Token désactivé côté serveur via ApiService")
+        try { prefs.edit { remove("fcm_token") } } catch (_: Exception) {}
+    }, onFailure = { err ->
+        Log.w("Logout", "Échec désactivation token via ApiService: $err")
+        // Make failure visible to user with a short Toast and a persistent log entry
         try {
-            client.newCall(request).enqueue(object : Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    Log.w("Logout", "Échec désactivation token côté serveur: ${e.message}")
-                }
-                override fun onResponse(call: Call, response: Response) {
-                    Log.d("Logout", "Token désactivé côté serveur: ${response.code}")
-                    response.close()
-                }
-            })
-        } catch (e: Exception) {
-            Log.w("Logout", "Erreur désactivation token: ${e.message}")
-        }
-    }
+            android.os.Handler(android.os.Looper.getMainLooper()).post {
+                android.widget.Toast.makeText(context, "Échec désactivation token: $err", android.widget.Toast.LENGTH_LONG).show()
+            }
+        } catch (_: Exception) {}
+    })
 }
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -197,6 +192,13 @@ class MainActivity : ComponentActivity() {
                 }
             } catch (e: Exception) {
                 Log.e("MainActivity", "registerDeviceToken startup error", e)
+            }
+
+            // Process any pending token deactivations queued from previous offline failures
+            try {
+                ApiService.processPendingDeactivations(this)
+            } catch (e: Exception) {
+                Log.w("MainActivity", "Erreur processPendingDeactivations: ${e.message}")
             }
             
             println("✅ Application démarrée avec succès")
