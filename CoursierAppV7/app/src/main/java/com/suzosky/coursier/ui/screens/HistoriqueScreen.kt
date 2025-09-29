@@ -159,12 +159,14 @@ private fun CommandeHistoriqueCard(
         "annulee" -> Color.Red
         "en_cours" -> WarningYellow
         else -> Color.Gray
-    
+    }
+
     val statutText = when (commande.statut) {
         "livree" -> "Livrée"
         "annulee" -> "Annulée"
         "en_cours" -> "En cours"
         else -> "Inconnue"
+    }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -313,6 +315,7 @@ private fun sortCommandes(
         "en_cours" -> 1
         "annulee" -> 2
         else -> 3
+    }
     val comparatorPrimary = when (field) {
         SortField.DATE -> compareBy<HistoriqueCommande> {
             runCatching { sdf.parse("${it.date} ${it.heure}")?.time ?: 0L }.getOrDefault(0L)
