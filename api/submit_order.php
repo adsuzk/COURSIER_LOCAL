@@ -77,21 +77,25 @@ try {
 	exit;
 }
 
-// Squelette d'insertion d'une commande (simulation)
-// TODO: Adapter les champs selon la structure réelle de la table commandes
+
+// Insertion réelle en base de données (table 'commandes')
 $commande = [
 	'client_id' => $data['client_id'],
 	'date_creation' => date('Y-m-d H:i:s'),
 	// Ajouter d'autres champs nécessaires ici
 ];
 
-// Exemple de requête préparée (simulation, pas d'insert réel)
-// $stmt = $pdo->prepare('INSERT INTO commandes (client_id, date_creation) VALUES (?, ?)');
-// $stmt->execute([$commande['client_id'], $commande['date_creation']]);
-
-// Log de la commande simulée
-if (function_exists('logMessage')) {
-	logMessage('diagnostics_errors.log', 'Commande simulée: ' . json_encode($commande));
+try {
+	$stmt = $pdo->prepare('INSERT INTO commandes (client_id, date_creation) VALUES (?, ?)');
+	$stmt->execute([$commande['client_id'], $commande['date_creation']]);
+	$commande_id = $pdo->lastInsertId();
+	if (function_exists('logMessage')) {
+		logMessage('diagnostics_errors.log', 'Commande insérée: ' . json_encode($commande) . ' | id=' . $commande_id);
+	}
+	echo json_encode(["success" => true, "message" => "Commande insérée en base", "commande_id" => $commande_id, "commande" => $commande]);
+} catch (Throwable $e) {
+	if (function_exists('logMessage')) {
+		logMessage('diagnostics_errors.log', 'Erreur insertion commande: ' . $e->getMessage());
+	}
+	echo json_encode(["success" => false, "message" => "Erreur lors de l'insertion en base", "error" => $e->getMessage(), "commande" => $commande]);
 }
-
-echo json_encode(["success" => true, "message" => "Commande simulée insérée (non réelle)", "commande" => $commande]);
