@@ -95,11 +95,12 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     
-    // Compose BOM et UI
+    // Compose BOM (version gérée automatiquement)
+    implementation(platform("androidx.compose:compose-bom:2024.01.00"))
+    implementation(libs.androidx.material3)
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
     // Compose Foundation (required for LazyColumn.stickyHeader)
     implementation("androidx.compose.foundation:foundation:1.7.6")
     // Compose Animation (required for AnimatedVisibility, fadeIn)
