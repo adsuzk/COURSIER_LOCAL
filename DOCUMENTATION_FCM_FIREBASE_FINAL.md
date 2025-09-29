@@ -99,6 +99,10 @@ INSERT INTO device_tokens VALUES (
     '2025-09-28 12:40:31', '2025-09-28 12:42:36', 
     '2025-09-28 12:42:36', 1, NULL, NULL
 );
+
+### Message affiché quand aucun coursier n'est disponible
+
+"Nos coursiers sont actuellement très sollicités. Restez sur cette page — des coursiers se libèrent dans un instant et le formulaire se rouvrira automatiquement pour vous permettre de commander immédiatement. Merci pour votre patience !"
 ```
 
 ### 🔧 API FCM Backend
