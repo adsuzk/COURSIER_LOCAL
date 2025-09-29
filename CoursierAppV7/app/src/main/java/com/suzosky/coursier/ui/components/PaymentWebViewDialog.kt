@@ -200,6 +200,9 @@ fun PaymentWebViewDialog(
         }
     }
 )
+}
+
+@Composable
 private fun SummaryCard(label: String, value: String) {
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
