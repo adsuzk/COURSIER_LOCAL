@@ -235,7 +235,7 @@ private fun ErrorOverlay(message: String, onRetry: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Icon(Icons.Default.Warning, contentDescription = null, tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(32.dp))
+            Icon(Icons.AutoMirrored.Filled.Warning, contentDescription = null, tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(32.dp))
             Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = message.ifBlank { "Impossible de charger la page CinetPay." },
@@ -258,7 +258,7 @@ private fun SupportHint() {
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
         ) {
             Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.Lock, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                Icon(Icons.AutoMirrored.Filled.Lock, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(text = "Paiement protégé", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)

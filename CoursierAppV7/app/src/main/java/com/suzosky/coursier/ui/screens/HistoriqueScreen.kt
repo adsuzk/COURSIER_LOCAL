@@ -58,7 +58,7 @@ fun HistoriqueScreen() {
                 colors = FilterChipDefaults.filterChipColors(selectedContainerColor = PrimaryGold.copy(alpha = 0.2f), selectedLabelColor = PrimaryGold))
             FilterChip(onClick = {}, label = { Text("Tri secondaire: Statut") }, selected = false,
                 colors = FilterChipDefaults.filterChipColors(selectedContainerColor = PrimaryGold, selectedLabelColor = PrimaryDark))
-            IconButton(onClick = {}) { Icon(Icons.Default.ArrowDownward, contentDescription = null, tint = PrimaryGold) }
+            IconButton(onClick = {}) { Icon(Icons.AutoMirrored.Filled.ArrowDownward, contentDescription = null, tint = PrimaryGold) }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -119,7 +119,7 @@ private fun CommandeHistoriqueCard(commande: HistoriqueCommande) {
             Spacer(modifier = Modifier.height(12.dp))
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(imageVector = Icons.Default.Person, contentDescription = null, tint = PrimaryGold, modifier = Modifier.size(16.dp))
+                Icon(imageVector = Icons.AutoMirrored.Filled.Person, contentDescription = null, tint = PrimaryGold, modifier = Modifier.size(16.dp))
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(text = commande.clientNom, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Medium)
 
@@ -134,8 +134,8 @@ private fun CommandeHistoriqueCard(commande: HistoriqueCommande) {
             Spacer(modifier = Modifier.height(8.dp))
 
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                AddressRow(icon = Icons.Default.LocationOn, address = commande.adresseEnlevement, label = "Enlèvement")
-                AddressRow(icon = Icons.Default.Flag, address = commande.adresseLivraison, label = "Livraison")
+                AddressRow(icon = Icons.AutoMirrored.Filled.LocationOn, address = commande.adresseEnlevement, label = "Enlèvement")
+                AddressRow(icon = Icons.AutoMirrored.Filled.Flag, address = commande.adresseLivraison, label = "Livraison")
             }
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -185,7 +185,7 @@ private fun sortCommandes(list: List<HistoriqueCommande>, field: SortField, orde
 private fun DateHeader(dateStr: String) {
     Surface(color = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f), shadowElevation = 2.dp) {
         Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
-            Icon(imageVector = Icons.Default.CalendarToday, contentDescription = null, tint = PrimaryGold, modifier = Modifier.size(14.dp))
+            Icon(imageVector = Icons.AutoMirrored.Filled.CalendarToday, contentDescription = null, tint = PrimaryGold, modifier = Modifier.size(14.dp))
             Spacer(modifier = Modifier.width(8.dp))
             Text(text = dateStr, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f), style = MaterialTheme.typography.labelMedium)
         }
