@@ -1,6 +1,6 @@
-import androidx.compose.runtime.Composable
 
 package com.suzosky.coursier.ui.screens
+import androidx.compose.runtime.Composable
 
 import androidx.core.content.FileProvider
 import androidx.compose.foundation.border
