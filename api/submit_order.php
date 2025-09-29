@@ -62,7 +62,7 @@ if (!empty($rawInput)) {
 
 // Validation complète des champs attendus
 $requiredFields = [
-	'departure', 'destination', 'senderPhone', 'receiverPhone', 'packageDescription', 'priority', 'paymentMethod', 'price'
+	'departure', 'destination', 'senderPhone', 'receiverPhone', 'priority', 'paymentMethod', 'price'
 ];
 $errors = [];
 foreach ($requiredFields as $field) {
