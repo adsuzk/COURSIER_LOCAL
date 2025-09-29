@@ -13,26 +13,7 @@ data class HistoriqueCommande(
 private enum class StatusFilter { ALL, LIVREE, EN_COURS, ANNULEE }
 private enum class PeriodFilter { TOUT, AUJOURD_HUI, SEMAINE, MOIS }
 private enum class SortField { DATE, MONTANT }
-private enum class SortOrder { ASC, DESC }
 
-
-
-                        statut = (map["statut"] as? String) ?: "",
-                        date = (map["dateCommande"] as? String) ?: "",
-                        heure = (map["heureCommande"] as? String) ?: "",
-                    )
-                } ?: emptyList()
-                lastFetchCount = list.size
-                allCommandes = if (reset) list else (allCommandes + list)
-                offset += lastFetchCount
-            } catch (e: Exception) {
-                error = "Erreur parsing: ${e.message}"
-            } finally {
-                loading = false
-                loadingMore = false
-            }
-        }
-    }
 
     // Initial fetch & when status changes
     LaunchedEffect(coursierId, statusFilter) { fetch(reset = true) }
