@@ -240,6 +240,51 @@ function debounce(func, wait, immediate) {
                 modal: modal ? 'FOUND' : 'NOT FOUND'
             });
         }, 1000);
+
+        // Start polling backend availability for coursiers as a fallback when FCM web is not present
+        try {
+            if (typeof startCoursierAvailabilityPoll !== 'function') {
+                window.COURSER_POLL_INTERVAL = 30000; // 30s
+                window._coursierPollTimer = null;
+
+                window.getCoursierAvailability = async function() {
+                    try {
+                        const resp = await fetch((window.ROOT_PATH || '') + '/api/get_coursier_availability.php', { cache: 'no-store' });
+                        const j = await resp.json();
+                        if (j && j.success) {
+                            if (typeof window.setFCMCoursierStatus === 'function') {
+                                window.setFCMCoursierStatus(Boolean(j.available), j.message || '');
+                            } else {
+                                // If setFCM API missing, create a temporary banner
+                                if (!j.available) {
+                                    try { alert(j.message || 'Aucun coursier disponible'); } catch(e){}
+                                }
+                            }
+                        }
+                    } catch (err) {
+                        console.warn('Erreur getCoursierAvailability:', err);
+                    }
+                };
+
+                window.startCoursierAvailabilityPoll = function() {
+                    if (window._coursierPollTimer) return;
+                    // Run immediately and then interval
+                    window.getCoursierAvailability();
+                    window._coursierPollTimer = setInterval(window.getCoursierAvailability, window.COURSER_POLL_INTERVAL);
+                };
+
+                window.stopCoursierAvailabilityPoll = function() {
+                    if (window._coursierPollTimer) {
+                        clearInterval(window._coursierPollTimer);
+                        window._coursierPollTimer = null;
+                    }
+                };
+            }
+            // Start polling by default so the order form receives availability info
+            window.startCoursierAvailabilityPoll();
+        } catch (e) {
+            console.warn('⚠️ Impossible de démarrer le poller de disponibilité coursiers', e);
+        }
     }
 
     // Mettre à jour les éléments d'authentification, notamment dans le menu mobile
