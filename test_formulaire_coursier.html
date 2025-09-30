@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Formulaire Coursier - Suzosky</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #1a1a2e; color: white; }
+        .controls { background: #16213e; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
+        .controls button { margin: 10px; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .connect-btn { background: #4caf50; color: white; }
+        .disconnect-btn { background: #f44336; color: white; }
+        .ping-btn { background: #2196f3; color: white; }
+        .status { background: #0f3460; padding: 15px; border-radius: 8px; margin: 10px 0; }
+        .available { border-left: 5px solid #4caf50; }
+        .unavailable { border-left: 5px solid #f44336; }
+        .form-test { background: #16213e; padding: 20px; border-radius: 10px; margin-top: 20px; }
+        .form-locked { opacity: 0.5; border: 2px dashed #f44336; }
+        .form-open { border: 2px solid #4caf50; }
+        iframe { width: 100%; height: 500px; border: 1px solid #333; border-radius: 5px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>🚚 Test Formulaire Coursier Suzosky</h1>
+    
+    <div class="controls">
+        <h3>Contrôles Coursier (ID: 5 - ZALLE)</h3>
+        <button class="connect-btn" onclick="connectCoursier()">🟢 Connecter Coursier</button>
+        <button class="disconnect-btn" onclick="disconnectCoursier()">🔴 Déconnecter Coursier</button>
+        <button class="ping-btn" onclick="pingCoursier()">📡 Ping (Keep-Alive)</button>
+        <button onclick="checkStatus()">🔍 Vérifier État</button>
+    </div>
+    
+    <div id="status" class="status">
+        <strong>État:</strong> <span id="statusText">Chargement...</span><br>
+        <small id="statusDetails"></small>
+    </div>
+    
+    <div class="form-test">
+        <h3>Test Formulaire Index</h3>
+        <p>Le formulaire ci-dessous devrait s'ouvrir/fermer selon l'état du coursier :</p>
+        <iframe src="/COURSIER_LOCAL/index.php" id="indexFrame"></iframe>
+    </div>
+
+    <script>
+        const API_BASE = '/COURSIER_LOCAL/api';
+        
+        async function connectCoursier() {
+            try {
+                const resp = await fetch(`${API_BASE}/simulate_app_connection.php?action=connect&coursier_id=5`);
+                const result = await resp.json();
+                console.log('Connect result:', result);
+                updateStatus('🟢 CONNECTÉ', 'Coursier connecté, formulaire devrait s\'ouvrir', 'available');
+                setTimeout(checkStatus, 2000); // Vérifier après 2s
+            } catch (e) {
+                console.error('Connect error:', e);
+                updateStatus('❌ ERREUR', e.message, 'unavailable');
+            }
+        }
+        
+        async function disconnectCoursier() {
+            try {
+                const resp = await fetch(`${API_BASE}/simulate_app_connection.php?action=disconnect&coursier_id=5`);
+                const result = await resp.json();
+                console.log('Disconnect result:', result);
+                updateStatus('🔴 DÉCONNECTÉ', 'Coursier déconnecté, formulaire devrait se fermer après 60s', 'unavailable');
+                setTimeout(checkStatus, 2000);
+            } catch (e) {
+                console.error('Disconnect error:', e);
+                updateStatus('❌ ERREUR', e.message, 'unavailable');
+            }
+        }
+        
+        async function pingCoursier() {
+            try {
+                const resp = await fetch(`${API_BASE}/simulate_app_connection.php?action=ping&coursier_id=5`);
+                const result = await resp.json();
+                console.log('Ping result:', result);
+                updateStatus('📡 PING', 'Keep-alive envoyé', 'available');
+                setTimeout(checkStatus, 1000);
+            } catch (e) {
+                console.error('Ping error:', e);
+                updateStatus('❌ ERREUR', e.message, 'unavailable');
+            }
+        }
+        
+        async function checkStatus() {
+            try {
+                const resp = await fetch(`${API_BASE}/get_coursier_availability.php`);
+                const result = await resp.json();
+                console.log('Status result:', result);
+                
+                if (result.available) {
+                    updateStatus('✅ DISPONIBLE', 
+                        `Fresh: ${result.fresh_count}, Active: ${result.active_count}, Message: ${result.message}`, 
+                        'available');
+                } else {
+                    updateStatus('❌ INDISPONIBLE', 
+                        `Fresh: ${result.fresh_count}, Active: ${result.active_count}, Stale: ${result.stale_active_count}, Message: ${result.message}`, 
+                        'unavailable');
+                }
+            } catch (e) {
+                console.error('Status error:', e);
+                updateStatus('❌ ERREUR', e.message, 'unavailable');
+            }
+        }
+        
+        function updateStatus(text, details, type) {
+            document.getElementById('statusText').textContent = text;
+            document.getElementById('statusDetails').textContent = details;
+            
+            const statusEl = document.getElementById('status');
+            statusEl.className = `status ${type}`;
+            
+            // Refresh iframe après changement d'état
+            setTimeout(() => {
+                document.getElementById('indexFrame').src = document.getElementById('indexFrame').src;
+            }, 500);
+        }
+        
+        // Auto-refresh toutes les 5s
+        setInterval(checkStatus, 5000);
+        
+        // Premier check
+        checkStatus();
+    </script>
+</body>
+</html>
