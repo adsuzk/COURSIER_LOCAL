@@ -32,18 +32,6 @@ if ($raw) {
 $data = array_merge($_GET, $_POST, $payload);
 $action = $data['action'] ?? 'login';
 
-// Logging léger des tentatives (sans mots de passe)
-try {
-    $idMask = '';
-    if (!empty($data['identifier'])) {
-        $id = (string)$data['identifier'];
-        $idMask = substr($id, 0, 2) . str_repeat('*', max(0, strlen($id) - 4)) . substr($id, -2);
-    }
-    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-    $ua = $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
-    error_log("AGENT_AUTH attempt method=" . ($_SERVER['REQUEST_METHOD'] ?? 'CLI') . ", action=$action, id=$idMask, ip=$ip, ua='$ua'");
-} catch (Throwable $e) { /* ignore logging errors */ }
-
 switch ($action) {
     case 'login':
         $identifier = trim($data['identifier'] ?? ''); // matricule ou telephone
