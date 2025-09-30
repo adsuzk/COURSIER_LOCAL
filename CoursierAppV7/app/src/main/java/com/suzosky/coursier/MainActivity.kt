@@ -119,6 +119,13 @@ class MainActivity : ComponentActivity() {
             if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
                 permissionsToRequest.add(android.Manifest.permission.ACCESS_COARSE_LOCATION)
             }
+
+            // Android 14+ : explicit runtime permission for starting LOCATION foreground services
+            if (android.os.Build.VERSION.SDK_INT >= 34) {
+                if (ContextCompat.checkSelfPermission(this, "android.permission.FOREGROUND_SERVICE_LOCATION") != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                    permissionsToRequest.add("android.permission.FOREGROUND_SERVICE_LOCATION")
+                }
+            }
             
             // Demander toutes les permissions manquantes
             if (permissionsToRequest.isNotEmpty()) {
@@ -270,6 +277,10 @@ class MainActivity : ComponentActivity() {
             
             val locationGranted = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == android.content.pm.PackageManager.PERMISSION_GRANTED ||
                                  ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == android.content.pm.PackageManager.PERMISSION_GRANTED
+
+            val fgsLocationGranted = if (android.os.Build.VERSION.SDK_INT >= 34) {
+                ContextCompat.checkSelfPermission(this, "android.permission.FOREGROUND_SERVICE_LOCATION") == android.content.pm.PackageManager.PERMISSION_GRANTED
+            } else true
             
             // Démarrer le service si les notifications sont accordées
             if (notificationGranted) {
@@ -294,6 +305,21 @@ class MainActivity : ComponentActivity() {
             }
             
             // Informer l'utilisateur si la localisation n'est pas accordée
+            // If location + FGS-location were granted and we have a coursier id saved, start the foreground tracking service.
+            try {
+                val prefs = getSharedPreferences("suzosky_prefs", MODE_PRIVATE)
+                val existingId = prefs.getInt("coursier_id", -1)
+                if (locationGranted && fgsLocationGranted && existingId > 0) {
+                    try {
+                        startLocationForegroundService(existingId)
+                    } catch (e: Exception) {
+                        Log.w("MainActivity", "Failed to start LocationForegroundService after permission grant: ${e.message}")
+                    }
+                }
+            } catch (e: Exception) {
+                Log.w("MainActivity", "Error while starting location service post-permission: ${e.message}")
+            }
+
             // TODO: Show Compose snackbar for location permission result
         }
     }
