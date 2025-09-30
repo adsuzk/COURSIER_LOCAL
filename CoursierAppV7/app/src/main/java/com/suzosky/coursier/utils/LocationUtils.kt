@@ -45,6 +45,7 @@ object LocationUtils {
                                     if (!ok) {
                                         Log.w("LocationUtils", "updateCoursierPosition failed: $err")
                                     }
+                                    return@updateCoursierPosition
                                 }
                             }
                         } catch (e: Exception) {
