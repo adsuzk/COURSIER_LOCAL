@@ -194,19 +194,39 @@
                 window._skipBeforeUnloadCheck = false;
             }
             
+            // If the client is not logged in, defer UI handling to FCM-driven status if available.
+            // The FCM layer should call `window.setFCMCoursierStatus(isAvailable, message)` to control
+            // whether the order form is visible. If FCM status is present we respect it; otherwise
+            // fall back to the previous behaviour (prompt for login).
             if (!window.currentClient) {
-                // Tenter différentes méthodes pour ouvrir la modale de connexion
-                const openLink = document.getElementById('openConnexionLink') || document.getElementById('openConnexionLinkMobile');
-                if (openLink) {
-                    openLink.click();
-                } else if (typeof window.openConnexionModal === 'function') {
-                    window.openConnexionModal();
-                } else if (typeof window.showModal === 'function' && document.getElementById('connexionModal')) {
-                    showModal('connexionModal');
+                if (typeof window.fcmCoursierAvailable !== 'undefined') {
+                    if (!window.fcmCoursierAvailable) {
+                        // Let FCM show a "no coursier available" message (or fallback to alert)
+                        if (typeof window.showCoursierUnavailableMessage === 'function') {
+                            window.showCoursierUnavailableMessage(window.fcmCoursierMessage || 'Aucun coursier disponible pour le moment.');
+                        } else {
+                            alert(window.fcmCoursierMessage || 'Aucun coursier disponible pour le moment.');
+                        }
+                        return;
+                    }
+                    // If FCM says coursier available, allow the flow to continue (no login modal forced here)
                 } else {
-                    alert('Veuillez vous connecter pour commander.');
+                    // fallback: try to open connexion modal as before
+                    const openLink = document.getElementById('openConnexionLink') || document.getElementById('openConnexionLinkMobile');
+                    if (openLink) {
+                        openLink.click();
+                        return;
+                    } else if (typeof window.openConnexionModal === 'function') {
+                        window.openConnexionModal();
+                        return;
+                    } else if (typeof window.showModal === 'function' && document.getElementById('connexionModal')) {
+                        showModal('connexionModal');
+                        return;
+                    } else {
+                        alert('Veuillez vous connecter pour commander.');
+                        return;
+                    }
                 }
-                return;
             }
             
             if (!validateForm()) return;
