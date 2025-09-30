@@ -575,28 +575,26 @@ if (trim((string)$defaultUnavailableMessage) === '') {
                         <h1 class="hero-title">Commandez un coursier<br><span class="hero-accent">en 1 minute</span></h1>
                         <p class="hero-subtitle">Livraison express, sécurisée et suivie en temps réel à Abidjan.<br>Payez à la livraison ou par mobile money.</p>
                     </div>
-                    <div class="order-form">
+                    <div class="order-form<?php echo !$coursiersDisponibles ? ' order-form--locked' : ''; ?>" id="orderFormContainer">
                         <h2 class="form-title">💫 Commander un coursier</h2>
-                        
-                        <?php if (!$coursiersDisponibles): ?>
-                        <!-- SÉCURITÉ: Aucun coursier disponible -->
-                        <div class="service-unavailable-alert">
-                            <?php
-                            // Ensure a friendly commercial message is shown if $messageIndisponibilite is empty.
-                            // Use centralized message provided by index.php when available
-                            $commercialText = isset($commercialFallbackMessage) ? $commercialFallbackMessage : (isset($messageIndisponibilite) ? $messageIndisponibilite : '');
-                            $displayMessage = trim((string)($messageIndisponibilite ?? '')) !== '' ? $messageIndisponibilite : $commercialText;
-                            echo '<div style="padding:12px; border-radius:8px; background: rgba(255,255,255,0.03);">' . $displayMessage . '</div>';
-                            ?>
+
+                        <div class="order-form-warning" id="orderFormLockCountdown" role="status" aria-live="polite">
+                            <span>⏳ Nos coursiers se reconnectent… fermeture automatique du formulaire dans <span class="order-form-warning-countdown" id="orderFormLockCountdownValue">60</span> s si aucun coursier ne revient.</span>
+                        </div>
+
+                        <div class="service-unavailable-alert order-form-locker<?php echo !$coursiersDisponibles ? ' order-form-locker--visible' : ''; ?>" id="orderFormLocker">
+                            <h3 style="margin-bottom: 10px;">🚧 Coursiers momentanément indisponibles</h3>
+                            <p id="orderFormLockerMessage"><?php echo nl2br(htmlspecialchars($defaultUnavailableMessage, ENT_QUOTES, 'UTF-8')); ?></p>
+                            <p id="orderFormLockerMeta" style="display:none;"></p>
+                            <p class="order-form-locker-note">Le formulaire se rouvrira automatiquement dès qu'un coursier redeviendra actif.</p>
                             <div style="text-align: center; margin-top: 15px;">
                                 <button type="button" onclick="location.reload()" class="refresh-btn">
                                     🔄 Actualiser
                                 </button>
                             </div>
                         </div>
-                        <?php else: ?>
-                        
-                        <form id="orderForm" action="/api/submit_order.php" method="post">
+
+                        <form id="orderForm" action="/api/submit_order.php" method="post" class="<?php echo !$coursiersDisponibles ? 'order-form-hidden' : ''; ?>">
                             <div class="address-row">
                                 <div class="form-group">
                                     <label for="departure">Départ (Expéditeur)</label>
@@ -782,8 +780,6 @@ if (trim((string)$defaultUnavailableMessage) === '') {
                             <div id="client-timeline-messages" class="client-timeline-messages"></div>
                         </div>
                     </form>
-                    
-                    <?php endif; // Fin du contrôle de disponibilité des coursiers ?>
                 </div>
                 </div>
                 
