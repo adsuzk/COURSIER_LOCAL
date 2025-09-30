@@ -43,16 +43,16 @@ object LocationUtils {
                                 // ApiService gère l'envoi asynchrone et les fallback bases
                                 ApiService.updateCoursierPosition(coursierId, loc.latitude, loc.longitude) { ok, err ->
                                     if (!ok) {
-                                        Log.w("LocationUtils", "updateCoursierPosition failed: ${'$'}err")
+                                        Log.w("LocationUtils", "updateCoursierPosition failed: ${err}")
                                     }
                                 }
                             }
                         } catch (e: Exception) {
-                            Log.w("LocationUtils", "Impossible d'envoyer position: ${'$'}{e.message}")
+                            Log.w("LocationUtils", "Impossible d'envoyer position: ${e.message}")
                         }
                     } catch (e: Exception) {
                         // Garder le callback principal robuste
-                        Log.w("LocationUtils", "Erreur handling location: ${'$'}{e.message}")
+                        Log.w("LocationUtils", "Erreur handling location: ${e.message}")
                     }
                 }
             }
