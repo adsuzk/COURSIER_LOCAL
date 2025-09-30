@@ -104,8 +104,17 @@ fun WalletScreen(
                             distanceKm = (m["distanceKm"] as? Number)?.toDouble() ?: (m["distance_km"] as? Number)?.toDouble() ?: 0.0
                         )
                     } ?: emptyList()
-                    historiqueCommandes = commandes
-                    earningsData = computeEarnings(commandes)
+                    // Update historiqueCommandes only if it meaningfully changed (ids differ) to reduce UI churn
+                    try {
+                        val newIdsHash = commandes.joinToString(separator = ",") { (it as WalletHistoryItem).id }
+                        val oldIdsHash = historiqueCommandes.joinToString(separator = ",") { it.id }
+                        if (newIdsHash != oldIdsHash) {
+                            historiqueCommandes = commandes
+                        }
+                    } catch (_: Exception) {
+                        historiqueCommandes = commandes
+                    }
+                     earningsData = computeEarnings(commandes)
                 } catch (e: Exception) {
                     historiqueCommandes = emptyList()
                     earningsData = emptyMap()
@@ -134,6 +143,7 @@ fun WalletScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(16.dp)
     ) {
         // Header
