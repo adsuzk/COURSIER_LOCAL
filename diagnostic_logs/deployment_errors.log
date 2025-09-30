@@ -1559,3 +1559,6 @@
 [2025-09-30 23:57:27] DEPLOYMENT ERROR: DEPLOYMENT ERROR DETECTOR ACTIVATED - Context: {"timestamp":"2025-09-30 23:57:27","php_version":"8.2.12","server":"localhost"}
 [2025-09-30 23:57:27] DEPLOYMENT ERROR: MISSING FUNCTIONS DETECTED - Context: {"missing_functions":["logInfo","logError","initLogging","logDebug"],"current_file":"C:\/xampp\/htdocs\/COURSIER_LOCAL\/index.php"}
 [2025-09-30 23:57:28] DEPLOYMENT ERROR: UNCAUGHT EXCEPTION: Call to undefined function logInfo() - Context: {"file":"C:\\xampp\\htdocs\\COURSIER_LOCAL\\index.php","line":396,"trace":"#0 {main}"}
+[2025-10-01 00:11:09] DEPLOYMENT ERROR: DEPLOYMENT ERROR DETECTOR ACTIVATED - Context: {"timestamp":"2025-10-01 00:11:09","php_version":"8.2.12","server":"localhost"}
+[2025-10-01 00:11:09] DEPLOYMENT ERROR: MISSING FUNCTIONS DETECTED - Context: {"missing_functions":["logInfo","logError","initLogging","logDebug"],"current_file":"C:\/xampp\/htdocs\/COURSIER_LOCAL\/index.php"}
+[2025-10-01 00:11:09] DEPLOYMENT ERROR: UNCAUGHT EXCEPTION: Call to undefined function logInfo() - Context: {"file":"C:\\xampp\\htdocs\\COURSIER_LOCAL\\index.php","line":396,"trace":"#0 {main}"}
