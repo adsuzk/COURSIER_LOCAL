@@ -293,7 +293,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                             Button(
                                 onClick = { expandedIdType = true },
                                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE0E0E0)),
-                                contentPadding = androidx.compose.ui.unit.PaddingValues(horizontal = 12.dp, vertical = 8.dp),
+                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
                                 modifier = Modifier.padding(end = 8.dp)
                             ) {
                                 Text(
