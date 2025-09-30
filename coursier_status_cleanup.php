@@ -18,7 +18,7 @@ function cleanupCoursierStatuses(?PDO $pdo = null): array {
     ];
     
     try {
-        // Nettoyer tous les coursiers inactifs depuis plus de 30 minutes
+        // Nettoyer tous les coursiers inactifs depuis plus de 2 minutes
         $stmt = $pdo->prepare("
             UPDATE agents_suzosky 
             SET statut_connexion = 'hors_ligne',
@@ -26,7 +26,7 @@ function cleanupCoursierStatuses(?PDO $pdo = null): array {
             WHERE statut_connexion = 'en_ligne' 
             AND (
                 last_login_at IS NULL 
-                OR TIMESTAMPDIFF(MINUTE, last_login_at, NOW()) > 30
+                OR TIMESTAMPDIFF(MINUTE, last_login_at, NOW()) > 2
             )
         ");
         
