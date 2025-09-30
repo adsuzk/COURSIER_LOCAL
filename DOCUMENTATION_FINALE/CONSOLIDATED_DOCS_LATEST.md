@@ -582,6 +582,7 @@ notifications_log_fcm:
 
 ## 📦 **SYSTÈME DE COMMANDES**
 
+
 ### 🏗️ **Table commandes (structure finale)**
 
 ```sql
@@ -591,12 +592,33 @@ commandes:
 ├── client_nom, client_telephone
 ├── adresse_retrait, adresse_livraison
 ├── prix_total, prix_base
-├── coursier_id → agents_suzosky.id (PAS coursiers.id!)
-├── statut (en_attente/assignee/acceptee/livre)
+├── coursier_id → agents_suzosky.id
+├── statut (nouvelle/assignee/en_attente/acceptee/livre)
 └── timestamps (created_at, heure_acceptation, etc.)
 ```
 
-### ⚠️ **CORRECTION CRITIQUE**
+### 🚦 Logique d'attribution des commandes (mise à jour 30/09/2025)
+
+#### Attribution immédiate et file d'attente par coursier
+
+- Lorsqu'une commande est créée (statut = 'nouvelle'), le système tente de l'attribuer immédiatement à un coursier actif n'ayant aucune commande en cours (statut = 'assignee').
+- Si le coursier a déjà une commande active, la nouvelle commande lui est affectée mais placée en file d'attente (statut = 'en_attente').
+- Un coursier ne peut avoir qu'une seule commande en statut 'assignee' à la fois. Toutes les autres commandes qui lui sont affectées sont en 'en_attente'.
+- Dès qu'une commande 'assignee' passe à un autre statut (ex : 'livre'), la première commande 'en_attente' de la file de ce coursier passe automatiquement à 'assignee'.
+
+#### Statuts utilisés
+
+- **nouvelle** : commande insérée, pas encore attribuée
+- **assignee** : commande active, en cours de traitement par le coursier
+- **en_attente** : commande affectée à un coursier mais en file d'attente (le coursier a déjà une commande active)
+- **acceptee** : commande acceptée par le coursier (optionnel selon workflow)
+- **livre** : commande livrée
+
+#### Remarques
+
+- L'attribution est stricte et immédiate : aucune commande ne reste sans coursier si un coursier est disponible.
+- La logique de file d'attente garantit qu'aucun coursier ne reçoit plusieurs commandes actives simultanément.
+- Toute ancienne mention d'attribution différée, de statut obsolète ou de table `coursiers` est à ignorer.
 
 **AVANT (incorrect) :**
 ```sql
