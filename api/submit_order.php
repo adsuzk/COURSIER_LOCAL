@@ -138,6 +138,7 @@ try {
 	$uniq = strtoupper(substr(md5(uniqid('', true)), 0, 6));
 }
 $fields['order_number'] = 'SZK' . date('ymd') . $uniq; // ex: SZK250930A1B2C3
+$fields['statut'] = 'nouvelle';
 
 // Log des données reçues
 if (function_exists('logMessage')) {
@@ -171,24 +172,25 @@ try {
 
 // Insertion réelle en base de données (table 'commandes')
 try {
-	$sql = "INSERT INTO commandes (order_number, code_commande, adresse_depart, adresse_arrivee, telephone_expediteur, telephone_destinataire, description_colis, priorite, mode_paiement, prix_estime, distance_estimee, dimensions, poids_estime, fragile, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	$sql = "INSERT INTO commandes (order_number, code_commande, adresse_depart, adresse_arrivee, telephone_expediteur, telephone_destinataire, description_colis, priorite, mode_paiement, prix_estime, distance_estimee, dimensions, poids_estime, fragile, statut, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	$stmt = $pdo->prepare($sql);
 	$stmt->execute([
 	$fields['order_number'],
 	$fields['code_commande'],
-		$fields['adresse_depart'],
-		$fields['adresse_arrivee'],
-		$fields['telephone_expediteur'],
-		$fields['telephone_destinataire'],
-		$fields['description_colis'],
-		$fields['priorite'],
-		$fields['mode_paiement'],
-		$fields['prix_estime'],
-		$fields['distance_estimee'],
-		$fields['dimensions'],
-		$fields['poids_estime'],
-		$fields['fragile'],
-		$fields['created_at']
+	$fields['adresse_depart'],
+	$fields['adresse_arrivee'],
+	$fields['telephone_expediteur'],
+	$fields['telephone_destinataire'],
+	$fields['description_colis'],
+	$fields['priorite'],
+	$fields['mode_paiement'],
+	$fields['prix_estime'],
+	$fields['distance_estimee'],
+	$fields['dimensions'],
+	$fields['poids_estime'],
+	$fields['fragile'],
+	$fields['statut'],
+	$fields['created_at']
 	]);
 	$commande_id = $pdo->lastInsertId();
 	if (function_exists('logMessage')) {
