@@ -443,18 +443,18 @@ object ApiService {
         }
     }
     private fun getInitRechargeUrl(): String =
-        if (useProd()) "${'$'}{prodBase()}/api/init_recharge.php" else "${'$'}{debugLocalBase()}/api/init_recharge.php"
+        if (useProd()) "${prodBase()}/api/init_recharge.php" else "${debugLocalBase()}/api/init_recharge.php"
 
     private fun getCoursierDataUrl(): String =
-        if (useProd()) "${'$'}{prodBase()}/api/get_coursier_data.php" else "${'$'}{debugLocalBase()}/api/get_coursier_data.php"
+        if (useProd()) "${prodBase()}/api/get_coursier_data.php" else "${debugLocalBase()}/api/get_coursier_data.php"
 
     // Deprecated: prefer buildApi(base, "update_order_status.php") with executeWithFallback
 
     private fun getProfileUrl(): String =
-        if (useProd()) "${'$'}{prodBase()}/api/profile.php" else "${'$'}{debugLocalBase()}/api/profile.php"
+        if (useProd()) "${prodBase()}/api/profile.php" else "${debugLocalBase()}/api/profile.php"
 
     private fun getAgentAuthUrl(): String =
-        if (useProd()) "${'$'}{prodBase()}/api/agent_auth.php" else "${'$'}{debugLocalBase()}/api/agent_auth.php"
+        if (useProd()) "${prodBase()}/api/agent_auth.php" else "${debugLocalBase()}/api/agent_auth.php"
 
     /**
      * Récupérer le profil du coursier (nom, prenoms, telephone, stats)
