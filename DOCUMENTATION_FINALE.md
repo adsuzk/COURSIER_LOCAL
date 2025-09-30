@@ -77,10 +77,10 @@ Seule la logique FCM gère la présence côté utilisateur. La logique SQL reste
 
 Les scripts de maintenance peuvent par ailleurs valider activement les tokens via FCM et désactiver automatiquement les tokens définitivement invalides (voir `Scripts/Scripts cron/fcm_validate_tokens.php`).
 
--#### Interfaces concernées :
-- **Index public** : formulaire affiché uniquement si la vérification FCM retourne >=1 token actif (`is_active = 1`)
-- **Dashboard admin** : section « Coursiers connectés » fondée sur la même logique
-- **Finances / Commandes** : même source de vérité
+#### Interfaces concernées :
+ **Index public** : formulaire affiché uniquement si la vérification FCM retourne >=1 token actif (`is_active = 1`)
+ **Dashboard admin** : section « Coursiers connectés » fondée sur la même logique
+ **Finances / Commandes** : même source de vérité
 
 **API centrale :** `/api/coursiers_connectes.php` (source unique de vérité pour les interfaces)
 
