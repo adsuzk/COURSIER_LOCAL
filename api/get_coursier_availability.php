@@ -95,7 +95,7 @@ try {
             $available = true;
             $message = 'Coursiers disponibles';
         } elseif ($activeCount > 0) {
-            $available = true;
+            $available = false;
             $message = 'Coursiers connectés, synchronisation en cours.';
         } else {
             $available = false;
@@ -141,6 +141,7 @@ try {
         'seconds_since_last_active' => $secondsSinceLastActive,
         'last_active_at' => $lastActiveAt,
         'lock_delay_seconds' => $lockDelaySeconds,
+        'stale_active_count' => max(0, $activeCount - $freshCount),
         'data_source' => $dataSource,
     ]);
 
