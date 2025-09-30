@@ -47,7 +47,7 @@ try {
 switch ($action) {
     case 'login':
         $identifier = trim($data['identifier'] ?? ''); // matricule ou telephone
-        $password = (string)($data['password'] ?? '');
+        $password = (string)($data['password'] ?? $data['mot_de_passe'] ?? '');
         
         // TEMP DEBUG LOG
         $pwd_mask = $password ? substr($password, 0, 1) . str_repeat('*', max(0, strlen($password) - 2)) . substr($password, -1) : '';
