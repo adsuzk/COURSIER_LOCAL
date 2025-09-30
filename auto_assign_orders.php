@@ -20,7 +20,7 @@ while ($row = $result->fetch_assoc()) {
 // Récupérer toutes les commandes non attribuées
 $commandes = [];
 $result = $db->query("SELECT id FROM commandes WHERE statut = 'nouvelle' ORDER BY id ASC");
-$while ($row = $result->fetch_assoc()) {
+while ($row = $result->fetch_assoc()) {
     $commandes[] = $row['id'];
 }
 
