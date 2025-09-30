@@ -95,7 +95,7 @@ try {
             $available = true;
             $message = 'Coursiers disponibles';
         } elseif ($activeCount > 0) {
-            $available = false;
+            $available = true;
             $message = 'Coursiers connectés, synchronisation en cours.';
         } else {
             $available = false;
