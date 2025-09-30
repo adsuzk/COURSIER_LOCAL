@@ -268,7 +268,7 @@ function debounce(func, wait, immediate) {
                             } else {
                                 // If setFCM API missing, create a temporary banner
                                 if (!j.available) {
-                                    try { alert(j.message || 'Aucun coursier disponible'); } catch(e){}
+                                    console.warn('Coursier indisponible (fallback)', j.message || 'Aucun coursier disponible');
                                 }
                             }
                         }
