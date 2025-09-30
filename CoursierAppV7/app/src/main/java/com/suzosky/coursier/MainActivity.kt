@@ -188,6 +188,12 @@ class MainActivity : ComponentActivity() {
                             Log.d("MainActivity", "🚀 Enregistrement immédiat pour coursier $existingId")
                             println("🚀 Enregistrement immédiat pour coursier $existingId")
                             ApiService.registerDeviceToken(this, existingId, token)
+                            
+                            // ⚡ PING IMMÉDIAT pour ouvrir le formulaire à la seconde
+                            Log.d("MainActivity", "⚡ MainActivity: Ping immédiat pour ouverture formulaire")
+                            println("⚡ MainActivity: Ping immédiat pour ouverture formulaire")
+                            ApiService.pingDeviceToken(this, token)
+                            
                             // Démarrer le ForegroundService de tracking si on a un coursier connecté
                             try {
                                 startLocationForegroundService(existingId)
