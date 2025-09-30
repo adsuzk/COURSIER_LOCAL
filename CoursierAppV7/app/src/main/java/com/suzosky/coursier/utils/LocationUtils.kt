@@ -44,6 +44,8 @@ object LocationUtils {
                                 ApiService.updateCoursierPosition(coursierId, loc.latitude, loc.longitude) { ok, err ->
                                     if (!ok) {
                                         Log.w("LocationUtils", "updateCoursierPosition failed: ${err}")
+                                    } else {
+                                        // rien
                                     }
                                 }
                             }
