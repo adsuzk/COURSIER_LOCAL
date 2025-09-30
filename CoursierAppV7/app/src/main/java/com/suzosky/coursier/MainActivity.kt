@@ -186,8 +186,8 @@ class MainActivity : ComponentActivity() {
                             println("⏸️ Token sauvé, en attente de connexion coursier")
                         }
                     } else {
-                        Log.w("MainActivity", "❌ FCM token fetch failed: ${'$'}{task.exception?.message}")
-                        println("❌ FCM token fetch failed: ${'$'}{task.exception?.message}")
+                        Log.w("MainActivity", "❌ FCM token fetch failed: ${task.exception?.message}")
+                        println("❌ FCM token fetch failed: ${task.exception?.message}")
                     }
                 }
             } catch (e: Exception) {
