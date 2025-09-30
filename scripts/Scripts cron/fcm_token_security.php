@@ -1,7 +1,7 @@
 <?php
 /**
  * FCMTokenSecurity
- * - Combines `is_active = 1` + freshness of `last_ping` to determine availability (default 120s)
+ * - Combines `is_active = 1` + freshness of `last_ping` (or `updated_at`) to determine availability (default 60s)
  * - Supports optional immediate detection mode via env `FCM_IMMEDIATE_DETECTION` or constructor option
  * - Returns an array compatible with the shim used by index.php
  */
@@ -12,17 +12,15 @@ require_once __DIR__ . '/../../lib/fcm_helper.php';
 class FCMTokenSecurity {
     private bool $verbose;
     // By default require a recent ping to consider a token available (in seconds)
-    // Default: 120 seconds (2 minutes). Can be overridden via constructor option
+    // Default: 60 seconds. Can be overridden via constructor option
     // or environment variable FCM_AVAILABILITY_THRESHOLD_SECONDS.
-    private int $thresholdSeconds = 120; // 2 minutes (forcé)
-    // If true, ignore freshness and consider any is_active=1 token immediately available.
-    // Default: true (immediate detection) to consider a token active as soon as the app registers it.
-    private bool $immediateDetection = true;
+    private int $thresholdSeconds = 60;
+    // If true, ignore freshness and consider any token immediately available.
+    private bool $immediateDetection = false;
 
     public function __construct(array $options = []) {
         $this->verbose = (bool)($options['verbose'] ?? false);
-        // Forcer le seuil à 120 secondes (2 minutes)
-    $this->thresholdSeconds = 60;
+        $this->thresholdSeconds = 60;
         // immediate detection option via constructor or env var
         if (isset($options['immediate_detection'])) {
             $this->immediateDetection = (bool)$options['immediate_detection'];
@@ -46,8 +44,16 @@ class FCMTokenSecurity {
         try {
             $pdo = getDBConnection();
             if ($this->immediateDetection) {
-                // Legacy immediate mode: any active token counts
-                $sql = "SELECT COUNT(*) AS cnt FROM device_tokens WHERE is_active = 1";
+                $hasIsActive = false;
+                try {
+                    $hasIsActive = (bool)$pdo->query("SHOW COLUMNS FROM device_tokens LIKE 'is_active'")->fetchColumn();
+                } catch (Throwable $e) {
+                    $hasIsActive = false;
+                }
+
+                $sql = $hasIsActive
+                    ? "SELECT COUNT(*) AS cnt FROM device_tokens WHERE is_active = 1"
+                    : "SELECT COUNT(*) AS cnt FROM device_tokens";
                 $stmt = $pdo->query($sql);
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
                 $count = isset($row['cnt']) ? (int)$row['cnt'] : 0;
@@ -55,7 +61,31 @@ class FCMTokenSecurity {
                 // Require recent last_ping (or updated_at fallback) within threshold
                 // Use a safe SQL expression to compare timestamps in seconds
                 $threshold = (int)$this->thresholdSeconds;
-                $sql = "SELECT COUNT(*) AS cnt FROM device_tokens WHERE is_active = 1 AND UNIX_TIMESTAMP(COALESCE(last_ping, updated_at)) >= UNIX_TIMESTAMP(NOW()) - ?";
+                $hasLastPing = false;
+                $hasIsActive = false;
+
+                try {
+                    $hasLastPing = (bool)$pdo->query("SHOW COLUMNS FROM device_tokens LIKE 'last_ping'")->fetchColumn();
+                } catch (Throwable $e) {
+                    $hasLastPing = false;
+                }
+
+                try {
+                    $hasIsActive = (bool)$pdo->query("SHOW COLUMNS FROM device_tokens LIKE 'is_active'")->fetchColumn();
+                } catch (Throwable $e) {
+                    $hasIsActive = false;
+                }
+
+                $timeExpr = $hasLastPing ? "COALESCE(last_ping, updated_at)" : "updated_at";
+                $conditions = [];
+                if ($hasIsActive) {
+                    $conditions[] = 'is_active = 1';
+                }
+                $conditions[] = "$timeExpr IS NOT NULL";
+                $conditions[] = "UNIX_TIMESTAMP($timeExpr) >= UNIX_TIMESTAMP(NOW()) - ?";
+                $whereClause = implode(' AND ', $conditions);
+                $sql = "SELECT COUNT(*) AS cnt FROM device_tokens WHERE $whereClause";
+
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([$threshold]);
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
