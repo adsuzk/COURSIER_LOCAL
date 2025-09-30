@@ -17,9 +17,9 @@ if ($db->connect_error) {
     die("Connection failed: " . $db->connect_error);
 }
 
-// Récupérer tous les coursiers actifs
+// Récupérer tous les coursiers actifs (agents_suzosky)
 $coursiers = [];
-$result = $db->query("SELECT id FROM coursiers WHERE statut = 'actif'");
+$result = $db->query("SELECT id FROM agents_suzosky WHERE statut_connexion = 'en_ligne' AND solde_wallet > 0");
 while ($row = $result->fetch_assoc()) {
     $coursiers[] = $row['id'];
 }
@@ -31,7 +31,8 @@ while ($row = $result->fetch_assoc()) {
     $commandes[] = $row['id'];
 }
 
-// Pour chaque coursier, construire sa file d'attente de commandes
+// Pour chaque coursier, construire sa file d'attente de commandes et notifier
+require_once __DIR__ . '/api/lib/fcm_enhanced.php';
 foreach ($coursiers as $coursier_id) {
     // Récupérer les commandes déjà attribuées à ce coursier
     $res = $db->query("SELECT id FROM commandes WHERE coursier_id = $coursier_id AND (statut = 'assignee' OR statut = 'en_attente') ORDER BY id ASC");
@@ -50,6 +51,17 @@ foreach ($coursiers as $coursier_id) {
     foreach ($queue as $i => $cmd_id) {
         if ($i == 0) {
             $db->query("UPDATE commandes SET coursier_id = $coursier_id, statut = 'assignee' WHERE id = $cmd_id");
+            // Notifier le coursier de la nouvelle commande
+            $token_row = $db->query("SELECT token FROM device_tokens WHERE (agent_id = $coursier_id OR coursier_id = $coursier_id) AND is_active = 1 ORDER BY updated_at DESC LIMIT 1")->fetch_assoc();
+            if ($token_row && !empty($token_row['token'])) {
+                fcm_send_with_log([
+                    $token_row['token']
+                ], "🚨 Nouvelle commande !", "Ouvrez l'app pour voir vos commandes", [
+                    'type' => 'new_orders',
+                    'commande_id' => $cmd_id,
+                    '_data_only' => true
+                ], $coursier_id, 'AUTO_ASSIGN');
+            }
         } else {
             $db->query("UPDATE commandes SET coursier_id = $coursier_id, statut = 'en_attente' WHERE id = $cmd_id");
         }
