@@ -51,10 +51,12 @@ fun deactivateFcmTokenOnServer(context: android.content.Context) {
 
     // Use ApiService helper which provides fallback and queuing behavior
     ApiService.deactivateDeviceToken(context, token, reEnqueueOnFailure = true, onSuccess = {
-        Log.d("Logout", "Token désactivé côté serveur via ApiService")
+        Log.d("Logout", "✅ Token désactivé côté serveur via ApiService")
+        println("✅ Token désactivé côté serveur via ApiService")
         try { prefs.edit { remove("fcm_token") } } catch (_: Exception) {}
     }, onFailure = { err ->
-        Log.w("Logout", "Échec désactivation token via ApiService: $err")
+        Log.w("Logout", "🚨 Échec désactivation token via ApiService: $err")
+        println("🚨 Échec désactivation token via ApiService: $err")
         // Make failure visible to user with a short Toast and a persistent log entry
         try {
             android.os.Handler(android.os.Looper.getMainLooper()).post {
