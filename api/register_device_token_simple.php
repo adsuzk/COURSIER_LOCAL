@@ -115,6 +115,7 @@ try {
     try { $pdo->exec("ALTER TABLE device_tokens ADD COLUMN platform VARCHAR(32) DEFAULT 'android'"); } catch (Throwable $e) {}
     try { $pdo->exec("ALTER TABLE device_tokens ADD COLUMN app_version VARCHAR(64) NULL"); } catch (Throwable $e) {}
     try { $pdo->exec("ALTER TABLE device_tokens ADD COLUMN is_active TINYINT(1) DEFAULT 1"); } catch (Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE device_tokens ADD COLUMN last_ping DATETIME NULL"); } catch (Throwable $e) {}
     try { $pdo->exec("ALTER TABLE device_tokens ADD COLUMN agent_id INT NULL"); } catch (Throwable $e) {}
     try { $pdo->exec("ALTER TABLE device_tokens ADD INDEX idx_agent (agent_id)"); } catch (Throwable $e) {}
 
@@ -128,9 +129,9 @@ try {
 
     // Upsert par token_hash pour éviter duplicats; réactiver si même token
     if ($agentId > 0) {
-        $sql = "INSERT INTO device_tokens (coursier_id, agent_id, token, token_hash, device_type, platform, app_version, is_active, created_at, updated_at, last_used)
-                VALUES (:cid, :aid, :tok, :th, 'mobile', :platform, :appv, 1, NOW(), NOW(), NOW())
-                ON DUPLICATE KEY UPDATE coursier_id = VALUES(coursier_id), agent_id = VALUES(agent_id), token = VALUES(token), device_type = VALUES(device_type), platform = VALUES(platform), app_version = VALUES(app_version), is_active = 1, updated_at = NOW(), last_used = NOW()";
+    $sql = "INSERT INTO device_tokens (coursier_id, agent_id, token, token_hash, device_type, platform, app_version, is_active, created_at, updated_at, last_used, last_ping)
+        VALUES (:cid, :aid, :tok, :th, 'mobile', :platform, :appv, 1, NOW(), NOW(), NOW(), NOW())
+        ON DUPLICATE KEY UPDATE coursier_id = VALUES(coursier_id), agent_id = VALUES(agent_id), token = VALUES(token), device_type = VALUES(device_type), platform = VALUES(platform), app_version = VALUES(app_version), is_active = 1, updated_at = NOW(), last_used = NOW(), last_ping = NOW()";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
             'cid' => $coursierId,
@@ -141,9 +142,9 @@ try {
             'appv' => $appVersion,
         ]);
     } else {
-        $sql = "INSERT INTO device_tokens (coursier_id, token, token_hash, device_type, platform, app_version, is_active, created_at, updated_at, last_used)
-                VALUES (:cid, :tok, :th, 'mobile', :platform, :appv, 1, NOW(), NOW(), NOW())
-                ON DUPLICATE KEY UPDATE coursier_id = VALUES(coursier_id), token = VALUES(token), device_type = VALUES(device_type), platform = VALUES(platform), app_version = VALUES(app_version), is_active = 1, updated_at = NOW(), last_used = NOW()";
+    $sql = "INSERT INTO device_tokens (coursier_id, token, token_hash, device_type, platform, app_version, is_active, created_at, updated_at, last_used, last_ping)
+        VALUES (:cid, :tok, :th, 'mobile', :platform, :appv, 1, NOW(), NOW(), NOW(), NOW())
+        ON DUPLICATE KEY UPDATE coursier_id = VALUES(coursier_id), token = VALUES(token), device_type = VALUES(device_type), platform = VALUES(platform), app_version = VALUES(app_version), is_active = 1, updated_at = NOW(), last_used = NOW(), last_ping = NOW()";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
             'cid' => $coursierId,
