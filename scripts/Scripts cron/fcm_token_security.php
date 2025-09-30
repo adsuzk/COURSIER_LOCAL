@@ -16,12 +16,11 @@ class FCMTokenSecurity {
     // or environment variable FCM_AVAILABILITY_THRESHOLD_SECONDS.
     private int $thresholdSeconds = 60;
     // If true, ignore freshness and consider any token immediately available.
-    private bool $immediateDetection = false;
+    private bool $immediateDetection = true;
 
     public function __construct(array $options = []) {
         $this->verbose = (bool)($options['verbose'] ?? false);
         $this->thresholdSeconds = 60;
-        // immediate detection option via constructor or env var
         if (isset($options['immediate_detection'])) {
             $this->immediateDetection = (bool)$options['immediate_detection'];
         }
@@ -43,62 +42,69 @@ class FCMTokenSecurity {
     public function canAcceptNewOrders(): array {
         try {
             $pdo = getDBConnection();
-            if ($this->immediateDetection) {
-                $hasIsActive = false;
-                try {
-                    $hasIsActive = (bool)$pdo->query("SHOW COLUMNS FROM device_tokens LIKE 'is_active'")->fetchColumn();
-                } catch (Throwable $e) {
-                    $hasIsActive = false;
-                }
+            $threshold = (int)$this->thresholdSeconds;
+            $hasLastPing = false;
+            $hasIsActive = false;
 
-                $sql = $hasIsActive
-                    ? "SELECT COUNT(*) AS cnt FROM device_tokens WHERE is_active = 1"
-                    : "SELECT COUNT(*) AS cnt FROM device_tokens";
-                $stmt = $pdo->query($sql);
-                $row = $stmt->fetch(PDO::FETCH_ASSOC);
-                $count = isset($row['cnt']) ? (int)$row['cnt'] : 0;
-            } else {
-                // Require recent last_ping (or updated_at fallback) within threshold
-                // Use a safe SQL expression to compare timestamps in seconds
-                $threshold = (int)$this->thresholdSeconds;
+            try {
+                $hasLastPing = (bool)$pdo->query("SHOW COLUMNS FROM device_tokens LIKE 'last_ping'")->fetchColumn();
+            } catch (Throwable $e) {
                 $hasLastPing = false;
-                $hasIsActive = false;
-
-                try {
-                    $hasLastPing = (bool)$pdo->query("SHOW COLUMNS FROM device_tokens LIKE 'last_ping'")->fetchColumn();
-                } catch (Throwable $e) {
-                    $hasLastPing = false;
-                }
-
-                try {
-                    $hasIsActive = (bool)$pdo->query("SHOW COLUMNS FROM device_tokens LIKE 'is_active'")->fetchColumn();
-                } catch (Throwable $e) {
-                    $hasIsActive = false;
-                }
-
-                $timeExpr = $hasLastPing ? "COALESCE(last_ping, updated_at)" : "updated_at";
-                $conditions = [];
-                if ($hasIsActive) {
-                    $conditions[] = 'is_active = 1';
-                }
-                $conditions[] = "$timeExpr IS NOT NULL";
-                $conditions[] = "UNIX_TIMESTAMP($timeExpr) >= UNIX_TIMESTAMP(NOW()) - ?";
-                $whereClause = implode(' AND ', $conditions);
-                $sql = "SELECT COUNT(*) AS cnt FROM device_tokens WHERE $whereClause";
-
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute([$threshold]);
-                $row = $stmt->fetch(PDO::FETCH_ASSOC);
-                $count = isset($row['cnt']) ? (int)$row['cnt'] : 0;
             }
 
+            try {
+                $hasIsActive = (bool)$pdo->query("SHOW COLUMNS FROM device_tokens LIKE 'is_active'")->fetchColumn();
+            } catch (Throwable $e) {
+                $hasIsActive = false;
+            }
+
+            $timeExpr = $hasLastPing ? "COALESCE(last_ping, updated_at)" : "updated_at";
+
+            if ($hasIsActive) {
+                $activeSelect = "SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END)";
+                $freshSelect = "SUM(CASE WHEN is_active = 1 AND TIMESTAMPDIFF(SECOND, {$timeExpr}, NOW()) <= :threshold THEN 1 ELSE 0 END)";
+                $lastActiveSelect = "MAX(CASE WHEN is_active = 1 THEN {$timeExpr} END)";
+            } else {
+                $activeSelect = "COUNT(*)";
+                $freshSelect = "SUM(CASE WHEN TIMESTAMPDIFF(SECOND, {$timeExpr}, NOW()) <= :threshold THEN 1 ELSE 0 END)";
+                $lastActiveSelect = "MAX({$timeExpr})";
+            }
+
+            $sql = "SELECT
+                        {$activeSelect} AS active_count,
+                        {$freshSelect} AS fresh_count,
+                        {$lastActiveSelect} AS last_active_at,
+                        MAX({$timeExpr}) AS last_seen_at
+                    FROM device_tokens";
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([':threshold' => $threshold]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
+
+            $activeCount = isset($row['active_count']) ? (int)$row['active_count'] : 0;
+            $freshCount = isset($row['fresh_count']) ? (int)$row['fresh_count'] : 0;
+            $lastActiveAt = $row['last_active_at'] ?? null;
+            $lastSeenAt = $row['last_seen_at'] ?? null;
+
+            $referenceTimestamp = $lastActiveAt ?: $lastSeenAt;
+            $secondsSinceLastActive = null;
+            if (!empty($referenceTimestamp)) {
+                $secondsSinceLastActive = max(0, time() - (int)strtotime((string)$referenceTimestamp));
+            }
+
+            $canAccept = $this->immediateDetection ? ($activeCount > 0) : ($freshCount > 0);
+
             $result = [
-                'can_accept_orders' => $count > 0,
-                'available_coursiers' => $count,
+                'can_accept_orders' => $canAccept,
+                'available_coursiers' => $activeCount,
+                'fresh_coursiers' => $freshCount,
+                'seconds_since_last_active' => $secondsSinceLastActive,
+                'last_active_at' => $lastActiveAt,
+                'last_seen_at' => $lastSeenAt,
                 'checked_at' => date('Y-m-d H:i:s'),
-                    'fallback_mode' => false,
-                    'detection_mode' => $this->immediateDetection ? 'immediate' : 'freshness',
-                    'threshold_seconds' => $this->thresholdSeconds,
+                'fallback_mode' => false,
+                'detection_mode' => $this->immediateDetection ? 'immediate' : 'freshness',
+                'threshold_seconds' => $this->thresholdSeconds,
             ];
 
             if ($this->verbose) {
