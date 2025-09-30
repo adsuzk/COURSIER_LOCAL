@@ -23,11 +23,11 @@
 
 ## ⚙️ Mise à jour rapide — 29 Sept 2025 (actions appliquées)
 
- - Seuil de nettoyage des tokens FCM existe toujours (`Scripts/Scripts cron/fcm_auto_cleanup.php`). La détection d'un token actif côté index est configurable : par défaut `FCMTokenSecurity` combine `is_active = 1` et fraîcheur `last_ping` (120s), ou peut être forcée en mode immédiat via `FCM_IMMEDIATE_DETECTION`.
-- Comportement client : en cas d'absence de coursiers le formulaire affiche un message d'indisponibilité (injecté via `index.php`) et propose un bouton « Actualiser ».
+- Seuil de nettoyage des tokens FCM maintenu (`Scripts/Scripts cron/fcm_auto_cleanup.php`). **Par défaut l'index considère désormais qu'un coursier est disponible dès qu'un token `is_active = 1` est présent** ; la fraîcheur `last_ping` sert uniquement à calculer la durée d'inactivité et peut redevenir bloquante en définissant `FCM_IMMEDIATE_DETECTION=0`.
+- Comportement client : en cas d'absence de coursiers le formulaire affiche un message d'indisponibilité (injecté via `index.php`), lance un compte à rebours de 60 s avant verrouillage et propose un bouton « Actualiser ».
 - Documentation consolidée : suppression/archivage des anciennes instructions obsolètes concernant la détection de présence non-FCM. Les sections marquées "Obsolète" doivent être ignorées (voir section "Changements récents").
 
-**Note migration DB :** La colonne `last_ping` a été ajoutée à la table `device_tokens` (migration appliquée). Les scripts de nettoyage FCM utilisent `last_ping` pour évaluer l'ancienneté des tokens, mais l'index considère un token disponible immédiatement si `is_active = 1`.
+**Note migration DB :** La colonne `last_ping` a été ajoutée à la table `device_tokens` (migration appliquée). Les scripts de nettoyage FCM utilisent `last_ping` pour évaluer l'ancienneté des tokens ; côté index le token s'affiche immédiatement si `is_active = 1`, et `last_ping` sert à déclencher le verrouillage automatique après 60 s d'inactivité.
 
 **Message affiché quand aucun coursier n'est disponible :**
 
@@ -69,16 +69,16 @@ VALUES ('TestAgent', 'Demo', 'test@demo.com', '+22501020304', 'hors_ligne', NOW(
 
 L’affichage du formulaire de commande sur l’index est piloté uniquement par la logique FCM :
 
-- Un coursier est considéré comme disponible si un token FCM est `is_active = 1` et que `last_ping` (ou `updated_at` si absent) date de moins de 1 minute.
-- Dès qu’il n’y a plus de token actif, le formulaire se ferme automatiquement (délai : 1 minute).
+- Ouverture immédiate : le formulaire s'affiche dès qu'au moins un token FCM avec `is_active = 1` est détecté (synchronisation à la seconde).
+- Sécurité de fermeture : dès qu’il n’y a plus de token actif, un compte à rebours de 60 s démarre et le formulaire se ferme automatiquement à l’échéance si aucun coursier ne revient.
 - La logique SQL/statut_connexion/last_login_at n’a aucune incidence sur l’affichage du formulaire.
 
 Seule la logique FCM gère la présence côté utilisateur. La logique SQL reste utilisée pour l’historique, l’audit et la maintenance, mais n’intervient pas dans l’UX.
 
 Les scripts de maintenance peuvent par ailleurs valider activement les tokens via FCM et désactiver automatiquement les tokens définitivement invalides (voir `Scripts/Scripts cron/fcm_validate_tokens.php`).
 
-#### Interfaces concernées :
-- **Index public** : formulaire affiché uniquement si la vérification FCM retourne >=1 token valide
+-#### Interfaces concernées :
+- **Index public** : formulaire affiché uniquement si la vérification FCM retourne >=1 token actif (`is_active = 1`)
 - **Dashboard admin** : section « Coursiers connectés » fondée sur la même logique
 - **Finances / Commandes** : même source de vérité
 
