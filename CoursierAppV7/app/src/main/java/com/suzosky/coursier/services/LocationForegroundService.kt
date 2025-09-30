@@ -230,6 +230,9 @@ class LocationForegroundService : Service() {
                     stopSelf()
                     Log.d(TAG, "Stopped foreground tracking")
                 }
+                else -> {
+                    Log.w(TAG, "Action inconnue reçue dans LocationForegroundService: $action")
+                }
             }
         }
         return START_STICKY
