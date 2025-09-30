@@ -1358,4 +1358,49 @@ object ApiService {
         }
         return path
     }
+
+    /**
+     * Ping instantané pour signaler que le coursier est en ligne
+     * Met à jour last_ping pour déclencher l'ouverture immédiate du formulaire
+     */
+    fun pingDeviceToken(context: Context, token: String? = null) {
+        val finalToken = token ?: run {
+            val prefs = context.getSharedPreferences("suzosky_prefs", Context.MODE_PRIVATE)
+            prefs.getString("fcm_token", null)
+        }
+        
+        if (finalToken.isNullOrBlank()) {
+            android.util.Log.w("ApiService", "🚨 pingDeviceToken: Aucun token disponible")
+            return
+        }
+
+        android.util.Log.d("ApiService", "🚀 pingDeviceToken START - Token: ${finalToken.substring(0, 20)}...")
+        
+        val form = FormBody.Builder()
+            .add("token", finalToken)
+            .build()
+            
+        executeWithFallback(
+            buildRequest = { base ->
+                val pingUrl = buildApi(base, "ping_device_token.php")
+                android.util.Log.d("ApiService", "🚀 Ping URL: $pingUrl")
+                logIfUrlInvalid(pingUrl)
+                Request.Builder().url(pingUrl).post(form).build()
+            },
+            onResponseMain = { response ->
+                try {
+                    val body = response.body?.string() ?: ""
+                    android.util.Log.d("ApiService", "✅ pingDeviceToken -> ${response.code}")
+                    android.util.Log.d("ApiService", "✅ Ping response: $body")
+                } catch (e: Exception) {
+                    android.util.Log.e("ApiService", "🚨 Erreur lecture ping response: ${e.message}")
+                } finally {
+                    response.close()
+                }
+            },
+            onFailureMain = { err ->
+                android.util.Log.w("ApiService", "🚨 pingDeviceToken failed: $err")
+            }
+        )
+    }
 }
