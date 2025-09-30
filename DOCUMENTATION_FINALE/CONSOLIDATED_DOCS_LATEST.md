@@ -597,14 +597,15 @@ commandes:
 └── timestamps (created_at, heure_acceptation, etc.)
 ```
 
-### 🚦 Logique d'attribution des commandes (mise à jour 30/09/2025)
+### 🚦 Logique d'attribution des commandes et notifications (mise à jour 30/09/2025)
 
-#### Attribution immédiate et file d'attente par coursier
+#### Attribution immédiate, file d'attente par coursier et notification FCM
 
-- Lorsqu'une commande est créée (statut = 'nouvelle'), le système tente de l'attribuer immédiatement à un coursier actif n'ayant aucune commande en cours (statut = 'assignee').
+- Lorsqu'une commande est créée (statut = 'nouvelle'), le système tente de l'attribuer immédiatement à un coursier actif (table `agents_suzosky`, statut_connexion = 'en_ligne', solde_wallet > 0) n'ayant aucune commande en cours (statut = 'assignee').
 - Si le coursier a déjà une commande active, la nouvelle commande lui est affectée mais placée en file d'attente (statut = 'en_attente').
 - Un coursier ne peut avoir qu'une seule commande en statut 'assignee' à la fois. Toutes les autres commandes qui lui sont affectées sont en 'en_attente'.
 - Dès qu'une commande 'assignee' passe à un autre statut (ex : 'livre'), la première commande 'en_attente' de la file de ce coursier passe automatiquement à 'assignee'.
+- Lorsqu'une commande passe en 'assignee', une notification FCM est envoyée au coursier via son token (table `device_tokens`).
 
 #### Statuts utilisés
 
@@ -618,6 +619,7 @@ commandes:
 
 - L'attribution est stricte et immédiate : aucune commande ne reste sans coursier si un coursier est disponible.
 - La logique de file d'attente garantit qu'aucun coursier ne reçoit plusieurs commandes actives simultanément.
+- Une notification FCM est envoyée à chaque attribution effective.
 - Toute ancienne mention d'attribution différée, de statut obsolète ou de table `coursiers` est à ignorer.
 
 **AVANT (incorrect) :**
