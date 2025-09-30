@@ -69,22 +69,11 @@ $messageIndisponibilite = '';
 $commercialFallbackMessage = "Nos coursiers sont actuellement très sollicités. Restez sur cette page — des coursiers se libèrent dans un instant et le formulaire se rouvrira automatiquement pour vous permettre de commander immédiatement. Merci pour votre patience !";
 
 try {
-    // Charger la logique FCM
+    // Charger la logique FCM uniquement (aucune logique SQL)
     require_once __DIR__ . '/fcm_token_security.php';
     $fcmSec = new FCMTokenSecurity(['verbose' => false]);
     $canAccept = $fcmSec->canAcceptNewOrders();
-    $fcmDispo = (is_array($canAccept) && !empty($canAccept['can_accept_orders']));
-
-    // Charger la logique SQL (présence stricte)
-    require_once __DIR__ . '/lib/coursier_presence.php';
-    $sqlDispo = false;
-    $connectedCouriers = getConnectedCouriers();
-    if (is_array($connectedCouriers) && count($connectedCouriers) > 0) {
-        $sqlDispo = true;
-    }
-
-    // Fusion stricte : si l'une des deux est à false, on ferme le formulaire
-    $coursiersDisponibles = ($fcmDispo && $sqlDispo);
+    $coursiersDisponibles = (is_array($canAccept) && !empty($canAccept['can_accept_orders']));
     if (!$coursiersDisponibles) {
         $messageIndisponibilite = method_exists($fcmSec, 'getUnavailabilityMessage') ? $fcmSec->getUnavailabilityMessage() : "Service momentanément indisponible.";
     }

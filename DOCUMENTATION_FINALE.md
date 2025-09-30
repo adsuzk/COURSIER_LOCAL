@@ -65,18 +65,15 @@ VALUES ('TestAgent', 'Demo', 'test@demo.com', '+22501020304', 'hors_ligne', NOW(
 
 
 
-### 🔎 Nouvelle logique de présence temps réel — Index & Admin
+### 🔎 Présence temps réel — Index & Admin
 
-La présence des coursiers (connectés) est principalement basée sur les entrées FCM dans `device_tokens`.
+L’affichage du formulaire de commande sur l’index est piloté uniquement par la logique FCM :
 
-Par défaut la logique combine deux conditions pour considérer un token comme valide :
+- Un coursier est considéré comme disponible si un token FCM est `is_active = 1` et que `last_ping` (ou `updated_at` si absent) date de moins de 2 minutes.
+- Dès qu’il n’y a plus de token actif, le formulaire se ferme automatiquement.
+- La logique SQL/statut_connexion/last_login_at n’a aucune incidence sur l’affichage du formulaire.
 
-- `is_active = 1` (le token n'a pas été explicitement désactivé)
-- `last_ping` (ou `updated_at` si `last_ping` est NULL) doit être récent — la fenêtre par défaut est 120 secondes.
-
-Ce comportement est configurable :
-- Variable d'environnement `FCM_AVAILABILITY_THRESHOLD_SECONDS` pour changer la fenêtre (en secondes).
-- Variable d'environnement `FCM_IMMEDIATE_DETECTION=true` (ou option `['immediate_detection'=>true]`) force le mode immédiat où tout `is_active = 1` est considéré disponible.
+Seule la logique FCM gère la présence côté utilisateur. La logique SQL reste utilisée pour l’historique, l’audit et la maintenance, mais n’intervient pas dans l’UX.
 
 Les scripts de maintenance peuvent par ailleurs valider activement les tokens via FCM et désactiver automatiquement les tokens définitivement invalides (voir `Scripts/Scripts cron/fcm_validate_tokens.php`).
 

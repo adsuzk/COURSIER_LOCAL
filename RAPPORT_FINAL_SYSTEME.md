@@ -25,15 +25,8 @@
 
 ## 🏗️ ARCHITECTURE FINALE
 
-### Système Auto-Nettoyant
-```php
-// CHAQUE APPEL NETTOIE AUTOMATIQUEMENT
-getConnectedCouriers($pdo);
-// → autoCleanExpiredStatuses() exécuté
-// → Statuts >30min mis à 'hors_ligne' 
-// → Sessions expirées → NULL
-// → Base toujours cohérente
-```
+### Système Auto-Nettoyant (hors UX)
+> La logique SQL/statut_connexion/last_login_at sert uniquement à la cohérence et à l’audit, mais n’a aucune incidence sur l’affichage du formulaire côté index. Seule la logique FCM pilote la présence utilisateur.
 
 ### Pages Admin Unifiées
 - **Dashboard** : Utilise `getConnectedCouriers()` ✅
