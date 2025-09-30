@@ -131,6 +131,14 @@ try {
 }
 $fields['code_commande'] = 'SZ' . date('ymdHis') . $rand; // ex: SZ250930123045A1B
 
+// Générer order_number unique (format lisible, utilisé ailleurs)
+try {
+	$uniq = strtoupper(substr(bin2hex(random_bytes(3)), 0, 6));
+} catch (Throwable $e) {
+	$uniq = strtoupper(substr(md5(uniqid('', true)), 0, 6));
+}
+$fields['order_number'] = 'SZK' . date('ymd') . $uniq; // ex: SZK250930A1B2C3
+
 // Log des données reçues
 if (function_exists('logMessage')) {
 	logMessage('diagnostics_errors.log', 'submit_order.php DATA: ' . json_encode($data));
@@ -163,10 +171,11 @@ try {
 
 // Insertion réelle en base de données (table 'commandes')
 try {
-	$sql = "INSERT INTO commandes (code_commande, adresse_depart, adresse_arrivee, telephone_expediteur, telephone_destinataire, description_colis, priorite, mode_paiement, prix_estime, distance_estimee, dimensions, poids_estime, fragile, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	$sql = "INSERT INTO commandes (order_number, code_commande, adresse_depart, adresse_arrivee, telephone_expediteur, telephone_destinataire, description_colis, priorite, mode_paiement, prix_estime, distance_estimee, dimensions, poids_estime, fragile, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	$stmt = $pdo->prepare($sql);
 	$stmt->execute([
-		$fields['code_commande'],
+	$fields['order_number'],
+	$fields['code_commande'],
 		$fields['adresse_depart'],
 		$fields['adresse_arrivee'],
 		$fields['telephone_expediteur'],
