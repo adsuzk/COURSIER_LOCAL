@@ -16,10 +16,10 @@ $argv = isset($_SERVER['argv']) ? $_SERVER['argv'] : array();
 $isDryRun = in_array('--dry-run', $argv, true) || in_array('-n', $argv, true);
 $isVerbose = in_array('--verbose', $argv, true) || in_array('-v', $argv, true);
 
-// Threshold in minutes (default 2). Can be overridden with env var FCM_CLEANUP_THRESHOLD_MIN
-// NOTE: reduced to 2 minutes as requested so the server will quickly mark orphan tokens as inactive
+// Threshold in minutes (default 1). Peut être surchargé par l'env FCM_CLEANUP_THRESHOLD_MIN
+// NOTE: réduit à 1 minute pour cohérence UX
 $envVal = getenv('FCM_CLEANUP_THRESHOLD_MIN');
-$staleMinutes = (int)(($envVal !== false && $envVal !== '') ? $envVal : 2);
+$staleMinutes = (int)(($envVal !== false && $envVal !== '') ? $envVal : 1);
 
 // Log file
 $logDir = __DIR__ . '/../../diagnostic_logs';
