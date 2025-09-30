@@ -9,6 +9,8 @@ import android.location.Location
 import android.os.Looper
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
+import com.suzosky.coursier.network.ApiService
+import android.util.Log
 
 object LocationUtils {
     private var fusedLocationClient: FusedLocationProviderClient? = null
@@ -26,11 +28,36 @@ object LocationUtils {
         val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10000L)
             .setMinUpdateIntervalMillis(5000L)
             .build()
+
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
-                result.lastLocation?.let { onLocation(it) }
+                result.lastLocation?.let { loc ->
+                    try {
+                        onLocation(loc)
+
+                        // Envoi automatique de la position au serveur si coursier_id présent
+                        try {
+                            val prefs = context.getSharedPreferences("suzosky_prefs", Context.MODE_PRIVATE)
+                            val coursierId = prefs.getInt("coursier_id", -1)
+                            if (coursierId > 0) {
+                                // ApiService gère l'envoi asynchrone et les fallback bases
+                                ApiService.updateCoursierPosition(coursierId, loc.latitude, loc.longitude) { ok, err ->
+                                    if (!ok) {
+                                        Log.w("LocationUtils", "updateCoursierPosition failed: ${'$'}err")
+                                    }
+                                }
+                            }
+                        } catch (e: Exception) {
+                            Log.w("LocationUtils", "Impossible d'envoyer position: ${'$'}{e.message}")
+                        }
+                    } catch (e: Exception) {
+                        // Garder le callback principal robuste
+                        Log.w("LocationUtils", "Erreur handling location: ${'$'}{e.message}")
+                    }
+                }
             }
         }
+
         fusedLocationClient?.requestLocationUpdates(locationRequest, locationCallback!!, Looper.getMainLooper())
     }
 
