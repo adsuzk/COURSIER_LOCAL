@@ -123,6 +123,14 @@ $fields = [
 	'created_at' => date('Y-m-d H:i:s'),
 ];
 
+// Générer un code_commande unique (court, <=20 chars) si la table requiert une valeur unique
+try {
+	$rand = strtoupper(substr(bin2hex(random_bytes(2)), 0, 3));
+} catch (Throwable $e) {
+	$rand = strtoupper(substr(md5(uniqid('', true)), 0, 3));
+}
+$fields['code_commande'] = 'SZ' . date('ymdHis') . $rand; // ex: SZ250930123045A1B
+
 // Log des données reçues
 if (function_exists('logMessage')) {
 	logMessage('diagnostics_errors.log', 'submit_order.php DATA: ' . json_encode($data));
@@ -155,9 +163,10 @@ try {
 
 // Insertion réelle en base de données (table 'commandes')
 try {
-	$sql = "INSERT INTO commandes (adresse_depart, adresse_arrivee, telephone_expediteur, telephone_destinataire, description_colis, priorite, mode_paiement, prix_estime, distance_estimee, dimensions, poids_estime, fragile, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	$sql = "INSERT INTO commandes (code_commande, adresse_depart, adresse_arrivee, telephone_expediteur, telephone_destinataire, description_colis, priorite, mode_paiement, prix_estime, distance_estimee, dimensions, poids_estime, fragile, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	$stmt = $pdo->prepare($sql);
 	$stmt->execute([
+		$fields['code_commande'],
 		$fields['adresse_depart'],
 		$fields['adresse_arrivee'],
 		$fields['telephone_expediteur'],
