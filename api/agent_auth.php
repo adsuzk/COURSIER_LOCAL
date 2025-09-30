@@ -32,6 +32,11 @@ if ($raw) {
 $data = array_merge($_GET, $_POST, $payload);
 $action = $data['action'] ?? 'login';
 
+// Log manuel des tentatives
+$logFile = __DIR__ . '/../diagnostic_logs/agent_auth_manual.log';
+$logData = date('Y-m-d H:i:s') . " | Method: " . ($_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN') . " | Action: $action | Identifier: " . ($data['identifier'] ?? 'NONE') . " | Password: " . (isset($data['password']) ? 'SET' : 'NOT SET') . " | IP: " . ($_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN') . " | UA: " . ($_SERVER['HTTP_USER_AGENT'] ?? 'UNKNOWN') . "\n";
+file_put_contents($logFile, $logData, FILE_APPEND);
+
 switch ($action) {
     case 'login':
         $identifier = trim($data['identifier'] ?? ''); // matricule ou telephone
