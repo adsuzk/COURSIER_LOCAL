@@ -268,21 +268,65 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                     // Formulaire de connexion
                     Column {
                         val passwordFocusRequester = remember { FocusRequester() }
-                        OutlinedTextField(
-                            value = identifier,
-                            onValueChange = { identifier = it },
-                            label = { Text("Matricule, Téléphone ou Email") },
-                            placeholder = { Text("Votre matricule ou numéro") },
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                            keyboardActions = KeyboardActions(
-                                onNext = {
-                                    passwordFocusRequester.requestFocus()
-                                }
+                        val ctx = LocalContext.current
+                        // Persist / restore last used identifier type & value
+                        var identifierType by remember { mutableStateOf("matricule") } // matricule | telephone | email
+                        LaunchedEffect(Unit) {
+                            try {
+                                val prefs = ctx.getSharedPreferences("suzosky_prefs", Context.MODE_PRIVATE)
+                                identifierType = prefs.getString("last_login_type", "matricule") ?: "matricule"
+                                identifier = prefs.getString("last_login_value", "") ?: ""
+                            } catch (_: Exception) {
+                            }
+                        }
+
+                        fun saveLastLoginPref() {
+                            try {
+                                val prefs = ctx.getSharedPreferences("suzosky_prefs", Context.MODE_PRIVATE)
+                                prefs.edit().putString("last_login_type", identifierType).putString("last_login_value", identifier).apply()
+                            } catch (_: Exception) { }
+                        }
+
+                        // Row: small dropdown selector for type + identifier field
+                        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                            var expandedIdType by remember { mutableStateOf(false) }
+                            Button(
+                                onClick = { expandedIdType = true },
+                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE0E0E0)),
+                                contentPadding = androidx.compose.ui.unit.PaddingValues(horizontal = 12.dp, vertical = 8.dp),
+                                modifier = Modifier.padding(end = 8.dp)
+                            ) {
+                                Text(
+                                    when (identifierType) {
+                                        "telephone" -> "Téléphone"
+                                        "email" -> "Email"
+                                        else -> "Matricule"
+                                    },
+                                    color = Color(0xFF1A1A1A)
+                                )
+                            }
+                            DropdownMenu(expanded = expandedIdType, onDismissRequest = { expandedIdType = false }) {
+                                DropdownMenuItem(text = { Text("Matricule") }, onClick = { identifierType = "matricule"; expandedIdType = false; saveLastLoginPref() })
+                                DropdownMenuItem(text = { Text("Téléphone") }, onClick = { identifierType = "telephone"; expandedIdType = false; saveLastLoginPref() })
+                                DropdownMenuItem(text = { Text("Email") }, onClick = { identifierType = "email"; expandedIdType = false; saveLastLoginPref() })
+                            }
+
+                            OutlinedTextField(
+                                value = identifier,
+                                onValueChange = { identifier = it; saveLastLoginPref() },
+                                label = { Text("Matricule, Téléphone ou Email") },
+                                placeholder = { Text("Votre matricule ou numéro") },
+                                modifier = Modifier
+                                    .weight(1f),
+                                singleLine = true,
+                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                                keyboardActions = KeyboardActions(
+                                    onNext = {
+                                        passwordFocusRequester.requestFocus()
+                                    }
+                                )
                             )
-                        )
+                        }
                         Spacer(Modifier.height(12.dp))
                         OutlinedTextField(
                             value = password,
