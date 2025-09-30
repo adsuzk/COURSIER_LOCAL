@@ -67,31 +67,32 @@ $messageIndisponibilite = '';
 // Prefer an environment variable or a config constant to avoid hardcoding text in code.
 // Commercial fallback message (centralized)
 $commercialFallbackMessage = "Nos coursiers sont actuellement très sollicités. Restez sur cette page — des coursiers se libèrent dans un instant et le formulaire se rouvrira automatiquement pour vous permettre de commander immédiatement. Merci pour votre patience !";
-try {
-    // Charger le shim / implémentation centrale (Scripts/Scripts cron/fcm_token_security.php)
-    require_once __DIR__ . '/fcm_token_security.php';
 
-    // Instancier en mode non-verbose (web) pour éviter les flashs visuels
+try {
+    // Charger la logique FCM
+    require_once __DIR__ . '/fcm_token_security.php';
     $fcmSec = new FCMTokenSecurity(['verbose' => false]);
     $canAccept = $fcmSec->canAcceptNewOrders();
-        if (is_array($canAccept)) {
-            $coursiersDisponibles = !empty($canAccept['can_accept_orders']);
-            if (!$coursiersDisponibles) {
-                // Prefer using the class provided message when available
-                $messageIndisponibilite = method_exists($fcmSec, 'getUnavailabilityMessage') ? $fcmSec->getUnavailabilityMessage() : "Service momentanément indisponible.";
-            }
-        } else {
-            // Fallback conservateur
-            $coursiersDisponibles = false;
-            $messageIndisponibilite = "Service momentanément indisponible.";
-        }
-        // If the message is empty or the generic placeholder, replace with our commercial message
-        if (trim((string)$messageIndisponibilite) === '' || $messageIndisponibilite === "Service momentanément indisponible.") {
-            $messageIndisponibilite = $commercialFallbackMessage;
-        }
+    $fcmDispo = (is_array($canAccept) && !empty($canAccept['can_accept_orders']));
+
+    // Charger la logique SQL (présence stricte)
+    require_once __DIR__ . '/lib/coursier_presence.php';
+    $sqlDispo = false;
+    $connectedCouriers = getConnectedCouriers();
+    if (is_array($connectedCouriers) && count($connectedCouriers) > 0) {
+        $sqlDispo = true;
+    }
+
+    // Fusion stricte : si l'une des deux est à false, on ferme le formulaire
+    $coursiersDisponibles = ($fcmDispo && $sqlDispo);
+    if (!$coursiersDisponibles) {
+        $messageIndisponibilite = method_exists($fcmSec, 'getUnavailabilityMessage') ? $fcmSec->getUnavailabilityMessage() : "Service momentanément indisponible.";
+    }
+    if (trim((string)$messageIndisponibilite) === '' || $messageIndisponibilite === "Service momentanément indisponible.") {
+        $messageIndisponibilite = $commercialFallbackMessage;
+    }
 } catch (Exception $e) {
     error_log('[SECURITY] Erreur vérification disponibilité coursiers (FCMTokenSecurity): ' . $e->getMessage());
-    // En cas d'erreur, bloquer la prise de commande pour éviter surbooking
     $coursiersDisponibles = false;
     $messageIndisponibilite = "Service momentanément indisponible.";
 }
