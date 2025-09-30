@@ -26,7 +26,20 @@ if ($sessionSenderPhoneRaw !== '') {
         $sessionSenderPhoneDigits = $digits;
     }
 }
+
+$initialCoursierAvailability = isset($coursiersDisponibles) ? (bool)$coursiersDisponibles : false;
+$defaultUnavailableMessage = $messageIndisponibilite ?? ($commercialFallbackMessage ?? 'Nos coursiers sont momentanément indisponibles. Restez sur la page, un coursier va se reconnecter.');
+if (trim((string)$defaultUnavailableMessage) === '') {
+    $defaultUnavailableMessage = 'Nos coursiers sont momentanément indisponibles. Restez sur la page, un coursier va se reconnecter.';
+}
 ?>
+    <script>
+        window.COMMERCIAL_FALLBACK_MESSAGE = window.COMMERCIAL_FALLBACK_MESSAGE || <?php echo json_encode($defaultUnavailableMessage, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+        window.initialCoursierAvailability = <?php echo $initialCoursierAvailability ? 'true' : 'false'; ?>;
+        window.initialCoursierMessage = window.initialCoursierMessage || <?php echo json_encode($defaultUnavailableMessage, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+        window.COURSIER_LOCK_DELAY_MS = window.COURSIER_LOCK_DELAY_MS || 60000;
+        window.COURSIER_POLL_INTERVAL_MS = window.COURSIER_POLL_INTERVAL_MS || 15000;
+    </script>
     <!-- Fix mobile pour les cartes de service -->
     <style>
         /* Force l'affichage des cartes sur mobile */
