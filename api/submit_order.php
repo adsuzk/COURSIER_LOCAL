@@ -59,47 +59,39 @@ if (!empty($rawInput)) {
 	$data = $_POST;
 }
 
+// --- Rétro-compatibilité: normaliser les clés entrantes (anglais -> français)
+$legacyMap = [
+	'departure' => 'adresse_depart',
+	'destination' => 'adresse_arrivee',
+	'senderPhone' => 'telephone_expediteur',
+	'receiverPhone' => 'telephone_destinataire',
+	'sender_phone' => 'telephone_expediteur',
+	'receiver_phone' => 'telephone_destinataire',
+	'packageDescription' => 'description_colis',
+	'packageDesc' => 'description_colis',
+	'package_description' => 'description_colis',
+	'priority' => 'priorite',
+	'paymentMethod' => 'mode_paiement',
+	'payment_method' => 'mode_paiement',
+	'price' => 'prix_estime',
+	'distance' => 'distance_estimee',
+	'duration' => 'distance_estimee',
+	'dimensions' => 'dimensions',
+	'weight' => 'poids_estime',
+	'poids' => 'poids_estime',
+	'fragile' => 'fragile'
+];
+if (is_array($data)) {
+	foreach ($legacyMap as $old => $new) {
+		if ((isset($data[$old]) || isset($data[$old]))) {
+			// Ne pas écraser une valeur déjà normalisée
+			if (!isset($data[$new]) || $data[$new] === '') {
+				$data[$new] = $data[$old];
+			}
+		}
+	}
+}
 
-$
-// Normalisation des clés entrantes (rétrocompatibilité)
-// Accepte les anciens noms utilisés par le frontend historique et les mappe
-// vers les noms de colonnes SQL actuels.
-$normalized = [];
-// Adresses
-if (!empty($data['adresse_depart'])) $normalized['adresse_depart'] = $data['adresse_depart'];
-if (!empty($data['departure'])) $normalized['adresse_depart'] = $data['departure'];
-if (!empty($data['adresse_arrivee'])) $normalized['adresse_arrivee'] = $data['adresse_arrivee'];
-if (!empty($data['destination'])) $normalized['adresse_arrivee'] = $data['destination'];
-// Téléphones
-if (!empty($data['telephone_expediteur'])) $normalized['telephone_expediteur'] = $data['telephone_expediteur'];
-if (!empty($data['senderPhone'])) $normalized['telephone_expediteur'] = $data['senderPhone'];
-if (!empty($data['telephone_destinataire'])) $normalized['telephone_destinataire'] = $data['telephone_destinataire'];
-if (!empty($data['receiverPhone'])) $normalized['telephone_destinataire'] = $data['receiverPhone'];
-// Description colis (optionnel)
-if (!empty($data['description_colis'])) $normalized['description_colis'] = $data['description_colis'];
-if (!empty($data['packageDesc'])) $normalized['description_colis'] = $data['packageDesc'];
-if (!empty($data['packageDescription'])) $normalized['description_colis'] = $data['packageDescription'];
-// Priorité / paiement / prix
-if (!empty($data['priorite'])) $normalized['priorite'] = $data['priorite'];
-if (!empty($data['priority'])) $normalized['priorite'] = $data['priority'];
-if (!empty($data['mode_paiement'])) $normalized['mode_paiement'] = $data['mode_paiement'];
-if (!empty($data['paymentMethod'])) $normalized['mode_paiement'] = $data['paymentMethod'];
-if (isset($data['prix_estime']) && $data['prix_estime'] !== '') $normalized['prix_estime'] = $data['prix_estime'];
-if (isset($data['price']) && $data['price'] !== '') $normalized['prix_estime'] = $data['price'];
-// Distance / dimensions / poids / fragile
-if (isset($data['distance_estimee'])) $normalized['distance_estimee'] = $data['distance_estimee'];
-if (isset($data['distance'])) $normalized['distance_estimee'] = $data['distance'];
-if (isset($data['dimensions'])) $normalized['dimensions'] = $data['dimensions'];
-if (isset($data['poids_estime'])) $normalized['poids_estime'] = $data['poids_estime'];
-if (isset($data['fragile'])) $normalized['fragile'] = $data['fragile'];
-// Lat/Lng (si fournis par le frontend)
-if (isset($data['departure_lat'])) $normalized['departure_lat'] = $data['departure_lat'];
-if (isset($data['departure_lng'])) $normalized['departure_lng'] = $data['departure_lng'];
-if (isset($data['destination_lat'])) $normalized['destination_lat'] = $data['destination_lat'];
-if (isset($data['destination_lng'])) $normalized['destination_lng'] = $data['destination_lng'];
-
-// Fusionner les valeurs normalisées dans $data (sans écraser intentionnellement des valeurs explicites déjà correctes)
-$data = array_merge($data, $normalized);
 
 // Validation complète des champs attendus
 
