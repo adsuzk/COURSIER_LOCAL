@@ -1002,15 +1002,34 @@ object ApiService {
     }
 
     fun updateCoursierPosition(coursierId: Int, lat: Double, lng: Double, callback: (Boolean, String?) -> Unit) {
-        val formBody = FormBody.Builder()
-            .add("coursier_id", coursierId.toString())
-            .add("latitude", lat.toString())
-            .add("longitude", lng.toString())
-            .build()
+        val payload = JSONObject().apply {
+            put("coursier_id", coursierId)
+            put("lat", lat)
+            put("lng", lng)
+        }.toString()
+        val body = payload.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
         executeWithFallback(
             buildRequest = { base ->
                 val url = buildApi(base, "update_coursier_position.php")
-                Request.Builder().url(url).post(formBody).build()
+                Request.Builder().url(url).post(body).build()
+            },
+            onResponseMain = { response ->
+                val ok = response.isSuccessful
+                callback(ok, if (ok) null else response.body?.string() ?: "Erreur server")
+            },
+            onFailureMain = { err -> callback(false, err) }
+        )
+    }
+
+    /**
+     * Posts raw JSON to an arbitrary API path (full URL), using the fallback/executeWithFallback machinery.
+     * callback: (ok, errMessage)
+     */
+    fun executeRawJson(fullUrl: String, json: JSONObject, callback: (Boolean, String?) -> Unit) {
+        val body = json.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+        executeWithFallback(
+            buildRequest = { _ ->
+                Request.Builder().url(fullUrl).post(body).build()
             },
             onResponseMain = { response ->
                 val ok = response.isSuccessful

@@ -22,6 +22,7 @@ require_once __DIR__ . '/config.php';
 
 // Optimisation de trajet (Google Directions API)
 function optimizeDeliveryRoute($start_lat, $start_lng, $deliveries) {
+    // Build the flat list of waypoint coordinates (same order as before: pickup then delivery)
     $waypoints = [];
     foreach ($deliveries as $delivery) {
         if (!empty($delivery['latitude_pickup']) && !empty($delivery['longitude_pickup'])) {
@@ -31,16 +32,186 @@ function optimizeDeliveryRoute($start_lat, $start_lng, $deliveries) {
             $waypoints[] = $delivery['latitude_delivery'] . ',' . $delivery['longitude_delivery'];
         }
     }
+
     if (empty($waypoints)) {
         return ['route' => [], 'total_distance' => 0, 'estimated_time' => 0];
     }
-    $origin = $start_lat . ',' . $start_lng;
-    $destination = end($waypoints);
-    $waypoints_str = implode('|', array_slice($waypoints, 0, -1));
+
     $api_key = defined('GOOGLE_MAPS_API_KEY') ? GOOGLE_MAPS_API_KEY : (getenv('GOOGLE_MAPS_API_KEY') ?: null);
     if (!$api_key) {
         return ['route' => $deliveries, 'total_distance' => 0, 'estimated_time' => 0, 'error' => 'Missing Google Maps API key'];
     }
+
+    // Prepare locations: origin + all waypoints
+    $locations = [];
+    $locations[] = ['lat' => floatval($start_lat), 'lng' => floatval($start_lng)];
+    foreach ($waypoints as $wp) {
+        list($lat, $lng) = array_map('trim', explode(',', $wp));
+        $locations[] = ['lat' => floatval($lat), 'lng' => floatval($lng)];
+    }
+
+    // Try Routes API: computeRouteMatrix to get pairwise distances/durations, then do a simple nearest-neighbour ordering.
+    $matrixUrl = 'https://routes.googleapis.com/v2:computeRouteMatrix?key=' . urlencode($api_key);
+    $matrixBody = [
+        'origins' => [],
+        'destinations' => [],
+        'travelMode' => 'DRIVE',
+        'routingPreference' => 'TRAFFIC_AWARE'
+    ];
+    foreach ($locations as $loc) {
+        $matrixBody['origins'][] = ['endpoint' => ['location' => ['latLng' => ['latitude' => $loc['lat'], 'longitude' => $loc['lng']]]]];
+        $matrixBody['destinations'][] = ['endpoint' => ['location' => ['latLng' => ['latitude' => $loc['lat'], 'longitude' => $loc['lng']]]]];
+    }
+
+    $ch = curl_init($matrixUrl);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($matrixBody));
+    curl_setopt($ch, CURLOPT_TIMEOUT, 8);
+    $matrixResp = @curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlErr = curl_error($ch);
+    curl_close($ch);
+
+    $distanceMatrix = null; // will be an NxN matrix in meters
+    if ($matrixResp && $httpCode >= 200 && $httpCode < 300) {
+        $matrixData = json_decode($matrixResp, true);
+        // Try to parse common shapes: rows->elements or originDestinationPairs
+        if (!empty($matrixData['rows']) && is_array($matrixData['rows'])) {
+            $n = count($matrixData['rows']);
+            $distanceMatrix = array_fill(0, $n, array_fill(0, $n, PHP_INT_MAX));
+            for ($i = 0; $i < $n; $i++) {
+                $elements = $matrixData['rows'][$i]['elements'] ?? [];
+                for ($j = 0; $j < count($elements); $j++) {
+                    $el = $elements[$j];
+                    if (isset($el['distance']) && isset($el['distance']['value'])) {
+                        $distanceMatrix[$i][$j] = (int)$el['distance']['value'];
+                    } elseif (isset($el['distanceMeters'])) {
+                        $distanceMatrix[$i][$j] = (int)$el['distanceMeters'];
+                    }
+                }
+            }
+        } elseif (!empty($matrixData['originDestinationPairs']) && is_array($matrixData['originDestinationPairs'])) {
+            // Some matrix responses present as a flat list
+            $pairs = $matrixData['originDestinationPairs'];
+            $n = count($locations);
+            $distanceMatrix = array_fill(0, $n, array_fill(0, $n, PHP_INT_MAX));
+            foreach ($pairs as $pair) {
+                $i = $pair['originIndex'] ?? null;
+                $j = $pair['destinationIndex'] ?? null;
+                $dist = $pair['distanceMeters'] ?? ($pair['distance'] ?? null);
+                if ($i !== null && $j !== null && $dist !== null) {
+                    $distanceMatrix[(int)$i][(int)$j] = (int)$dist;
+                }
+            }
+        } else {
+            // Unknown format — ignore and fallback later
+            error_log('Routes matrix: unexpected response format or empty matrix');
+        }
+    } else {
+        error_log('Routes matrix request failed HTTP=' . intval($httpCode) . ' curlErr=' . $curlErr . ' resp=' . substr($matrixResp ?? '', 0, 200));
+    }
+
+    // If we got a valid distance matrix, compute a simple greedy route (nearest neighbour)
+    if (is_array($distanceMatrix)) {
+        $n = count($distanceMatrix);
+        // indices: 0 = origin, 1..n-1 = waypoints
+        $visited = array_fill(0, $n, false);
+        $order = [];
+        $current = 0; // start at origin
+        $visited[0] = true;
+        while (true) {
+            $best = null;
+            $bestDist = PHP_INT_MAX;
+            for ($j = 1; $j < $n; $j++) {
+                if ($visited[$j]) continue;
+                $d = $distanceMatrix[$current][$j] ?? PHP_INT_MAX;
+                if ($d < $bestDist) {
+                    $bestDist = $d;
+                    $best = $j;
+                }
+            }
+            if ($best === null) break;
+            $order[] = $best;
+            $visited[$best] = true;
+            $current = $best;
+        }
+
+        // Map the waypoint indices back to deliveries (best-effort: preserve previous behavior)
+        $optimized_deliveries = [];
+        $optimized_order = [];
+        foreach ($order as $wpIndex) {
+            // $wpIndex corresponds to locations index; waypoints start at locations index 1
+            $relative = $wpIndex - 1; // index into $waypoints
+            $optimized_order[] = $relative;
+            // Attempt to map back to a delivery: the original code assumed a direct mapping; keep that for compatibility
+            if (isset($deliveries[$relative])) {
+                $optimized_deliveries[] = $deliveries[$relative];
+            }
+        }
+
+        // Compute rough total distance/time by summing chosen legs from the matrix
+        $total_distance = 0;
+        $estimated_time = 0;
+        $prev = 0;
+        foreach ($order as $idx) {
+            $d = $distanceMatrix[$prev][$idx] ?? 0;
+            $total_distance += (int)$d;
+            $prev = $idx;
+            // duration estimation not always available in matrix; keep 0
+        }
+
+        // For polyline/legs, fall back to Directions API to get an overview polyline using the optimized order
+        try {
+            $ordered_waypoints = [];
+            foreach ($order as $idx) {
+                $loc = $locations[$idx];
+                $ordered_waypoints[] = $loc['lat'] . ',' . $loc['lng'];
+            }
+            $origin = $locations[0]['lat'] . ',' . $locations[0]['lng'];
+            $destination = end($ordered_waypoints);
+            $waypoints_str = implode('|', array_slice($ordered_waypoints, 0, -1));
+            $directionsUrl = 'https://maps.googleapis.com/maps/api/directions/json?' . http_build_query([
+                'origin' => $origin,
+                'destination' => $destination,
+                'waypoints' => $waypoints_str ? ('|' . $waypoints_str) : '',
+                'key' => $api_key,
+                'language' => 'fr',
+                'region' => 'CI'
+            ]);
+            $dirResp = @file_get_contents($directionsUrl);
+            if ($dirResp !== false) {
+                $dirData = json_decode($dirResp, true);
+                if (!empty($dirData['routes'][0])) {
+                    $poly = $dirData['routes'][0]['overview_polyline']['points'] ?? null;
+                    return [
+                        'route' => $optimized_deliveries,
+                        'total_distance' => $total_distance,
+                        'estimated_time' => $estimated_time,
+                        'polyline' => $poly,
+                        'optimized_order' => $optimized_order,
+                    ];
+                }
+            }
+        } catch (Throwable $e) {
+            error_log('Directions fallback after matrix error: ' . $e->getMessage());
+        }
+
+        // If we reached here, return what we have (no polyline)
+        return [
+            'route' => $optimized_deliveries,
+            'total_distance' => $total_distance,
+            'estimated_time' => $estimated_time,
+            'polyline' => null,
+            'optimized_order' => $optimized_order,
+        ];
+    }
+
+    // Fallback: original Directions API call with optimize:true (keeps previous behavior when Routes API not available)
+    $origin = $start_lat . ',' . $start_lng;
+    $destination = end($waypoints);
+    $waypoints_str = implode('|', array_slice($waypoints, 0, -1));
     $url = 'https://maps.googleapis.com/maps/api/directions/json?' . http_build_query([
         'origin' => $origin,
         'destination' => $destination,
@@ -77,7 +248,8 @@ function optimizeDeliveryRoute($start_lat, $start_lng, $deliveries) {
             'optimized_order' => $optimized_order,
         ];
     }
-    // Fallback si la réponse n'est pas OK
+
+    // Final fallback
     return ['route' => $deliveries, 'total_distance' => 0, 'estimated_time' => 0, 'error' => 'Directions API error'];
 }
 

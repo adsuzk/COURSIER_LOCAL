@@ -181,6 +181,12 @@ class MainActivity : ComponentActivity() {
                             Log.d("MainActivity", "🚀 Enregistrement immédiat pour coursier $existingId")
                             println("🚀 Enregistrement immédiat pour coursier $existingId")
                             ApiService.registerDeviceToken(this, existingId, token)
+                            // Démarrer le ForegroundService de tracking si on a un coursier connecté
+                            try {
+                                startLocationForegroundService(existingId)
+                            } catch (e: Exception) {
+                                Log.w("MainActivity", "Impossible de démarrer LocationForegroundService: ${e.message}")
+                            }
                         } else {
                             Log.d("MainActivity", "⏸️ Token sauvé, en attente de connexion coursier")
                             println("⏸️ Token sauvé, en attente de connexion coursier")
@@ -220,6 +226,31 @@ class MainActivity : ComponentActivity() {
                     ErrorFallbackScreen(error = e.message ?: "Erreur inconnue")
                 }
             }
+        }
+    }
+
+    private fun startLocationForegroundService(coursierId: Int) {
+        try {
+            val intent = android.content.Intent(this, com.suzosky.coursier.services.LocationForegroundService::class.java)
+            intent.action = com.suzosky.coursier.services.LocationForegroundService.ACTION_START
+            intent.putExtra(com.suzosky.coursier.services.LocationForegroundService.EXTRA_COURSIER_ID, coursierId)
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                startForegroundService(intent)
+            } else {
+                startService(intent)
+            }
+        } catch (e: Exception) {
+            Log.w("MainActivity", "startLocationForegroundService failed: ${e.message}")
+        }
+    }
+
+    private fun stopLocationForegroundService() {
+        try {
+            val intent = android.content.Intent(this, com.suzosky.coursier.services.LocationForegroundService::class.java)
+            intent.action = com.suzosky.coursier.services.LocationForegroundService.ACTION_STOP
+            startService(intent)
+        } catch (e: Exception) {
+            Log.w("MainActivity", "stopLocationForegroundService failed: ${e.message}")
         }
     }
     // Callback de permission notifications (Android 13+)

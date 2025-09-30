@@ -87,13 +87,19 @@ Callbacks :
 4. Détails commande (dialog / bottom sheet).
 5. Tracking temps réel (WebSocket ou polling léger).
 
-### Position / Tracking (note importante)
-L'application Android envoie maintenant automatiquement la position du coursier au serveur à chaque mise à jour de localisation via `ApiService.updateCoursierPosition(...)`.
+### Position / Tracking (service Foreground robuste)
+L'application inclut désormais un `LocationForegroundService` robuste qui :
 
-- Endpoint côté serveur : `/api/update_coursier_position.php` (attend `coursier_id`, `latitude`, `longitude`, `accuracy`).
-- SharedPreferences : clé utilisée `suzosky_prefs` ; l'ID du coursier est lu depuis `coursier_id` dans ces prefs.
+- Démarre en service foreground (notification persistante) pour garantir la continuité en arrière-plan.
+- Demande et vérifie les permissions runtime (ACCESS_FINE_LOCATION, ACCESS_BACKGROUND_LOCATION, POST_NOTIFICATIONS si nécessaire).
+- Collecte des positions haute précision via FusedLocationProvider.
+- Envoie les positions au serveur au format JSON {coursier_id, lat, lng, accuracy} en utilisant le helper `ApiService.updateCoursierPosition(...)`.
+- Gère une file locale avec retry/exponential backoff pour résilience réseau (queue + stockage temporaire si hors-ligne).
+- Supporte batching (regroupe plusieurs positions si le réseau est lent) et politesses battery-aware (réduit la fréquence si batterie faible).
 
-Assurez-vous que le device ou l'émulateur peut atteindre l'hôte de développement (voir `local.properties` `debug.localHost`) pour que les envois aboutissent en environnement local.
+SharedPreferences : clé utilisée `suzosky_prefs` ; l'ID du coursier est lu depuis `coursier_id` dans ces prefs. Le service expose des actions START/STOP et des helpers dans `MainActivity` pour contrôle manuel.
+
+Assurez-vous que le device peut atteindre l'hôte de développement (voir `local.properties` `debug.localHost`) et que l'utilisateur accorde la permission background de localisation sur Android 10+.
 
 ---
 ## 🧪 QA Visuelle

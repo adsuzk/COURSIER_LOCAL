@@ -39,14 +39,16 @@ object LocationUtils {
                         try {
                             val prefs = context.getSharedPreferences("suzosky_prefs", Context.MODE_PRIVATE)
                             val coursierId = prefs.getInt("coursier_id", -1)
-                            if (coursierId > 0) {
+                            if (coursierId <= 0) {
+                                // Pas d'ID coursier enregistré, on n'envoie rien
+                            } else {
                                 // ApiService gère l'envoi asynchrone et les fallback bases
-                                val _posCb: (Boolean, String?) -> Unit = { ok, err ->
+                                ApiService.updateCoursierPosition(coursierId, loc.latitude, loc.longitude) { ok, err ->
                                     if (!ok) {
                                         Log.w("LocationUtils", "updateCoursierPosition failed: $err")
                                     }
+                                    Unit
                                 }
-                                ApiService.updateCoursierPosition(coursierId, loc.latitude, loc.longitude, _posCb)
                             }
                         } catch (e: Exception) {
                             Log.w("LocationUtils", "Impossible d'envoyer position: ${e.message}")
