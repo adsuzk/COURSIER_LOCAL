@@ -38,7 +38,7 @@ if (trim((string)$defaultUnavailableMessage) === '') {
         window.initialCoursierAvailability = <?php echo $initialCoursierAvailability ? 'true' : 'false'; ?>;
         window.initialCoursierMessage = window.initialCoursierMessage || <?php echo json_encode($defaultUnavailableMessage, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
         window.COURSIER_LOCK_DELAY_MS = window.COURSIER_LOCK_DELAY_MS || 60000;
-    window.COURSIER_POLL_INTERVAL_MS = window.COURSIER_POLL_INTERVAL_MS || 3000;
+    window.COURSIER_POLL_INTERVAL_MS = window.COURSIER_POLL_INTERVAL_MS || 1000;
     </script>
     <!-- Fix mobile pour les cartes de service -->
     <style>
