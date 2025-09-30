@@ -25,6 +25,7 @@ try {
         'message' => 'Token de test créé',
         'coursier_id' => $coursierId,
         'token_preview' => substr($testToken, 0, 20) . '...',
+        'token' => $testToken,
         'timestamp' => date('Y-m-d H:i:s')
     ]);
     
