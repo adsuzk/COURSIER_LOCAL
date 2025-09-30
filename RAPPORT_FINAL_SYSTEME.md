@@ -26,7 +26,7 @@
 ## 🏗️ ARCHITECTURE FINALE
 
 ### Système Auto-Nettoyant (hors UX)
-> La logique SQL/statut_connexion/last_login_at sert uniquement à la cohérence et à l’audit, mais n’a aucune incidence sur l’affichage du formulaire côté index. Seule la logique FCM pilote la présence utilisateur.
+> La logique SQL/statut_connexion/last_login_at sert uniquement à la cohérence et à l’audit, mais n’a aucune incidence sur l’affichage du formulaire côté index. Seule la logique FCM pilote la présence utilisateur (délai de fraîcheur : 1 minute).
 
 ### Pages Admin Unifiées
 - **Dashboard** : Utilise `getConnectedCouriers()` ✅

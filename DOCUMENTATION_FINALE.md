@@ -69,8 +69,8 @@ VALUES ('TestAgent', 'Demo', 'test@demo.com', '+22501020304', 'hors_ligne', NOW(
 
 L’affichage du formulaire de commande sur l’index est piloté uniquement par la logique FCM :
 
-- Un coursier est considéré comme disponible si un token FCM est `is_active = 1` et que `last_ping` (ou `updated_at` si absent) date de moins de 2 minutes.
-- Dès qu’il n’y a plus de token actif, le formulaire se ferme automatiquement.
+- Un coursier est considéré comme disponible si un token FCM est `is_active = 1` et que `last_ping` (ou `updated_at` si absent) date de moins de 1 minute.
+- Dès qu’il n’y a plus de token actif, le formulaire se ferme automatiquement (délai : 1 minute).
 - La logique SQL/statut_connexion/last_login_at n’a aucune incidence sur l’affichage du formulaire.
 
 Seule la logique FCM gère la présence côté utilisateur. La logique SQL reste utilisée pour l’historique, l’audit et la maintenance, mais n’intervient pas dans l’UX.
