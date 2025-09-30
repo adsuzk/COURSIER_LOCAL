@@ -41,12 +41,12 @@ object LocationUtils {
                             val coursierId = prefs.getInt("coursier_id", -1)
                             if (coursierId > 0) {
                                 // ApiService gère l'envoi asynchrone et les fallback bases
-                                ApiService.updateCoursierPosition(coursierId, loc.latitude, loc.longitude) { ok, err ->
+                                val _posCb: (Boolean, String?) -> Unit = { ok, err ->
                                     if (!ok) {
                                         Log.w("LocationUtils", "updateCoursierPosition failed: $err")
                                     }
-                                    Unit
                                 }
+                                ApiService.updateCoursierPosition(coursierId, loc.latitude, loc.longitude, _posCb)
                             }
                         } catch (e: Exception) {
                             Log.w("LocationUtils", "Impossible d'envoyer position: ${e.message}")
