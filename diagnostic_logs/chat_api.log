@@ -6591,3 +6591,5 @@
 [2025-09-30 04:19:55] {"endpoint":"get_messages","conversation_id":17,"count":0}
 [2025-09-30 04:19:59] {"endpoint":"get_messages","conversation_id":17,"count":0}
 [2025-09-30 04:20:42] {"endpoint":"get_messages","conversation_id":17,"count":0}
+[2025-09-30 04:21:52] {"endpoint":"init","type":"particulier","client_id":198912625,"conversation_id":37,"ip":"192.168.134.193"}
+[2025-09-30 04:21:52] {"endpoint":"get_messages","conversation_id":37,"count":0}
