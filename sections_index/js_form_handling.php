@@ -8,6 +8,42 @@
 
     console.log('🚀 js_form_handling.php - Chargement des fonctions modales');
 
+    // FCM-driven control: expose a function for FCM code to notify whether coursiers are available.
+    // Usage from FCM layer: window.setFCMCoursierStatus(true|false, optionalMessage)
+    if (typeof window.setFCMCoursierStatus !== 'function') {
+        window.fcmCoursierAvailable = undefined; // undefined means "not provided"
+        window.fcmCoursierMessage = '';
+        window.setFCMCoursierStatus = function(isAvailable, message) {
+            window.fcmCoursierAvailable = Boolean(isAvailable);
+            window.fcmCoursierMessage = message || '';
+            console.log('📡 FCM coursier status set:', window.fcmCoursierAvailable, window.fcmCoursierMessage);
+            // Optionally show/hide a banner on the page
+            try {
+                const banner = document.getElementById('coursier-unavailable-banner');
+                if (!window.fcmCoursierAvailable) {
+                    if (!banner) {
+                        const b = document.createElement('div');
+                        b.id = 'coursier-unavailable-banner';
+                        b.style = 'position:fixed;top:0;left:0;right:0;z-index:99999;padding:10px;text-align:center;background:linear-gradient(90deg,#D9534F,#F0AD4E);color:#fff;font-weight:700;';
+                        b.textContent = window.fcmCoursierMessage || 'Aucun coursier disponible pour le moment.';
+                        document.body.appendChild(b);
+                    } else {
+                        banner.textContent = window.fcmCoursierMessage || banner.textContent;
+                        banner.style.display = '';
+                    }
+                } else if (banner) {
+                    banner.style.display = 'none';
+                }
+            } catch (e) {
+                console.warn('⚠️ setFCMCoursierStatus banner update failed', e);
+            }
+        };
+        // Helper to show unavailable message explicitly
+        window.showCoursierUnavailableMessage = function(msg) {
+            window.setFCMCoursierStatus(false, msg);
+        };
+    }
+
     if (typeof window.__cashFlowEnhanced === 'undefined') {
         window.__cashFlowEnhanced = true;
         console.info('⚙️  __cashFlowEnhanced absent, valeur par défaut activée.');
