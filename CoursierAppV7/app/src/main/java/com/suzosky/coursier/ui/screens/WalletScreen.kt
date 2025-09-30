@@ -406,7 +406,7 @@ fun WalletScreen(
                                             fontWeight = FontWeight.SemiBold
                                         )
                                         Text(
-                                            text = "${'$'}{c.dateCommande} ${'$'}{c.heureCommande}",
+                                            text = "${c.dateCommande} ${c.heureCommande}",
                                             style = MaterialTheme.typography.bodySmall,
                                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                                         )
