@@ -1,4 +1,22 @@
 # 📚 DOCUMENTATION CONSOLIDÉE AUTOMATIQUE
+
+## 🚦 Clés/API Google Routes utilisées (septembre 2025)
+
+### 1. Clé API Web (JavaScript, navigateur)
+- **Clé API** : `AIzaSyChGsSDgCY9ELhBtMuEqDtAWsQYxUggMHs`
+- **Usage** : à utiliser uniquement côté web (Google Maps JavaScript API, Directions, Routes, etc.)
+- **Sécurité** : restreindre cette clé aux référents HTTP de ton site et aux APIs nécessaires dans la Google Cloud Console.
+
+### 2. Clé API Android (application mobile)
+- **Clé API** : `AIzaSyAWcWWwpRx9myEaROuKrOPeL5wfbfQxCmk`
+- **Usage** : à utiliser uniquement dans l’application Android (Google Maps SDK for Android, Routes, etc.)
+- **Sécurité** : restreindre cette clé aux signatures SHA-1 de ton appli Android et aux APIs nécessaires.
+
+**Important** :
+- Ne jamais exposer de fichier JSON de compte de service côté web ou mobile.
+- Le backend (serveur PHP/Node) peut utiliser un compte de service JSON uniquement côté serveur, jamais dans l’app ou le navigateur.
+
+Pour toute modification ou ajout de clé, toujours passer par la Google Cloud Console : https://console.cloud.google.com/apis/credentials
 ## 🕐 Générée automatiquement le 29/09/2025 à 01:40:22
 ## 🏠 Projet: SUZOSKY COURSIER - Version Consolidée
 
