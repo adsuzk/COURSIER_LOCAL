@@ -195,6 +195,12 @@ if (trim((string)$defaultUnavailableMessage) === '') {
             font-size: 0.85rem;
             opacity: 0.85;
         }
+
+        .order-form-locker-note {
+            margin-top: 10px;
+            font-size: 0.85rem;
+            opacity: 0.85;
+        }
         
         /* 📱 STYLES PHONE-ROW - SYSTÈME ORIGINAL CONFORME À LA CHARTE */
         .phone-row {
