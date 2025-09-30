@@ -244,7 +244,10 @@ function debounce(func, wait, immediate) {
         // Start polling backend availability for coursiers as a fallback when FCM web is not present
         try {
             if (typeof startCoursierAvailabilityPoll !== 'function') {
-                window.COURSER_POLL_INTERVAL = 30000; // 30s
+                const defaultPollInterval = (typeof window.COURSIER_POLL_INTERVAL_MS === 'number' && window.COURSIER_POLL_INTERVAL_MS > 0)
+                    ? window.COURSIER_POLL_INTERVAL_MS
+                    : 15000;
+                window.COURSER_POLL_INTERVAL = defaultPollInterval;
                 window._coursierPollTimer = null;
 
                 window.getCoursierAvailability = async function() {
@@ -253,7 +256,15 @@ function debounce(func, wait, immediate) {
                         const j = await resp.json();
                         if (j && j.success) {
                             if (typeof window.setFCMCoursierStatus === 'function') {
-                                window.setFCMCoursierStatus(Boolean(j.available), j.message || '');
+                                window.setFCMCoursierStatus(Boolean(j.available), j.message || '', {
+                                    origin: 'poll',
+                                    lockDelayMs: (typeof j.lock_delay_seconds === 'number' && j.lock_delay_seconds > 0) ? j.lock_delay_seconds * 1000 : undefined,
+                                    meta: {
+                                        activeCount: typeof j.active_count === 'number' ? j.active_count : null,
+                                        freshCount: typeof j.fresh_count === 'number' ? j.fresh_count : null,
+                                        secondsSinceLastActive: typeof j.seconds_since_last_active === 'number' ? j.seconds_since_last_active : null
+                                    }
+                                });
                             } else {
                                 // If setFCM API missing, create a temporary banner
                                 if (!j.available) {
