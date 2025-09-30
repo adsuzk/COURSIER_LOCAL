@@ -121,10 +121,15 @@ INSERT INTO device_tokens VALUES (
 
 ### Détection de disponibilité (rappel et configuration)
 
-La logique de disponibilité côté serveur utilise désormais une combinaison `is_active = 1` + fraîcheur de `last_ping` (par défaut 120 secondes). Vous pouvez :
+La logique de disponibilité côté serveur s'appuie sur deux notions complémentaires :
 
-- Changer la fenêtre via `FCM_AVAILABILITY_THRESHOLD_SECONDS` (secondes)
-- Forcer la détection immédiate (ignorer la fraîcheur) via `FCM_IMMEDIATE_DETECTION=true`
+- **Visibilité immédiate** : dès qu'un token FCM possède `is_active = 1`, l'index considère qu'un coursier est joignable et le formulaire s'ouvre instantanément. C'est le comportement par défaut.
+- **Fraîcheur du signal** : `last_ping` (ou `updated_at` si absent) est suivi pour mesurer l'inactivité. Lorsque tous les tokens deviennent inactifs, un compte à rebours de 60 s est déclenché avant de verrouiller le formulaire.
+
+Paramètres disponibles :
+
+- `FCM_AVAILABILITY_THRESHOLD_SECONDS` : ajuste la fenêtre d'inactivité tolérée (par défaut 60 s) pour calculer le compte à rebours côté frontend.
+- `FCM_IMMEDIATE_DETECTION` : mettez la variable à `0` / `false` pour revenir à un mode strict qui exige un `last_ping` récent avant d'afficher le formulaire.
 
 Le script de validation active (`fcm_validate_tokens.php`) aide à garder la table `device_tokens` propre en désactivant automatiquement les tokens définitivement invalides.
 ```
