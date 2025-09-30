@@ -61,8 +61,10 @@ if (!empty($rawInput)) {
 
 
 // Validation complète des champs attendus
+
+// Champs obligatoires selon la structure réelle de la table
 $requiredFields = [
-	'departure', 'destination', 'senderPhone', 'receiverPhone', 'priority', 'paymentMethod', 'price'
+	'adresse_depart', 'adresse_arrivee', 'telephone_expediteur', 'telephone_destinataire', 'priorite', 'mode_paiement', 'prix_estime'
 ];
 $errors = [];
 foreach ($requiredFields as $field) {
@@ -71,23 +73,21 @@ foreach ($requiredFields as $field) {
 	}
 }
 
-// Optionnels : distance, duration, lat/lng
+// Mapping des champs pour correspondre à la table 'commandes'
 $fields = [
-	'departure' => $data['departure'] ?? '',
-	'destination' => $data['destination'] ?? '',
-	'senderPhone' => $data['senderPhone'] ?? '',
-	'receiverPhone' => $data['receiverPhone'] ?? '',
-	'packageDescription' => $data['packageDescription'] ?? '',
-	'priority' => $data['priority'] ?? 'normale',
-	'paymentMethod' => $data['paymentMethod'] ?? 'cash',
-	'price' => $data['price'] ?? 0,
-	'distance' => $data['distance'] ?? '',
-	'duration' => $data['duration'] ?? '',
-	'departure_lat' => $data['departure_lat'] ?? null,
-	'departure_lng' => $data['departure_lng'] ?? null,
-	'destination_lat' => $data['destination_lat'] ?? null,
-	'destination_lng' => $data['destination_lng'] ?? null,
-	'date_creation' => date('Y-m-d H:i:s'),
+	'adresse_depart' => $data['adresse_depart'] ?? '',
+	'adresse_arrivee' => $data['adresse_arrivee'] ?? '',
+	'telephone_expediteur' => $data['telephone_expediteur'] ?? '',
+	'telephone_destinataire' => $data['telephone_destinataire'] ?? '',
+	'description_colis' => $data['description_colis'] ?? '', // optionnel
+	'priorite' => $data['priorite'] ?? 'normale',
+	'mode_paiement' => $data['mode_paiement'] ?? 'especes',
+	'prix_estime' => $data['prix_estime'] ?? 0,
+	'distance_estimee' => $data['distance_estimee'] ?? null,
+	'dimensions' => $data['dimensions'] ?? null,
+	'poids_estime' => $data['poids_estime'] ?? null,
+	'fragile' => $data['fragile'] ?? 0,
+	'created_at' => date('Y-m-d H:i:s'),
 ];
 
 // Log des données reçues
@@ -119,26 +119,25 @@ try {
 
 
 
+
 // Insertion réelle en base de données (table 'commandes')
 try {
-	$sql = "INSERT INTO commandes (departure, destination, senderPhone, receiverPhone, packageDescription, priority, paymentMethod, price, distance, duration, departure_lat, departure_lng, destination_lat, destination_lng, date_creation) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	$sql = "INSERT INTO commandes (adresse_depart, adresse_arrivee, telephone_expediteur, telephone_destinataire, description_colis, priorite, mode_paiement, prix_estime, distance_estimee, dimensions, poids_estime, fragile, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	$stmt = $pdo->prepare($sql);
 	$stmt->execute([
-		$fields['departure'],
-		$fields['destination'],
-		$fields['senderPhone'],
-		$fields['receiverPhone'],
-		$fields['packageDescription'],
-		$fields['priority'],
-		$fields['paymentMethod'],
-		$fields['price'],
-		$fields['distance'],
-		$fields['duration'],
-		$fields['departure_lat'],
-		$fields['departure_lng'],
-		$fields['destination_lat'],
-		$fields['destination_lng'],
-		$fields['date_creation']
+		$fields['adresse_depart'],
+		$fields['adresse_arrivee'],
+		$fields['telephone_expediteur'],
+		$fields['telephone_destinataire'],
+		$fields['description_colis'],
+		$fields['priorite'],
+		$fields['mode_paiement'],
+		$fields['prix_estime'],
+		$fields['distance_estimee'],
+		$fields['dimensions'],
+		$fields['poids_estime'],
+		$fields['fragile'],
+		$fields['created_at']
 	]);
 	$commande_id = $pdo->lastInsertId();
 	if (function_exists('logMessage')) {
