@@ -43,10 +43,7 @@ object LocationUtils {
                                 // ApiService gère l'envoi asynchrone et les fallback bases
                                 ApiService.updateCoursierPosition(coursierId, loc.latitude, loc.longitude) { ok, err ->
                                     if (!ok) {
-                                        Log.w("LocationUtils", "updateCoursierPosition failed: ${err}")
-                                        Unit
-                                    } else {
-                                        Unit
+                                        Log.w("LocationUtils", "updateCoursierPosition failed: $err")
                                     }
                                 }
                             }
