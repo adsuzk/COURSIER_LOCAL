@@ -26,10 +26,12 @@ class UpdateApiService {
             norm
         } else {
             val host = try { com.suzosky.coursier.BuildConfig.DEBUG_LOCAL_HOST } catch (_: Throwable) { "" }
+            // For local/dev hosts, respect the provided scheme (http://) instead of forcing https.
             val h = if (host.isNotBlank()) {
-                if (host.startsWith("http")) host.replace("http://", "https://") else "https://$host"
+                if (host.startsWith("http", ignoreCase = true)) host.trimEnd('/') else "http://$host".trimEnd('/')
             } else {
-                "https://10.0.2.2"
+                // emulator loopback is http
+                "http://10.0.2.2"
             }
             val base = if (h.endsWith("/COURSIER_LOCAL")) "$h/" else "$h/COURSIER_LOCAL/"
             base
