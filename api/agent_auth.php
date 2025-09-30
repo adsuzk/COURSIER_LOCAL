@@ -48,6 +48,11 @@ switch ($action) {
     case 'login':
         $identifier = trim($data['identifier'] ?? ''); // matricule ou telephone
         $password = (string)($data['password'] ?? '');
+        
+        // TEMP DEBUG LOG
+        $pwd_mask = $password ? substr($password, 0, 1) . str_repeat('*', max(0, strlen($password) - 2)) . substr($password, -1) : '';
+        error_log("AGENT_LOGIN_DEBUG: identifier='$identifier', password='$pwd_mask', method=" . ($_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN'));
+        
         if ($identifier === '' || $password === '') {
             echo json_encode(['success' => false, 'error' => 'MISSING_FIELDS', 'message' => 'Identifiant et mot de passe requis']);
             exit;
