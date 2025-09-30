@@ -60,36 +60,9 @@ if (!empty($rawInput)) {
 }
 
 // --- Rétro-compatibilité: normaliser les clés entrantes (anglais -> français)
-$legacyMap = [
-	'departure' => 'adresse_depart',
-	'destination' => 'adresse_arrivee',
-	'senderPhone' => 'telephone_expediteur',
-	'receiverPhone' => 'telephone_destinataire',
-	'sender_phone' => 'telephone_expediteur',
-	'receiver_phone' => 'telephone_destinataire',
-	'packageDescription' => 'description_colis',
-	'packageDesc' => 'description_colis',
-	'package_description' => 'description_colis',
-	'priority' => 'priorite',
-	'paymentMethod' => 'mode_paiement',
-	'payment_method' => 'mode_paiement',
-	'price' => 'prix_estime',
-	'distance' => 'distance_estimee',
-	'duration' => 'distance_estimee',
-	'dimensions' => 'dimensions',
-	'weight' => 'poids_estime',
-	'poids' => 'poids_estime',
-	'fragile' => 'fragile'
-];
+require_once __DIR__ . '/field_normalizer.php';
 if (is_array($data)) {
-	foreach ($legacyMap as $old => $new) {
-		if ((isset($data[$old]) || isset($data[$old]))) {
-			// Ne pas écraser une valeur déjà normalisée
-			if (!isset($data[$new]) || $data[$new] === '') {
-				$data[$new] = $data[$old];
-			}
-		}
-	}
+	normalize_input_fields($data);
 }
 
 // Normaliser différentes variantes de noms pour les coordonnées (pickup/departure)
