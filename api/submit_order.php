@@ -92,6 +92,22 @@ if (is_array($data)) {
 	}
 }
 
+// Normaliser différentes variantes de noms pour les coordonnées (pickup/departure)
+$latCandidates = ['departure_lat', 'latitude_depart', 'lat_depart', 'latitude_retrait', 'lat_retrait', 'latitude_pickup', 'lat_pickup'];
+$lngCandidates = ['departure_lng', 'longitude_depart', 'lng_depart', 'longitude_retrait', 'lng_retrait', 'longitude_pickup', 'lng_pickup'];
+foreach ($latCandidates as $k) {
+	if (isset($data[$k]) && $data[$k] !== '') {
+		$data['departure_lat'] = $data[$k];
+		break;
+	}
+}
+foreach ($lngCandidates as $k) {
+	if (isset($data[$k]) && $data[$k] !== '') {
+		$data['departure_lng'] = $data[$k];
+		break;
+	}
+}
+
 
 // Validation complète des champs attendus
 
@@ -116,6 +132,8 @@ $fields = [
 	'priorite' => $data['priorite'] ?? 'normale',
 	'mode_paiement' => $data['mode_paiement'] ?? 'especes',
 	'prix_estime' => $data['prix_estime'] ?? 0,
+	'latitude_depart' => isset($data['departure_lat']) && $data['departure_lat'] !== '' ? floatval($data['departure_lat']) : null,
+	'longitude_depart' => isset($data['departure_lng']) && $data['departure_lng'] !== '' ? floatval($data['departure_lng']) : null,
 	'distance_estimee' => $data['distance_estimee'] ?? null,
 	'dimensions' => $data['dimensions'] ?? null,
 	'poids_estime' => $data['poids_estime'] ?? null,
@@ -172,7 +190,7 @@ try {
 
 // Insertion réelle en base de données (table 'commandes')
 try {
-	$sql = "INSERT INTO commandes (order_number, code_commande, adresse_depart, adresse_arrivee, telephone_expediteur, telephone_destinataire, description_colis, priorite, mode_paiement, prix_estime, distance_estimee, dimensions, poids_estime, fragile, statut, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	$sql = "INSERT INTO commandes (order_number, code_commande, adresse_depart, adresse_arrivee, telephone_expediteur, telephone_destinataire, description_colis, priorite, mode_paiement, prix_estime, latitude_depart, longitude_depart, distance_estimee, dimensions, poids_estime, fragile, statut, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	$stmt = $pdo->prepare($sql);
 	$stmt->execute([
 	$fields['order_number'],
@@ -185,6 +203,8 @@ try {
 	$fields['priorite'],
 	$fields['mode_paiement'],
 	$fields['prix_estime'],
+	$fields['latitude_depart'],
+	$fields['longitude_depart'],
 	$fields['distance_estimee'],
 	$fields['dimensions'],
 	$fields['poids_estime'],
