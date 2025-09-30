@@ -1,11 +1,18 @@
 <?php
 // Processus d'attribution automatique simple
+
 require_once 'config.php';
 
 $pdo = getDBConnection();
 
-// Vérifier s'il y a des commandes non attribuées (statuts initial ou legacy)
-$db = new mysqli($db_host, $db_user, $db_pass, $db_name);
+// Récupération des paramètres de connexion depuis la config (comme getDBConnection)
+$db_conf = [
+    'host' => getenv('DB_HOST') ?: '127.0.0.1',
+    'user' => getenv('DB_USER') ?: 'root',
+    'password' => getenv('DB_PASS') ?: '',
+    'name' => getenv('DB_NAME') ?: 'coursier_local',
+];
+$db = new mysqli($db_conf['host'], $db_conf['user'], $db_conf['password'], $db_conf['name']);
 if ($db->connect_error) {
     die("Connection failed: " . $db->connect_error);
 }
