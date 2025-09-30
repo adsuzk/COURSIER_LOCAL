@@ -601,6 +601,11 @@
         if (submitBtn) {
             submitBtn.addEventListener('click', processOrder);
         }
+
+        if (typeof window.initialCoursierAvailability !== 'undefined' && typeof window.setFCMCoursierStatus === 'function') {
+            const initialMessage = window.initialCoursierMessage || window.COMMERCIAL_FALLBACK_MESSAGE || 'Nos coursiers sont momentanément indisponibles.';
+            window.setFCMCoursierStatus(window.initialCoursierAvailability, initialMessage, { forceImmediate: true, origin: 'initial' });
+        }
         
         console.log('✅ Événements du formulaire attachés');
     });
