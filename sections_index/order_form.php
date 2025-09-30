@@ -141,6 +141,60 @@ if (trim((string)$defaultUnavailableMessage) === '') {
                 font-size: 0.85rem !important;
             }
         }
+
+        /* === Gestion disponibilité coursiers === */
+        #orderFormContainer {
+            position: relative;
+        }
+
+        #orderFormContainer.order-form--locked form {
+            opacity: 0.4;
+            filter: grayscale(0.35);
+        }
+
+        .order-form-warning {
+            display: none;
+            margin: 12px 0 18px;
+            padding: 14px 18px;
+            border-radius: 12px;
+            background: rgba(233, 69, 96, 0.18);
+            border: 1px solid rgba(233, 69, 96, 0.45);
+            color: #fff;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            box-shadow: 0 8px 20px rgba(233, 69, 96, 0.18);
+        }
+
+        .order-form-warning.order-form-warning--visible {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .order-form-warning-countdown {
+            font-weight: 700;
+            color: #ffc107;
+            font-size: 1.05rem;
+        }
+
+        .order-form-locker {
+            display: none;
+            margin-top: 16px;
+        }
+
+        .order-form-locker.order-form-locker--visible {
+            display: block;
+        }
+
+        .order-form-hidden {
+            display: none !important;
+        }
+
+        #orderFormLockerMeta {
+            margin: 10px 0 0;
+            font-size: 0.85rem;
+            opacity: 0.85;
+        }
         
         /* 📱 STYLES PHONE-ROW - SYSTÈME ORIGINAL CONFORME À LA CHARTE */
         .phone-row {
