@@ -313,7 +313,7 @@ mysql -u root coursier_local -e "SELECT COUNT(*) FROM device_tokens WHERE is_act
 - ✅ **Interface diagnostic** : test_fcm_direct_interface.html
 - ❌ **API Legacy supprimée** : Plus d'utilisation de l'ancienne clé serveur
 
-### Composants Obsolètes Supprimés
+### Composants Obsolètes (archivés)
 - ❌ `FCMManager` avec clé serveur legacy  
 - ❌ Tokens factices/debug générés côté serveur
 - ❌ Configuration IP hardcodée 192.168.1.5
@@ -332,20 +332,16 @@ mysql -u root coursier_local -e "SELECT COUNT(*) FROM device_tokens WHERE is_act
 
 ---
 
-## ⚠️ SUPPRESSION ÉLÉMENTS OBSOLÈTES
+## ⚠️ ÉLÉMENTS ARCHIVÉS / OBSOLÈTES
 
-### ❌ Fichiers/Méthodes supprimés ou dépréciés :
-- ❌ **FCMManager avec server key legacy** : Remplacé par API v1 OAuth2
-- ❌ **Tokens factices générés côté serveur** : Seuls tokens Android réels acceptés
-- ❌ **register_device_token.php** : Remplacé par mobile_sync_api.php
-- ❌ **Configuration IP hardcodée 192.168.1.5** : Mise à jour dynamique 192.168.1.4
-- ❌ **google-services.json sans firebase_messaging** : Fichier corrigé obligatoire
+Les éléments ci-dessous sont conservés à des fins d'audit mais ne doivent plus être utilisés en production. Ils ont été replacés dans l'historique et/ou supprimés des flux actifs.
 
-### ✅ Architecture finale validée :
-- ✅ **Application Android** : Génère tokens FCM authentiques
-- ✅ **Backend PHP** : API FCM v1 avec service account OAuth2  
-- ✅ **Base de données** : Tokens réels dans device_tokens
-- ✅ **Tests complets** : Interface diagnostic + E2E runner
-- ✅ **Notifications livrées** : Téléphone reçoit avec Suzosky ringtone
+- FCMManager (server key legacy) : remplacé par API FCM v1 (OAuth2).
+- Tokens factices/debug : supprimés du flux de production; les scripts de test restent dans `Tests/`.
+- `register_device_token.php` : remplacé fonctionnellement par `mobile_sync_api.php`.
+- Configuration IP hardcodée (192.168.1.5) : corrigée — la configuration locale est maintenant gérée via `CoursierAppV7/local.properties`.
+- Anciennes copies de `google-services.json` sans `firebase_messaging` : supprimées; fichier canonique : `CoursierAppV7/app/google-services.json`.
 
-**🎯 RÉSULTAT : Système FCM production-ready avec 0% tokens factices !**
+---
+
+*Mise à jour appliquée : 2025-09-29 — sections obsolètes archivées et le fichier canonical `CoursierAppV7/app/google-services.json` clarifié.*
