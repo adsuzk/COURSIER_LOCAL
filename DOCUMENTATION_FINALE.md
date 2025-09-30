@@ -27,7 +27,7 @@
 - Comportement client : en cas d'absence de coursiers le formulaire affiche un message d'indisponibilité (injecté via `index.php`), lance un compte à rebours de 60 s avant verrouillage et propose un bouton « Actualiser ».
 - Documentation consolidée : suppression/archivage des anciennes instructions obsolètes concernant la détection de présence non-FCM. Les sections marquées "Obsolète" doivent être ignorées (voir section "Changements récents").
 
-**Note migration DB :** La colonne `last_ping` a été ajoutée à la table `device_tokens` (migration appliquée). Les scripts de nettoyage FCM utilisent `last_ping` pour évaluer l'ancienneté des tokens. Côté index, un token fraîchement mis à jour (`last_ping` ≤ 60 s) ouvre le formulaire instantanément, tandis qu'un token inactif est compté dans `stale_active_count` et déclenche la fermeture automatique après 60 s sans activité.
+**Note migration DB :** La colonne `last_ping` a été ajoutée à la table `device_tokens` (migration appliquée). Chaque enregistrement ou rafraîchissement de token via `register_device_token_simple.php` met `last_ping = NOW()`. Les scripts de nettoyage FCM utilisent ce champ pour évaluer l'ancienneté. Côté index, un token fraîchement mis à jour (`last_ping` ≤ 60 s) ouvre le formulaire instantanément, tandis qu'un token inactif est compté dans `stale_active_count` et déclenche la fermeture automatique après 60 s sans activité.
 
 **Message affiché quand aucun coursier n'est disponible :**
 
