@@ -22,7 +22,7 @@ class FCMTokenSecurity {
     public function __construct(array $options = []) {
         $this->verbose = (bool)($options['verbose'] ?? false);
         // Forcer le seuil à 120 secondes (2 minutes)
-        $this->thresholdSeconds = 120;
+    $this->thresholdSeconds = 60;
         // immediate detection option via constructor or env var
         if (isset($options['immediate_detection'])) {
             $this->immediateDetection = (bool)$options['immediate_detection'];
