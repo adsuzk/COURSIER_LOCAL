@@ -4,6 +4,12 @@
  * Mise en forme premium + tracking temps réel aligné production
  */
 
+$__start = microtime(true);
+register_shutdown_function(function() use ($__start) {
+    // Small non-intrusive fixed-position badge showing total PHP time in ms
+    echo '<div id="php-timer" style="position:fixed;top:8px;right:8px;background:#fff;color:#000;z-index:9999;font-size:13px;padding:6px 10px;border:1px solid #ccc;box-shadow:0 1px 3px rgba(0,0,0,0.2)">Chargement PHP : ' . round((microtime(true)-$__start)*1000,1) . ' ms</div>';
+});
+
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/lib/SystemSync.php';
 require_once __DIR__ . '/lib/db_maintenance.php';

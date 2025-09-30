@@ -34,26 +34,66 @@ function getDashboardStats() {
     ];
     
     // Revenus du jour
-    $revenus = $pdo->query("
+    $revenusQuery = $pdo->query("
         SELECT 
             COALESCE(SUM(prix_total), 0) as revenus_jour,
-            return [
-                'commandes' => $commandesStats ?: ['total' => 0, 'nouvelles' => 0, 'assignees' => 0, 'en_cours' => 0, 'livrees' => 0, 'aujourdhui' => 0],
-                'coursiers' => $coursiersStats,
-                'revenus' => $revenus ?: ['revenus_jour' => 0, 'commandes_jour' => 0]
-            ];
+            COUNT(*) as commandes_jour
+        FROM commandes 
+        WHERE DATE(created_at) = CURDATE() AND statut = 'livree'
+    ")->fetch(PDO::FETCH_ASSOC);
+    
+    $revenus = [
+        'revenus_jour' => (float) ($revenusQuery['revenus_jour'] ?? 0),
+        'commandes_jour' => (int) ($revenusQuery['commandes_jour'] ?? 0)
+    ];
+    
     return [
-            last_login_at, last_login_ip
-        FROM agents_suzosky 
-            $coursiers = [];
-        ORDER BY statut_connexion DESC, last_login_at DESC
-    ")->fetchAll(PDO::FETCH_ASSOC);
-            $stats = ['commandes' => ['total' => 0, 'nouvelles' => 0, 'assignees' => 0, 'en_cours' => 0, 'livrees' => 0, 'aujourdhui' => 0], 'coursiers' => ['total' => 0, 'en_ligne' => '--', 'hors_ligne' => '--', 'occupe' => '--', 'avec_token' => '--'], 'revenus' => ['revenus_jour' => 0, 'commandes_jour' => 0]];
+        'commandes' => $commandesStats ?: ['total' => 0, 'nouvelles' => 0, 'assignees' => 0, 'en_cours' => 0, 'livrees' => 0, 'aujourdhui' => 0],
+        'coursiers' => $coursiersStats,
+        'revenus' => $revenus
+    ];
+}
+
+function getCoursiersList() {
+    $pdo = getDBConnection();
+    
+    try {
+        $coursiers = $pdo->query("
+            SELECT id, nom, prenoms, telephone, statut_connexion, last_login_at, last_login_ip
+            FROM agents_suzosky 
+            ORDER BY statut_connexion DESC, last_login_at DESC
+        ")->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Throwable $e) {
+        error_log("Error fetching coursiers: " . $e->getMessage());
+        $coursiers = [];
+    }
+    
     foreach ($coursiers as &$coursier) {
         $coursier['status_info'] = getCoursierStatus($coursier);
     }
     
     return $coursiers;
+}
+
+function getCoursierStatus($coursier) {
+    $status = $coursier['statut_connexion'] ?? 'hors_ligne';
+    $lastLogin = $coursier['last_login_at'] ?? null;
+    
+    $info = [
+        'status' => $status,
+        'color' => 'gray',
+        'text' => 'Hors ligne'
+    ];
+    
+    if ($status === 'en_ligne') {
+        $info['color'] = 'green';
+        $info['text'] = 'En ligne';
+    } elseif ($status === 'occupe') {
+        $info['color'] = 'orange';
+        $info['text'] = 'Occupé';
+    }
+    
+    return $info;
 }
 
 try {

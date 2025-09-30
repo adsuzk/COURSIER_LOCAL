@@ -1,0 +1,1 @@
+(Get-Content 'C:\xampp\mysql\bin\my.ini') -replace 'datadir="C:/xampp/mysql/data"', 'datadir="C:/xampp/mysql/data_new"' | Set-Content 'C:\xampp\mysql\bin\my.ini' -Encoding UTF8

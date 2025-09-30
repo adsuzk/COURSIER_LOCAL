@@ -33,8 +33,7 @@ android {
     if (lpFile.exists()) {
         lpFile.inputStream().use { localProps.load(it) }
     }
-    // Default to common LAN IP if local.properties not set to avoid accidental misconfig on dev machines
-    val debugLocalHost: String = (localProps.getProperty("debug.localHost") ?: "").trim().takeIf { it.isNotBlank() } ?: "http://192.168.1.25"
+    val debugLocalHost: String = (localProps.getProperty("debug.localHost") ?: "").trim()
     val debugForceLocalOnly: Boolean = (localProps.getProperty("debug.forceLocalOnly") ?: "false")
         .trim()
         .equals("true", ignoreCase = true)

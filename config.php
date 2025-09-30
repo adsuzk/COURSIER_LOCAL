@@ -117,11 +117,30 @@ function getDBConnection(): PDO {
         $password = $envOverride['password'] ?: '';
         $dsn = "mysql:host={$host};port={$port};dbname={$name};charset=utf8mb4";
         try {
-            return new PDO($dsn, $user, $password, [
+            // Respect an optional environment override for connect timeout (seconds)
+            $connectTimeout = (int) (getenv('DB_CONNECT_TIMEOUT') ?: 5);
+            $pdoOptions = [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES => false,
-            ]);
+                PDO::ATTR_TIMEOUT => $connectTimeout,
+            ];
+
+            $t0 = microtime(true);
+            $pdo = new PDO($dsn, $user, $password, $pdoOptions);
+            $t1 = microtime(true);
+
+            // Log connection attempt duration for diagnostics (development only or when FORCE_LOCAL)
+            try {
+                $logDir = __DIR__ . '/diagnostic_logs';
+                if (!is_dir($logDir)) @mkdir($logDir, 0775, true);
+                $msg = date('c') . " | ENV DB connect to {$host}:{$port}/{$name} took " . round(($t1 - $t0) * 1000, 1) . " ms (timeout={$connectTimeout}s)\n";
+                @file_put_contents($logDir . '/db_connection_times.log', $msg, FILE_APPEND);
+            } catch (Throwable $e) {
+                // ignore logging errors
+            }
+
+            return $pdo;
         } catch (Throwable $e) {
             $errors[] = 'ENV override DB connect failed: ' . $e->getMessage();
         }
@@ -146,11 +165,26 @@ function getDBConnection(): PDO {
         $port = $dbConfig['port'] ?? '3306';
         $dsn = "mysql:host={$host};port={$port};dbname={$name};charset=utf8mb4";
         try {
-            return new PDO($dsn, $user, $password, [
+            $connectTimeout = (int) (getenv('DB_CONNECT_TIMEOUT') ?: 5);
+            $pdoOptions = [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES => false,
-            ]);
+                PDO::ATTR_TIMEOUT => $connectTimeout,
+            ];
+
+            $t0 = microtime(true);
+            $pdo = new PDO($dsn, $user, $password, $pdoOptions);
+            $t1 = microtime(true);
+
+            try {
+                $logDir = __DIR__ . '/diagnostic_logs';
+                if (!is_dir($logDir)) @mkdir($logDir, 0775, true);
+                $msg = date('c') . " | DB connect to {$host}:{$port}/{$name} took " . round(($t1 - $t0) * 1000, 1) . " ms (timeout={$connectTimeout}s)\n";
+                @file_put_contents($logDir . '/db_connection_times.log', $msg, FILE_APPEND);
+            } catch (Throwable $e) {}
+
+            return $pdo;
         } catch (Throwable $e) {
             $errors[] = "DB connect failed for {$host}/{$name}: " . $e->getMessage();
             // Continue to next config
@@ -256,7 +290,13 @@ function getAppBaseUrl(): string {
     $scheme = getRequestScheme();
     $host = getServerHost();
     $base = getAppBasePath();
-    return $scheme . '://' . $host . $base; // ex: http://localhost/coursier_prod
+    // Ensure returned base URL always ends with a trailing slash so appUrl concatenation
+    // does not produce malformed URLs (ex: .../COURSIER_LOCALapi/...)
+    // If base is root '/', return scheme://host/ explicitly.
+    if ($base === '/') {
+        return $scheme . '://' . $host . '/';
+    }
+    return $scheme . '://' . $host . rtrim($base, '/') . '/'; // ex: http://localhost/COURSIER_LOCAL/
 }
 
 /**
@@ -266,6 +306,8 @@ function getAppBaseUrl(): string {
 function appUrl(string $path = ''): string {
     $prefix = getAppBaseUrl();
     $path = ltrim($path, '/');
+    // If no path provided, return prefix (which ends with '/').
+    if ($path === '') return rtrim($prefix, '/') . '/';
     return $prefix . $path;
 }
 

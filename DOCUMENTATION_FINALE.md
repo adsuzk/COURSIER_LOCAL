@@ -3,6 +3,24 @@
 
 ---
 
+## 🗄️ Configuration de la Base de Données (IMPORTANT)
+
+**Nom de la base :** La base de données doit toujours être nommée `coursier_local` pour correspondre à la configuration dans `env_override.php`.
+
+**Pourquoi ?** L'application utilise `env_override.php` pour forcer le nom de DB à `coursier_local`. Si la DB a un autre nom (ex. `conci2547642_1m4twb`), les pages seront lentes à cause d'échecs de connexion répétés.
+
+**Procédure de migration si nécessaire :**
+1. Dump la DB actuelle : `mysqldump -u root conci2547642_1m4twb --no-create-db > dump.sql`
+2. Créer la nouvelle DB : `CREATE DATABASE coursier_local;`
+3. Importer : `mysql -u root coursier_local < dump.sql`
+4. Recréer les vues sans DEFINER (utiliser `SQL SECURITY INVOKER`).
+5. Supprimer l'ancienne DB : `DROP DATABASE conci2547642_1m4twb;`
+6. Tester la connexion PHP.
+
+**Vérification :** Lancez `php -r "new PDO('mysql:host=127.0.0.1;dbname=coursier_local','root',''); echo 'OK';"` — doit afficher "OK".
+
+---
+
 ## ⚙️ Mise à jour rapide — 29 Sept 2025 (actions appliquées)
 
  - Seuil de nettoyage des tokens FCM existe toujours (`Scripts/Scripts cron/fcm_auto_cleanup.php`). La détection d'un token actif côté index est configurable : par défaut `FCMTokenSecurity` combine `is_active = 1` et fraîcheur `last_ping` (120s), ou peut être forcée en mode immédiat via `FCM_IMMEDIATE_DETECTION`.
@@ -1052,28 +1070,32 @@ CREATE TABLE `device_tokens` (
 ```
 
 
+
 ### 📦 Tables principales et notifications :
 - **agents_suzosky** : gestion des coursiers, statuts, tokens de session
 - **commandes** : commandes clients, assignation, suivi
 - **device_tokens** : tokens FCM, gestion présence temps réel
-- **notifications_log_fcm** : journalisation de toutes les notifications push FCM (statut, code retour, message, token utilisé, etc.)
+- **notifications_log** : journalisation de toutes les notifications (push FCM, SMS, email, WhatsApp, etc.)
 
-#### Table notifications_log_fcm (structure)
+#### Table notifications_log (structure simplifié)
 ```sql
-CREATE TABLE IF NOT EXISTS notifications_log_fcm (
+CREATE TABLE IF NOT EXISTS notifications_log (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    coursier_id INT NULL,
     commande_id INT NULL,
-    title VARCHAR(255) NULL,
-    message TEXT NULL,
-    status VARCHAR(64) NULL,
-    fcm_response_code INT NULL,
-    fcm_response TEXT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    destinataire_type ENUM('client','business','coursier','agent') NOT NULL,
+    destinataire_id INT NOT NULL,
+    destinataire_telephone VARCHAR(20),
+    type_notification ENUM('nouvelle_commande','commande_acceptee','coursier_en_route','livraison_terminee','bonus','penalite','rappel_paiement','autre') NOT NULL,
+    canal ENUM('sms','email','push','whatsapp') NOT NULL,
+    contenu TEXT NOT NULL,
+    statut ENUM('envoye','echec','en_attente') DEFAULT 'en_attente',
+    reference_externe VARCHAR(100),
+    cout DECIMAL(6,4) DEFAULT 0.0000,
+    created_at TIMESTAMP NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ```
 
-Chaque notification FCM (nouvelle commande, recharge, test, etc.) est loggée ici avec le statut (sent/failed), le code retour, le message d’erreur éventuel, et le token utilisé.
+Chaque notification (push FCM, SMS, email, WhatsApp, etc.) est loggée ici avec le statut, le canal, le message, et le destinataire. Cette table remplace toute ancienne référence à `notifications_log_fcm`.
 
 ---
 
@@ -1136,3 +1158,83 @@ Ce script crée la base, toutes les tables, et importe les données nécessaires
 ---
 
 *Version 4.0 - 28 Septembre 2025 - Système Auto-Piloté Complet*
+
+---
+
+## 🗃️ Sauvegardes GitHub & Procédure de restauration complète
+
+### 📦 Où sont stockées les sauvegardes ?
+Les sauvegardes du code et des bases de données (dumps SQL) sont stockées dans le dépôt GitHub :
+https://github.com/adsuzk/COURSIER_LOCAL
+
+Les dumps SQL se trouvent dans le dossier `_sql/` du dépôt.
+
+### 🔄 Procédure pour restaurer une sauvegarde SQL depuis GitHub
+
+1. **Cloner le dépôt ou télécharger le dossier _sql/**
+    ```powershell
+    git clone https://github.com/adsuzk/COURSIER_LOCAL.git C:\temp\repo_backups
+    # ou télécharger manuellement le fichier voulu depuis GitHub
+    ```
+
+2. **Vérifier la présence du dump SQL**
+    ```powershell
+    Get-ChildItem C:\temp\repo_backups\_sql
+    # Exemple : conci2547642_1m4twb.sql
+    ```
+
+3. **Arrêter MySQL si besoin (pour restauration complète)**
+    ```powershell
+    net stop mysql
+    # ou via XAMPP Control Panel
+    ```
+
+4. **Sauvegarder le dossier data actuel (optionnel mais recommandé)**
+    ```powershell
+    Copy-Item C:\xampp\mysql\data C:\sauvegardes\mysql_data_backup -Recurse
+    ```
+
+5. **Supprimer les fichiers InnoDB corrompus si nécessaire**
+    ```powershell
+    Remove-Item C:\xampp\mysql\data\ib* -Force
+    ```
+
+6. **Redémarrer MySQL**
+    ```powershell
+    net start mysql
+    # ou via XAMPP Control Panel
+    ```
+
+7. **Importer le dump SQL**
+    ```powershell
+    C:\xampp\mysql\bin\mysql.exe -u root < C:\temp\repo_backups\_sql\conci2547642_1m4twb.sql
+    ```
+
+8. **Vérifier la présence des tables principales**
+    ```powershell
+    C:\xampp\mysql\bin\mysql.exe -u root -e "SHOW TABLES FROM coursier_local;"
+    ```
+
+### ℹ️ Remarques importantes sur les tables FCM
+
+- La table `device_tokens` est **présente** dans la sauvegarde SQL et doit exister pour la gestion FCM/mobile.
+- La table `notifications_log_fcm` n'existe pas dans la sauvegarde, mais la table `notifications_log` assure la journalisation des notifications (push, SMS, email, WhatsApp). Si votre code attend `notifications_log_fcm`, adaptez-le pour utiliser `notifications_log` ou créez la table selon le schéma documenté.
+
+#### Exemple de création manuelle de la table `notifications_log_fcm` (si besoin)
+```sql
+CREATE TABLE IF NOT EXISTS notifications_log_fcm (
+     id INT AUTO_INCREMENT PRIMARY KEY,
+     coursier_id INT NULL,
+     commande_id INT NULL,
+     title VARCHAR(255) NULL,
+     message TEXT NULL,
+     status VARCHAR(64) NULL,
+     fcm_response_code INT NULL,
+     fcm_response TEXT NULL,
+     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+```
+
+---
+**En cas de doute, vérifiez la documentation et la structure réelle de la base restaurée.**
+---

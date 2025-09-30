@@ -1,0 +1,18 @@
+﻿*************************** 1. row ***************************
+       Table: app_devices
+Create Table: CREATE TABLE `app_devices` (
+  `id` int(11) unsigned NOT NULL,
+  `device_id` varchar(128) NOT NULL COMMENT 'Android ID ou UUID généré',
+  `courier_id` int(11) unsigned DEFAULT NULL COMMENT 'ID du coursier si connecté',
+  `device_model` varchar(100) DEFAULT NULL COMMENT 'Modèle appareil',
+  `device_brand` varchar(50) DEFAULT NULL COMMENT 'Marque appareil',
+  `android_version` varchar(20) DEFAULT NULL COMMENT 'Version Android',
+  `app_version_code` int(11) NOT NULL DEFAULT 1 COMMENT 'Code version app',
+  `app_version_name` varchar(20) NOT NULL DEFAULT '1.0' COMMENT 'Nom version',
+  `first_install` datetime NOT NULL DEFAULT current_timestamp(),
+  `last_seen` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `total_sessions` int(11) unsigned NOT NULL DEFAULT 0,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
