@@ -340,13 +340,13 @@ object ApiService {
             },
             onResponseMain = { response ->
                 try {
-                    android.util.Log.d("ApiService", "syncAgentToken -> ${'$'}{response.code}")
+                    android.util.Log.d("ApiService", "syncAgentToken -> ${response.code}")
                 } finally {
                     response.close()
                 }
             },
             onFailureMain = { err ->
-                android.util.Log.w("ApiService", "syncAgentToken failed: ${'$'}err")
+                android.util.Log.w("ApiService", "syncAgentToken failed: ${err}")
             }
         )
     }
