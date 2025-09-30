@@ -309,8 +309,9 @@ Le script peut être intégré au `cron_master.php` pour une consolidation quoti
 
 ### POST `/api/submit_order.php`
 - Méthode: POST JSON (`application/json`). CORS OK; 405 sinon.
-    - Requis: `departure`, `destination`, `senderPhone`, `receiverPhone`, `priority` (`normale|urgente|express`), `paymentMethod` (`cash|orange_money|mobile_money|mtn_money|moov_money|card|wave|credit_business`).
-    - Optionnels: `packageDescription` (description du colis, non obligatoire), `price` (num), `distance` (ex: "12.3 km"), `duration` (ex: "25 min"), `departure_lat`, `departure_lng`, `destination_lat`, `destination_lng`.
+    - Requis : `adresse_depart`, `adresse_arrivee`, `telephone_expediteur`, `telephone_destinataire`, `priorite` (`normale|urgente|express`), `mode_paiement` (`especes|mobile_money|carte_bancaire|wave|credit_business`), `prix_estime` (numérique).
+    - Optionnels : `description_colis` (texte), `distance_estimee` (num), `dimensions` (texte), `poids_estime` (num), `fragile` (booléen).
+    - Les anciens champs (`departure`, `senderPhone`, `packageDescription`, etc.) sont obsolètes et ne doivent plus être utilisés.
 - Normalisations: téléphones digits-only; map `priority`; prix fallback serveur via `parametres_tarification` + multiplicateurs; `code_commande` unique si colonne; `client_id` résolu selon FK.
 - Side-effect: attribution automatique via `/api/assign_nearest_coursier.php` si coords départ présentes.
 - Réponse (200) typique:
