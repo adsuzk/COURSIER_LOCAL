@@ -46,15 +46,19 @@
             return `Dernier coursier actif il y a ${parts.join(' ')}.`;
         };
 
+        const initialAvailability = (typeof window.initialCoursierAvailability === 'undefined')
+            ? undefined
+            : Boolean(window.initialCoursierAvailability);
+
         const state = window.__coursierAvailabilityState = {
-            available: undefined,
+            available: initialAvailability,
             lockDelayMs: defaultLockDelay,
             lockTimer: null,
             countdownInterval: null,
             countdownEndsAt: null,
             pendingMessage: '',
-            isLocked: false,
-            lastAvailableAt: Date.now(),
+            isLocked: initialAvailability === undefined ? false : !initialAvailability,
+            lastAvailableAt: initialAvailability ? Date.now() : null,
             meta: null
         };
 
@@ -253,9 +257,16 @@
                     state.lockTimer = null;
                 }
                 stopCountdown();
-                if (state.isLocked && !options.preventUnlock) {
-                    unlockOrderForm();
+
+                if (!options.preventUnlock) {
+                    const { container, form } = getOrderFormElements();
+                    const formHidden = form && form.classList.contains('order-form-hidden');
+                    const containerLocked = container && container.classList.contains('order-form--locked');
+                    if (state.isLocked || formHidden || containerLocked) {
+                        unlockOrderForm();
+                    }
                 }
+                state.isLocked = false;
                 return;
             }
 
