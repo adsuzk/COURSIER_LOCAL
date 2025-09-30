@@ -161,3 +161,4 @@
 2025-09-30T04:05:42+02:00 | ENV DB connect to 127.0.0.1:3306/coursier_local took 0.9 ms (timeout=5s)
 2025-09-30T04:06:42+02:00 | ENV DB connect to 127.0.0.1:3306/coursier_local took 1.1 ms (timeout=5s)
 2025-09-30T04:07:42+02:00 | ENV DB connect to 127.0.0.1:3306/coursier_local took 0.9 ms (timeout=5s)
+2025-09-30T04:08:42+02:00 | ENV DB connect to 127.0.0.1:3306/coursier_local took 14.4 ms (timeout=5s)
