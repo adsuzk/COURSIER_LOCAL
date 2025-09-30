@@ -44,6 +44,12 @@ class FCMService : FirebaseMessagingService() {
                  Log.d(TAG, "🔥 FCMService: Enregistrement token pour coursier $storedId")
                  println("🔥 FCMService: Enregistrement token pour coursier $storedId")
                  ApiService.registerDeviceToken(this, storedId, token)
+                 
+                 // ⚡ PING IMMÉDIAT pour ouvrir le formulaire à la seconde
+                 Log.d(TAG, "⚡ FCMService: Ping immédiat pour ouverture formulaire")
+                 println("⚡ FCMService: Ping immédiat pour ouverture formulaire")
+                 ApiService.pingDeviceToken(this, token)
+                 
                  Log.d(TAG, "✅ FCMService: Appel API lancé")
                  println("✅ FCMService: Appel API lancé")
              } else {
