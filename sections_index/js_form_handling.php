@@ -11,24 +11,229 @@
     // FCM-driven control: expose a function for FCM code to notify whether coursiers are available.
     // Usage from FCM layer: window.setFCMCoursierStatus(true|false, optionalMessage)
     if (typeof window.setFCMCoursierStatus !== 'function') {
-        window.fcmCoursierAvailable = undefined; // undefined means "not provided"
+        window.fcmCoursierAvailable = undefined;
         window.fcmCoursierMessage = '';
-        window.setFCMCoursierStatus = function(isAvailable, message) {
+
+        const defaultLockDelay = (typeof window.COURSIER_LOCK_DELAY_MS === 'number' && window.COURSIER_LOCK_DELAY_MS > 0)
+            ? window.COURSIER_LOCK_DELAY_MS
+            : 60000;
+
+        const formatSecondsAgo = (seconds) => {
+            if (!Number.isFinite(seconds)) return '';
+            const totalSeconds = Math.max(0, Math.round(seconds));
+            if (totalSeconds < 60) {
+                return `Dernier coursier actif il y a ${totalSeconds}s.`;
+            }
+            const totalMinutes = Math.floor(totalSeconds / 60);
+            const remainingSeconds = totalSeconds % 60;
+            if (totalMinutes < 60) {
+                return remainingSeconds > 0
+                    ? `Dernier coursier actif il y a ${totalMinutes} min ${remainingSeconds}s.`
+                    : `Dernier coursier actif il y a ${totalMinutes} min.`;
+            }
+            const totalHours = Math.floor(totalMinutes / 60);
+            const remainingMinutes = totalMinutes % 60;
+            if (totalHours < 24) {
+                const parts = [`${totalHours} h`];
+                if (remainingMinutes > 0) parts.push(`${remainingMinutes} min`);
+                return `Dernier coursier actif il y a ${parts.join(' ')}.`;
+            }
+            const totalDays = Math.floor(totalHours / 24);
+            const remHours = totalHours % 24;
+            const parts = [`${totalDays} j`];
+            if (remHours > 0) parts.push(`${remHours} h`);
+            if (remainingMinutes > 0) parts.push(`${remainingMinutes} min`);
+            return `Dernier coursier actif il y a ${parts.join(' ')}.`;
+        };
+
+        const state = window.__coursierAvailabilityState = {
+            available: undefined,
+            lockDelayMs: defaultLockDelay,
+            lockTimer: null,
+            countdownInterval: null,
+            countdownEndsAt: null,
+            pendingMessage: '',
+            isLocked: false,
+            lastAvailableAt: Date.now(),
+            meta: null
+        };
+
+        const getOrderFormElements = () => {
+            return {
+                container: document.getElementById('orderFormContainer'),
+                form: document.getElementById('orderForm'),
+                locker: document.getElementById('orderFormLocker'),
+                lockerMessage: document.getElementById('orderFormLockerMessage'),
+                lockerMeta: document.getElementById('orderFormLockerMeta'),
+                countdown: document.getElementById('orderFormLockCountdown'),
+                countdownValue: document.getElementById('orderFormLockCountdownValue')
+            };
+        };
+
+        const toggleFormDisabled = (disabled) => {
+            const { form } = getOrderFormElements();
+            if (!form) return;
+            const fields = form.querySelectorAll('input, select, textarea, button');
+            fields.forEach((field) => {
+                if (disabled) {
+                    field.setAttribute('disabled', 'disabled');
+                } else {
+                    field.removeAttribute('disabled');
+                }
+            });
+        };
+
+        const stopCountdown = () => {
+            if (state.countdownInterval) {
+                clearInterval(state.countdownInterval);
+                state.countdownInterval = null;
+            }
+            state.countdownEndsAt = null;
+            const { countdown, countdownValue } = getOrderFormElements();
+            if (countdown) {
+                countdown.classList.remove('order-form-warning--visible');
+            }
+            if (countdownValue) {
+                const baseSeconds = Math.ceil((state.lockDelayMs || defaultLockDelay) / 1000);
+                countdownValue.textContent = String(baseSeconds);
+            }
+        };
+
+        const updateCountdown = () => {
+            const { countdownValue } = getOrderFormElements();
+            if (!countdownValue) return;
+            if (!state.countdownEndsAt) {
+                const baseSeconds = Math.ceil((state.lockDelayMs || defaultLockDelay) / 1000);
+                countdownValue.textContent = String(baseSeconds);
+                return;
+            }
+            const remainingMs = state.countdownEndsAt - Date.now();
+            if (remainingMs <= 0) {
+                countdownValue.textContent = '0';
+                stopCountdown();
+                return;
+            }
+            const seconds = Math.max(0, Math.ceil(remainingMs / 1000));
+            countdownValue.textContent = String(seconds);
+        };
+
+        const startCountdown = (delayMs) => {
+            const { countdown } = getOrderFormElements();
+            state.countdownEndsAt = Date.now() + delayMs;
+            if (!countdown) {
+                if (state.countdownInterval) {
+                    clearInterval(state.countdownInterval);
+                    state.countdownInterval = null;
+                }
+                return;
+            }
+            countdown.classList.add('order-form-warning--visible');
+            updateCountdown();
+            if (state.countdownInterval) {
+                clearInterval(state.countdownInterval);
+            }
+            state.countdownInterval = setInterval(updateCountdown, 1000);
+        };
+
+        const updateLockerMeta = () => {
+            const { lockerMeta } = getOrderFormElements();
+            if (!lockerMeta) return;
+            let seconds = null;
+            if (state.meta && typeof state.meta.secondsSinceLastActive === 'number') {
+                const base = state.meta.secondsSinceLastActive;
+                const offset = state.meta.receivedAt ? Math.max(0, Math.round((Date.now() - state.meta.receivedAt) / 1000)) : 0;
+                seconds = base + offset;
+            } else if (state.lastAvailableAt) {
+                seconds = Math.max(0, Math.round((Date.now() - state.lastAvailableAt) / 1000));
+            }
+
+            if (!Number.isFinite(seconds) || seconds === null) {
+                lockerMeta.style.display = 'none';
+                lockerMeta.textContent = '';
+                return;
+            }
+
+            lockerMeta.style.display = '';
+            lockerMeta.textContent = formatSecondsAgo(seconds);
+        };
+
+        const lockOrderForm = (message) => {
+            stopCountdown();
+            const { container, form, locker, lockerMessage } = getOrderFormElements();
+            if (container) {
+                container.classList.add('order-form--locked');
+            }
+            if (form) {
+                form.classList.add('order-form-hidden');
+            }
+            toggleFormDisabled(true);
+            if (locker) {
+                locker.classList.add('order-form-locker--visible');
+            }
+            if (lockerMessage) {
+                lockerMessage.innerHTML = (message || '').replace(/\n/g, '<br>');
+            }
+            updateLockerMeta();
+            state.isLocked = true;
+        };
+
+        const unlockOrderForm = () => {
+            const { container, form, locker, lockerMeta } = getOrderFormElements();
+            if (container) {
+                container.classList.remove('order-form--locked');
+            }
+            if (form) {
+                form.classList.remove('order-form-hidden');
+            }
+            toggleFormDisabled(false);
+            if (locker) {
+                locker.classList.remove('order-form-locker--visible');
+            }
+            if (lockerMeta) {
+                lockerMeta.style.display = 'none';
+                lockerMeta.textContent = '';
+            }
+            state.isLocked = false;
+            state.meta = null;
+            state.pendingMessage = '';
+        };
+
+        window.setFCMCoursierStatus = function(isAvailable, message, options) {
+            options = options || {};
+            const normalizedMessage = (message && String(message).trim() !== '')
+                ? String(message)
+                : (window.COMMERCIAL_FALLBACK_MESSAGE || window.initialCoursierMessage || 'Nos coursiers sont momentanément indisponibles.');
+
+            if (typeof options.lockDelayMs === 'number' && options.lockDelayMs > 0) {
+                state.lockDelayMs = options.lockDelayMs;
+            } else if (typeof window.COURSIER_LOCK_DELAY_MS === 'number' && window.COURSIER_LOCK_DELAY_MS > 0) {
+                state.lockDelayMs = window.COURSIER_LOCK_DELAY_MS;
+            }
+
+            if (options.meta && typeof options.meta === 'object') {
+                state.meta = {
+                    ...options.meta,
+                    receivedAt: Date.now()
+                };
+            }
+
             window.fcmCoursierAvailable = Boolean(isAvailable);
-            window.fcmCoursierMessage = message || '';
-            console.log('📡 FCM coursier status set:', window.fcmCoursierAvailable, window.fcmCoursierMessage);
-            // Optionally show/hide a banner on the page
+            window.fcmCoursierMessage = normalizedMessage;
+
+            console.log('📡 FCM coursier status set:', window.fcmCoursierAvailable, window.fcmCoursierMessage, options);
+
             try {
                 const banner = document.getElementById('coursier-unavailable-banner');
                 if (!window.fcmCoursierAvailable) {
+                    const text = window.fcmCoursierMessage || 'Aucun coursier disponible pour le moment.';
                     if (!banner) {
                         const b = document.createElement('div');
                         b.id = 'coursier-unavailable-banner';
                         b.style = 'position:fixed;top:0;left:0;right:0;z-index:99999;padding:10px;text-align:center;background:linear-gradient(90deg,#D9534F,#F0AD4E);color:#fff;font-weight:700;';
-                        b.textContent = window.fcmCoursierMessage || 'Aucun coursier disponible pour le moment.';
+                        b.textContent = text;
                         document.body.appendChild(b);
                     } else {
-                        banner.textContent = window.fcmCoursierMessage || banner.textContent;
+                        banner.textContent = text;
                         banner.style.display = '';
                     }
                 } else if (banner) {
@@ -37,10 +242,58 @@
             } catch (e) {
                 console.warn('⚠️ setFCMCoursierStatus banner update failed', e);
             }
+
+            const forceImmediate = Boolean(options.forceImmediate || options.immediate);
+
+            if (window.fcmCoursierAvailable) {
+                state.available = true;
+                state.lastAvailableAt = Date.now();
+                if (state.lockTimer) {
+                    clearTimeout(state.lockTimer);
+                    state.lockTimer = null;
+                }
+                stopCountdown();
+                if (state.isLocked && !options.preventUnlock) {
+                    unlockOrderForm();
+                }
+                return;
+            }
+
+            state.available = false;
+            const effectiveMessage = normalizedMessage;
+
+            if (forceImmediate) {
+                if (state.lockTimer) {
+                    clearTimeout(state.lockTimer);
+                    state.lockTimer = null;
+                }
+                lockOrderForm(effectiveMessage);
+                return;
+            }
+
+            if (state.isLocked) {
+                lockOrderForm(effectiveMessage);
+                return;
+            }
+
+            const delay = (typeof options.lockDelayMs === 'number' && options.lockDelayMs > 0)
+                ? options.lockDelayMs
+                : state.lockDelayMs;
+
+            state.pendingMessage = effectiveMessage;
+
+            if (!state.lockTimer) {
+                startCountdown(delay);
+                state.lockTimer = setTimeout(() => {
+                    state.lockTimer = null;
+                    lockOrderForm(state.pendingMessage || effectiveMessage);
+                    state.pendingMessage = '';
+                }, delay);
+            }
         };
-        // Helper to show unavailable message explicitly
+
         window.showCoursierUnavailableMessage = function(msg) {
-            window.setFCMCoursierStatus(false, msg);
+            window.setFCMCoursierStatus(false, msg, { forceImmediate: true });
         };
     }
 
