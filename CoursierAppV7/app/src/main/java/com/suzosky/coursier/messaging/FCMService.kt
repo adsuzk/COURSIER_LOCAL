@@ -62,6 +62,11 @@ class FCMService : FirebaseMessagingService() {
                          Log.d(TAG, "✅ FCMService: Session coursier validée (id=$resolvedId), enregistrement token")
                          println("✅ FCMService: Session coursier validée (id=$resolvedId), enregistrement token")
                          ApiService.registerDeviceToken(this@FCMService, resolvedId, token)
+                         
+                         // ⚡ PING IMMÉDIAT pour ouvrir le formulaire à la seconde
+                         Log.d(TAG, "⚡ FCMService: Ping immédiat pour ouverture formulaire (session récupérée)")
+                         println("⚡ FCMService: Ping immédiat pour ouverture formulaire (session récupérée)")
+                         ApiService.pingDeviceToken(this@FCMService, token)
                      } else {
                          Log.e(TAG, "❌ FCMService: Impossible d'enregistrer le token, session invalide (${err ?: "inconnue"})")
                          println("❌ FCMService: Impossible d'enregistrer le token, session invalide (${err ?: "inconnue"})")
