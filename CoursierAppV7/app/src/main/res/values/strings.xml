@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Suzosky Coursier V7</string>
     <!-- Clés API Google -->
-    <string name="google_maps_key">AIzaSyBqWqKwcyj9Bn4Ktit72gm2cow1glmuFJY</string>
+    <string name="google_maps_key">AIzaSyAWcWWwpRx9myEaROuKrOPeL5wfbfQxCmk</string>
     <string name="google_places_key">AIzaSyAGKC21fGmY-k6i0dcY8MpBExa5IqqBXbE</string>
 </resources>
