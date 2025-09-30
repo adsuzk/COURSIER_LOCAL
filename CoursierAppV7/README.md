@@ -87,6 +87,14 @@ Callbacks :
 4. Détails commande (dialog / bottom sheet).
 5. Tracking temps réel (WebSocket ou polling léger).
 
+### Position / Tracking (note importante)
+L'application Android envoie maintenant automatiquement la position du coursier au serveur à chaque mise à jour de localisation via `ApiService.updateCoursierPosition(...)`.
+
+- Endpoint côté serveur : `/api/update_coursier_position.php` (attend `coursier_id`, `latitude`, `longitude`, `accuracy`).
+- SharedPreferences : clé utilisée `suzosky_prefs` ; l'ID du coursier est lu depuis `coursier_id` dans ces prefs.
+
+Assurez-vous que le device ou l'émulateur peut atteindre l'hôte de développement (voir `local.properties` `debug.localHost`) pour que les envois aboutissent en environnement local.
+
 ---
 ## 🧪 QA Visuelle
 Ajustements effectués :
