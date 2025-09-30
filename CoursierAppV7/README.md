@@ -2,10 +2,10 @@
 
 ## 🚦 Clé API Google Maps/Routes utilisée
 
-- **Clé API Android** : `AIzaSyAWcWWwpRx9myEaROuKrOPeL5wfbfQxCmk`
-- **Usage** : Cette clé est utilisée pour toutes les fonctionnalités Google Maps, Directions et Routes dans l’application Android.
-- **Sécurité** : Elle est restreinte dans la Google Cloud Console aux signatures SHA-1 de l’application et aux APIs nécessaires (Google Maps SDK for Android, Routes API, Directions API).
-- **Important** : Une seule clé Android suffit pour toutes les fonctionnalités cartographiques et d’itinéraire. Ne jamais utiliser de clé web ou de fichier JSON dans l’application mobile.
+-- **Clé API Android** : `AIzaSyAWcWWwpRx9myEaROuKrOPeL5wfbfQxCmk`
+-- **Usage** : Cette clé est utilisée pour toutes les fonctionnalités Google Maps, Directions et Routes dans l’application Android.
+-- **Sécurité** : Elle est restreinte dans la Google Cloud Console aux signatures SHA-1 de l’application et aux APIs nécessaires (Google Maps SDK for Android, Routes API, Directions API).
+-- **Important** : Une seule clé Android suffit pour toutes les fonctionnalités cartographiques et d’itinéraire. Ne jamais utiliser de clé web ou de fichier JSON dans l’application mobile.
 
 Version native Android (Jetpack Compose) reproduisant fidèlement l'interface web `coursier.php`.
 

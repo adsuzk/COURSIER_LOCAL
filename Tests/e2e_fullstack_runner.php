@@ -186,7 +186,7 @@ function sendTestFCM(PDO $pdo, int $coursierId, ?string $token = null): array {
 
 function sendDirectFCMTest(int $coursierId): array {
     try {
-        $saPath = __DIR__ . '/../coursier-suzosky-firebase-adminsdk-fbsvc-3605815057.json';
+    $saPath = __DIR__ . '/../coursier-suzosky-firebase-adminsdk-fbsvc-3605815057.json';
         if (!file_exists($saPath)) {
             return ['success'=>false,'message'=>'Service Account non trouvé'];
         }

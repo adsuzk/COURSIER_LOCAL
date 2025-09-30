@@ -19,7 +19,7 @@ class FCMManager {
     
     public function getServerKey() {
         // Essayer de lire depuis le fichier de config Firebase
-        $firebaseConfig = 'coursier-suzosky-firebase-adminsdk-fbsvc-3605815057.json';
+    $firebaseConfig = 'coursier-suzosky-firebase-adminsdk-fbsvc-3605815057.json';
         
         if (file_exists($firebaseConfig)) {
             $config = json_decode(file_get_contents($firebaseConfig), true);

@@ -18,6 +18,9 @@ Pour toute modification ou ajout de clé, toujours passer par la Google Cloud Co
 
 ---
 
+> Remarque (maintenance) : certains logs et anciennes versions de la documentation peuvent contenir des adresses IP locales obsolètes (ex: `192.168.134.193` ou `192.168.1.4`). Ne tenez pas compte de ces IPs : définissez toujours `debug.localHost` dans votre `local.properties` local (hors dépôt) avec l'IP actuelle de votre poste de développement, par exemple `http://192.168.1.25/COURSIER_LOCAL`.
+> Remarque (maintenance) : certains logs et anciennes versions de la documentation peuvent contenir des adresses IP locales obsolètes (ex: `192.168.134.193` ou `192.168.1.4`). Ne tenez pas compte de ces IPs : définissez toujours `debug.localHost` dans votre `local.properties` local (hors dépôt) avec l'IP actuelle de votre poste de développement, par exemple `http://192.168.1.25/COURSIER_LOCAL`.
+
 ## 📋 TABLE DES MATIÈRES
 
 1. [CONSOLIDATED_DOCS_2025-09-29_01-40-06](#consolidateddocs20250929014006) - *Modifié: 2025-09-29 01:40:08* - `DOCUMENTATION_FINALE\CONSOLIDATED_DOCS_2025-09-29_01-40-06.md`
@@ -1067,7 +1070,7 @@ mysqldump -u root coursier_lws_20250928 > backup_20250928.sql
 - **IP mise à jour** : `192.168.1.4` (était 192.168.1.5)
 - **Fichier** : `CoursierAppV7/local.properties`
 ```properties
-debug.localHost=http://192.168.1.4
+debug.localHost=<set your development machine IP here, e.g. http://192.168.1.25/COURSIER_LOCAL>
 ```
 
 #### 3. **Initialisation Firebase dans l'application** ✅ RÉSOLU
@@ -1224,7 +1227,7 @@ function sendFCMNotificationV1($token, $message, $data = []) {
 ```bash
 # Vérifier configuration
 cat CoursierAppV7/local.properties
-# debug.localHost=http://192.168.1.4
+# debug.localHost=<set your development machine IP here, e.g. http://192.168.1.25/COURSIER_LOCAL>
 
 # Compiler et installer
 # Android Studio: Build > Clean Project > Rebuild Project
