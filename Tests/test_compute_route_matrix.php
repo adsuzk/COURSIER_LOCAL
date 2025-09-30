@@ -2,32 +2,16 @@
 require_once __DIR__ . '/../lib/google_service_account_oauth.php';
 
 // Usage: php Tests/test_compute_route_matrix.php /path/to/service-account.json
-
 $jsonPath = $argv[1] ?? getenv('GOOGLE_MAPS_SERVICE_ACCOUNT_JSON');
-$apiKey = getenv('GOOGLE_MAPS_API_KEY') ?: 'AIzaSyChGsSDgCY9ELhBtMuEqDtAWsQYxUggMHs'; // clé API web par défaut
-if (!$jsonPath && !$apiKey) {
+if (!$jsonPath) {
     echo "Usage: php Tests/test_compute_route_matrix.php /path/to/service-account.json\n";
     exit(2);
 }
 
 try {
-
-    if ($apiKey && (!$jsonPath || $argv[2] === 'apikey')) {
-        echo "Using API KEY: $apiKey\n";
-        $matrixUrl = 'https://routes.googleapis.com/v2:computeRouteMatrix?key=' . urlencode($apiKey);
-        $useApiKey = true;
-    } else {
-        echo "Using service account JSON: $jsonPath\n";
-        $token = get_service_account_access_token($jsonPath, 'https://www.googleapis.com/auth/cloud-platform');
-        echo "Got access token (length=" . strlen($token) . ") — calling computeRouteMatrix...\n";
-        $projectId = json_decode(file_get_contents($jsonPath), true)['project_id'] ?? null;
-        if ($projectId) {
-            $matrixUrl = 'https://routes.googleapis.com/v2/projects/' . urlencode($projectId) . '/locations/global:computeRouteMatrix';
-        } else {
-            $matrixUrl = 'https://routes.googleapis.com/v2:computeRouteMatrix';
-        }
-        $useApiKey = false;
-    }
+    echo "Using service account JSON: $jsonPath\n";
+    $token = get_service_account_access_token($jsonPath, 'https://www.googleapis.com/auth/cloud-platform');
+    echo "Got access token (length=" . strlen($token) . ") — calling computeRouteMatrix...\n";
 
     $json = json_decode(file_get_contents($jsonPath), true);
     $projectId = $json['project_id'] ?? null;
@@ -58,19 +42,18 @@ try {
     echo "Request URL: $matrixUrl\n";
     echo "Request body:\n" . json_encode($body, JSON_PRETTY_PRINT) . "\n\n";
 
-
     $ch = curl_init($matrixUrl);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HEADER, true); // include headers in output
+    // verbose curl output to stderr for low-level diagnostics
     curl_setopt($ch, CURLOPT_VERBOSE, true);
     $verbose = fopen('php://stderr', 'w');
     curl_setopt($ch, CURLOPT_STDERR, $verbose);
     curl_setopt($ch, CURLOPT_POST, true);
-    $headers = ['Content-Type: application/json'];
-    if (!$useApiKey) {
-        $headers[] = 'Authorization: Bearer ' . $token;
-    }
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json',
+        'Authorization: Bearer ' . $token
+    ]);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
     curl_setopt($ch, CURLOPT_TIMEOUT, 10);
     $resp = curl_exec($ch);
