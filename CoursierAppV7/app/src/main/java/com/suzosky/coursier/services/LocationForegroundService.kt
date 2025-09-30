@@ -14,6 +14,9 @@ import android.os.Build
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.*
 import com.suzosky.coursier.MainActivity
@@ -220,6 +223,21 @@ class LocationForegroundService : Service() {
             when (action) {
                 ACTION_START -> {
                     coursierId = it.getIntExtra(EXTRA_COURSIER_ID, -1)
+                    // Verify runtime permissions before starting a location foreground service.
+                    val hasCoarse = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                    val hasFine = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                    // On Android API 34+ an explicit FOREGROUND_SERVICE_LOCATION permission may be required at runtime.
+                    val hasFgsLocation = if (Build.VERSION.SDK_INT >= 34) {
+                        ContextCompat.checkSelfPermission(this, "android.permission.FOREGROUND_SERVICE_LOCATION") == PackageManager.PERMISSION_GRANTED
+                    } else true
+
+                    if (!hasFgsLocation || !(hasFine || hasCoarse)) {
+                        Log.e(TAG, "Cannot start foreground location service: missing permissions (FGS=$hasFgsLocation, fine=$hasFine, coarse=$hasCoarse)")
+                        // Stop gracefully; caller (Activity) should request the required permissions and restart the service.
+                        stopSelf()
+                        return START_NOT_STICKY
+                    }
+
                     startForeground(NOTIF_ID, buildNotification())
                     startLocationUpdates()
                     Log.d(TAG, "Started foreground tracking (coursier=$coursierId)")
