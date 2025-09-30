@@ -124,7 +124,7 @@ INSERT INTO device_tokens VALUES (
 La logique de disponibilité côté serveur s'appuie sur deux notions complémentaires :
 
 - **Visibilité immédiate** : lorsqu'au moins un token FCM possède `is_active = 1` **et** un `last_ping` (ou `updated_at`) de moins de 60 s, le formulaire s'ouvre instantanément. C'est le comportement par défaut.
-- **Fraîcheur du signal** : `last_ping` mesure l'inactivité. Lorsque tous les tokens dépassent la fenêtre configurée, un compte à rebours de 60 s est déclenché avant de verrouiller le formulaire. Les tokens encore `is_active` mais inactifs sont exposés via `stale_active_count` dans `/api/get_coursier_availability.php`.
+- **Fraîcheur du signal** : `register_device_token_simple.php` met `last_ping = NOW()` à chaque rafraîchissement. Lorsque tous les tokens dépassent la fenêtre configurée, un compte à rebours de 60 s est déclenché avant de verrouiller le formulaire. Les tokens encore `is_active` mais inactifs sont exposés via `stale_active_count` dans `/api/get_coursier_availability.php`.
 
 Paramètres disponibles :
 
