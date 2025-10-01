@@ -468,6 +468,9 @@ fun CourseActionPanel(
     deliveryStep: DeliveryStep,
     onAcceptOrder: () -> Unit,
     onRejectOrder: () -> Unit,
+    onStartDelivery: () -> Unit = {},
+    onPickupPackage: () -> Unit = {},
+    onMarkDelivered: () -> Unit = {},
     onPickupValidation: () -> Unit,
     onDeliveryValidation: () -> Unit,
     modifier: Modifier = Modifier
