@@ -235,6 +235,144 @@ try {
             }
             break;
             
+        case 'start_delivery':
+            // Commencer la livraison (acceptee → en_cours)
+            $commande_id = intval($_REQUEST['commande_id'] ?? 0);
+            
+            if (!$commande_id || !$coursier_id) {
+                $response = ['success' => false, 'message' => 'ID commande requis'];
+                break;
+            }
+            
+            // Vérifier que la commande est bien acceptée
+            $check = $pdo->prepare("SELECT statut FROM commandes WHERE id = ? AND coursier_id = ?");
+            $check->execute([$commande_id, $coursier_id]);
+            $commande = $check->fetch();
+            
+            if (!$commande) {
+                $response = ['success' => false, 'message' => 'Commande non trouvée'];
+                break;
+            }
+            
+            if ($commande['statut'] !== 'acceptee') {
+                $response = ['success' => false, 'message' => 'Commande déjà en cours ou terminée'];
+                break;
+            }
+            
+            // Mettre à jour le statut et l'heure de début
+            $stmt = $pdo->prepare("
+                UPDATE commandes 
+                SET statut = 'en_cours', 
+                    heure_debut = NOW(),
+                    updated_at = NOW()
+                WHERE id = ? AND coursier_id = ?
+            ");
+            
+            if ($stmt->execute([$commande_id, $coursier_id])) {
+                $response = [
+                    'success' => true,
+                    'message' => 'Livraison commencée',
+                    'commande_id' => $commande_id,
+                    'nouveau_statut' => 'en_cours'
+                ];
+                logRequest('start_delivery', ['commande_id' => $commande_id], $response);
+            } else {
+                $response = ['success' => false, 'message' => 'Erreur lors du démarrage'];
+            }
+            break;
+            
+        case 'pickup_package':
+            // Marquer le colis comme récupéré (en_cours → recuperee)
+            $commande_id = intval($_REQUEST['commande_id'] ?? 0);
+            
+            if (!$commande_id || !$coursier_id) {
+                $response = ['success' => false, 'message' => 'ID commande requis'];
+                break;
+            }
+            
+            // Vérifier que la commande est bien en cours
+            $check = $pdo->prepare("SELECT statut FROM commandes WHERE id = ? AND coursier_id = ?");
+            $check->execute([$commande_id, $coursier_id]);
+            $commande = $check->fetch();
+            
+            if (!$commande) {
+                $response = ['success' => false, 'message' => 'Commande non trouvée'];
+                break;
+            }
+            
+            if ($commande['statut'] !== 'en_cours') {
+                $response = ['success' => false, 'message' => 'Commande pas en cours de livraison'];
+                break;
+            }
+            
+            // Mettre à jour le statut et l'heure de retrait
+            $stmt = $pdo->prepare("
+                UPDATE commandes 
+                SET statut = 'recuperee', 
+                    heure_retrait = NOW(),
+                    updated_at = NOW()
+                WHERE id = ? AND coursier_id = ?
+            ");
+            
+            if ($stmt->execute([$commande_id, $coursier_id])) {
+                $response = [
+                    'success' => true,
+                    'message' => 'Colis récupéré',
+                    'commande_id' => $commande_id,
+                    'nouveau_statut' => 'recuperee'
+                ];
+                logRequest('pickup_package', ['commande_id' => $commande_id], $response);
+            } else {
+                $response = ['success' => false, 'message' => 'Erreur lors de la récupération'];
+            }
+            break;
+            
+        case 'mark_delivered':
+            // Marquer comme livrée (recuperee → livree)
+            $commande_id = intval($_REQUEST['commande_id'] ?? 0);
+            
+            if (!$commande_id || !$coursier_id) {
+                $response = ['success' => false, 'message' => 'ID commande requis'];
+                break;
+            }
+            
+            // Vérifier que la commande est bien récupérée
+            $check = $pdo->prepare("SELECT statut FROM commandes WHERE id = ? AND coursier_id = ?");
+            $check->execute([$commande_id, $coursier_id]);
+            $commande = $check->fetch();
+            
+            if (!$commande) {
+                $response = ['success' => false, 'message' => 'Commande non trouvée'];
+                break;
+            }
+            
+            if ($commande['statut'] !== 'recuperee') {
+                $response = ['success' => false, 'message' => 'Colis pas encore récupéré'];
+                break;
+            }
+            
+            // Mettre à jour le statut et l'heure de livraison
+            $stmt = $pdo->prepare("
+                UPDATE commandes 
+                SET statut = 'livree', 
+                    heure_livraison = NOW(),
+                    updated_at = NOW()
+                WHERE id = ? AND coursier_id = ?
+            ");
+            
+            if ($stmt->execute([$commande_id, $coursier_id])) {
+                $response = [
+                    'success' => true,
+                    'message' => 'Commande livrée avec succès',
+                    'commande_id' => $commande_id,
+                    'nouveau_statut' => 'livree'
+                ];
+                logRequest('mark_delivered', ['commande_id' => $commande_id], $response);
+            } else {
+                $response = ['success' => false, 'message' => 'Erreur lors de la livraison'];
+            }
+            break;
+            
         case 'update_position':
             // Mettre à jour position GPS
             $latitude = floatval($_REQUEST['latitude'] ?? 0);
