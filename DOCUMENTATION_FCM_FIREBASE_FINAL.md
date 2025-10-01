@@ -108,6 +108,7 @@ INSERT INTO device_tokens VALUES (
 
 - `lib/fcm_helper.php` : centralise la logique d'obtention d'un access token OAuth2 via le service account et l'envoi d'un message FCM v1 (fonction `sendFCMNotificationV1`). Réutilisé par `test_fcm_direct_sender.php` et par les scripts de maintenance.
 - `Scripts/Scripts cron/fcm_validate_tokens.php` : parcourt les tokens `is_active = 1`, envoie un ping léger via FCM et désactive (`is_active = 0`) les tokens qui renvoient des erreurs permanentes (NOT_REGISTERED / INVALID_REGISTRATION). Le script est en dry-run par défaut ; passez `--apply` pour écrire en base.
+- `Scripts/Scripts cron/fcm_auto_cleanup.php` : signale les tokens très anciens mais ne les désactive plus automatiquement. Utilisez `--apply` pour purger ; sans option, le script reste purement informatif.
 
 **Exécution et planification :**
 
