@@ -1077,8 +1077,9 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                 
                                 ApiService.confirmCashReceived(commandeId.toIntOrNull() ?: 0, coursierId) { success, message ->
                                     if (success) {
-                                        // Déclencher un rechargement des commandes
-                                        shouldRefreshCommandes = true
+                                        Log.d("MainActivity", "✅ Cash confirmé - Refresh IMMEDIAT des commandes")
+                                        // REFRESH IMMEDIAT après cash confirmé
+                                        refreshTrigger++
                                     }
                                 }
                             },
