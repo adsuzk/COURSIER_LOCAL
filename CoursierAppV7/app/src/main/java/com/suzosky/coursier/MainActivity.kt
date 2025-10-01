@@ -762,12 +762,12 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
             }
         }
 
-        // 🔥 POLLING AUTOMATIQUE DES NOUVELLES COMMANDES - Toutes les 10 secondes
+        // 🔥 POLLING AUTOMATIQUE DES NOUVELLES COMMANDES - CHAQUE SECONDE !
         LaunchedEffect(isLoggedIn, coursierId) {
             if (isLoggedIn && coursierId > 0) {
-                Log.d("MainActivity", "🔄 Démarrage du polling automatique des commandes")
+                Log.d("MainActivity", "🔄 Démarrage du polling automatique ULTRA-RAPIDE (1s)")
                 while (isLoggedIn && coursierId > 0) {
-                    kotlinx.coroutines.delay(10000) // Toutes les 10 secondes
+                    kotlinx.coroutines.delay(1000) // CHAQUE SECONDE !
                     
                     Log.d("MainActivity", "🔍 Polling: Vérification des nouvelles commandes...")
                     ApiService.getCoursierData(coursierId) { data, err ->
