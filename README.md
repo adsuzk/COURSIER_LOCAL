@@ -1,18 +1,29 @@
 # 🚚 SUZOSKY COURSIER - Plateforme de Livraison en Temps Réel
 
-![Version](https://img.shields.io/badge/version-2.0-gold)
+![Version](https://img.shields.io/badge/version-2.1-gold)
 ![Status](https://img.shields.io/badge/status-production-success)
 ![PHP](https://img.shields.io/badge/PHP-7.4+-blue)
 ![Android](https://img.shields.io/badge/Android-SDK%2034-green)
+
+## 🌐 URL du Site
+
+```
+http://localhost/COURSIER_LOCAL/
+```
+
+⚠️ **IMPORTANT** : Ne PAS utiliser `/index.php` à la fin !
+
+---
 
 ## 📋 Vue d'Ensemble
 
 **Suzosky Coursier** est une plateforme complète de gestion de livraisons en temps réel comprenant :
 - 🌐 **Site Web Client** : Commande et suivi en temps réel
 - 📱 **Application Mobile Coursier** : Android (Kotlin + Jetpack Compose)
-- 💳 **Paiement Intégré** : CinetPay (Modal dans l'index)
+- 💳 **Paiement Intégré** : CinetPay (Modal AVANT enregistrement)
 - 🔔 **Notifications** : Firebase Cloud Messaging (FCM)
 - 🗺️ **Géolocalisation** : Google Maps API temps réel
+- 🎙️ **Guidage Vocal** : Text-to-Speech intégré dans l'app
 
 ---
 
