@@ -75,7 +75,7 @@ fun deactivateFcmTokenOnServer(context: android.content.Context) {
 class MainActivity : ComponentActivity() {
 
     // BroadcastReceiver pour les nouvelles commandes
-    private var commandeReceiver: BroadcastReceiver? = null
+    // private var commandeReceiver: BroadcastReceiver? = null // TEMPORAIREMENT DÉSACTIVÉ
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
