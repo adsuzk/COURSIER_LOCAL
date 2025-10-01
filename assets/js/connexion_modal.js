@@ -558,6 +558,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const userNav  = document.getElementById('userNav');
     if (guestNav) guestNav.style.display = 'block';
     if (userNav) userNav.style.display = 'none';
+    window.currentClient = null;
+    if (typeof window.forceCoursierAvailabilityForGuests === 'function') {
+      window.forceCoursierAvailabilityForGuests();
+    }
     const senderInput = document.getElementById('senderPhone');
     if (senderInput) {
       const phoneUtils = window.SuzoskyPhoneUtils;
