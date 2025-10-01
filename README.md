@@ -388,19 +388,45 @@ git push origin feature/ma-nouvelle-fonctionnalite
 
 ## 📝 Changelog
 
-### v2.0 - 1er Octobre 2025
-**🎉 Version majeure avec redesign complet**
+### v2.1 - 1er Octobre 2025
+**🎉 Corrections Majeures + Guidage Vocal**
 
 **Corrections critiques** :
-- ✅ **Flux paiement en ligne corrigé** : Modal CinetPay AVANT enregistrement
-- ✅ Commande enregistrée uniquement après confirmation paiement
-- ✅ APIs créées : `initiate_payment_only.php` + `create_order_after_payment.php`
+- ✅ **Flux paiement CinetPay corrigé** : Modal s'ouvre AVANT enregistrement
+  - ÉTAPE 1: Appel `initiate_payment_only.php` (génération URL)
+  - ÉTAPE 2: Ouverture modal avec iframe CinetPay
+  - ÉTAPE 3: Écoute postMessage pour confirmation
+  - ÉTAPE 4: Si confirmé → `create_order_after_payment.php`
+  - ÉTAPE 5: Recherche coursier automatique
+
+- ✅ **Credentials CinetPay mis à jour** :
+  - API Key: 8338609805877a8eaac7eb6.01734650
+  - Site ID: 5875732 (CHANGÉ)
+  - Secret Key: 830006136690110164ddb1.29156844 (CHANGÉ)
+
+- ✅ **Guidage vocal INTERNE** (plus d'ouverture Google Maps) :
+  - Text-to-Speech Android natif
+  - Instructions en temps réel
+  - Bouton activation/désactivation
+  - Le coursier reste dans l'app
+
+- ✅ **Matricule coursier réel** :
+  - Format: CM20250003 (au lieu de C{id})
+  - Récupéré depuis `agents_suzosky.matricule`
+  - Affiché en doré dans Profil
+
+**Nettoyage** :
+- ✅ Suppression 3 fichiers CONSOLIDATED_DOCS obsolètes
+- ✅ URLs corrigées partout : `http://localhost/COURSIER_LOCAL/` (sans index.php)
+- ✅ Documentation mise à jour
+
+### v2.0 - 30 Septembre 2025
+**🎉 Version majeure avec redesign complet**
 
 **Nouvelles fonctionnalités** :
 - ✅ 2 numéros cliquables (Client + Destinataire) dans Mes Courses
 - ✅ Clavier numérique pour saisie montant recharge
-- ✅ Branding Suzosky complet (plus de CinetPay visible)
-- ✅ Matricule coursier affiché dans profil (`ID: C{id}`)
+- ✅ Branding Suzosky complet
 - ✅ Textes visibles dans menu bas (hauteur 80dp)
 
 **Redesign UI/UX** :
