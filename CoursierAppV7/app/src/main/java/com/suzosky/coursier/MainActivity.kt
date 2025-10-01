@@ -22,6 +22,8 @@ import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import com.suzosky.coursier.data.models.Commande
+import com.suzosky.coursier.data.models.SystemHealth
+import com.suzosky.coursier.data.models.HealthStatus
 import com.suzosky.coursier.network.ApiService
 import com.suzosky.coursier.services.AutoUpdateService
 import com.suzosky.coursier.services.OrderRingService
@@ -30,6 +32,7 @@ import com.suzosky.coursier.telemetry.TelemetrySDK
 import com.suzosky.coursier.telemetry.UpdateInfo
 import com.suzosky.coursier.ui.components.PaymentStatusDialog
 import com.suzosky.coursier.ui.components.PaymentWebViewDialog
+import com.suzosky.coursier.ui.components.WaitingForOrdersScreen
 import com.suzosky.coursier.ui.screens.CoursierScreenNew
 import com.suzosky.coursier.ui.screens.LoginScreen
 import com.suzosky.coursier.ui.theme.SuzoskyTheme
