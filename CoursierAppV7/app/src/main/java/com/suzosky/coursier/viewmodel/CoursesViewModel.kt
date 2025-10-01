@@ -1,6 +1,7 @@
 package com.suzosky.coursier.viewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
@@ -51,6 +52,7 @@ class CoursesViewModel @Inject constructor(
     private fun getUserId(): Int? {
         val prefs = context.getSharedPreferences("suzosky_prefs", Context.MODE_PRIVATE)
         val coursierId = prefs.getInt("coursier_id", -1)
+        Log.d("CoursesViewModel", "getUserId() -> coursierId = $coursierId")
         return if (coursierId > 0) coursierId else null
     }
     
@@ -74,17 +76,21 @@ class CoursesViewModel @Inject constructor(
      */
     private suspend fun loadPendingOrders() {
         try {
+            Log.d("CoursesViewModel", "loadPendingOrders() - START")
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
             
             // Récupérer l'ID du coursier connecté
             val coursierId = getUserId() // Fonction à implémenter selon votre système d'auth
+            Log.d("CoursesViewModel", "loadPendingOrders() - coursierId = $coursierId")
             
             if (coursierId != null) {
+                Log.d("CoursesViewModel", "Appel ApiService.getCoursierOrders avec coursierId=$coursierId")
                 ApiService.getCoursierOrders(
                     coursierId = coursierId,
                     status = "all", // Récupérer toutes les commandes pour filtrer localement
                     limit = 20
                 ) { result, error ->
+                    Log.d("CoursesViewModel", "API Response - error: $error, result: $result")
                     if (error != null) {
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
