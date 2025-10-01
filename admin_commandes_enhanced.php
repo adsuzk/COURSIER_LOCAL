@@ -1779,10 +1779,186 @@ body.admin-commandes-page {
     50% { opacity: 1; transform: scale(1.1); }
 }
 
+/* ✅ MODAL DE TRACKING */
+.tracking-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.3s ease;
+}
+
+.tracking-modal-overlay.active {
+    display: flex;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.tracking-modal-card {
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    border-radius: 20px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    max-width: 900px;
+    width: 100%;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    animation: slideUp 0.3s ease;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+@keyframes slideUp {
+    from { 
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tracking-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 28px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(30, 41, 59, 0.3));
+}
+
+.tracking-modal-header h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    color: #f9fafb;
+}
+
+.tracking-modal-close {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 24px;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.tracking-modal-close:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+.tracking-modal-body {
+    padding: 28px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.tracking-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.tracking-info-card {
+    background: rgba(30, 41, 59, 0.6);
+    border-radius: 14px;
+    padding: 18px;
+    border: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.tracking-info-card h3 {
+    margin: 0 0 12px 0;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: rgba(226, 232, 240, 0.7);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tracking-info-card h3 i {
+    color: #60a5fa;
+}
+
+.tracking-info-card p {
+    margin: 8px 0;
+    font-size: 14px;
+    color: rgba(226, 232, 240, 0.9);
+    line-height: 1.6;
+}
+
+.tracking-info-card strong {
+    color: #f9fafb;
+    font-weight: 600;
+}
+
+.tracking-map-container {
+    margin-top: 24px;
+    border-radius: 14px;
+    overflow: hidden;
+    height: 350px;
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+#trackingMap {
+    width: 100%;
+    height: 100%;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.status-badge.online {
+    background: rgba(34, 197, 94, 0.2);
+    color: #4ade80;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.status-badge.offline {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
 @media (max-width: 780px) {
     .admin-header { flex-direction: column; gap: 12px; align-items: flex-start; }
     .filters-actions { justify-content: flex-start; }
     .commande-actions { flex-direction: column; align-items: stretch; }
+    
+    .tracking-modal-card {
+        max-width: 95vw;
+        max-height: 90vh;
+    }
+    
+    .tracking-info-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 1080px) {
