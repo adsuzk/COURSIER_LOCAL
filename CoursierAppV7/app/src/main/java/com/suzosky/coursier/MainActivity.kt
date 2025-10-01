@@ -411,7 +411,6 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
             }
         )
     }
-    val context = LocalContext.current
     // Persist a simple login flag in SharedPreferences to stabilize navigation after login
     val prefs = remember { context.getSharedPreferences("suzosky_prefs", android.content.Context.MODE_PRIVATE) }
     
