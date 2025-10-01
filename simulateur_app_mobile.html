@@ -511,11 +511,60 @@
             commandes.forEach(cmd => {
                 const card = document.createElement('div');
                 card.className = 'commande-card';
+                
+                // Déterminer le badge de statut
+                let statutBadge = '';
+                let actionButtons = '';
+                
+                switch(cmd.statut) {
+                    case 'nouvelle':
+                    case 'attribuee':
+                        statutBadge = '<span style="background:#3498db;color:white;padding:3px 10px;border-radius:12px;font-size:0.85rem;">📬 Nouvelle</span>';
+                        actionButtons = `
+                            <button class="btn btn-accept" onclick="acceptCommande(${cmd.id}, '${cmd.code_commande}')">
+                                ✅ Accepter
+                            </button>
+                            <button class="btn btn-refuse" onclick="refuseCommande(${cmd.id}, '${cmd.code_commande}')">
+                                ❌ Refuser
+                            </button>
+                        `;
+                        break;
+                    
+                    case 'acceptee':
+                        statutBadge = '<span style="background:#27ae60;color:white;padding:3px 10px;border-radius:12px;font-size:0.85rem;">✅ Acceptée</span>';
+                        actionButtons = `
+                            <button class="btn btn-accept" onclick="startDelivery(${cmd.id}, '${cmd.code_commande}')">
+                                🚀 Commencer la livraison
+                            </button>
+                        `;
+                        break;
+                    
+                    case 'en_cours':
+                        statutBadge = '<span style="background:#f39c12;color:white;padding:3px 10px;border-radius:12px;font-size:0.85rem;">🚴 En cours</span>';
+                        actionButtons = `
+                            <button class="btn btn-accept" onclick="pickupPackage(${cmd.id}, '${cmd.code_commande}')">
+                                📦 J'ai récupéré le colis
+                            </button>
+                        `;
+                        break;
+                    
+                    case 'recuperee':
+                        statutBadge = '<span style="background:#e67e22;color:white;padding:3px 10px;border-radius:12px;font-size:0.85rem;">📦 Colis récupéré</span>';
+                        actionButtons = `
+                            <button class="btn btn-accept" onclick="markDelivered(${cmd.id}, '${cmd.code_commande}')">
+                                🏁 Marquer comme livrée
+                            </button>
+                        `;
+                        break;
+                }
+                
                 card.innerHTML = `
                     <div class="commande-header">
                         <div class="commande-code">#${cmd.code_commande}</div>
                         <div class="commande-prix">${parseFloat(cmd.prix_total).toFixed(0)} FCFA</div>
                     </div>
+                    
+                    <div style="margin-bottom:10px;">${statutBadge}</div>
                     
                     <div class="commande-details">
                         <div>
@@ -539,12 +588,7 @@
                     </div>
                     
                     <div class="commande-actions">
-                        <button class="btn btn-accept" onclick="acceptCommande(${cmd.id}, '${cmd.code_commande}')">
-                            ✅ Accepter
-                        </button>
-                        <button class="btn btn-refuse" onclick="refuseCommande(${cmd.id}, '${cmd.code_commande}')">
-                            ❌ Refuser
-                        </button>
+                        ${actionButtons}
                     </div>
                 `;
                 container.appendChild(card);
