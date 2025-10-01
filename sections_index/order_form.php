@@ -1652,15 +1652,38 @@ if (trim((string)$defaultUnavailableMessage) === '') {
             }
         };
 
+        // Créer une commande après paiement confirmé (paiement en ligne uniquement)
+        const createOrderAfterPayment = async (payloadData) => {
+            console.log('💳 Création commande après paiement confirmé...');
+            const fd = new FormData();
+            Object.keys(payloadData).forEach(key => {
+                fd.append(key, payloadData[key]);
+            });
+            
+            const res = await fetch((window.ROOT_PATH || '') + '/api/create_order_after_payment.php', {
+                method: 'POST',
+                body: fd
+            });
+            
+            const txt = await res.text();
+            let json = null;
+            try { json = txt ? JSON.parse(txt) : null; } catch (e) { 
+                console.error('Erreur parsing JSON:', txt);
+                json = null; 
+            }
+            
+            if (!res.ok || !json) {
+                const detail = (json && (json.message || json.error)) || txt || 'Réponse serveur invalide';
+                throw new Error(detail);
+            }
+            
+            return json;
+        };
+
         const afterEnhancedSuccess = (method, data) => {
             state.retrying = false;
             state.retryEnabled = false;
-            if (method !== 'cash' && data && data.payment_url) {
-                updateBadge('payment');
-                openPaymentInline(data.payment_url);
-            } else if (method !== 'cash') {
-                updateBadge('payment', 'Paiement à finaliser');
-            }
+            // Success déjà géré dans handleEnhancedSubmit
         };
 
         const handleEnhancedSubmit = async (method) => {
@@ -1672,27 +1695,148 @@ if (trim((string)$defaultUnavailableMessage) === '') {
             state.messages = [];
             state.timelineLastUpdate = 0;
             showTimeline();
-            updateBadge(method === 'cash' ? 'pending' : 'payment');
+            
             await ensureLatLng(state.payload);
-            const res = await submitOrder(state.payload);
-            if (!res || !res.success) {
-                throw new Error(res?.message || 'Soumission échouée');
+            
+            // ===== NOUVEAU FLUX SELON DOCUMENTATION =====
+            // Si paiement en ligne (non cash), ouvrir modal AVANT d'enregistrer
+            if (method !== 'cash') {
+                console.log('💳 Mode paiement en ligne détecté:', method);
+                updateBadge('payment', 'Initialisation du paiement...');
+                
+                // Ajouter message
+                state.messages.push({
+                    text: '💳 Initialisation du paiement sécurisé...',
+                    type: 'info'
+                });
+                renderTimelineMessages(state.messages);
+                
+                // ÉTAPE 1: Initier le paiement (génère URL sans enregistrer commande)
+                const priceInfo = readPriceInfo();
+                const orderNumber = 'SZK' + Date.now();
+                
+                const paymentFormData = new FormData();
+                paymentFormData.append('order_number', orderNumber);
+                paymentFormData.append('amount', priceInfo.price || 1500);
+                paymentFormData.append('client_name', state.payload.senderPhone || 'Client');
+                paymentFormData.append('client_phone', state.payload.senderPhone || '');
+                paymentFormData.append('client_email', window.currentClient?.email || 'client@suzosky.com');
+                
+                console.log('📤 Appel API initiate_payment_only.php...');
+                const paymentRes = await fetch((window.ROOT_PATH || '') + '/api/initiate_payment_only.php', {
+                    method: 'POST',
+                    body: paymentFormData
+                });
+                
+                const paymentTxt = await paymentRes.text();
+                let paymentJson = null;
+                try { paymentJson = paymentTxt ? JSON.parse(paymentTxt) : null; } catch (e) {
+                    console.error('Erreur parsing JSON paiement:', paymentTxt);
+                    throw new Error('Réponse serveur invalide');
+                }
+                
+                if (!paymentJson || !paymentJson.success || !paymentJson.payment_url) {
+                    throw new Error(paymentJson?.message || 'Impossible de générer le lien de paiement');
+                }
+                
+                console.log('✅ URL de paiement reçue:', paymentJson.payment_url);
+                
+                state.messages.push({
+                    text: '✅ Lien de paiement généré - Ouverture du modal...',
+                    type: 'success'
+                });
+                renderTimelineMessages(state.messages);
+                
+                // ÉTAPE 2: Ouvrir le modal et attendre confirmation
+                return new Promise((resolve, reject) => {
+                    if (typeof window.showPaymentModal !== 'function') {
+                        reject(new Error('Fonction showPaymentModal non disponible'));
+                        return;
+                    }
+                    
+                    console.log('🔷 Ouverture modal de paiement...');
+                    window.showPaymentModal(paymentJson.payment_url, async (paymentSuccess) => {
+                        if (paymentSuccess) {
+                            console.log('✅ Paiement confirmé ! Enregistrement de la commande...');
+                            
+                            state.messages.push({
+                                text: '✅ Paiement confirmé ! Enregistrement de votre commande...',
+                                type: 'success'
+                            });
+                            renderTimelineMessages(state.messages);
+                            updateBadge('pending', 'Enregistrement...');
+                            
+                            try {
+                                // ÉTAPE 3: Enregistrer la commande APRÈS paiement confirmé
+                                const res = await createOrderAfterPayment(state.payload);
+                                
+                                if (!res || !res.success) {
+                                    throw new Error(res?.message || 'Enregistrement échoué');
+                                }
+                                
+                                const data = res.data || {};
+                                
+                                // Marquer les étapes
+                                markStep('commande_creee', 'completed');
+                                markStep('recherche_coursier', 'active');
+                                
+                                state.messages.push({
+                                    text: `✅ Commande ${data.order_number || orderNumber} enregistrée avec succès`,
+                                    type: 'success'
+                                });
+                                renderTimelineMessages(state.messages);
+                                
+                                startPolling(data);
+                                resolve(data);
+                                
+                            } catch (err) {
+                                console.error('❌ Erreur enregistrement après paiement:', err);
+                                state.messages.push({
+                                    text: '❌ Erreur: ' + (err.message || 'Enregistrement échoué'),
+                                    type: 'error'
+                                });
+                                renderTimelineMessages(state.messages);
+                                reject(err);
+                            }
+                        } else {
+                            console.log('❌ Paiement annulé ou échoué');
+                            state.messages.push({
+                                text: '❌ Paiement annulé ou échoué. Vous pouvez réessayer.',
+                                type: 'error'
+                            });
+                            renderTimelineMessages(state.messages);
+                            updateBadge('error', 'Paiement échoué');
+                            state.retryEnabled = true;
+                            reject(new Error('Paiement annulé'));
+                        }
+                    });
+                });
+                
+            } else {
+                // Mode ESPÈCES: flux normal (enregistrement direct)
+                console.log('💵 Mode paiement espèces - Enregistrement direct');
+                updateBadge('pending');
+                
+                const res = await submitOrder(state.payload);
+                if (!res || !res.success) {
+                    throw new Error(res?.message || 'Soumission échouée');
+                }
+                const data = res.data || {};
+                
+                // Marquer immédiatement les premières étapes
+                markStep('commande_creee', 'completed');
+                markStep('recherche_coursier', 'active');
+                
+                // Ajouter message de confirmation
+                state.messages.push({
+                    text: `✅ Commande ${data.order_number || data.code_commande || 'créée'} enregistrée avec succès`,
+                    type: 'success'
+                });
+                renderTimelineMessages(state.messages);
+                
+                startPolling(data);
+                return data;
             }
-            const data = res.data || {};
-            
-            // Marquer immédiatement les premières étapes
-            markStep('commande_creee', 'completed');
-            markStep('recherche_coursier', 'active');
-            
-            // Ajouter message de confirmation
-            state.messages.push({
-                text: `✅ Commande ${data.order_number || data.code_commande || 'créée'} enregistrée avec succès`,
-                type: 'success'
-            });
-            renderTimelineMessages(state.messages);
-            
-            startPolling(data);
-            return data;
         };
 
         attemptRetry = async () => {
