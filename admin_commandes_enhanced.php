@@ -487,31 +487,17 @@ $resetUrl = htmlspecialchars($baseScript . '?section=commandes', ENT_QUOTES);
 $ajaxEndpoint = htmlspecialchars(basename(__FILE__), ENT_QUOTES);
 ?>
 
-<!-- ✅ STUBS GLOBAUX : Définir les fonctions AVANT le HTML pour éviter "not defined" -->
+<!-- ✅ SCRIPTS SIMPLIFIÉS : Focus sur les fonctionnalités essentielles -->
 <script>
-// Déclarations anticipées des fonctions de tracking (implémentations réelles plus bas)
-window.openTrackingModal = window.openTrackingModal || function(commandeId, coursierId, mode) {
-    console.warn('⚠️ openTrackingModal stub appelé, implémentation réelle en chargement...', {commandeId, coursierId, mode});
-};
-window.closeTrackingModal = window.closeTrackingModal || function() {
-    console.warn('⚠️ closeTrackingModal stub appelé');
-};
-window.showTrackingUnavailable = window.showTrackingUnavailable || function() {
-    alert("Aucun coursier n'est encore assigné à cette commande.");
-};
-window.switchTrackingTab = window.switchTrackingTab || function(tab) {
-    console.warn('⚠️ switchTrackingTab stub appelé:', tab);
-};
-window.refreshTracking = window.refreshTracking || function() {
-    console.warn('⚠️ refreshTracking stub appelé');
-};
-window.closeCoursierModal = window.closeCoursierModal || function(event) {
+// Gestion du modal coursier (assignation)
+window.closeCoursierModal = function(event) {
     const modal = document.getElementById('coursierModal');
     if (modal && (!event || event.target === modal)) {
         modal.style.display = 'none';
     }
 };
-console.log('✅ Stubs de tracking initialisés');
+
+console.log('✅ Scripts admin simplifiés chargés');
 </script>
 
 <style>
