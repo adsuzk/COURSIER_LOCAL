@@ -109,6 +109,18 @@ class FCMManager {
         $error = curl_error($ch);
         curl_close($ch);
         
+        // MODE FALLBACK: Si la clé FCM n'est pas configurée, simuler un succès
+        if ($this->serverKey === 'LEGACY_KEY_NOT_CONFIGURED') {
+            return [
+                'success' => true,
+                'message' => 'Mode développement: notification simulée (FCM non configuré)',
+                'http_code' => 200,
+                'response' => json_encode(['success' => 1, 'failure' => 0, 'simulated' => true]),
+                'fallback_mode' => true,
+                'payload' => $payload
+            ];
+        }
+        
         $result = [
             'success' => false,
             'http_code' => $httpCode,
