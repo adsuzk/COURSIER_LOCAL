@@ -210,6 +210,7 @@ try {
             'tempsEstime' => intval(($cmd['distance'] ?? 0) * 3), // 3 min par km
             'prixTotal' => floatval($cmd['prix_livraison']),
             'prixLivraison' => floatval($cmd['prix_livraison']),
+            'methodePaiement' => $cmd['mode_paiement'] ?? 'especes',
             'statut' => $frontStatut,
             'statut_raw' => $statutRaw,
             'dateCommande' => date('Y-m-d', strtotime($cmd['date_commande'])),
