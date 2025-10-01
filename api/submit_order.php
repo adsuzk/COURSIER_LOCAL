@@ -25,6 +25,33 @@ require_once __DIR__ . '/../logger.php';
 require_once __DIR__ . '/../lib/db_maintenance.php';
 require_once __DIR__ . '/../cinetpay/cinetpay_integration.php';
 
+if (session_status() === PHP_SESSION_NONE) {
+	session_start();
+}
+
+$sessionIndicators = [
+	$_SESSION['client_id'] ?? null,
+	$_SESSION['client_email'] ?? null,
+	$_SESSION['client_telephone'] ?? null,
+];
+$hasClientSession = false;
+foreach ($sessionIndicators as $value) {
+	if (!empty($value)) {
+		$hasClientSession = true;
+		break;
+	}
+}
+
+if (!$hasClientSession) {
+	http_response_code(401);
+	echo json_encode([
+		'success' => false,
+		'message' => 'Session client requise. Veuillez vous connecter avant de commander.',
+		'code' => 'AUTH_REQUIRED'
+	]);
+	exit;
+}
+
 // Protection anti-sortie parasite : buffer de sortie
 ob_start();
 
