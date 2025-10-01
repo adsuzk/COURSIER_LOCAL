@@ -281,7 +281,7 @@ include __DIR__ . '/../functions.php';
         opacity: 0.75;
     }
 
-    .finance-recharge .main-content {
+    .finance-recharge .agents-section {
         background: rgba(26, 26, 46, 0.9);
         border-radius: 18px;
         border: 1px solid rgba(212, 168, 83, 0.22);
@@ -292,7 +292,7 @@ include __DIR__ . '/../functions.php';
     .finance-recharge .coursiers-grid {
         display: grid;
         gap: 22px;
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     }
 
     .finance-recharge .coursier-card {
@@ -533,8 +533,8 @@ include __DIR__ . '/../functions.php';
             <?php unset($_SESSION['error_message']); ?>
         <?php endif; ?>
 
-        <!-- Liste des coursiers -->
-        <div class="main-content">
+    <!-- Liste des coursiers -->
+    <div class="agents-section">
             <div class="coursiers-grid">
                 <?php foreach ($coursiers as $coursier): ?>
                     <div class="coursier-card">
