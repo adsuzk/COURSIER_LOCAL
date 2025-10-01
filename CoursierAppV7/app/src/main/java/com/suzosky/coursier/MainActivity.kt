@@ -73,6 +73,14 @@ fun deactivateFcmTokenOnServer(context: android.content.Context) {
 }
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    // BroadcastReceiver pour les nouvelles commandes
+    private var commandeReceiver: BroadcastReceiver? = null
+    
+    // Variables pour forcer le rafraîchissement
+    private var shouldRefreshCommandes = false
+    private var newOrderId: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
