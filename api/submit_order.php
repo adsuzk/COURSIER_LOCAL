@@ -271,7 +271,7 @@ try {
 					$body, 
 					$notifData,
 					$coursier['id'],
-					'SUBMIT_ORDER_AUTO'
+					$commande_id
 				);
 				
 				if (function_exists('logMessage')) {
