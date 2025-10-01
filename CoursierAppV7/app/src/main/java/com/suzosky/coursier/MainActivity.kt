@@ -674,6 +674,10 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                         println("❌ Erreur conversion commandes: ${e.message}")
                         emptyList()
                     }
+                    Log.d("MainActivity", "Commandes loaded: ${commandesReelles.size} orders mapped successfully")
+                    commandesReelles.forEach { cmd ->
+                        Log.d("MainActivity", "  Order: id=${cmd.id}, statut=${cmd.statut}, client=${cmd.clientNom}")
+                    }
                     error = null
                 } else {
                     println("❌ Erreur chargement données: $err")
