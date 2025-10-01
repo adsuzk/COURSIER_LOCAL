@@ -1656,9 +1656,35 @@ if (trim((string)$defaultUnavailableMessage) === '') {
         const createOrderAfterPayment = async (payloadData) => {
             console.log('💳 Création commande après paiement confirmé...');
             const fd = new FormData();
+            
+            // Mapper les champs du payload vers les noms attendus par l'API
+            const fieldMapping = {
+                'departure': 'adresse_depart',
+                'destination': 'adresse_destination',
+                'departure_lat': 'latitude_retrait',
+                'departure_lng': 'longitude_retrait',
+                'destination_lat': 'latitude_livraison',
+                'destination_lng': 'longitude_livraison',
+                'price': 'prix_livraison',
+                'receiverPhone': 'telephone_destinataire',
+                'senderPhone': 'client_phone',
+                'packageDescription': 'notes_speciales'
+            };
+            
             Object.keys(payloadData).forEach(key => {
-                fd.append(key, payloadData[key]);
+                const mappedKey = fieldMapping[key] || key;
+                fd.append(mappedKey, payloadData[key]);
             });
+            
+            // Extraire la distance numérique si elle contient "km"
+            if (payloadData.distance) {
+                const distanceNum = parseFloat(String(payloadData.distance).replace(/[^\d.]/g, ''));
+                if (!isNaN(distanceNum)) {
+                    fd.set('distance_km', distanceNum);
+                }
+            }
+            
+            console.log('📤 Données envoyées à create_order_after_payment:', Object.fromEntries(fd));
             
             const res = await fetch((window.ROOT_PATH || '') + '/api/create_order_after_payment.php', {
                 method: 'POST',
