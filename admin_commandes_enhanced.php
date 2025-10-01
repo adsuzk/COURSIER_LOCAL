@@ -78,7 +78,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'termi
 
             $pdo->beginTransaction();
 
-            $update = $pdo->prepare("UPDATE commandes SET statut = 'livree', updated_at = NOW() WHERE id = ?");
+            // Mettre à jour la commande : statut = livree + statut_paiement = paye
+            $update = $pdo->prepare("UPDATE commandes SET statut = 'livree', statut_paiement = 'paye', updated_at = NOW() WHERE id = ?");
             $update->execute([$commandeId]);
 
             if (!empty($commande['coursier_id'])) {
