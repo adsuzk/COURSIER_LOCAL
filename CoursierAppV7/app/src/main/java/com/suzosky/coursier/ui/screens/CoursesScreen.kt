@@ -378,8 +378,26 @@ fun CoursesScreen(
                                 Text("Valider récupération", color = PrimaryDark)
                             }
                         }
-                        DeliveryStep.EN_ROUTE_PICKUP -> {
-                            // Pas d'action spécifique ici
+                        DeliveryStep.PICKED_UP, DeliveryStep.EN_ROUTE_DELIVERY -> {
+                            // Bouton pour naviguer vers le point de livraison
+                            val context = androidx.compose.ui.platform.LocalContext.current
+                            Button(
+                                onClick = {
+                                    currentOrder?.coordonneesLivraison?.let { delivery ->
+                                        val deliveryLatLng = LatLng(delivery.latitude, delivery.longitude)
+                                        launchTurnByTurn(context, deliveryLatLng)
+                                    }
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = SuccessGreen
+                                ),
+                                enabled = currentOrder?.coordonneesLivraison != null
+                            ) {
+                                Icon(Icons.Filled.Navigation, contentDescription = null, tint = Color.White)
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("Démarrer navigation (Livraison)", fontWeight = FontWeight.Bold)
+                            }
                         }
                         DeliveryStep.DELIVERY_ARRIVED -> {
                             Button(
