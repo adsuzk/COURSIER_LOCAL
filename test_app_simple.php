@@ -10,11 +10,24 @@ try {
 
     // Vérifier les dernières commandes créées
     echo "\n=== DERNIÈRES COMMANDES ===\n";
-    $stmt = $pdo->query("SELECT id, code_commande, statut, coursier_id, created_at FROM commandes ORDER BY created_at DESC LIMIT 3");
+    $stmt = $pdo->query("SELECT id, code_commande, statut, coursier_id, created_at FROM commandes ORDER BY created_at DESC LIMIT 5");
     while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $statut = $row['statut'];
         $coursier = $row['coursier_id'] ? "Coursier #{$row['coursier_id']}" : "Pas assigné";
         echo "#{$row['id']} - {$row['code_commande']} - Statut: $statut - $coursier - {$row['created_at']}\n";
+    }
+
+    // Vérifier les commandes assignées au coursier #5
+    echo "\n=== COMMANDES POUR COURSIER #5 ===\n";
+    $stmt = $pdo->query("SELECT id, code_commande, statut, client_nom, adresse_depart, adresse_arrivee, prix_total FROM commandes WHERE coursier_id = 5 AND statut IN ('attribuee', 'en_cours') ORDER BY created_at DESC LIMIT 3");
+    $commandes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if (empty($commandes)) {
+        echo "❌ Aucune commande assignée au coursier #5\n";
+    } else {
+        foreach ($commandes as $row) {
+            echo "✅ #{$row['id']} - {$row['code_commande']} - {$row['statut']} - {$row['client_nom']}\n";
+            echo "   📍 {$row['adresse_depart']} → {$row['adresse_arrivee']} - {$row['prix_total']} FCFA\n";
+        }
     }
 
     // Vérifier l'état du coursier #5
