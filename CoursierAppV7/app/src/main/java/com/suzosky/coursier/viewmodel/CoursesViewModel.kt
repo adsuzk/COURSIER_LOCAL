@@ -140,11 +140,6 @@ class CoursesViewModel @Inject constructor(
                     isLoading = false,
                     error = "Utilisateur non connecté"
                 )
-            } else {
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    error = "Coursier non connecté"
-                )
             }
             
         } catch (e: Exception) {
