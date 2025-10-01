@@ -391,6 +391,13 @@
             </div>
         </div>
     </div>
+    
+    <!-- MODAL POUR NOUVELLE COMMANDE -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal-content" id="modal-content">
+            <!-- Contenu injecté dynamiquement -->
+        </div>
+    </div>
 
     <script>
         const API_BASE = 'http://localhost/COURSIER_LOCAL';
@@ -430,6 +437,16 @@
                 if (data.success && data.commandes && data.commandes.length > 0) {
                     // Filtrer seulement les nouvelles
                     const nouvelles = data.commandes.filter(c => c.statut === 'nouvelle');
+                    
+                    // Détecter une NOUVELLE commande (pas dans lastCommandes)
+                    const nouvelleCommande = nouvelles.find(c => 
+                        !lastCommandes.some(last => last.id === c.id)
+                    );
+                    
+                    if (nouvelleCommande) {
+                        addLog(`🚨 NOUVELLE COMMANDE DÉTECTÉE: ${nouvelleCommande.code_commande}`, 'success');
+                        showCommandeModal(nouvelleCommande);
+                    }
                     
                     if (nouvelles.length !== lastCommandes.length) {
                         addLog(`✅ ${nouvelles.length} commande(s) trouvée(s)`, 'success');
@@ -558,22 +575,118 @@
         }
         
         function playNotificationSound() {
-            // Créer un son de notification simple
+            // Son de notification FORT et répétitif
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
             
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
+            // Jouer 3 bips successifs
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    // Fréquence plus haute = plus audible
+                    oscillator.frequency.value = 1200;
+                    oscillator.type = 'square'; // Son plus percutant
+                    
+                    // Volume plus fort
+                    gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                    
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.3);
+                }, i * 400);
+            }
             
-            oscillator.frequency.value = 800;
-            oscillator.type = 'sine';
+            // Ajouter une vibration visuelle
+            const phone = document.querySelector('.phone-simulator');
+            phone.classList.add('alert');
+            setTimeout(() => phone.classList.remove('alert'), 500);
+        }
+        
+        function showCommandeModal(commande) {
+            const modal = document.getElementById('modal-overlay');
+            const content = document.getElementById('modal-content');
             
-            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            content.innerHTML = `
+                <div class="modal-header">
+                    <div class="modal-icon">🚨</div>
+                    <div class="modal-title">NOUVELLE COMMANDE!</div>
+                    <div style="color: #666; font-size: 0.9rem;">Code: ${commande.code_commande}</div>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="modal-detail">
+                        <span class="icon">📍</span>
+                        <div>
+                            <strong>Départ:</strong><br>
+                            ${commande.adresse_depart || 'Non spécifié'}
+                        </div>
+                    </div>
+                    
+                    <div class="modal-detail">
+                        <span class="icon">🎯</span>
+                        <div>
+                            <strong>Arrivée:</strong><br>
+                            ${commande.adresse_arrivee || 'Non spécifié'}
+                        </div>
+                    </div>
+                    
+                    <div class="modal-detail">
+                        <span class="icon">💰</span>
+                        <div>
+                            <strong>Prix estimé:</strong> ${commande.prix_estime || commande.prix_total || '0'} FCFA
+                        </div>
+                    </div>
+                    
+                    <div class="modal-detail">
+                        <span class="icon">📏</span>
+                        <div>
+                            <strong>Distance:</strong> ${commande.distance_estimee || 'N/A'} km
+                        </div>
+                    </div>
+                    
+                    ${commande.description_colis ? `
+                    <div class="modal-detail">
+                        <span class="icon">📦</span>
+                        <div>
+                            <strong>Colis:</strong> ${commande.description_colis}
+                        </div>
+                    </div>
+                    ` : ''}
+                </div>
+                
+                <div class="modal-actions">
+                    <button class="modal-btn modal-btn-accept" onclick="acceptCommandeFromModal(${commande.id}, '${commande.code_commande}')">
+                        ✅ ACCEPTER
+                    </button>
+                    <button class="modal-btn modal-btn-refuse" onclick="refuseCommandeFromModal(${commande.id}, '${commande.code_commande}')">
+                        ❌ REFUSER
+                    </button>
+                </div>
+            `;
             
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.5);
+            modal.classList.add('show');
+            
+            // Jouer le son de notification
+            playNotificationSound();
+        }
+        
+        function hideCommandeModal() {
+            const modal = document.getElementById('modal-overlay');
+            modal.classList.remove('show');
+        }
+        
+        async function acceptCommandeFromModal(commandeId, code) {
+            hideCommandeModal();
+            await acceptCommande(commandeId, code);
+        }
+        
+        async function refuseCommandeFromModal(commandeId, code) {
+            hideCommandeModal();
+            await refuseCommande(commandeId, code);
         }
         
         // Démarrer le polling
