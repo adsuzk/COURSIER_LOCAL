@@ -844,7 +844,8 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
         }
     }
 
-    // Configuration du BroadcastReceiver pour les nouvelles commandes
+    /*
+    // Configuration du BroadcastReceiver pour les nouvelles commandes - DOUBLE DÉCLARATION COMMENTÉE
     private fun setupCommandeReceiver() {
         commandeReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
@@ -902,5 +903,6 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
             }
         }
     }
+    */
 }
 
