@@ -445,6 +445,9 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
         var coursierTelephone by coursierTelephoneState
         var coursierEmail by coursierEmailState
         var dateInscription by dateInscriptionState
+        var shouldRefreshCommandes by shouldRefreshCommandesState
+        var newOrderId by newOrderIdState
+        
     // Persist login UI state across recompositions/config changes + initialize from prefs
     var isLoggedIn by rememberSaveable { mutableStateOf(prefs.getBoolean("isLoggedIn", false)) }
     if (!isLoggedIn) {
