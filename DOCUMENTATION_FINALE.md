@@ -78,20 +78,21 @@ VALUES ('TestAgent', 'Demo', 'test@demo.com', '+22501020304', 'hors_ligne', NOW(
 
 ### 🔎 Présence temps réel — Index & Admin
 
-L’affichage du formulaire de commande sur l’index est piloté uniquement par la logique FCM :
+L’affichage du formulaire de commande sur l’index est piloté par la logique FCM, avec une exception explicite pour les visiteurs :
 
-- **Ouverture immédiate** : le formulaire s'affiche dès qu'au moins un token FCM est actif (`is_active = 1`), même si son `last_ping` date de plusieurs heures. Les champs `last_ping` / `seconds_since_last_active` servent uniquement aux messages d'information.
-- **Sécurité de fermeture** : si `active_count` retombe à zéro, un compte à rebours de 60 s démarre puis le formulaire se verrouille lorsqu'aucun coursier ne revient. Les tokens encore `is_active = 1` mais considérés comme obsolètes sont signalés via `stale_active_count` pour faciliter le diagnostic, sans fermer le formulaire.
-- La logique SQL/statut_connexion/last_login_at n’a aucune incidence sur l’affichage du formulaire.
+- **Visiteurs sans session client** : le formulaire reste toujours affiché et utilisable. Les messages FCM sont visibles à titre informatif, mais aucun verrouillage/countdown n’est appliqué tant qu’aucune session cliente n’est ouverte.
+- **Clients authentifiés** : dès qu’un token FCM `is_active = 1` est présent, le formulaire reste ouvert (même si `last_ping` est ancien) et affiche le message « Coursiers connectés (activité arrière-plan) ». Si `active_count` retombe à zéro, un compte à rebours de 60 s démarre ; en l’absence de reconnexion, le formulaire se verrouille automatiquement.
+- **Suivi des tokens obsolètes** : `stale_active_count` signale les tokens actifs mais non frais pour l’audit sans bloquer l’UX. `seconds_since_last_active` est utilisé uniquement pour l’affichage.
+- **Sources de vérité** : la logique SQL (`statut_connexion`, `last_login_at`, etc.) n’intervient plus dans l’affichage. Elle est réservée à l’historisation et à la maintenance.
 
-Seule la logique FCM gère la présence côté utilisateur. La logique SQL reste utilisée pour l’historique, l’audit et la maintenance, mais n’intervient pas dans l’UX.
+Seule la logique FCM commande désormais l’expérience utilisateur dès qu’une session client est ouverte ; avant connexion, le site reste en mode « capture de leads » avec formulaire disponible.
 
 Les scripts de maintenance peuvent par ailleurs valider activement les tokens via FCM et désactiver automatiquement les tokens définitivement invalides (voir `Scripts/Scripts cron/fcm_validate_tokens.php`).
 
 #### Interfaces concernées :
-- **Index public** : formulaire affiché uniquement si la vérification FCM retourne >=1 token actif et frais (`is_active = 1` ET `last_ping` ≤ 60 s)
-- **Dashboard admin** : section « Coursiers connectés » fondée sur la même logique
-- **Finances / Commandes** : même source de vérité
+- **Index public** : formulaire toujours visible pour les visiteurs ; dès qu’une session client est active, la disponibilité FCM s’applique (≥1 token `is_active = 1` pour rester ouvert, countdown si `active_count = 0`).
+- **Dashboard admin** : section « Coursiers connectés » fondée sur la même logique FCM.
+- **Finances / Commandes** : mêmes indicateurs (`active_count`, `fresh_count`, `stale_active_count`).
 
 **API centrale :** `/api/coursiers_connectes.php` (source unique de vérité pour les interfaces)
 
