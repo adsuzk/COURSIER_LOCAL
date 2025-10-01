@@ -12,7 +12,7 @@ try {
         'nom' => 'Client Test',
         'email' => 'test.client@suzosky.com',
         'telephone' => '+225 07 08 09 10 11',
-        'mot_de_passe' => password_hash('test123', PASSWORD_DEFAULT)
+        'password_hash' => password_hash('test123', PASSWORD_DEFAULT)
     ];
     
     // Vérifier si le client existe déjà
@@ -25,14 +25,14 @@ try {
         echo "✅ Client existant trouvé ID: $clientId\n";
     } else {
         $stmt = $pdo->prepare("
-            INSERT INTO clients (nom, email, telephone, mot_de_passe, date_inscription) 
+            INSERT INTO clients (nom, email, telephone, password_hash, created_at) 
             VALUES (?, ?, ?, ?, NOW())
         ");
         $stmt->execute([
             $clientData['nom'],
             $clientData['email'], 
             $clientData['telephone'],
-            $clientData['mot_de_passe']
+            $clientData['password_hash']
         ]);
         $clientId = $pdo->lastInsertId();
         echo "✅ Nouveau client créé ID: $clientId\n";
