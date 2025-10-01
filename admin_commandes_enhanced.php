@@ -197,7 +197,9 @@ function getStatistics(): array
     $stats = [
         'total' => 0,
         'nouvelle' => 0,
-        'assignee' => 0,
+        'en_attente' => 0,
+        'attribuee' => 0,
+        'acceptee' => 0,
         'en_cours' => 0,
         'livree' => 0,
         'annulee' => 0,
@@ -212,7 +214,6 @@ function getStatistics(): array
                 $stats[$key] = (int) $row['total'];
             }
         }
-        $stats['assignee'] = (int) $pdo->query('SELECT COUNT(*) FROM commandes WHERE coursier_id IS NOT NULL AND coursier_id > 0')->fetchColumn();
     } catch (PDOException $e) {
         // ignore
     }
