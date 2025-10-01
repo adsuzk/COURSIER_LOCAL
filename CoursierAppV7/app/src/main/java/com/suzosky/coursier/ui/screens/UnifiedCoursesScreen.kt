@@ -473,6 +473,7 @@ fun CourseActionPanel(
     onStartDelivery: () -> Unit = {},
     onPickupPackage: () -> Unit = {},
     onMarkDelivered: () -> Unit = {},
+    onConfirmCash: () -> Unit = {},
     onPickupValidation: () -> Unit,
     onDeliveryValidation: () -> Unit,
     modifier: Modifier = Modifier
