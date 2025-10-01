@@ -42,39 +42,59 @@ try {
     
     // Créer une commande directement en BD pour contourner l'API
     $commandeData = [
+        'order_number' => 'TEST-' . date('YmdHis'),
+        'code_commande' => 'T' . strtoupper(substr(uniqid(), -6)),
+        'client_type' => 'particulier',
         'client_id' => $clientId,
-        'type_service' => 'course',
-        'lieu_depart' => 'Test Départ - Cocody, Abidjan',
-        'lieu_destination' => 'Test Destination - Plateau, Abidjan',
-        'nom_destinataire' => 'Test Destinataire',
+        'client_nom' => 'Client Test',
+        'client_telephone' => '+225 07 08 09 10 11',
+        'adresse_retrait' => 'Test Départ - Cocody, Abidjan',
+        'adresse_livraison' => 'Test Destination - Plateau, Abidjan',
+        'adresse_depart' => 'Test Départ - Cocody, Abidjan',
+        'adresse_arrivee' => 'Test Destination - Plateau, Abidjan',
+        'telephone_expediteur' => '+225 07 08 09 10 11',
         'telephone_destinataire' => '+225 01 02 03 04 05',
-        'description' => 'Test de commande automatique - NE PAS LIVRER',
-        'methode_paiement' => 'especes',
-        'prix_estimatif' => 2000,
-        'date_commande' => date('Y-m-d H:i:s'),
-        'statut' => 'en_attente'
+        'description_colis' => 'Test de commande automatique - NE PAS LIVRER',
+        'mode_paiement' => 'especes',
+        'prix_base' => 2000,
+        'prix_total' => 2000,
+        'prix_estime' => 2000,
+        'statut' => 'en_attente',
+        'statut_paiement' => 'attente',
+        'priorite' => 'normale'
     ];
     
     $stmt = $pdo->prepare("
         INSERT INTO commandes (
-            client_id, type_service, lieu_depart, lieu_destination, 
-            nom_destinataire, telephone_destinataire, description, 
-            methode_paiement, prix_estimatif, date_commande, statut
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            order_number, code_commande, client_type, client_id, client_nom, client_telephone,
+            adresse_retrait, adresse_livraison, adresse_depart, adresse_arrivee,
+            telephone_expediteur, telephone_destinataire, description_colis,
+            mode_paiement, prix_base, prix_total, prix_estime, 
+            statut, statut_paiement, priorite, created_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
     ");
     
     $stmt->execute([
+        $commandeData['order_number'],
+        $commandeData['code_commande'],
+        $commandeData['client_type'],
         $commandeData['client_id'],
-        $commandeData['type_service'],
-        $commandeData['lieu_depart'],
-        $commandeData['lieu_destination'],
-        $commandeData['nom_destinataire'],
+        $commandeData['client_nom'],
+        $commandeData['client_telephone'],
+        $commandeData['adresse_retrait'],
+        $commandeData['adresse_livraison'],
+        $commandeData['adresse_depart'],
+        $commandeData['adresse_arrivee'],
+        $commandeData['telephone_expediteur'],
         $commandeData['telephone_destinataire'],
-        $commandeData['description'],
-        $commandeData['methode_paiement'],
-        $commandeData['prix_estimatif'],
-        $commandeData['date_commande'],
-        $commandeData['statut']
+        $commandeData['description_colis'],
+        $commandeData['mode_paiement'],
+        $commandeData['prix_base'],
+        $commandeData['prix_total'],
+        $commandeData['prix_estime'],
+        $commandeData['statut'],
+        $commandeData['statut_paiement'],
+        $commandeData['priorite']
     ]);
     
     $orderId = $pdo->lastInsertId();
