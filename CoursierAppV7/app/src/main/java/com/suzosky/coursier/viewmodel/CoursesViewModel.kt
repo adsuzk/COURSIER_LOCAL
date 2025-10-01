@@ -63,16 +63,62 @@ class CoursesViewModel @Inject constructor() : ViewModel() {
         try {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
             
-            // Ici, vous devez adapter selon votre API
-            // ApiService.getPendingOrders { orders -> 
-            //     _uiState.value = _uiState.value.copy(
-            //         pendingOrders = orders,
-            //         isLoading = false
-            //     )
-            // }
+            // Récupérer l'ID du coursier connecté
+            val coursierId = getUserId() // Fonction à implémenter selon votre système d'auth
             
-            // Pour l'instant, simulation avec des données de test
-            _uiState.value = _uiState.value.copy(isLoading = false)
+            if (coursierId != null) {
+                ApiService.getCoursierOrders(
+                    coursierId = coursierId,
+                    status = "all", // Récupérer toutes les commandes pour filtrer localement
+                    limit = 20
+                ) { result, error ->
+                    if (error != null) {
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            error = "Erreur API: $error"
+                        )
+                    } else if (result != null) {
+                        val commandes = result["commandes"] as? List<Map<String, Any>> ?: emptyList()
+                        
+                        // Filtrer les commandes en attente (nouvelles ou assignées)
+                        val pendingCommandes = commandes.filter { commande ->
+                            val statut = commande["statut"] as? String ?: ""
+                            val statutRaw = commande["statut_raw"] as? String ?: ""
+                            
+                            // Considérer comme "pending" les commandes assignées qui n'ont pas encore été acceptées
+                            statutRaw in listOf("assignee", "attribuee", "nouvelle", "en_attente")
+                        }.map { commande ->
+                            Commande(
+                                id = commande["id"] as? String ?: "",
+                                clientNom = commande["clientNom"] as? String ?: "",
+                                clientTelephone = commande["clientTelephone"] as? String ?: "",
+                                adresseEnlevement = commande["adresseEnlevement"] as? String ?: "",
+                                adresseLivraison = commande["adresseLivraison"] as? String ?: "",
+                                distanceKm = (commande["distanceKm"] as? Double) ?: 0.0,
+                                prix = (commande["prix"] as? Double) ?: 0.0,
+                                statut = commande["statut"] as? String ?: "",
+                                dateCommande = commande["dateCommande"] as? String ?: "",
+                                heureCommande = commande["heureCommande"] as? String ?: ""
+                            )
+                        }
+                        
+                        _uiState.value = _uiState.value.copy(
+                            pendingOrders = pendingCommandes,
+                            isLoading = false
+                        )
+                    } else {
+                        _uiState.value = _uiState.value.copy(
+                            pendingOrders = emptyList(),
+                            isLoading = false
+                        )
+                    }
+                }
+            } else {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = "Coursier non connecté"
+                )
+            }
             
         } catch (e: Exception) {
             _uiState.value = _uiState.value.copy(
