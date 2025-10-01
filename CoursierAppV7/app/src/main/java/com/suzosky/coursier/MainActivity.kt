@@ -85,7 +85,57 @@ class MainActivity : ComponentActivity() {
     // BroadcastReceiver pour les nouvelles commandes
     // private var commandeReceiver: BroadcastReceiver? = null // TEMPORAIREMENT DÉSACTIVÉ
     
-    // 🗺️ Fonction pour lancer Google Maps avec itinéraire
+    // � Variables de monitoring système
+    private var lastSyncTimestamp = System.currentTimeMillis()
+    private var lastDatabaseCheck = false
+    private var lastFcmTokenCheck = false
+    private var lastSyncCheck = false
+    
+    // 🩺 Fonction pour calculer la santé du système
+    internal fun calculateSystemHealth(prefs: android.content.SharedPreferences, hasRecentData: Boolean): SystemHealth {
+        val now = System.currentTimeMillis()
+        val timeSinceLastSync = (now - lastSyncTimestamp) / 1000
+        
+        // Vérifier la base de données (si on a reçu des données récemment)
+        val databaseConnected = hasRecentData && timeSinceLastSync < 30
+        lastDatabaseCheck = databaseConnected
+        
+        // Vérifier le token FCM
+        val fcmToken = prefs.getString("fcm_token", null)
+        val fcmTokenActive = !fcmToken.isNullOrBlank()
+        lastFcmTokenCheck = fcmTokenActive
+        
+        // Vérifier la synchronisation (max 10s pour être considéré comme OK)
+        val syncWorking = timeSinceLastSync < 10
+        lastSyncCheck = syncWorking
+        
+        // Calculer le statut global
+        val status = when {
+            !databaseConnected -> HealthStatus.CRITICAL
+            !fcmTokenActive -> HealthStatus.CRITICAL
+            !syncWorking -> HealthStatus.WARNING
+            else -> HealthStatus.HEALTHY
+        }
+        
+        // Générer le message d'erreur si nécessaire
+        val message = when {
+            !databaseConnected -> "❌ Connexion à la base de données perdue"
+            !fcmTokenActive -> "❌ Token FCM invalide ou expiré"
+            !syncWorking -> "⚠️ Synchronisation lente (${timeSinceLastSync}s)"
+            else -> "✅ Tous les systèmes opérationnels"
+        }
+        
+        return SystemHealth(
+            status = status,
+            databaseConnected = databaseConnected,
+            fcmTokenActive = fcmTokenActive,
+            syncWorking = syncWorking,
+            lastSyncTimestamp = lastSyncTimestamp,
+            message = message
+        )
+    }
+    
+    // �🗺️ Fonction pour lancer Google Maps avec itinéraire
     fun launchGoogleMaps(depart: String, arrivee: String) {
         try {
             val uri = Uri.parse("https://www.google.com/maps/dir/?api=1&origin=${Uri.encode(depart)}&destination=${Uri.encode(arrivee)}&travelmode=driving")
