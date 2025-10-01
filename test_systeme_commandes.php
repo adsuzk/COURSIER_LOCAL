@@ -24,7 +24,7 @@ try {
             COUNT(DISTINCT f.id) as nb_tokens_fcm,
             COUNT(DISTINCT CASE WHEN f.is_active = 1 THEN f.id END) as tokens_actifs
         FROM agents_suzosky a
-        LEFT JOIN fcm_tokens f ON a.id = f.coursier_id
+        LEFT JOIN device_tokens f ON a.id = f.coursier_id
         GROUP BY a.id, a.nom, a.prenoms, a.matricule, a.telephone, a.statut_connexion, a.last_login_at, a.solde_wallet
         ORDER BY a.statut_connexion DESC, a.last_login_at DESC
     ");
@@ -71,7 +71,7 @@ try {
                 COALESCE(a.solde_wallet, 0) as solde,
                 COUNT(DISTINCT CASE WHEN f.is_active = 1 THEN f.id END) as tokens_actifs
             FROM agents_suzosky a
-            LEFT JOIN fcm_tokens f ON a.id = f.coursier_id
+            LEFT JOIN device_tokens f ON a.id = f.coursier_id
             WHERE a.statut_connexion = 'en_ligne'
             GROUP BY a.id, a.nom, a.prenoms, a.matricule, a.solde_wallet
         ");
@@ -149,9 +149,9 @@ try {
         // Récupérer token FCM actif
         $stmt = $pdo->prepare("
             SELECT token, last_ping, device_info
-            FROM fcm_tokens 
+            FROM device_tokens 
             WHERE coursier_id = ? AND is_active = 1 
-            ORDER BY last_ping DESC 
+            ORDER BY updated_at DESC 
             LIMIT 1
         ");
         $stmt->execute([$coursierChoisi['id']]);

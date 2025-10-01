@@ -241,9 +241,9 @@ try {
 			
 			// Envoyer notification FCM
 			$stmtToken = $pdo->prepare("
-				SELECT token FROM fcm_tokens 
+				SELECT token FROM device_tokens 
 				WHERE coursier_id = ? AND is_active = 1 
-				ORDER BY last_ping DESC LIMIT 1
+				ORDER BY updated_at DESC LIMIT 1
 			");
 			$stmtToken->execute([$coursier['id']]);
 			$tokenData = $stmtToken->fetch(PDO::FETCH_ASSOC);
