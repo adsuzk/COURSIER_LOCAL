@@ -164,7 +164,10 @@ fun CoursierScreen(
                                     onAccepter = { onCommandeAccept(cmd.id) },
                                     onRefuser = { onCommandeReject(cmd.id) },
                                     onMettreEnAttente = { onCommandeAttente(cmd.id) },
-                                    onVoirDetails = { /* TODO */ }
+                                    onVoirDetails = { /* TODO */ },
+                                    onStartDelivery = { onStartDelivery(cmd.id) },
+                                    onPickupPackage = { onPickupPackage(cmd.id) },
+                                    onMarkDelivered = { onMarkDelivered(cmd.id) }
                                 )
                             }
                         }
