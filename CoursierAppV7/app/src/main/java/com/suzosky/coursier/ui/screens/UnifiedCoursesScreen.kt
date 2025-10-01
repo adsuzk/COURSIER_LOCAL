@@ -631,6 +631,7 @@ fun VoiceGuidanceButton(
     onToggle: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    @Suppress("DEPRECATION")
     FloatingActionButton(
         onClick = { onToggle(!isEnabled) },
         modifier = modifier.size(56.dp),
@@ -638,7 +639,7 @@ fun VoiceGuidanceButton(
         shape = CircleShape
     ) {
         Icon(
-            imageVector = if (isEnabled) VolumeUp else VolumeOff,
+            imageVector = if (isEnabled) Icons.Filled.VolumeUp else Icons.Filled.VolumeOff,
             contentDescription = if (isEnabled) "Désactiver guidage vocal" else "Activer guidage vocal",
             tint = if (isEnabled) Color.White else PrimaryGold,
             modifier = Modifier.size(28.dp)
