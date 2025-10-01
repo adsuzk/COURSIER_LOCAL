@@ -4,7 +4,7 @@
 // Log de debug ultra-précoce (toute requête entrante, avant tout traitement)
 if (file_exists(__DIR__ . '/../logger.php')) {
 	$debugLog = __DIR__ . '/../diagnostic_logs/diagnostics_errors.log';
-	$debugHeaders = json_encode(getallheaders() ?: []);
+	$debugHeaders = json_encode(function_exists('getallheaders') ? getallheaders() : []);
 	$debugBody = file_get_contents('php://input');
 	$debugMeta = [
 		'date' => date('Y-m-d H:i:s'),
