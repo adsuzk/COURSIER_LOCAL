@@ -601,10 +601,21 @@ document.addEventListener('DOMContentLoaded', () => {
         updateUIForGuestUser();
         showNotification(data.message || 'Déconnexion réussie', 'success');
         // Rediriger vers la page d'accueil (chemin racine sans imposer index.php)
-        const basePath = (typeof window.ROOT_PATH === 'string' && window.ROOT_PATH.length)
-          ? window.ROOT_PATH
-          : (window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, ''));
-        window.location.href = basePath || '/';
+        const rawRoot = (typeof window.ROOT_PATH === 'string') ? window.ROOT_PATH.trim() : '';
+        const normalizedRoot = (() => {
+          if (rawRoot) {
+            const cleaned = rawRoot.replace(/index\.php(?:[?#].*)?$/i, '').replace(/\/+$/, '');
+            if (/^https?:/i.test(cleaned)) {
+              return cleaned;
+            }
+            const base = window.location.origin.replace(/\/$/, '');
+            const path = cleaned ? (cleaned.startsWith('/') ? cleaned : '/' + cleaned) : '';
+            return base + path;
+          }
+          const pathOnly = window.location.pathname.replace(/\/[^\/]*$/, '');
+          return window.location.origin.replace(/\/$/, '') + (pathOnly || '/');
+        })();
+        window.location.href = normalizedRoot || (window.location.origin + '/');
       } else {
         showNotification(data.error || 'Erreur de déconnexion', 'error');
       }
