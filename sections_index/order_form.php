@@ -5,6 +5,10 @@ $sessionSenderPhoneRaw = $_SESSION['client_telephone'] ?? '';
 $sessionSenderPhoneDisplay = '';
 $sessionSenderPhoneDigits = '';
 
+$hasClientSession = !empty($_SESSION['client_id'] ?? null)
+    || !empty($_SESSION['client_email'] ?? null)
+    || !empty($_SESSION['client_telephone'] ?? null);
+
 if ($sessionSenderPhoneRaw !== '') {
     $digits = preg_replace('/\D+/', '', $sessionSenderPhoneRaw);
 
@@ -28,6 +32,9 @@ if ($sessionSenderPhoneRaw !== '') {
 }
 
 $initialCoursierAvailability = isset($coursiersDisponibles) ? (bool)$coursiersDisponibles : false;
+if (!$hasClientSession) {
+    $initialCoursierAvailability = true;
+}
 $defaultUnavailableMessage = $messageIndisponibilite ?? ($commercialFallbackMessage ?? 'Nos coursiers sont momentanément indisponibles. Restez sur la page, un coursier va se reconnecter.');
 if (trim((string)$defaultUnavailableMessage) === '') {
     $defaultUnavailableMessage = 'Nos coursiers sont momentanément indisponibles. Restez sur la page, un coursier va se reconnecter.';
@@ -35,7 +42,8 @@ if (trim((string)$defaultUnavailableMessage) === '') {
 ?>
     <script>
         window.COMMERCIAL_FALLBACK_MESSAGE = window.COMMERCIAL_FALLBACK_MESSAGE || <?php echo json_encode($defaultUnavailableMessage, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
-        window.initialCoursierAvailability = <?php echo $initialCoursierAvailability ? 'true' : 'false'; ?>;
+    window.initialCoursierAvailability = <?php echo $initialCoursierAvailability ? 'true' : 'false'; ?>;
+    window.hasClientSession = <?php echo $hasClientSession ? 'true' : 'false'; ?>;
         window.initialCoursierMessage = window.initialCoursierMessage || <?php echo json_encode($defaultUnavailableMessage, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
         window.COURSIER_LOCK_DELAY_MS = window.COURSIER_LOCK_DELAY_MS || 60000;
     window.COURSIER_POLL_INTERVAL_MS = window.COURSIER_POLL_INTERVAL_MS || 1000;
