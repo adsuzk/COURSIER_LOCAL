@@ -210,6 +210,10 @@ try {
             'telephoneDestinataire' => $cmd['telephone_destinataire'],
             'adresseEnlevement' => $cmd['adresse_enlevement'],
             'adresseLivraison' => $cmd['adresse_livraison'],
+            'latitudeEnlevement' => floatval($cmd['latitude_enlevement'] ?? 0),
+            'longitudeEnlevement' => floatval($cmd['longitude_enlevement'] ?? 0),
+            'latitudeLivraison' => floatval($cmd['latitude_livraison'] ?? 0),
+            'longitudeLivraison' => floatval($cmd['longitude_livraison'] ?? 0),
             'distance' => floatval($cmd['distance'] ?? 0),
             'tempsEstime' => intval(($cmd['distance'] ?? 0) * 3), // 3 min par km
             'prixTotal' => floatval($cmd['prix_livraison']),
