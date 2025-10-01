@@ -1076,6 +1076,52 @@ object ApiService {
         )
     }
 
+    /**
+     * Accepte ou refuse une commande via l'API order_response.php
+     */
+    fun respondToOrder(
+        orderId: String,
+        coursierId: String,
+        action: String, // "accept" ou "refuse"
+        callback: (Boolean, String?) -> Unit
+    ) {
+        val payload = JSONObject().apply {
+            put("order_id", orderId)
+            put("coursier_id", coursierId)
+            put("action", action)
+        }.toString()
+        val body = payload.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+        
+        executeWithFallback(
+            buildRequest = { base ->
+                val url = buildApi(base, "order_response.php")
+                Request.Builder().url(url).post(body).build()
+            },
+            onResponseMain = { response ->
+                val bodyStr = response.body?.string()
+                android.util.Log.d("ApiService", "respondToOrder response: $bodyStr")
+                
+                if (!response.isSuccessful || bodyStr == null) {
+                    callback(false, "Erreur serveur HTTP ${response.code}")
+                } else {
+                    try {
+                        val json = JSONObject(bodyStr)
+                        val success = json.optBoolean("success", false)
+                        val message = json.optString("message", "")
+                        callback(success, message)
+                    } catch (e: Exception) {
+                        android.util.Log.e("ApiService", "Erreur parsing JSON: ${e.message}")
+                        callback(false, "Réponse invalide: $bodyStr")
+                    }
+                }
+            },
+            onFailureMain = { error ->
+                android.util.Log.e("ApiService", "respondToOrder failed: $error")
+                callback(false, error)
+            }
+        )
+    }
+    
     fun updateOrderStatus(commandeId: String, statut: String, callback: (Boolean) -> Unit) {
         updateOrderStatusWithCash(commandeId, statut, false, null, callback)
     }
