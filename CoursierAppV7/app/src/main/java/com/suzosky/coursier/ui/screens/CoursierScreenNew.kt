@@ -167,8 +167,16 @@ fun CoursierScreenNew(
             }
         }
         // Passer à la prochaine commande en attente
-        deliveryStep = DeliveryStep.PENDING
-        currentOrder = commandes.firstOrNull { it.statut == "nouvelle" || it.statut == "attente" }
+        currentOrder = commandes.firstOrNull { it.statut == "nouvelle" || it.statut == "attente" || it.statut == "acceptee" }
+        // Mapper le statut de la commande au deliveryStep approprié
+        deliveryStep = when (currentOrder?.statut) {
+            "nouvelle", "attente" -> DeliveryStep.PENDING
+            "acceptee" -> DeliveryStep.ACCEPTED
+            "en_cours", "recupere" -> DeliveryStep.PICKED_UP
+            "en_livraison" -> DeliveryStep.EN_ROUTE_DELIVERY
+            "livree" -> DeliveryStep.DELIVERED
+            else -> DeliveryStep.PENDING
+        }
     }
     // paymentUrl déjà déclaré plus haut
 
