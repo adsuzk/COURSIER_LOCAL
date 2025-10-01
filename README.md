@@ -187,17 +187,10 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
 **✅ POINT CLÉ** : Le modal de paiement s'ouvre **AVANT** l'enregistrement de la commande. La commande n'est enregistrée que si le paiement est confirmé.
-```
 
-### Mode Paiement En Ligne 💳
-```
-1. Client remplit formulaire
-2. Clic "Commander"
-3. ➡️ Modal CinetPay s'ouvre (AVANT enregistrement)
-   API: POST /api/initiate_payment_only.php
-4. Client paie dans le modal (sans quitter l'index)
-5. ➡️ Confirmation paiement reçue
-6. ➡️ Enregistrement commande
+---
+
+## � Fonctionnalités Application Mobile
    API: POST /api/create_order_after_payment.php
 7. Recherche coursier automatique
 8. Notification FCM au coursier
