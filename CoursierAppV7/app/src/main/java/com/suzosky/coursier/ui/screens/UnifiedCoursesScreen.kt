@@ -198,6 +198,7 @@ fun UnifiedCoursesScreen(
                 onStartDelivery = onStartDelivery,
                 onPickupPackage = onPickupPackage,
                 onMarkDelivered = onMarkDelivered,
+                onConfirmCash = onConfirmCash,
                 onPickupValidation = onPickupValidation,
                 onDeliveryValidation = onDeliveryValidation,
                 modifier = Modifier
