@@ -238,62 +238,6 @@ $totalCoursiers = count($coursiers);
 $coursiersAvecSolde = array_filter($coursiers, fn($c) => ($c['solde'] ?? 0) > 0);
 
 include __DIR__ . '/../functions.php';
-
-if (!function_exists('logFcmNotification')) {
-    /**
-     * Insère un log FCM en s'adaptant dynamiquement à la structure de la table.
-     */
-    function logFcmNotification(\PDO $pdo, array $data): void
-    {
-        static $availableColumns = null;
-
-        if ($availableColumns === null) {
-            $availableColumns = [];
-            try {
-                $stmt = $pdo->query('DESCRIBE notifications_log_fcm');
-                if ($stmt) {
-                    $columns = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                    foreach ($columns as $column) {
-                        if (isset($column['Field'])) {
-                            $availableColumns[] = $column['Field'];
-                        }
-                    }
-                }
-            } catch (\Throwable $e) {
-                error_log('notifications_log_fcm describe failed: ' . $e->getMessage());
-                $availableColumns = [];
-            }
-        }
-
-        if (empty($availableColumns)) {
-            return;
-        }
-
-        $columnsToInsert = [];
-        $values = [];
-
-        foreach ($data as $column => $value) {
-            if (in_array($column, $availableColumns, true)) {
-                $columnsToInsert[] = $column;
-                $values[] = $value;
-            }
-        }
-
-        if (empty($columnsToInsert)) {
-            return;
-        }
-
-        $columnList = implode(', ', $columnsToInsert);
-        $placeholders = implode(', ', array_fill(0, count($columnsToInsert), '?'));
-
-        try {
-            $stmt = $pdo->prepare("INSERT INTO notifications_log_fcm ($columnList) VALUES ($placeholders)");
-            $stmt->execute($values);
-        } catch (\Throwable $e) {
-            error_log('notifications_log_fcm insert failed: ' . $e->getMessage());
-        }
-    }
-}
 ?>
 
 <style>
