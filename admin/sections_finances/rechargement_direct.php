@@ -157,6 +157,8 @@ $coursiers = [];
 $apiCoursiersUrl = function_exists('routePath')
     ? routePath('api/coursiers_connectes.php')
     : rtrim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/\\') . '/api/coursiers_connectes.php';
+
+foreach ($allCoursiers as $coursier) {
     $type = strtolower($coursier['type_poste'] ?? '');
     if ($type !== '' && !in_array($type, $allowedTypes, true)) {
         continue;
@@ -175,7 +177,7 @@ $coursiersAvecSolde = array_filter($coursiers, fn($c) => ($c['solde'] ?? 0) > 0)
 include __DIR__ . '/../functions.php';
 ?>
 
-?><style>
+<style>
     .finance-recharge {
         padding: 24px;
         background: linear-gradient(135deg, #1A1A2E 0%, #16213E 100%);
