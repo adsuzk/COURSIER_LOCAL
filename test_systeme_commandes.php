@@ -156,7 +156,23 @@ try {
             echo "   Token: " . substr($tokenData['token'], 0, 30) . "...\n";
             echo "   Dernier ping: {$tokenData['last_ping']}\n\n";
             
-            echo "\n📤 Envoi notification FCM...\n";
+            // Charger système FCM
+            require_once __DIR__ . '/api/lib/fcm_enhanced.php';
+            
+            $title = "🚚 Nouvelle commande #$codeCommande";
+            $body = "De: Cocody Angré\nVers: Plateau\nPrix: 1500 FCFA";
+            
+            $notifData = [
+                'type' => 'new_order',
+                'commande_id' => $commandeId,
+                'code_commande' => $codeCommande,
+                'adresse_depart' => 'Cocody Angré 7ème Tranche',
+                'adresse_arrivee' => 'Plateau Cité Administrative',
+                'prix_estime' => 1500,
+                'priorite' => 'normale'
+            ];
+            
+            echo "📤 Envoi notification FCM...\n";
             $fcmResult = fcm_send_with_log(
                 [$tokenData['token']], 
                 $title, 
