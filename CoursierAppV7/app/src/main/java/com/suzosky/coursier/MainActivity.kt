@@ -595,9 +595,11 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
             }
 
             println("🔄 Chargement des VRAIES données depuis l'API")
+            Log.d("MainActivity", "Calling ApiService.getCoursierData for coursierId=$coursierId")
             loading = true
 
             ApiService.getCoursierData(coursierId) { data, err ->
+                Log.d("MainActivity", "API Response - data: ${data != null}, error: $err")
                 if (data != null) {
                     println("✅ Données réelles reçues")
                     fun toDoubleSafe(v: Any?): Double = when (v) {
