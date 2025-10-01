@@ -762,6 +762,49 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
             }
         }
 
+        // 🔥 POLLING AUTOMATIQUE DES NOUVELLES COMMANDES - Toutes les 10 secondes
+        LaunchedEffect(isLoggedIn, coursierId) {
+            if (isLoggedIn && coursierId > 0) {
+                Log.d("MainActivity", "🔄 Démarrage du polling automatique des commandes")
+                while (isLoggedIn && coursierId > 0) {
+                    kotlinx.coroutines.delay(10000) // Toutes les 10 secondes
+                    
+                    Log.d("MainActivity", "🔍 Polling: Vérification des nouvelles commandes...")
+                    ApiService.getCoursierData(coursierId) { data, err ->
+                        if (data != null) {
+                            @Suppress("UNCHECKED_CAST")
+                            val commandesData = data["commandes"] as? List<Map<String, Any>> ?: emptyList()
+                            val nbCommandesRecues = commandesData.size
+                            val nbCommandesActuelles = commandesReelles.size
+                            
+                            Log.d("MainActivity", "📊 Polling: ${nbCommandesRecues} commandes (avant: ${nbCommandesActuelles})")
+                            
+                            // Si le nombre de commandes a changé, déclencher un refresh complet
+                            if (nbCommandesRecues != nbCommandesActuelles) {
+                                Log.d("MainActivity", "🆕 NOUVELLE COMMANDE DÉTECTÉE ! Refresh automatique...")
+                                refreshTrigger++
+                            } else {
+                                // Vérifier si le statut d'une commande a changé
+                                commandesData.forEach { cmdMap ->
+                                    val cmdId = cmdMap["id"]?.toString() ?: ""
+                                    val cmdStatut = cmdMap["statut"]?.toString() ?: ""
+                                    val existante = commandesReelles.find { it.id == cmdId }
+                                    if (existante != null && existante.statut != cmdStatut) {
+                                        Log.d("MainActivity", "🔄 Commande $cmdId: statut changé de ${existante.statut} → $cmdStatut")
+                                        refreshTrigger++
+                                        return@forEach
+                                    }
+                                }
+                            }
+                        } else {
+                            Log.d("MainActivity", "⚠️ Polling: Erreur API - $err")
+                        }
+                    }
+                }
+                Log.d("MainActivity", "⏹️ Arrêt du polling automatique")
+            }
+        }
+
         Scaffold(modifier = Modifier.fillMaxSize()) { paddingValues ->
             Box(modifier = Modifier
                 .fillMaxSize()
