@@ -208,11 +208,35 @@ class CoursesViewModel @Inject constructor(
     fun rejectOrder(orderId: String) {
         viewModelScope.launch {
             try {
-                // Appel API pour refuser la commande si nécessaire
-                val updatedPendingOrders = _uiState.value.pendingOrders.filter { it.id != orderId }
-                _uiState.value = _uiState.value.copy(pendingOrders = updatedPendingOrders)
+                // Récupérer l'ID du coursier
+                val prefs = context.getSharedPreferences("suzosky_prefs", Context.MODE_PRIVATE)
+                val coursierId = prefs.getString("coursier_id", "") ?: ""
+                
+                if (coursierId.isBlank()) {
+                    _uiState.value = _uiState.value.copy(
+                        error = "ID coursier non trouvé"
+                    )
+                    return@launch
+                }
+                
+                Log.d("CoursesViewModel", "Rejecting order $orderId for coursier $coursierId")
+                
+                // Appel à l'API order_response.php
+                ApiService.respondToOrder(orderId, coursierId, "refuse") { success, message ->
+                    if (success) {
+                        Log.d("CoursesViewModel", "Order rejected successfully: $message")
+                        val updatedPendingOrders = _uiState.value.pendingOrders.filter { it.id != orderId }
+                        _uiState.value = _uiState.value.copy(pendingOrders = updatedPendingOrders)
+                    } else {
+                        Log.e("CoursesViewModel", "Failed to reject order: $message")
+                        _uiState.value = _uiState.value.copy(
+                            error = "Erreur: ${message ?: "Échec du refus"}"
+                        )
+                    }
+                }
                 
             } catch (e: Exception) {
+                Log.e("CoursesViewModel", "Exception rejecting order: ${e.message}")
                 _uiState.value = _uiState.value.copy(
                     error = "Erreur lors du refus: ${e.message}"
                 )
