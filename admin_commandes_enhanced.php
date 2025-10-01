@@ -1707,7 +1707,7 @@ body.admin-commandes-page {
                 <label for="statut">Statut</label>
                 <select id="statut" name="statut">
                     <option value="">Tous</option>
-                    <?php foreach (['nouvelle' => 'Nouvelles', 'assignee' => 'Assignées', 'en_cours' => 'En cours', 'livree' => 'Livrées', 'annulee' => 'Annulées'] as $value => $label): ?>
+                    <?php foreach (['nouvelle' => 'Nouvelles', 'en_attente' => 'En attente', 'attribuee' => 'Attribuées', 'acceptee' => 'Acceptées', 'en_cours' => 'En cours', 'livree' => 'Livrées', 'annulee' => 'Annulées'] as $value => $label): ?>
                         <option value="<?= $value ?>" <?= $filtreStatut === $value ? 'selected' : '' ?>><?= $label ?></option>
                     <?php endforeach; ?>
                 </select>
