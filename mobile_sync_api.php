@@ -24,6 +24,45 @@ function logRequest($action, $data, $response) {
     file_put_contents('mobile_sync_debug.log', json_encode($log) . "\n", FILE_APPEND);
 }
 
+/**
+ * Calcule les frais de service pour une commande
+ * @param float $prixTotal Prix total de la commande
+ * @param PDO $pdo Connexion base de données
+ * @return array ['frais_service' => float, 'commission_suzosky' => float, 'gain_coursier' => float]
+ */
+function calculerFraisService($prixTotal, $pdo) {
+    // Récupérer les paramètres de tarification
+    $stmt = $pdo->query("
+        SELECT parametre, valeur 
+        FROM parametres_tarification 
+        WHERE parametre IN ('commission_suzosky', 'frais_plateforme')
+    ");
+    
+    $params = [];
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $params[$row['parametre']] = (float)$row['valeur'];
+    }
+    
+    $commissionPercent = $params['commission_suzosky'] ?? 15.0; // Défaut: 15%
+    $fraisPlateformePercent = $params['frais_plateforme'] ?? 5.0; // Défaut: 5%
+    
+    // Calculs
+    $commissionSuzosky = round($prixTotal * ($commissionPercent / 100), 2);
+    $fraisPlateforme = round($prixTotal * ($fraisPlateformePercent / 100), 2);
+    $fraisTotal = $commissionSuzosky + $fraisPlateforme;
+    $gainCoursier = round($prixTotal - $fraisTotal, 2);
+    
+    return [
+        'frais_service' => $fraisTotal,
+        'commission_suzosky' => $commissionSuzosky,
+        'frais_plateforme' => $fraisPlateforme,
+        'gain_coursier' => $gainCoursier,
+        'prix_total' => $prixTotal,
+        'pourcentage_commission' => $commissionPercent,
+        'pourcentage_plateforme' => $fraisPlateformePercent
+    ];
+}
+
 try {
     $pdo = getDBConnection();
     
