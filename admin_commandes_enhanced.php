@@ -1380,6 +1380,46 @@ body.admin-commandes-page {
     align-items: center;
 }
 
+/* ✅ BOUTONS DE TRACKING */
+.btn-track {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-track i {
+    font-size: 16px;
+}
+
+.btn-track.live {
+    background: linear-gradient(135deg, #2563eb, #60a5fa);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.btn-track.live:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.5);
+}
+
+.btn-track.history {
+    background: rgba(37, 99, 235, 0.18);
+    color: #93c5fd;
+    border: 1px solid rgba(37, 99, 235, 0.3);
+}
+
+.btn-track.history:hover {
+    background: rgba(37, 99, 235, 0.25);
+    transform: translateY(-2px);
+}
+
 /* ✅ BADGES D'INFORMATION SIMPLIFIÉS */
 .info-badge {
     display: inline-flex;
