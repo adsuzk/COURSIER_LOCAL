@@ -798,15 +798,61 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                             balance = soldeReel.toInt(), // VRAI solde de l'API
                             gainsDuJour = gainsDuJour.toInt(), // VRAIS gains de l'API
                             onStatutChange = { nouveauStatut -> coursierStatut = nouveauStatut },
-                            onCommandeAccept = {
+                            onCommandeAccept = { commandeId ->
                                 try { OrderRingService.stop(context) } catch (_: Exception) {}
-                                // TODO: Accept logic (API update)
+                                // Accepter la commande via API
+                                ApiService.respondToOrder(commandeId, coursierId.toString(), "accept") { success, message ->
+                                    if (success) {
+                                        // Rafraîchir les commandes
+                                        loadCoursierCommandes(coursierId) { nouvCommandes ->
+                                            commandesReelles = nouvCommandes
+                                        }
+                                    }
+                                }
                             },
-                            onCommandeReject = {
+                            onCommandeReject = { commandeId ->
                                 try { OrderRingService.stop(context) } catch (_: Exception) {}
-                                // TODO: Reject logic (API update)
+                                // Refuser la commande via API
+                                ApiService.respondToOrder(commandeId, coursierId.toString(), "refuse") { success, message ->
+                                    if (success) {
+                                        // Rafraîchir les commandes
+                                        loadCoursierCommandes(coursierId) { nouvCommandes ->
+                                            commandesReelles = nouvCommandes
+                                        }
+                                    }
+                                }
                             },
                             onCommandeAttente = { /* TODO: Waiting logic */ },
+                            onStartDelivery = { commandeId ->
+                                ApiService.startDelivery(commandeId.toIntOrNull() ?: 0, coursierId) { success, message ->
+                                    if (success) {
+                                        // Rafraîchir les commandes
+                                        loadCoursierCommandes(coursierId) { nouvCommandes ->
+                                            commandesReelles = nouvCommandes
+                                        }
+                                    }
+                                }
+                            },
+                            onPickupPackage = { commandeId ->
+                                ApiService.pickupPackage(commandeId.toIntOrNull() ?: 0, coursierId) { success, message ->
+                                    if (success) {
+                                        // Rafraîchir les commandes
+                                        loadCoursierCommandes(coursierId) { nouvCommandes ->
+                                            commandesReelles = nouvCommandes
+                                        }
+                                    }
+                                }
+                            },
+                            onMarkDelivered = { commandeId ->
+                                ApiService.markDelivered(commandeId.toIntOrNull() ?: 0, coursierId) { success, message ->
+                                    if (success) {
+                                        // Rafraîchir les commandes
+                                        loadCoursierCommandes(coursierId) { nouvCommandes ->
+                                            commandesReelles = nouvCommandes
+                                        }
+                                    }
+                                }
+                            },
                             onNavigateToProfile = { /* TODO: Navigation */ },
                             onNavigateToHistorique = { /* TODO: Navigation */ },
                             onNavigateToGains = { /* TODO: Navigation */ },
