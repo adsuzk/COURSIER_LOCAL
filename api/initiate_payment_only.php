@@ -7,6 +7,7 @@
 
 header('Content-Type: application/json');
 require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../cinetpay/config.php';
 
 // Log de démarrage
 error_log("[PAYMENT_ONLY] === Initialisation paiement SANS enregistrement commande ===");
