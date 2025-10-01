@@ -13,7 +13,12 @@ ini_set('display_errors', 1);
 require_once __DIR__ . '/../../config.php';
 
 $argv = isset($_SERVER['argv']) ? $_SERVER['argv'] : array();
-$isDryRun = in_array('--dry-run', $argv, true) || in_array('-n', $argv, true);
+$hasApplyFlag = in_array('--apply', $argv, true) || in_array('--no-dry-run', $argv, true);
+$isDryRun = ! $hasApplyFlag;
+// Autoriser explicitement le dry-run avec --dry-run / -n (même si c'est le mode par défaut)
+if (!$isDryRun) {
+    $isDryRun = in_array('--dry-run', $argv, true) || in_array('-n', $argv, true);
+}
 $isVerbose = in_array('--verbose', $argv, true) || in_array('-v', $argv, true);
 
 // Threshold in minutes (default 1). Peut être surchargé par l'env FCM_CLEANUP_THRESHOLD_MIN
