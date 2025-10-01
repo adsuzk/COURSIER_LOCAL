@@ -65,12 +65,11 @@ try {
         $stmt = $pdo->query("
             SELECT 
                 a.id, a.nom, a.prenoms, a.matricule,
-                COALESCE(a.solde_wallet, 0) as solde,
                 COUNT(DISTINCT CASE WHEN f.is_active = 1 THEN f.id END) as tokens_actifs
             FROM agents_suzosky a
             LEFT JOIN device_tokens f ON a.id = f.coursier_id
             WHERE a.statut_connexion = 'en_ligne'
-            GROUP BY a.id, a.nom, a.prenoms, a.matricule, a.solde_wallet
+            GROUP BY a.id, a.nom, a.prenoms, a.matricule
         ");
         $coursiersEnLigne = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -120,11 +119,7 @@ try {
     if (empty($coursiersEnLigne)) {
         echo "❌ Aucun coursier disponible pour attribution\n\n";
     } else {
-        // Prendre le coursier avec le plus gros solde
-        usort($coursiersEnLigne, function($a, $b) {
-            return $b['solde'] <=> $a['solde'];
-        });
-        
+        // Prendre le premier coursier disponible
         $coursierChoisi = $coursiersEnLigne[0];
         
         // Assigner la commande
@@ -136,8 +131,7 @@ try {
         $stmt->execute([$coursierChoisi['id'], $commandeId]);
         
         echo "✅ Commande assignée à: {$coursierChoisi['nom']} {$coursierChoisi['prenoms']}\n";
-        echo "   Matricule: {$coursierChoisi['matricule']}\n";
-        echo "   Solde: {$coursierChoisi['solde']} FCFA\n\n";
+        echo "   Matricule: {$coursierChoisi['matricule']}\n\n";
         
         // 4. Envoi notification FCM
         echo "📱 4. NOTIFICATION FCM\n";
