@@ -407,6 +407,31 @@
         let lastCommandes = [];
         let pollingCount = 0;
         
+        // Demander la permission pour les notifications système
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                    addLog('✅ Notifications système activées', 'success');
+                }
+            });
+        }
+        
+        function showSystemNotification(commande) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                const notification = new Notification('🚨 Nouvelle Commande Suzosky!', {
+                    body: `${commande.code_commande}\nDe: ${commande.adresse_depart}\nVers: ${commande.adresse_arrivee}\nPrix: ${commande.prix_estime || commande.prix_total || '0'} FCFA`,
+                    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="80" font-size="80">🚚</text></svg>',
+                    requireInteraction: true,
+                    tag: 'commande-' + commande.id
+                });
+                
+                notification.onclick = () => {
+                    window.focus();
+                    notification.close();
+                };
+            }
+        }
+        
         function addLog(message, type = 'info') {
             const logs = document.getElementById('logs');
             const time = new Date().toLocaleTimeString();
@@ -446,6 +471,7 @@
                     if (nouvelleCommande) {
                         addLog(`🚨 NOUVELLE COMMANDE DÉTECTÉE: ${nouvelleCommande.code_commande}`, 'success');
                         showCommandeModal(nouvelleCommande);
+                        showSystemNotification(nouvelleCommande);
                     }
                     
                     if (nouvelles.length !== lastCommandes.length) {
