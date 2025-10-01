@@ -7,7 +7,7 @@ echo "=== COMMANDES EN COURS ===\n\n";
 
 $stmt = $pdo->query("
     SELECT id, code_commande, order_number, statut, coursier_id, client_nom, 
-           pickup_address, delivery_address, created_at 
+           adresse_retrait, adresse_livraison, created_at 
     FROM commandes 
     WHERE statut IN ('en_cours', 'acceptee', 'en_route', 'prise_en_charge')
     ORDER BY created_at DESC 
