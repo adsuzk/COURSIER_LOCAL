@@ -86,10 +86,10 @@ class MainActivity : ComponentActivity() {
     // private var commandeReceiver: BroadcastReceiver? = null // TEMPORAIREMENT DÉSACTIVÉ
     
     // � Variables de monitoring système
-    private var lastSyncTimestamp = System.currentTimeMillis()
-    private var lastDatabaseCheck = false
-    private var lastFcmTokenCheck = false
-    private var lastSyncCheck = false
+    internal var lastSyncTimestamp = System.currentTimeMillis()
+    internal var lastDatabaseCheck = false
+    internal var lastFcmTokenCheck = false
+    internal var lastSyncCheck = false
     
     // 🩺 Fonction pour calculer la santé du système
     internal fun calculateSystemHealth(prefs: android.content.SharedPreferences, hasRecentData: Boolean): SystemHealth {
@@ -1234,4 +1234,5 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
     }
     */
 }
+
 
