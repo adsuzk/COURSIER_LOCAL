@@ -242,7 +242,7 @@ try {
 			$stmtAssign->execute([$coursier['id'], $commande_id]);
 			
 			if (function_exists('logMessage')) {
-				logMessage('diagnostics_errors.log', "Coursier #{$coursier['id']} ({$coursier['nom']}) proposé pour commande #{$commande_id} - En attente d'acceptation");
+				logMessage('diagnostics_errors.log', "Coursier #{$coursier['id']} ({$coursier['nom']}) proposé pour commande #{$commande_id} (statut: {$coursier['statut_connexion']}, tokens: {$coursier['active_tokens']})");
 			}
 			
 			// Envoyer notification FCM
