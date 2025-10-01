@@ -154,7 +154,9 @@ $allowedTypes = ['coursier', 'coursier_moto', 'coursier_velo', 'coursier_cargo']
 $allCoursiers = getAllCouriers($pdo);
 $coursiers = [];
 
-foreach ($allCoursiers as $coursier) {
+$apiCoursiersUrl = function_exists('routePath')
+    ? routePath('api/coursiers_connectes.php')
+    : rtrim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/\\') . '/api/coursiers_connectes.php';
     $type = strtolower($coursier['type_poste'] ?? '');
     if ($type !== '' && !in_array($type, $allowedTypes, true)) {
         continue;
@@ -173,315 +175,308 @@ $coursiersAvecSolde = array_filter($coursiers, fn($c) => ($c['solde'] ?? 0) > 0)
 include __DIR__ . '/../functions.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rechargement Direct - Admin Suzosky</title>
-    <style>
-        /* Coloris Suzosky officiels */
-        :root {
-            --primary-color: #D4A853;
-            --secondary-color: #1A1A2E;
-            --accent-color: #16213E;
-            --light-accent: #0F3460;
-            --success-color: #27AE60;
-            --warning-color: #F39C12;
-            --danger-color: #E94560;
-            --text-light: #ECF0F1;
+?><style>
+    .finance-recharge {
+        padding: 24px;
+        background: linear-gradient(135deg, #1A1A2E 0%, #16213E 100%);
+        border-radius: 20px;
+        border: 1px solid rgba(212, 168, 83, 0.18);
+        box-shadow: 0 20px 40px rgba(10, 10, 30, 0.35);
+        color: #ECF0F1;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .finance-recharge::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at top left, rgba(212,168,83,0.25), transparent 55%),
+                    radial-gradient(circle at bottom right, rgba(13, 110, 253, 0.18), transparent 60%);
+        pointer-events: none;
+        opacity: 0.6;
+    }
+
+    .finance-recharge__inner {
+        position: relative;
+        z-index: 1;
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .finance-recharge * {
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .finance-recharge .header-section {
+        background: rgba(26, 26, 46, 0.85);
+        border-radius: 16px;
+        padding: 28px;
+        border: 1px solid rgba(212, 168, 83, 0.25);
+        backdrop-filter: blur(12px);
+    }
+
+    .finance-recharge .header-title {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 18px;
+    }
+
+    .finance-recharge .header-title h1 {
+        color: #D4A853;
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .finance-recharge .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        gap: 18px;
+    }
+
+    .finance-recharge .stat-card {
+        background: rgba(22, 33, 62, 0.78);
+        padding: 18px;
+        border-radius: 14px;
+        border: 1px solid rgba(212, 168, 83, 0.28);
+        text-align: center;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .finance-recharge .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 26px rgba(5, 5, 25, 0.45);
+    }
+
+    .finance-recharge .stat-number {
+        font-size: 2.1rem;
+        font-weight: 800;
+        color: #F5D78C;
+        margin-bottom: 6px;
+    }
+
+    .finance-recharge .stat-label {
+        font-size: 0.85rem;
+        letter-spacing: 0.03em;
+        opacity: 0.75;
+    }
+
+    .finance-recharge .main-content {
+        background: rgba(26, 26, 46, 0.9);
+        border-radius: 18px;
+        border: 1px solid rgba(212, 168, 83, 0.22);
+        padding: 28px;
+        backdrop-filter: blur(12px);
+    }
+
+    .finance-recharge .coursiers-grid {
+        display: grid;
+        gap: 22px;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    }
+
+    .finance-recharge .coursier-card {
+        background: rgba(22, 33, 62, 0.82);
+        border-radius: 16px;
+        border: 1px solid rgba(212, 168, 83, 0.28);
+        padding: 22px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .finance-recharge .coursier-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 20px 35px rgba(15, 20, 60, 0.35);
+    }
+
+    .finance-recharge .coursier-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .finance-recharge .coursier-info h3 {
+        margin: 0 0 6px;
+        color: #F5D78C;
+        font-size: 1.2rem;
+        text-transform: capitalize;
+    }
+
+    .finance-recharge .coursier-details {
+        font-size: 0.9rem;
+        opacity: 0.82;
+        line-height: 1.45;
+    }
+
+    .finance-recharge .status-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 8px;
+        min-width: 150px;
+    }
+
+    .finance-recharge .status-badge {
+        padding: 6px 12px;
+        border-radius: 18px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .finance-recharge .status-online {
+        background: rgba(46, 204, 113, 0.18);
+        color: #2ecc71;
+    }
+
+    .finance-recharge .status-offline {
+        background: rgba(231, 76, 60, 0.16);
+        color: #e74c3c;
+    }
+
+    .finance-recharge .status-warning {
+        background: rgba(243, 156, 18, 0.2);
+        color: #f39c12;
+    }
+
+    .finance-recharge .status-pending {
+        background: rgba(255, 255, 255, 0.12);
+        color: rgba(236, 240, 241, 0.85);
+    }
+
+    .finance-recharge .status-meta {
+        font-size: 0.75rem;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        align-items: flex-end;
+        opacity: 0.75;
+    }
+
+    .finance-recharge .solde-display {
+        font-size: 1.55rem;
+        font-weight: 700;
+        text-align: center;
+        padding: 12px;
+        border-radius: 12px;
+    }
+
+    .finance-recharge .solde-positive {
+        background: rgba(39, 174, 96, 0.18);
+        color: #2ecc71;
+    }
+
+    .finance-recharge .solde-zero {
+        background: rgba(233, 69, 96, 0.16);
+        color: #e94560;
+    }
+
+    .finance-recharge .recharge-form {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 12px;
+        align-items: end;
+    }
+
+    .finance-recharge .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .finance-recharge .form-group label {
+        font-size: 0.85rem;
+        opacity: 0.85;
+    }
+
+    .finance-recharge .form-group input {
+        padding: 9px 14px;
+        border-radius: 8px;
+        border: 1px solid rgba(212, 168, 83, 0.35);
+        background: rgba(15, 52, 96, 0.82);
+        color: #f7f7f7;
+        font-size: 0.92rem;
+    }
+
+    .finance-recharge .form-group input:focus {
+        outline: none;
+        border-color: rgba(245, 215, 140, 0.9);
+        box-shadow: 0 0 0 3px rgba(212, 168, 83, 0.18);
+    }
+
+    .finance-recharge .btn {
+        padding: 10px 20px;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        justify-content: center;
+        background: linear-gradient(135deg, #DAB861, #B8941F);
+        color: #1A1A2E;
+    }
+
+    .finance-recharge .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 24px rgba(212, 168, 83, 0.35);
+    }
+
+    .finance-recharge .alert {
+        padding: 16px 20px;
+        border-radius: 12px;
+        border: 1px solid;
+        background: rgba(255, 255, 255, 0.06);
+        font-weight: 600;
+    }
+
+    .finance-recharge .alert-success {
+        border-color: rgba(39, 174, 96, 0.65);
+        color: #27AE60;
+    }
+
+    .finance-recharge .alert-danger {
+        border-color: rgba(233, 69, 96, 0.65);
+        color: #E94560;
+    }
+
+    @media (max-width: 1024px) {
+        .finance-recharge {
+            padding: 18px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .finance-recharge .recharge-form {
+            grid-template-columns: 1fr;
         }
 
-        body {
-            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--accent-color) 100%);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 20px;
-            color: var(--text-light);
-            min-height: 100vh;
+        .finance-recharge .header-title h1 {
+            font-size: 1.4rem;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
+        .finance-recharge .stats-grid {
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
         }
+    }
+</style>
 
-        .header-section {
-            background: rgba(26, 26, 46, 0.9);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(212, 168, 83, 0.2);
-            backdrop-filter: blur(10px);
-        }
-
-        .header-title {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .header-title h1 {
-            color: var(--primary-color);
-            margin: 0;
-            font-size: 2rem;
-            font-weight: bold;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .stat-card {
-            background: rgba(22, 33, 62, 0.8);
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid rgba(212, 168, 83, 0.3);
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            color: var(--text-light);
-            opacity: 0.8;
-        }
-
-        .main-content {
-            background: rgba(26, 26, 46, 0.9);
-            border-radius: 15px;
-            padding: 30px;
-            border: 1px solid rgba(212, 168, 83, 0.2);
-            backdrop-filter: blur(10px);
-        }
-
-        .coursiers-grid {
-            display: grid;
-            gap: 20px;
-        }
-
-        .coursier-card {
-            background: rgba(22, 33, 62, 0.8);
-            border-radius: 12px;
-            border: 1px solid rgba(212, 168, 83, 0.3);
-            padding: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .coursier-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(212, 168, 83, 0.2);
-        }
-
-        .coursier-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .coursier-info h3 {
-            margin: 0 0 5px 0;
-            color: var(--primary-color);
-            font-size: 1.2rem;
-        }
-
-        .coursier-details {
-            font-size: 0.9rem;
-            color: var(--text-light);
-            opacity: 0.8;
-        }
-
-        .status-badge {
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .status-online {
-            background: var(--success-color);
-            color: white;
-        }
-
-        .status-offline {
-            background: var(--danger-color);
-            color: white;
-        }
-
-        .status-warning {
-            background: rgba(243, 156, 18, 0.25);
-            color: var(--warning-color);
-        }
-
-        .status-pending {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-light);
-        }
-
-        .status-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 8px;
-            text-align: right;
-        }
-
-        .status-icon {
-            font-size: 1rem;
-        }
-
-        .status-text {
-            white-space: nowrap;
-        }
-
-        .status-meta {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            font-size: 0.75rem;
-            color: var(--text-light);
-            opacity: 0.8;
-            align-items: flex-end;
-        }
-
-        .status-last-seen {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .solde-display {
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-align: center;
-            padding: 10px;
-            border-radius: 8px;
-            margin: 15px 0;
-        }
-
-        .solde-positive {
-            background: rgba(39, 174, 96, 0.2);
-            color: var(--success-color);
-        }
-
-        .solde-zero {
-            background: rgba(233, 69, 96, 0.2);
-            color: var(--danger-color);
-        }
-
-        .recharge-form {
-            display: grid;
-            grid-template-columns: 1fr 1fr auto;
-            gap: 10px;
-            align-items: end;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .form-group label {
-            font-size: 0.9rem;
-            color: var(--text-light);
-            opacity: 0.9;
-        }
-
-        .form-group input {
-            padding: 8px 12px;
-            border-radius: 6px;
-            border: 1px solid rgba(212, 168, 83, 0.3);
-            background: rgba(15, 52, 96, 0.8);
-            color: var(--text-light);
-            font-size: 0.9rem;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 5px rgba(212, 168, 83, 0.3);
-        }
-
-        .btn {
-            padding: 8px 16px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            justify-content: center;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color), #B8941F);
-            color: var(--secondary-color);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(212, 168, 83, 0.4);
-        }
-
-        .fcm-indicator {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.8rem;
-        }
-
-        .fcm-ok { color: var(--success-color); }
-        .fcm-warning { color: var(--warning-color); }
-
-        .alert {
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border: 1px solid;
-        }
-
-        .alert-success {
-            background: rgba(39, 174, 96, 0.1);
-            border-color: var(--success-color);
-            color: var(--success-color);
-        }
-
-        .alert-danger {
-            background: rgba(233, 69, 96, 0.1);
-            border-color: var(--danger-color);
-            color: var(--danger-color);
-        }
-
-        @media (max-width: 768px) {
-            .recharge-form {
-                grid-template-columns: 1fr;
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
+<section class="finance-recharge">
+    <div class="finance-recharge__inner">
         <!-- Header avec statistiques -->
         <div class="header-section">
             <div class="header-title">
@@ -599,10 +594,11 @@ include __DIR__ . '/../functions.php';
             <?php endif; ?>
         </div>
     </div>
+</section>
 
-    <script>
+<script>
         (function () {
-            const API_URL = '../../api/coursiers_connectes.php';
+            const API_URL = '<?= addslashes($apiCoursiersUrl) ?>';
             const connectedCountEl = document.querySelector('[data-connected-count]');
             const panelElements = Array.from(document.querySelectorAll('[data-status-panel]'));
 
@@ -770,7 +766,5 @@ include __DIR__ . '/../functions.php';
             refreshConnectivity();
             setInterval(refreshConnectivity, 30000);
         })();
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
-</body>
-</html>
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
