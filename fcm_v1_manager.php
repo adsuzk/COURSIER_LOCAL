@@ -119,8 +119,7 @@ class FCMv1Manager {
                         'priority' => 'HIGH',
                         'notification' => [
                             'sound' => 'default',
-                            'channel_id' => 'nouvelles_commandes',
-                            'priority' => 'max'
+                            'channel_id' => 'nouvelles_commandes'
                         ]
                     ]
                 ]
