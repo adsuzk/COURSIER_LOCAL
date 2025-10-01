@@ -270,13 +270,40 @@ fun CoursesScreen(
                     
                     Spacer(modifier = Modifier.height(12.dp))
                     
+                    // Informations client
                     Text(
-                        text = "Client: ${currentOrder.clientNom}",
+                        text = "📱 Client: ${currentOrder.clientNom}",
                         style = MaterialTheme.typography.bodyLarge,
-                        color = Color.White
+                        color = Color.White,
+                        fontWeight = FontWeight.Medium
                     )
+                    if (currentOrder.clientTelephone.isNotBlank()) {
+                        Text(
+                            text = "    Tel: ${currentOrder.clientTelephone}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.White.copy(alpha = 0.9f)
+                        )
+                    }
+                    
+                    // Informations destinataire
+                    if (currentOrder.telephoneDestinataire.isNotBlank()) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "📞 Destinataire:",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = Color.White,
+                            fontWeight = FontWeight.Medium
+                        )
+                        Text(
+                            text = "    Tel: ${currentOrder.telephoneDestinataire}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.White.copy(alpha = 0.9f)
+                        )
+                    }
+                    
+                    Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = "Prix: ${currentOrder.prixTotal.toInt()} FCFA",
+                        text = "💰 Prix: ${currentOrder.prixTotal.toInt()} FCFA",
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Bold,
                         color = PrimaryGold
