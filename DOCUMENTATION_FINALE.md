@@ -25,9 +25,18 @@
 
 - Seuil de nettoyage des tokens FCM maintenu (`Scripts/Scripts cron/fcm_auto_cleanup.php`). **Un coursier est compté comme disponible lorsque son token est `is_active = 1` et que `last_ping` (ou `updated_at`) date de moins de 60 s**. Ce seuil reste ajustable via `FCM_AVAILABILITY_THRESHOLD_SECONDS` et peut être forcé en mode immédiat en définissant `FCM_IMMEDIATE_DETECTION=1`.
 - Comportement client : en cas d'absence de coursiers le formulaire affiche un message d'indisponibilité (injecté via `index.php`), lance un compte à rebours de 60 s avant verrouillage et propose un bouton « Actualiser ».
-- Documentation consolidée : suppression/archivage des anciennes instructions obsolètes concernant la détection de présence non-FCM. Les sections marquées "Obsolète" doivent être ignorées (voir section "Changements récents").
+- Documentation consolidée : les anciennes instructions concernant la détection de présence non-FCM ont été archivées. Les sections précédemment marquées "Obsolète" ont été déplacées dans l'historique et ne doivent plus être utilisées en production (voir la section "Éléments archivés").
 
 **Note migration DB :** La colonne `last_ping` a été ajoutée à la table `device_tokens` (migration appliquée). Chaque enregistrement ou rafraîchissement de token via `register_device_token_simple.php` met `last_ping = NOW()`. Les scripts de nettoyage FCM utilisent ce champ pour évaluer l'ancienneté. Côté index, un token fraîchement mis à jour (`last_ping` ≤ 60 s) ouvre le formulaire instantanément, tandis qu'un token inactif est compté dans `stale_active_count` et déclenche la fermeture automatique après 60 s sans activité.
+
+## ⚠️ ÉLÉMENTS ARCHIVÉS
+
+Les sections marquées obsolètes ont été retirées de la lecture principale et archivées pour audit. Elles restent accessibles via `DOCUMENTATION_FINALE/CONSOLIDATED_DOCS_[TIMESTAMP].md` générées par `consolidate_docs.php`.
+
+### Fichier Firebase canonique
+Le fichier canonical `google-services.json` utilisé par l'application Android est : `CoursierAppV7/app/google-services.json`. Les copies obsolètes trouvées ailleurs ont été archivées ou supprimées.
+
+*Mise à jour appliquée : 2025-09-29 — archive des éléments obsolètes et clarification sur le fichier Firebase canonical.*
 
 **Message affiché quand aucun coursier n'est disponible :**
 
