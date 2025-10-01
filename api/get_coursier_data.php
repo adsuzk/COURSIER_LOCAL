@@ -172,13 +172,13 @@ try {
                     COALESCE(adresse_arrivee, adresse_livraison) as adresse_livraison,
                     COALESCE(prix_total, prix_estime, 0) as prix_livraison,
                     statut,
-                    COALESCE(created_at, date_creation) as date_commande,
+                    created_at as date_commande,
                     COALESCE(description_colis, description, '') as description,
                     COALESCE(distance_estimee, 0) as distance
                 FROM commandes 
                 WHERE coursier_id = ? 
                 AND statut IN ($placeholders)
-                ORDER BY COALESCE(created_at, date_creation) DESC
+                ORDER BY created_at DESC
                 LIMIT 10
             ");
             $params = array_merge([$coursierId], $activeStatuses);
