@@ -254,16 +254,16 @@ function renderStatsContent(array $stats): string
             <h3>🚚 En cours</h3>
             <strong><?= (int) ($stats['en_cours'] ?? 0) ?></strong>
         </div>
-        <div class="stat-card">
-            <h3>En cours</h3>
-            <strong><?= (int) $stats['en_cours'] ?></strong>
+        <div class="stat-card" style="background: linear-gradient(135deg, #00bcd4 0%, #0097a7 100%); color: white;">
+            <h3>📦 Récupérées</h3>
+            <strong><?= (int) ($stats['recuperee'] ?? 0) ?></strong>
         </div>
-        <div class="stat-card">
-            <h3>Livrées</h3>
+        <div class="stat-card" style="background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%); color: white;">
+            <h3>✅ Livrées</h3>
             <strong><?= (int) $stats['livree'] ?></strong>
         </div>
-        <div class="stat-card">
-            <h3>Annulées</h3>
+        <div class="stat-card" style="background: linear-gradient(135deg, #f44336 0%, #c62828 100%); color: white;">
+            <h3>❌ Annulées</h3>
             <strong><?= (int) $stats['annulee'] ?></strong>
         </div>
     <?php
