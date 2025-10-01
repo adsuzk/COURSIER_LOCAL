@@ -406,9 +406,64 @@ chmod 777 /path/to/COURSIER_LOCAL/diagnostic_logs
 
 ## 🔄 CHANGELOG
 
-### v2.0 - 1er Octobre 2025
+### v2.1 - 1er Octobre 2025
 **CORRECTIONS MAJEURES** :
-- ✅ **Flux paiement en ligne corrigé** : Modal CinetPay AVANT enregistrement
+- ✅ **Flux paiement CinetPay corrigé** : Modal s'ouvre AVANT enregistrement commande
+  - ÉTAPE 1: Appel `initiate_payment_only.php` pour générer URL paiement
+  - ÉTAPE 2: Ouverture modal avec iframe CinetPay (branding Suzosky)
+  - ÉTAPE 3: Écoute postMessage pour détecter confirmation paiement
+  - ÉTAPE 4: SI confirmé → Appel `create_order_after_payment.php`
+  - ÉTAPE 5: Enregistrement commande + recherche coursier automatique
+  
+- ✅ **Guidage vocal INTERNE à l'application** (plus d'ouverture Google Maps)
+  - Système Text-to-Speech Android intégré
+  - Instructions vocales en temps réel pendant la navigation
+  - Alertes de proximité et changements de direction
+  - Bouton activation/désactivation dans Mes Courses
+  
+- ✅ **Matricule coursier affiché correctement**
+  - Récupéré depuis `agents_suzosky.matricule`
+  - Format: CM20250003 (au lieu de C{id} généré)
+  - Visible dans l'écran Profil
+  - Sauvegardé en SharedPreferences
+  
+- ✅ **Modal de paiement avec branding Suzosky**
+  - Header doré avec logo Suzosky
+  - Instructions claires en français
+  - Bouton fermer avec animation
+  - Loading indicator pendant chargement
+  - Responsive (mobile + desktop)
+
+**NOUVELLES APIs** :
+- `POST /api/initiate_payment_only.php` : Génère URL paiement sans enregistrer
+  - Paramètres: order_number, amount, client_name, client_phone, client_email
+  - Retourne: payment_url, transaction_id
+  
+- `POST /api/create_order_after_payment.php` : Enregistre commande après paiement confirmé
+  - Paramètres: tous champs formulaire (mappés automatiquement)
+  - Mode paiement: automatiquement 'cinetpay'
+  - Statut paiement: automatiquement 'paye'
+
+**CONFIGURATION CINETPAY** :
+```php
+// Dans config.php
+function getCinetPayConfig(): array {
+    return [
+        'apikey'     => '8338609805877a8eaac7eb6.01734650',
+        'site_id'    => '219503',
+        'secret_key' => '17153003105e7ca6606cc157.46703056',
+        'endpoint'   => 'https://api-checkout.cinetpay.com/v2/payment'
+    ];
+}
+```
+
+**MODIFICATIONS JAVASCRIPT** :
+- Fonction `window.showPaymentModal(url, callback)` créée dans `sections_index/js_payment.php`
+- Flux de paiement modifié dans `sections_index/order_form.php`
+- Mapping automatique des champs formulaire → API
+
+### v2.0 - 30 Septembre 2025
+**CORRECTIONS INITIALES** :
 - ✅ **Ajout 2 numéros cliquables** dans Mes Courses (Client + Destinataire)
 - ✅ **Clavier numérique** pour saisie montant recharge
 - ✅ **Branding Suzosky** complet dans modal paiement (plus de mention CinetPay visible)
