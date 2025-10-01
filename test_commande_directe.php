@@ -131,26 +131,39 @@ try {
     
     // Test de notification FCM
     echo "=== TEST NOTIFICATION FCM ===\n";
-    require_once 'lib/fcm_helper.php';
+    require_once 'api/lib/fcm_enhanced.php';
     
-    $fcmHelper = new FCMHelper();
+    // Préparer les données de notification
     $notificationData = [
-        'title' => 'Nouvelle commande !',
-        'body' => "Commande #{$orderId} - {$commandeData['lieu_depart']} → {$commandeData['lieu_destination']}",
         'type' => 'new_order',
-        'order_id' => (string)$orderId,
-        'pickup_location' => $commandeData['lieu_depart'],
-        'delivery_location' => $commandeData['lieu_destination'],
-        'client_name' => 'Client Test',
-        'client_phone' => '+225 07 08 09 10 11',
-        'recipient_name' => $commandeData['nom_destinataire'],
-        'recipient_phone' => $commandeData['telephone_destinataire'],
-        'description' => $commandeData['description'],
-        'estimated_price' => (string)$commandeData['prix_estimatif']
+        'order_id' => $commandeId,
+        'order_number' => $commandeData['order_number'],
+        'code_commande' => $commandeData['code_commande'],
+        'client_nom' => $commandeData['client_nom'],
+        'client_telephone' => $commandeData['client_telephone'],
+        'adresse_depart' => $commandeData['adresse_depart'],
+        'adresse_arrivee' => $commandeData['adresse_arrivee'],
+        'description_colis' => $commandeData['description_colis'],
+        'prix_total' => $commandeData['prix_total'],
+        'mode_paiement' => $commandeData['mode_paiement']
     ];
     
+    $title = "🔔 Nouvelle commande #{$commandeData['code_commande']}";
+    $body = "Course de {$commandeData['adresse_depart']} vers {$commandeData['adresse_arrivee']} - {$commandeData['prix_total']} FCFA";
+    
     echo "Envoi notification vers token: " . substr($coursier['token'], 0, 30) . "...\n";
-    $result = $fcmHelper->sendNotification($coursier['token'], $notificationData);
+    echo "Titre: $title\n";
+    echo "Message: $body\n";
+    
+    // Envoyer la notification
+    $result = fcm_send_with_log(
+        [$coursier['token']], 
+        $title, 
+        $body, 
+        $notificationData, 
+        $coursier['coursier_id'], 
+        $commandeId
+    );
     
     if ($result['success']) {
         echo "✅ Notification envoyée avec succès\n";
