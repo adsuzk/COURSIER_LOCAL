@@ -466,13 +466,7 @@ function getCinetPayConfig(): array {
 **CORRECTIONS INITIALES** :
 - ✅ **Ajout 2 numéros cliquables** dans Mes Courses (Client + Destinataire)
 - ✅ **Clavier numérique** pour saisie montant recharge
-- ✅ **Branding Suzosky** complet dans modal paiement (plus de mention CinetPay visible)
-- ✅ **Matricule coursier** affiché dans profil
 - ✅ **Textes visibles** dans menu bas (hauteur 80dp)
-
-**NOUVELLES APIs** :
-- `POST /api/initiate_payment_only.php` : Génère URL paiement sans enregistrer
-- `POST /api/create_order_after_payment.php` : Enregistre commande après paiement confirmé
 
 **NOUVEAUX ÉCRANS** :
 - `UnifiedCoursesScreen.kt` : Écran Mes Courses intégré sans modal
