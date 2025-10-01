@@ -1229,6 +1229,37 @@ object ApiService {
         )
     }
     
+    /**
+     * Confirme que le cash a été récupéré pour une commande en espèces (après livraison)
+     */
+    fun confirmCashReceived(commandeId: Int, coursierId: Int, callback: (Boolean, String?) -> Unit) {
+        executeWithFallback(
+            buildRequest = { base ->
+                val url = buildApi(base, "mobile_sync_api.php") +
+                        "?action=confirm_cash_received&coursier_id=$coursierId&commande_id=$commandeId"
+                Request.Builder().url(url).post("".toRequestBody()).build()
+            },
+            onResponseMain = { response ->
+                val bodyStr = response.body?.string()
+                if (!response.isSuccessful || bodyStr == null) {
+                    callback(false, "Erreur réseau")
+                    return@executeWithFallback
+                }
+                try {
+                    val json = JSONObject(bodyStr)
+                    val success = json.optBoolean("success", false)
+                    val message = json.optString("message", "")
+                    callback(success, message)
+                } catch (e: Exception) {
+                    callback(false, "Erreur de parsing: ${e.message}")
+                }
+            },
+            onFailureMain = { error ->
+                callback(false, error)
+            }
+        )
+    }
+    
     fun updateOrderStatusWithCash(
         commandeId: String,
         statut: String,
