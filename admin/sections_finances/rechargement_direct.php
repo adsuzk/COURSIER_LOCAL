@@ -83,13 +83,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                         
                         // Log détaillé de la notification FCM en fonction de la structure disponible
                         $logStatus = $result['success'] ? 'sent' : 'failed';
+                        $responsePayload = json_encode($result, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                        if ($responsePayload === false) {
+                            $responsePayload = null;
+                        }
+
                         $logPayload = [
                             'coursier_id' => $coursier_id,
                             'token_used' => $token,
                             'message' => $body,
                             'type' => 'wallet_recharge',
                             'status' => $logStatus,
-                            'response_data' => json_encode($result, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+                            'response_data' => $responsePayload
                         ];
                         logFcmNotification($pdo, $logPayload);
                         
