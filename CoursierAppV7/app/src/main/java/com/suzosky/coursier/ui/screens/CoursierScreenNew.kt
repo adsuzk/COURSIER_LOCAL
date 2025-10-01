@@ -26,7 +26,11 @@ import com.suzosky.coursier.ui.screens.WalletScreen
 import com.suzosky.coursier.ui.screens.ProfileScreen
 import com.suzosky.coursier.ui.screens.DeliveryStep
 import com.suzosky.coursier.ui.screens.ChatMessage
+import com.suzosky.coursier.ui.screens.NavigationScreen
 import com.suzosky.coursier.services.NotificationSoundService
+import com.suzosky.coursier.viewmodel.MapViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.android.gms.maps.model.LatLng
 import java.util.*
 
 /**
