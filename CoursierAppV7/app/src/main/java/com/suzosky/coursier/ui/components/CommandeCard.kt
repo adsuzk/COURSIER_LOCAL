@@ -363,7 +363,10 @@ private fun ActionButtonsSection(
     onAccepter: () -> Unit,
     onRefuser: () -> Unit,
     onMettreEnAttente: () -> Unit,
-    onVoirDetails: () -> Unit
+    onVoirDetails: () -> Unit,
+    onStartDelivery: () -> Unit = {},
+    onPickupPackage: () -> Unit = {},
+    onMarkDelivered: () -> Unit = {}
 ) {
     when (statut.lowercase()) {
         "nouvelle" -> {
@@ -423,12 +426,35 @@ private fun ActionButtonsSection(
             }
         }
         
-        "acceptee", "en_cours" -> {
+        "acceptee" -> {
+            // Bouton pour commencer la livraison
             SuzoskyButton(
-                text = "Voir détails",
-                onClick = onVoirDetails,
+                text = "🚀 Commencer la livraison",
+                onClick = onStartDelivery,
+                style = SuzoskyButtonStyle.Success,
+                icon = Icons.Filled.LocalShipping,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+        
+        "en_cours" -> {
+            // Bouton pour récupérer le colis
+            SuzoskyButton(
+                text = "📦 J'ai récupéré le colis",
+                onClick = onPickupPackage,
                 style = SuzoskyButtonStyle.Primary,
-                icon = Icons.Filled.Visibility,
+                icon = Icons.Filled.ShoppingBag,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+        
+        "recuperee" -> {
+            // Bouton pour marquer comme livrée
+            SuzoskyButton(
+                text = "🏁 Marquer comme livrée",
+                onClick = onMarkDelivered,
+                style = SuzoskyButtonStyle.Success,
+                icon = Icons.Filled.Check,
                 modifier = Modifier.fillMaxWidth()
             )
         }
