@@ -649,6 +649,7 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                 id = toStringSafe(cmdMap["id"]),
                                 clientNom = toStringSafe(cmdMap["clientNom"]),
                                 clientTelephone = toStringSafe(cmdMap["clientTelephone"]),
+                                telephoneDestinataire = toStringSafe(cmdMap["telephoneDestinataire"]),
                                 adresseEnlevement = toStringSafe(cmdMap["adresseEnlevement"]),
                                 adresseLivraison = toStringSafe(cmdMap["adresseLivraison"]),
                                 distance = toDoubleSafe(cmdMap["distance"]).let { if (it.isFinite()) it else 0.0 },
