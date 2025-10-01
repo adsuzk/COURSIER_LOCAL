@@ -19,7 +19,7 @@ class FCMManager {
     
     public function getServerKey() {
         // Essayer de lire depuis le fichier de config Firebase
-    $firebaseConfig = 'coursier-suzosky-firebase-adminsdk-fbsvc-3605815057.json';
+        $firebaseConfig = __DIR__ . '/coursier-suzosky-firebase-adminsdk-fbsvc-3605815057.json';
         
         if (file_exists($firebaseConfig)) {
             $config = json_decode(file_get_contents($firebaseConfig), true);
@@ -28,12 +28,19 @@ class FCMManager {
             }
         }
         
-        // Pour les tests, utiliser une clé de développement
-        // REMPLACER PAR VOTRE VRAIE SERVER KEY FIREBASE
-        return 'AAAA1234567890:APA91bHsampleKeyForTesting1234567890abcdefghijklmnopqrstuvwxyz';
+        // Clé serveur FCM legacy (à remplacer par votre vraie clé depuis Firebase Console > Project Settings > Cloud Messaging)
+        // Pour le moment, utiliser une clé de fallback
+        return getenv('FCM_SERVER_KEY') ?: 'LEGACY_KEY_NOT_CONFIGURED';
     }
     
     public function envoyerNotification($token, $title, $body, $data = []) {
+        // CORRECTION: Utiliser l'API moderne FCM si disponible, sinon legacy
+        $useModernApi = false; // Passer à true quand OAuth2 est configuré
+        
+        if ($useModernApi) {
+            return $this->envoyerNotificationV1($token, $title, $body, $data);
+        }
+        
         $url = 'https://fcm.googleapis.com/fcm/send';
         
         // Construction du payload
