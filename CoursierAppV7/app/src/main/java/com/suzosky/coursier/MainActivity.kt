@@ -754,5 +754,47 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
             }
         }
     }
+
+    // Configuration du BroadcastReceiver pour les nouvelles commandes
+    private fun setupCommandeReceiver() {
+        commandeReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                if (intent?.action == FCMService.ACTION_REFRESH_DATA) {
+                    val orderId = intent.getStringExtra(FCMService.EXTRA_ORDER_ID)
+                    println("🔔 BroadcastReceiver: Nouvelle commande reçue - Order ID: $orderId")
+                    Log.d("MainActivity", "🔔 BroadcastReceiver: Nouvelle commande reçue - Order ID: $orderId")
+                    
+                    // Forcer le rafraîchissement des commandes
+                    shouldRefreshCommandes = true
+                    newOrderId = orderId
+                    
+                    // Déclencher un recompose en modifiant un état observé
+                    // Cette approche force le rafraîchissement de l'interface
+                }
+            }
+        }
+        
+        // Enregistrer le receiver pour les broadcasts locaux
+        val filter = IntentFilter(FCMService.ACTION_REFRESH_DATA)
+        registerReceiver(commandeReceiver, filter)
+        
+        println("✅ BroadcastReceiver configuré pour ACTION_REFRESH_DATA")
+        Log.d("MainActivity", "✅ BroadcastReceiver configuré pour ACTION_REFRESH_DATA")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Désinscrire le BroadcastReceiver
+        commandeReceiver?.let {
+            try {
+                unregisterReceiver(it)
+                println("✅ BroadcastReceiver désinscrit")
+                Log.d("MainActivity", "✅ BroadcastReceiver désinscrit")
+            } catch (e: Exception) {
+                println("❌ Erreur lors de la désinscription du receiver: ${e.message}")
+                Log.e("MainActivity", "❌ Erreur lors de la désinscription du receiver", e)
+            }
+        }
+    }
 }
 
