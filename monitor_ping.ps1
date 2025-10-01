@@ -2,7 +2,7 @@
 Write-Host "🔍 Surveillance du ping FCM - Appuyez sur Ctrl+C pour arrêter" -ForegroundColor Green
 Write-Host ""
 
-$lastPing = ""
+$lastStatus = ""
 $lastCount = 0
 
 while ($true) {
