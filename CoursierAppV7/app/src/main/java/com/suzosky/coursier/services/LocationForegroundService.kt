@@ -212,6 +212,28 @@ class LocationForegroundService : Service() {
         }
     }
 
+    // ⚡ FCM PING PERIÓDIQUE
+    private fun startFcmPing() {
+        fcmPingJob?.cancel()
+        fcmPingJob = scope.launch {
+            while (isActive) {
+                try {
+                    Log.d(TAG, "🚀 FCM Ping périodique...")
+                    ApiService.pingDeviceToken(this@LocationForegroundService)
+                    delay(30_000L) // Ping toutes les 30 secondes
+                } catch (e: Exception) {
+                    Log.w(TAG, "⚠️ FCM Ping failed: ${e.message}")
+                    delay(60_000L) // Attendre 1 minute en cas d'erreur
+                }
+            }
+        }
+    }
+
+    private fun stopFcmPing() {
+        fcmPingJob?.cancel()
+        fcmPingJob = null
+    }
+
     private fun buildApiPath(file: String): String {
         // Reuse ApiService's builder helpers via reflection-like static method if exists
         return try {
