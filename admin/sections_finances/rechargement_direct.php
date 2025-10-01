@@ -115,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     ]);
                     
                     // 3. Envoyer notification FCM RÉELLE via FCMManager
-                    $fcm = new FCMManager();
+                                $fcmManager = new FCMv1Manager();
                     $stmt = $pdo->prepare("SELECT token FROM device_tokens WHERE coursier_id = ? AND is_active = 1");
                     $stmt->execute([$coursier_id]);
                     $tokens = $stmt->fetchAll(PDO::FETCH_COLUMN);

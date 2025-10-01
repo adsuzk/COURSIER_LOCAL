@@ -237,10 +237,10 @@ try {
 		$notificationsFailed = [];
 		
 		if (count($coursiersDisponibles) > 0) {
-			// Charger le système FCM
-			if (file_exists(__DIR__ . '/../fcm_manager.php')) {
-				require_once __DIR__ . '/../fcm_manager.php';
-				$fcm = new FCMManager();
+			// Charger le système FCM v1
+			if (file_exists(__DIR__ . '/../fcm_v1_manager.php')) {
+				require_once __DIR__ . '/../fcm_v1_manager.php';
+				$fcm = new FCMv1Manager();
 				
 				$title = "🚚 Nouvelle commande #{$fields['code_commande']}";
 				$body = "De: {$fields['adresse_depart']}\nVers: {$fields['adresse_arrivee']}\nPrix: {$fields['prix_estime']} FCFA";
