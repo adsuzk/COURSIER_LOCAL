@@ -158,10 +158,23 @@ class CoursesViewModel @Inject constructor(
             try {
                 val orderToAccept = _uiState.value.pendingOrders.find { it.id == orderId }
                 if (orderToAccept != null) {
+                    // Récupérer l'ID du coursier depuis SharedPreferences
+                    val prefs = context.getSharedPreferences("suzosky_prefs", Context.MODE_PRIVATE)
+                    val coursierId = prefs.getString("coursier_id", "") ?: ""
                     
-                    // Appel API pour accepter la commande
-                    ApiService.updateOrderStatus(orderId, "acceptee") { success ->
+                    if (coursierId.isBlank()) {
+                        _uiState.value = _uiState.value.copy(
+                            error = "ID coursier non trouvé"
+                        )
+                        return@launch
+                    }
+                    
+                    Log.d("CoursesViewModel", "Accepting order $orderId for coursier $coursierId")
+                    
+                    // Appel à la nouvelle API order_response.php
+                    ApiService.respondToOrder(orderId, coursierId, "accept") { success, message ->
                         if (success) {
+                            Log.d("CoursesViewModel", "Order accepted successfully: $message")
                             val updatedPendingOrders = _uiState.value.pendingOrders.filter { it.id != orderId }
                             
                             _uiState.value = _uiState.value.copy(
@@ -172,10 +185,16 @@ class CoursesViewModel @Inject constructor(
                             )
                             
                             startLocationMonitoring()
+                        } else {
+                            Log.e("CoursesViewModel", "Failed to accept order: $message")
+                            _uiState.value = _uiState.value.copy(
+                                error = "Erreur: ${message ?: "Échec de l'acceptation"}"
+                            )
                         }
                     }
                 }
             } catch (e: Exception) {
+                Log.e("CoursesViewModel", "Exception accepting order: ${e.message}")
                 _uiState.value = _uiState.value.copy(
                     error = "Erreur lors de l'acceptation: ${e.message}"
                 )
