@@ -234,8 +234,16 @@ function renderStatsContent(array $stats): string
             <strong><?= (int) $stats['nouvelle'] ?></strong>
         </div>
         <div class="stat-card">
-            <h3>Assignées</h3>
-            <strong><?= (int) $stats['assignee'] ?></strong>
+            <h3>En attente</h3>
+            <strong><?= (int) ($stats['en_attente'] ?? 0) ?></strong>
+        </div>
+        <div class="stat-card">
+            <h3>Attribuées</h3>
+            <strong><?= (int) ($stats['attribuee'] ?? 0) ?></strong>
+        </div>
+        <div class="stat-card">
+            <h3>Acceptées</h3>
+            <strong><?= (int) ($stats['acceptee'] ?? 0) ?></strong>
         </div>
         <div class="stat-card">
             <h3>En cours</h3>
