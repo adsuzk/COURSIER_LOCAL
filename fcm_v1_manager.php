@@ -224,7 +224,7 @@ if (basename(__FILE__) == basename($_SERVER['PHP_SELF'])) {
         $pdo = getDBConnection();
         
         $stmt = $pdo->query("
-            SELECT dt.token, a.nom, a.prenom 
+            SELECT dt.token, a.nom 
             FROM device_tokens dt
             JOIN agents_suzosky a ON dt.coursier_id = a.id
             WHERE dt.is_active = 1 
