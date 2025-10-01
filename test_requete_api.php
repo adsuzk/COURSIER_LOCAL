@@ -21,7 +21,7 @@ try {
             COALESCE(prix_total, prix_estime, 0) as prix_livraison,
             statut,
             created_at as date_commande,
-            COALESCE(description_colis, description, '') as description,
+            description_colis as description,
             COALESCE(distance_estimee, 0) as distance
         FROM commandes 
         WHERE coursier_id = ? 
