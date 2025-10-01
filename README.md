@@ -158,7 +158,7 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 
 ---
 
-## 🔄 Flux de Commande (CORRIGÉ v2.0)
+## 🔄 Flux de Commande (CORRIGÉ v2.1)
 
 ### Mode Espèces 💵
 ```
@@ -167,7 +167,26 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 3. Enregistrement BDD immédiat
 4. Recherche coursier automatique
 5. Notification FCM au coursier
-6. Suivi temps réel sur l'index
+6. Suivi temps réel
+```
+
+### Mode Paiement en Ligne 💳 (Orange Money, MTN, etc.)
+```
+1. Client remplit formulaire
+2. Clic "Commander"
+3. ➡️ Modal CinetPay s'ouvre (AVANT enregistrement)
+4. Client effectue le paiement
+5. ✅ SI paiement confirmé:
+   → Enregistrement BDD
+   → Recherche coursier automatique
+   → Notification FCM
+   → Suivi temps réel
+6. ❌ SI paiement échoué:
+   → Modal se ferme
+   → Possibilité de réessayer
+```
+
+**✅ POINT CLÉ** : Le modal de paiement s'ouvre **AVANT** l'enregistrement de la commande. La commande n'est enregistrée que si le paiement est confirmé.
 ```
 
 ### Mode Paiement En Ligne 💳
