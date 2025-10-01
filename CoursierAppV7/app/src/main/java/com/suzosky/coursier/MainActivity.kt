@@ -816,7 +816,7 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                 // 🔔 NOTIFICATION SONORE + VIBRATION
                                 try {
                                     // Vibration
-                                    val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as? android.os.Vibrator
+                                    val vibrator = this@MainActivity.getSystemService(Context.VIBRATOR_SERVICE) as? android.os.Vibrator
                                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                                         vibrator?.vibrate(android.os.VibrationEffect.createWaveform(longArrayOf(0, 200, 100, 200), -1))
                                     } else {
@@ -826,14 +826,14 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                     
                                     // Son de notification
                                     val notification = android.media.RingtoneManager.getDefaultUri(android.media.RingtoneManager.TYPE_NOTIFICATION)
-                                    val ringtone = android.media.RingtoneManager.getRingtone(applicationContext, notification)
+                                    val ringtone = android.media.RingtoneManager.getRingtone(this@MainActivity.applicationContext, notification)
                                     ringtone.play()
                                     
                                     // 🔊 Annonce vocale
                                     val newCommande = commandesData.firstOrNull()
                                     val clientName = newCommande?.get("clientNom")?.toString() ?: "un client"
                                     val destination = newCommande?.get("adresseLivraison")?.toString() ?: "destination inconnue"
-                                    voiceGuidance?.announceNewOrder(clientName, destination)
+                                    this@MainActivity.voiceGuidance?.announceNewOrder(clientName, destination)
                                     
                                     Log.d("MainActivity", "🔔 Notification émise: vibration + son + voix")
                                 } catch (e: Exception) {
