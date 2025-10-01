@@ -100,6 +100,23 @@ fun CoursierScreenNew(
         pendingOrdersCount = commandes.count { it.statut == "nouvelle" || it.statut == "attente" }
     }
     
+    // Rafraîchissement automatique des commandes quand une nouvelle arrive
+    LaunchedEffect(shouldRefreshCommandes) {
+        if (shouldRefreshCommandes) {
+            println("🔄 Rafraîchissement automatique des commandes déclenché")
+            
+            // Démarrer la sonnerie pour nouvelle commande
+            hasNewOrder = true
+            notificationService.startNotificationSound()
+            
+            // Forcer le passage à l'onglet Courses
+            currentTab = NavigationTab.COURSES
+            
+            // Signaler que le rafraîchissement a été traité
+            onCommandesRefreshed()
+        }
+    }
+    
     // États pour les courses
     // Sélectionner d'abord une commande réellement active (en_cours/acceptee), sinon prendre une nouvelle/attente
     var currentOrder by remember { mutableStateOf<Commande?>(
