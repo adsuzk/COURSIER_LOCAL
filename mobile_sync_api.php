@@ -126,11 +126,15 @@ try {
             
             $stmt = $pdo->prepare("
                 SELECT 
-                    id, order_number, code_commande, client_nom, client_telephone,
-                    adresse_depart, adresse_arrivee, description,
-                    prix_total, statut, priorite,
+                    id, order_number, code_commande, 
+                    telephone_expediteur as client_telephone,
+                    adresse_depart, adresse_arrivee, 
+                    description_colis as description,
+                    prix_estime as prix_total, 
+                    statut, priorite,
                     created_at, updated_at,
-                    heure_acceptation, heure_retrait, heure_livraison
+                    heure_acceptation, heure_retrait, heure_livraison,
+                    latitude_depart, longitude_depart, distance_estimee
                 FROM commandes 
                 WHERE coursier_id = ? 
                 AND statut IN ('nouvelle', 'attribuee', 'acceptee', 'en_cours', 'retiree')
