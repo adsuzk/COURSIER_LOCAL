@@ -982,21 +982,12 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                             onCommandeAccept = { commandeId ->
                                 try { OrderRingService.stop(context) } catch (_: Exception) {}
                                 
-                                // 🔊 Annonce vocale
+                                // 🔊 Annonce vocale UNIQUEMENT (PAS DE MAPS SUR ACCEPT !)
                                 activity?.voiceGuidance?.announceOrderAccepted()
                                 
                                 // Accepter la commande via API
                                 ApiService.respondToOrder(commandeId, coursierId.toString(), "accept") { success, message ->
                                     if (success) {
-                                        // Trouver la commande pour récupérer les adresses
-                                        val commande = commandesReelles.find { it.id == commandeId }
-                                        if (commande != null) {
-                                            // 🗺️ Lancer Google Maps vers le point de départ
-                                            val depart = commande.adresseEnlevement
-                                            if (depart.isNotBlank()) {
-                                                activity?.launchGoogleMaps("Ma position", depart)
-                                            }
-                                        }
                                         // Déclencher un rechargement des commandes
                                         shouldRefreshCommandes = true
                                     }
