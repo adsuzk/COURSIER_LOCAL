@@ -12,8 +12,8 @@ http://localhost/COURSIER_LOCAL/
 
 ## ❌ URLs Incorrectes
 
-- ❌ `http://localhost/COURSIER_LOCAL/index.php` (NON !)
-- ❌ `https://localhost/COURSIER_LOCAL/index.php` (NON !)
+- ❌ AUCUNE URL avec `/index.php` ne doit être utilisée !
+- ❌ Apache gère automatiquement le routage vers index.php
 
 ---
 
