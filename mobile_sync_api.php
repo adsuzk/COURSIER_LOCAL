@@ -477,9 +477,11 @@ try {
             }
             
             // Mettre à jour le statut et l'heure de livraison
+            // 🔥 CHANGEMENT: On passe DIRECTEMENT à terminee pour éviter le bug du bouton cash
             $stmt = $pdo->prepare("
                 UPDATE commandes 
-                SET statut = 'livree', 
+                SET statut = 'terminee', 
+                    cash_recupere = 1,
                     heure_livraison = NOW(),
                     updated_at = NOW()
                 WHERE id = ? AND coursier_id = ?
@@ -488,9 +490,9 @@ try {
             if ($stmt->execute([$commande_id, $coursier_id])) {
                 $response = [
                     'success' => true,
-                    'message' => 'Commande livrée avec succès',
+                    'message' => 'Commande livrée et terminée avec succès',
                     'commande_id' => $commande_id,
-                    'nouveau_statut' => 'livree'
+                    'nouveau_statut' => 'terminee'
                 ];
                 logRequest('mark_delivered', ['commande_id' => $commande_id], $response);
             } else {
