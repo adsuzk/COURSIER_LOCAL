@@ -169,6 +169,22 @@ fun CoursierScreenNew(
         }
     }
     
+    // État pour afficher le NavigationScreen en plein écran
+    var showNavigationScreen by remember { mutableStateOf(false) }
+    
+    // Ouvrir automatiquement la navigation quand la commande est acceptée
+    LaunchedEffect(deliveryStep) {
+        if (deliveryStep in listOf(
+            DeliveryStep.ACCEPTED,
+            DeliveryStep.EN_ROUTE_PICKUP,
+            DeliveryStep.PICKED_UP,
+            DeliveryStep.EN_ROUTE_DELIVERY,
+            DeliveryStep.DELIVERY_ARRIVED
+        )) {
+            showNavigationScreen = true
+        }
+    }
+    
     // Fonction pour réinitialiser vers prochaine commande
     fun resetToNextOrder() {
         // Désactiver l'ordre actif côté serveur (best-effort)
