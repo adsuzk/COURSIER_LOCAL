@@ -346,6 +346,27 @@ fun CoursesScreen(
                                 }
                             }
                         }
+                        DeliveryStep.ACCEPTED, DeliveryStep.EN_ROUTE_PICKUP -> {
+                            // Bouton pour démarrer Google Maps navigation vers le point d'enlèvement
+                            val context = androidx.compose.ui.platform.LocalContext.current
+                            Button(
+                                onClick = {
+                                    currentOrder?.coordonneesEnlevement?.let { pickup ->
+                                        val pickupLatLng = LatLng(pickup.latitude, pickup.longitude)
+                                        launchTurnByTurn(context, pickupLatLng)
+                                    }
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = PrimaryGold
+                                ),
+                                enabled = currentOrder?.coordonneesEnlevement != null
+                            ) {
+                                Icon(Icons.Filled.Navigation, contentDescription = null, tint = PrimaryDark)
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("Démarrer navigation (Enlèvement)", color = PrimaryDark, fontWeight = FontWeight.Bold)
+                            }
+                        }
                         DeliveryStep.PICKUP_ARRIVED -> {
                             Button(
                                 onClick = onPickupValidation,
