@@ -185,7 +185,7 @@
             state.isLocked = true;
         };
 
-        const unlockOrderForm = () => {
+        const unlockOrderForm = (opts = {}) => {
             const { container, form, locker, lockerMeta } = getOrderFormElements();
             if (container) {
                 container.classList.remove('order-form--locked');
@@ -202,8 +202,12 @@
                 lockerMeta.textContent = '';
             }
             state.isLocked = false;
-            state.meta = null;
-            state.pendingMessage = '';
+            if (!opts.preserveMeta) {
+                state.meta = null;
+            }
+            if (!opts.preserveMessage) {
+                state.pendingMessage = '';
+            }
         };
 
         window.setFCMCoursierStatus = function(isAvailable, message, options) {
