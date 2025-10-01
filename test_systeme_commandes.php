@@ -20,12 +20,11 @@ try {
         SELECT 
             a.id, a.nom, a.prenoms, a.matricule, a.telephone,
             a.statut_connexion, a.last_login_at,
-            COALESCE(a.solde_wallet, 0) as solde,
             COUNT(DISTINCT f.id) as nb_tokens_fcm,
             COUNT(DISTINCT CASE WHEN f.is_active = 1 THEN f.id END) as tokens_actifs
         FROM agents_suzosky a
         LEFT JOIN device_tokens f ON a.id = f.coursier_id
-        GROUP BY a.id, a.nom, a.prenoms, a.matricule, a.telephone, a.statut_connexion, a.last_login_at, a.solde_wallet
+        GROUP BY a.id, a.nom, a.prenoms, a.matricule, a.telephone, a.statut_connexion, a.last_login_at
         ORDER BY a.statut_connexion DESC, a.last_login_at DESC
     ");
     
@@ -34,11 +33,10 @@ try {
     
     foreach ($coursiers as $c) {
         $statut = $c['statut_connexion'] === 'en_ligne' ? '🟢' : '🔴';
-        $solde = $c['solde'] > 0 ? '💰' : '💸';
         $token = $c['tokens_actifs'] > 0 ? '📱✅' : '📱❌';
         
-        echo "$statut $solde $token {$c['nom']} {$c['prenoms']} (M:{$c['matricule']})\n";
-        echo "   Solde: {$c['solde']} FCFA | Tokens FCM: {$c['tokens_actifs']}/{$c['nb_tokens_fcm']}\n";
+        echo "$statut $token {$c['nom']} {$c['prenoms']} (M:{$c['matricule']})\n";
+        echo "   Tokens FCM: {$c['tokens_actifs']}/{$c['nb_tokens_fcm']}\n";
         echo "   Statut: {$c['statut_connexion']} | Dernière connexion: " . ($c['last_login_at'] ?? 'Jamais') . "\n\n";
         
         if ($c['statut_connexion'] === 'en_ligne') {
@@ -51,12 +49,11 @@ try {
     if (empty($coursiersEnLigne)) {
         echo "⚠️  AUCUN COURSIER EN LIGNE - Simulation de connexion...\n\n";
         
-        // Simuler connexion des 2 premiers coursiers avec solde
+        // Simuler connexion des 2 premiers coursiers
         $stmt = $pdo->prepare("
             UPDATE agents_suzosky 
             SET statut_connexion = 'en_ligne', 
                 last_login_at = NOW()
-            WHERE COALESCE(solde_wallet, 0) >= 100
             LIMIT 2
         ");
         $stmt->execute();
