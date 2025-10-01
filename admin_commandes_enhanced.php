@@ -82,19 +82,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'termi
             $update->execute([$commandeId]);
 
             if (!empty($commande['coursier_id'])) {
-                $checkTransaction = $pdo->prepare("SELECT COUNT(*) FROM transactions_financieres WHERE commande_id = ?");
+                // Vérifier si une transaction existe déjà pour cette commande
+                $checkTransaction = $pdo->prepare("SELECT COUNT(*) FROM transactions WHERE commande_id = ?");
                 $checkTransaction->execute([$commandeId]);
 
                 if ($checkTransaction->fetchColumn() == 0) {
+                    // Créer une transaction de paiement pour la course terminée
+                    $refTransaction = 'TRX-' . strtoupper(uniqid());
                     $insert = $pdo->prepare("
-                        INSERT INTO transactions_financieres (
-                            commande_id, coursier_id, montant, mode_paiement,
-                            type_transaction, statut, created_at
-                        ) VALUES (?, ?, ?, 'especes', 'livraison', 'completed', NOW())
+                        INSERT INTO transactions (
+                            commande_id, reference_transaction, montant, type_transaction,
+                            methode_paiement, statut, created_at
+                        ) VALUES (?, ?, ?, 'paiement', 'especes', 'success', NOW())
                     ");
                     $insert->execute([
                         $commandeId,
-                        $commande['coursier_id'],
+                        $refTransaction,
                         $commande['prix_estime'] ?? 0,
                     ]);
                 }
