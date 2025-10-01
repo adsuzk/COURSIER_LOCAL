@@ -652,10 +652,13 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                 telephoneDestinataire = toStringSafe(cmdMap["telephoneDestinataire"]),
                                 adresseEnlevement = toStringSafe(cmdMap["adresseEnlevement"]),
                                 adresseLivraison = toStringSafe(cmdMap["adresseLivraison"]),
+                                coordonneesEnlevement = null, // À implémenter plus tard
+                                coordonneesLivraison = null, // À implémenter plus tard
                                 distance = toDoubleSafe(cmdMap["distance"]).let { if (it.isFinite()) it else 0.0 },
                                 tempsEstime = toIntFromDistanceKm(cmdMap["distance"]),
                                 prixTotal = toDoubleSafe(cmdMap["prixLivraison"]).let { if (it.isFinite()) it else 0.0 },
                                 prixLivraison = toDoubleSafe(cmdMap["prixLivraison"]).let { if (it.isFinite()) it else 0.0 },
+                                methodePaiement = toStringSafe(cmdMap["methodePaiement"]).ifBlank { "especes" },
                                 // Ne pas forcer un statut test. Si vide, classer comme "inconnue" pour éviter faux positifs.
                                 statut = toStringSafe(cmdMap["statut"]).ifBlank { "inconnue" },
                                 // Éviter les labels de démo; utiliser les champs si présents, sinon vide
