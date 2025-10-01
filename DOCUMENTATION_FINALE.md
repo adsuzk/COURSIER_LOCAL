@@ -21,10 +21,12 @@
 
 ---
 
-## ⚙️ Mise à jour rapide — 29 Sept 2025 (actions appliquées)
+## ⚙️ Mise à jour rapide — 01 Oct 2025
 
-- Seuil de nettoyage des tokens FCM maintenu (`Scripts/Scripts cron/fcm_auto_cleanup.php`). **Un coursier est compté comme disponible lorsque son token est `is_active = 1` et que `last_ping` (ou `updated_at`) date de moins de 60 s**. Ce seuil reste ajustable via `FCM_AVAILABILITY_THRESHOLD_SECONDS` et peut être forcé en mode immédiat en définissant `FCM_IMMEDIATE_DETECTION=1`.
-- Comportement client : en cas d'absence de coursiers le formulaire affiche un message d'indisponibilité (injecté via `index.php`), lance un compte à rebours de 60 s avant verrouillage et propose un bouton « Actualiser ».
+- **Disponibilité FCM** : le formulaire reste ouvert tant qu'au moins un token possède `device_tokens.is_active = 1`. Le champ `seconds_since_last_active` n'est utilisé qu'en information ; le compte à rebours ne démarre plus qu'une fois `active_count = 0`.
+- **Nettoyage tokens FCM** : `Scripts/Scripts cron/fcm_auto_cleanup.php` est désormais en *dry-run* par défaut (aucune désactivation automatique). Utilisez `--apply` si vous devez purger manuellement des tokens invalides.
+- **Comportement client** : si aucun coursier n'est disponible (`active_count = 0`), le formulaire affiche le message d'indisponibilité, lance un compte à rebours de 60 s puis se verrouille. Dès qu'un seul coursier redevient actif, le formulaire se rouvre immédiatement.
+- **Protection commande publique** : lorsque l'utilisateur n'est pas connecté, le clic sur « Commander » ouvre la modale de connexion existante et aucune requête `/api/submit_order.php` n'est envoyée tant qu'aucune session client n'est active.
 - Documentation consolidée : les anciennes instructions concernant la détection de présence non-FCM ont été archivées. Les sections précédemment marquées "Obsolète" ont été déplacées dans l'historique et ne doivent plus être utilisées en production (voir la section "Éléments archivés").
 
 **Note migration DB :** La colonne `last_ping` a été ajoutée à la table `device_tokens` (migration appliquée). Chaque enregistrement ou rafraîchissement de token via `register_device_token_simple.php` met `last_ping = NOW()`. Les scripts de nettoyage FCM utilisent ce champ pour évaluer l'ancienneté. Côté index, un token fraîchement mis à jour (`last_ping` ≤ 60 s) ouvre le formulaire instantanément, tandis qu'un token inactif est compté dans `stale_active_count` et déclenche la fermeture automatique après 60 s sans activité.
@@ -78,8 +80,8 @@ VALUES ('TestAgent', 'Demo', 'test@demo.com', '+22501020304', 'hors_ligne', NOW(
 
 L’affichage du formulaire de commande sur l’index est piloté uniquement par la logique FCM :
 
-- Ouverture immédiate : le formulaire s'affiche dès qu'au moins un token FCM actif a un `last_ping` récent (≤ 60 s), que l'information arrive via FCM en temps réel ou via le poll backend.
-- Sécurité de fermeture : dès qu’il n’y a plus de token frais, un compte à rebours de 60 s démarre et le formulaire se ferme automatiquement à l’échéance si aucun coursier ne revient. Les tokens encore `is_active = 1` mais inactifs sont exposés via `stale_active_count` pour faciliter le diagnostic.
+- **Ouverture immédiate** : le formulaire s'affiche dès qu'au moins un token FCM est actif (`is_active = 1`), même si son `last_ping` date de plusieurs heures. Les champs `last_ping` / `seconds_since_last_active` servent uniquement aux messages d'information.
+- **Sécurité de fermeture** : si `active_count` retombe à zéro, un compte à rebours de 60 s démarre puis le formulaire se verrouille lorsqu'aucun coursier ne revient. Les tokens encore `is_active = 1` mais considérés comme obsolètes sont signalés via `stale_active_count` pour faciliter le diagnostic, sans fermer le formulaire.
 - La logique SQL/statut_connexion/last_login_at n’a aucune incidence sur l’affichage du formulaire.
 
 Seule la logique FCM gère la présence côté utilisateur. La logique SQL reste utilisée pour l’historique, l’audit et la maintenance, mais n’intervient pas dans l’UX.
@@ -106,10 +108,12 @@ Les scripts de maintenance peuvent par ailleurs valider activement les tokens vi
 
 ### ✅ Nettoyage tokens FCM — Exécution & sauvegarde
 
-- Le script `fcm_auto_cleanup.php` désactive automatiquement tout token FCM actif dont la fraîcheur (`last_ping` ou `updated_at`) dépasse 1 minute. Ce nettoyage est lancé chaque minute par le master cron.
-- Les exports de tokens et la validation active sont optionnels et réservés à l'audit ou à la maintenance avancée.
-
-Le script est safe-by-default (dry-run) : exécutez sans `--apply` pour simuler.
+- Le script `fcm_auto_cleanup.php` fonctionne en *dry-run* tant que l'option `--apply` n'est pas fournie : aucune désactivation n'est effectuée automatiquement par le master cron.
+- Pour analyser les tokens considérés comme obsolètes, exécutez le script sans option (ou avec `--dry-run`). Pour appliquer réellement les désactivations, lancez :
+    ```bash
+    php Scripts/Scripts\ cron/fcm_auto_cleanup.php --apply
+    ```
+- Les exports de tokens et la validation active (`fcm_validate_tokens.php`) restent optionnels et réservés à l'audit ou à la maintenance avancée.
 
 ---
 
