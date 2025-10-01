@@ -53,14 +53,20 @@ if ($argc > 1 && $argv[1] === 'clean') {
     if (empty($testIds)) {
         echo "Aucune commande de test à supprimer.\n";
     } else {
-        // D'abord, supprimer les transactions liées
+        // D'abord, supprimer les transactions liées (si la table existe)
         $placeholders = implode(',', array_fill(0, count($testIds), '?'));
         
-        echo "Suppression des transactions liées...\n";
-        $deleteTrans = $pdo->prepare("DELETE FROM coursier_transactions WHERE order_id IN ($placeholders)");
-        $deleteTrans->execute($testIds);
-        $transDeleted = $deleteTrans->rowCount();
-        echo "✓ $transDeleted transactions supprimées\n";
+        // Vérifier si la table coursier_transactions existe
+        $tables = $pdo->query("SHOW TABLES LIKE 'coursier_transactions'")->fetchAll();
+        if (!empty($tables)) {
+            echo "Suppression des transactions liées...\n";
+            $deleteTrans = $pdo->prepare("DELETE FROM coursier_transactions WHERE order_id IN ($placeholders)");
+            $deleteTrans->execute($testIds);
+            $transDeleted = $deleteTrans->rowCount();
+            echo "✓ $transDeleted transactions supprimées\n";
+        } else {
+            echo "⚠ Table coursier_transactions inexistante (ignorée)\n";
+        }
         
         // Ensuite, supprimer les commandes
         echo "Suppression des commandes de test...\n";
