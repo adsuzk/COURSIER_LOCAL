@@ -96,7 +96,7 @@ echo "   🕔 Livraison: " . ($final['heure_livraison'] ?? 'N/A') . "\n";
 echo "   ⏰ Dernière MAJ: {$final['updated_at']}\n\n";
 
 echo "💡 VÉRIFICATION MANUELLE:\n";
-echo "   🌐 Ouvrir: https://localhost/COURSIER_LOCAL/index.php\n";
+echo "   🌐 Ouvrir: http://localhost/COURSIER_LOCAL/\n";
 echo "   🔍 Chercher commande: {$commande['code_commande']}\n";
 echo "   📊 Vérifier que le statut affiche: {$final['statut']}\n";
 echo "   ⏱️  Vérifier que la timeline est mise à jour\n\n";
