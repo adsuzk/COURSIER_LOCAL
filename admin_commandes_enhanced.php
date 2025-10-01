@@ -330,39 +330,27 @@ function renderCommandesContent(array $commandes): string
             $isActive = in_array($statut, ['attribuee', 'acceptee', 'en_cours'], true);
             $isCompleted = in_array($statut, ['livree', 'annulee'], true);
 
-            // Sécurisation des IDs pour éviter erreurs JS
-            $safeCommandeId = (int) $commande['id'];
-            $safeCoursierId = !empty($commande['coursier_id']) ? (int) $commande['coursier_id'] : 0;
-            $safeCoursierId_JS = $safeCoursierId > 0 ? $safeCoursierId : 'null';
-
+            // Détermination du statut pour affichage simple
+            $infoLabel = '';
+            $infoClass = '';
+            $infoIcon = '';
+            
             if (!$hasCoursier) {
-                $trackClass = 'btn-track disabled';
-                $trackLabel = 'Pas de coursier';
-                $trackIcon = 'ban';
-                $trackTitle = "Aucun coursier assigné";
-                $trackAction = 'showTrackingUnavailable(); return false;';
-                $trackDisabled = 'disabled';
+                $infoLabel = 'Pas de coursier';
+                $infoClass = 'status-warning';
+                $infoIcon = 'exclamation-circle';
             } elseif ($isActive) {
-                $trackClass = 'btn-track live';
-                $trackLabel = 'Tracking Live';
-                $trackIcon = 'satellite';
-                $trackTitle = 'Suivi en temps réel';
-                $trackAction = "openTrackingModal({$safeCommandeId}, {$safeCoursierId_JS}, 'live');";
-                $trackDisabled = '';
+                $infoLabel = 'En cours';
+                $infoClass = 'status-active';
+                $infoIcon = 'spinner fa-spin';
             } elseif ($isCompleted) {
-                $trackClass = 'btn-track history';
-                $trackLabel = 'Historique';
-                $trackIcon = 'history';
-                $trackTitle = 'Consulter la course';
-                $trackAction = "openTrackingModal({$safeCommandeId}, {$safeCoursierId_JS}, 'history');";
-                $trackDisabled = '';
+                $infoLabel = 'Terminée';
+                $infoClass = 'status-completed';
+                $infoIcon = 'check-circle';
             } else {
-                $trackClass = 'btn-track pending';
-                $trackLabel = 'En attente';
-                $trackIcon = 'clock';
-                $trackTitle = 'Commande en attente';
-                $trackAction = "openTrackingModal({$safeCommandeId}, {$safeCoursierId_JS}, 'pending');";
-                $trackDisabled = '';
+                $infoLabel = 'En attente';
+                $infoClass = 'status-pending';
+                $infoIcon = 'clock';
             }
 
             $rawStatus = $commande['coursier_status'] ?? '';
@@ -433,22 +421,22 @@ function renderCommandesContent(array $commandes): string
                 </div>
 
                 <div class="commande-actions">
-                    <button class="<?= $trackClass ?>" title="<?= htmlspecialchars($trackTitle, ENT_QUOTES) ?>" onclick="<?= $trackAction ?>" <?= $trackDisabled ?>>
-                        <i class="fas fa-<?= $trackIcon ?>"></i>
-                        <?= $trackLabel ?>
-                    </button>
+                    <div class="info-badge <?= $infoClass ?>">
+                        <i class="fas fa-<?= $infoIcon ?>"></i>
+                        <span><?= $infoLabel ?></span>
+                    </div>
 
-                    <?php if (!$isCompleted): ?>
-                        <form method="POST" onsubmit="return confirm('Confirmer la terminaison de cette commande ?');">
+                    <?php if (!$isCompleted && $hasCoursier): ?>
+                        <form method="POST" onsubmit="return confirm('⚠️ Êtes-vous sûr de vouloir terminer cette commande maintenant ?\n\nCette action est irréversible.');" style="display: inline-block;">
                             <input type="hidden" name="action" value="terminate_order">
                             <input type="hidden" name="commande_id" value="<?= (int) $commande['id'] ?>">
-                            <button class="btn-terminate" type="submit">
-                                <i class="fas fa-check"></i> Terminer manuellement
+                            <button class="btn-terminate" type="submit" title="Marquer comme terminée">
+                                <i class="fas fa-check-double"></i> Terminer la course
                             </button>
                         </form>
-                    <?php else: ?>
-                        <div style="color: var(--success-green); font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
-                            <i class="fas fa-check-circle"></i> Commande terminée
+                    <?php elseif ($isCompleted): ?>
+                        <div class="badge-completed">
+                            <i class="fas fa-check-circle"></i> <strong>Course terminée</strong>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -1822,69 +1810,7 @@ body.admin-commandes-page {
     </div>
 </div>
 
-<div id="trackingModal" class="tracking-modal" role="dialog" aria-modal="true" aria-labelledby="trackingTitle">
-    <div class="modal-card">
-        <header>
-            <div>
-                <h2 id="trackingTitle">Tracking commande</h2>
-                <small id="trackingSubtitle">Initialisation...</small>
-            </div>
-            <button class="modal-close-btn" type="button" onclick="closeTrackingModal()" aria-label="Fermer le tracking">
-                <i class="fas fa-times"></i>
-            </button>
-        </header>
-        <div class="modal-tabs">
-            <button type="button" class="active" data-tab="overview" onclick="switchTrackingTab('overview')">Vue d'ensemble</button>
-            <button type="button" data-tab="map" onclick="switchTrackingTab('map')">Carte</button>
-            <button type="button" data-tab="timeline" onclick="switchTrackingTab('timeline')">Timeline</button>
-        </div>
-        <div class="modal-body">
-            <div id="tab-overview" class="modal-tab active">
-                <div class="overview-grid">
-                    <div class="overview-card">
-                        <h5>Coursier</h5>
-                        <div id="trackingCourier">Chargement...</div>
-                    </div>
-                    <div class="overview-card">
-                        <h5>File d'attente</h5>
-                        <div id="trackingQueue">-</div>
-                    </div>
-                    <div class="overview-card">
-                        <h5>Estimations</h5>
-                        <div id="trackingEstimates">-</div>
-                    </div>
-                    <div class="overview-card">
-                        <h5>Détails commande</h5>
-                        <div id="trackingDetails">-</div>
-                    </div>
-                </div>
-                <div style="margin-top: 18px; display: flex; gap: 12px;">
-                    <button class="button button-primary" type="button" onclick="refreshTracking()"><i class="fas fa-sync-alt"></i> Actualiser</button>
-                    <button class="button button-secondary" type="button" onclick="switchTrackingTab('map')"><i class="fas fa-map"></i> Voir la carte</button>
-                </div>
-            </div>
-            <div id="tab-map" class="modal-tab">
-                <div class="map-container">
-                    <div id="trackingMap"></div>
-                </div>
-            </div>
-            <div id="tab-timeline" class="modal-tab">
-                <div class="timeline" id="trackingTimeline">
-                    <div>Aucune donnée disponible.</div>
-                </div>
-            </div>
-        </div>
-        <div class="sync-row">
-            <div class="sync-indicator">
-                <span class="sync-dot"></span>
-                <span id="trackingSync">Synchronisation...</span>
-            </div>
-            <div id="trackingLastUpdate" style="font-size: 13px; color: rgba(226,232,240,0.65);">
-                Dernière mise à jour : --:--:--
-            </div>
-        </div>
-    </div>
-</div>
+<!-- Modal supprimé - système simplifié sans tracking complexe -->
 
 <?php $mapsApiKey = defined('GOOGLE_MAPS_API_KEY') ? GOOGLE_MAPS_API_KEY : (getenv('GOOGLE_MAPS_API_KEY') ?: ''); ?>
 
