@@ -230,45 +230,6 @@ fun CoursierScreenNew(
                                         Toast.makeText(context, message ?: "Erreur", Toast.LENGTH_LONG).show()
                                     }
                                 }
-                                    ApiService.setActiveOrder(coursierId, order.id, active = true) { activeOk ->
-                                        if (!activeOk) {
-                                            timelineBanner = TimelineBanner(
-                                                message = "Impossible d'activer le suivi en direct pour le client maintenant.",
-                                                severity = BannerSeverity.WARNING,
-                                                actionLabel = "Réessayer",
-                                                onAction = {
-                                                    bannerVersion++
-                                                    ApiService.setActiveOrder(coursierId, order.id, active = true) { ok2 ->
-                                                        if (ok2) timelineBanner = null
-                                                    }
-                                                }
-                                            )
-                                            Toast.makeText(context, "Impossible d'activer le suivi live maintenant", Toast.LENGTH_SHORT).show()
-                                        }
-                                    }
-                                    if (DeliveryStatusMapper.requiresApiCall(DeliveryStep.ACCEPTED)) {
-                                        val serverStatus = DeliveryStatusMapper.mapStepToServerStatus(DeliveryStep.ACCEPTED)
-                                        ApiService.updateOrderStatus(order.id, serverStatus) { success ->
-                                            if (success) {
-                                                timelineBanner = null
-                                                Toast.makeText(context, DeliveryStatusMapper.getSuccessMessage(DeliveryStep.ACCEPTED, order.methodePaiement), Toast.LENGTH_SHORT).show()
-                                            } else {
-                                                timelineBanner = TimelineBanner(
-                                                    message = "Statut 'Acceptée' non synchronisé avec le serveur.",
-                                                    severity = BannerSeverity.ERROR,
-                                                    actionLabel = "Réessayer",
-                                                    onAction = {
-                                                        bannerVersion++
-                                                        ApiService.updateOrderStatus(order.id, serverStatus) { ok2 ->
-                                                            if (ok2) timelineBanner = null
-                                                        }
-                                                    }
-                                                )
-                                                Toast.makeText(context, "Erreur synchronisation serveur", Toast.LENGTH_SHORT).show()
-                                            }
-                                        }
-                                    }
-                                }
                             }
                         },
                         onRejectOrder = {
