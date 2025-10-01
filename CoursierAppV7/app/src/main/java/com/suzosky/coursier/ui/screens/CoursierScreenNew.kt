@@ -74,6 +74,18 @@ fun CoursierScreenNew(
     // Service de notification sonore
     val notificationService = remember { NotificationSoundService(context) }
     
+    // ViewModel pour la localisation en temps réel
+    val mapViewModel: MapViewModel = hiltViewModel()
+    val mapUi by mapViewModel.uiState.collectAsState()
+    
+    // Démarrer le suivi de localisation
+    LaunchedEffect(Unit) {
+        mapViewModel.startLocationTracking()
+    }
+    
+    // Extraire la position du coursier
+    val courierLocation = mapUi.myLocation
+    
     // État pour tracker les nouvelles commandes et déclencher le son
     var previousCommandesCount by remember { mutableStateOf(commandes.size) }
     var hasNewOrder by remember { mutableStateOf(false) }
