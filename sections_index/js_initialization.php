@@ -258,6 +258,7 @@ function debounce(func, wait, immediate) {
                             if (typeof window.setFCMCoursierStatus === 'function') {
                                 window.setFCMCoursierStatus(Boolean(j.available), j.message || '', {
                                     origin: 'poll',
+                                    applyForGuests: true, // Appliquer aussi pour les visiteurs
                                     lockDelayMs: (typeof j.lock_delay_seconds === 'number' && j.lock_delay_seconds > 0) ? j.lock_delay_seconds * 1000 : undefined,
                                     meta: {
                                         activeCount: typeof j.active_count === 'number' ? j.active_count : null,
