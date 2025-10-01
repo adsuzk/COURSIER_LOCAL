@@ -219,13 +219,18 @@ try {
 	
 	// ⚡ ATTRIBUTION AUTOMATIQUE + NOTIFICATION FCM
 	try {
-		// Rechercher un coursier connecté et disponible
+		// CORRECTION: Rechercher un coursier avec token FCM actif (priorité en_ligne, puis hors_ligne)
 		$stmtCoursier = $pdo->query("
-			SELECT id, nom, prenoms, matricule, telephone
-			FROM agents_suzosky 
-			WHERE statut_connexion = 'en_ligne' 
-			AND status = 'actif'
-			ORDER BY last_login_at DESC
+			SELECT a.id, a.nom, a.prenoms, a.matricule, a.telephone, a.statut_connexion,
+			       COUNT(dt.token) as active_tokens
+			FROM agents_suzosky a
+			LEFT JOIN device_tokens dt ON dt.coursier_id = a.id AND dt.is_active = 1
+			WHERE a.status = 'actif'
+			GROUP BY a.id
+			HAVING active_tokens > 0
+			ORDER BY 
+			    CASE WHEN a.statut_connexion = 'en_ligne' THEN 1 ELSE 2 END,
+			    a.last_login_at DESC
 			LIMIT 1
 		");
 		$coursier = $stmtCoursier->fetch(PDO::FETCH_ASSOC);
