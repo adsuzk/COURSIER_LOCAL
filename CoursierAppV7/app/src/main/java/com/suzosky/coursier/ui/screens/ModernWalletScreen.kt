@@ -515,10 +515,10 @@ fun TransactionItem(transaction: Transaction) {
 }
 
 /**
- * Dialog de recharge
+ * Dialog de recharge pour le portefeuille
  */
 @Composable
-fun RechargeDialog(
+fun WalletRechargeDialog(
     onDismiss: () -> Unit,
     onConfirm: (Int) -> Unit
 ) {
