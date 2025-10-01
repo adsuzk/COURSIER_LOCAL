@@ -300,6 +300,27 @@ fun CoursierScreenNew(
                                 }
                             }
                         },
+                        onStartDelivery = {
+                            currentOrder?.let { order ->
+                                Toast.makeText(context, "Démarrage de la livraison...", Toast.LENGTH_SHORT).show()
+                                onStartDelivery(order.id)
+                                deliveryStep = DeliveryStep.EN_ROUTE_PICKUP
+                            }
+                        },
+                        onPickupPackage = {
+                            currentOrder?.let { order ->
+                                Toast.makeText(context, "Colis récupéré!", Toast.LENGTH_SHORT).show()
+                                onPickupPackage(order.id)
+                                deliveryStep = DeliveryStep.PICKED_UP
+                            }
+                        },
+                        onMarkDelivered = {
+                            currentOrder?.let { order ->
+                                Toast.makeText(context, "Commande livrée!", Toast.LENGTH_SHORT).show()
+                                onMarkDelivered(order.id)
+                                deliveryStep = DeliveryStep.DELIVERED
+                            }
+                        },
                         onPickupValidation = {
                             currentOrder?.let { order ->
                                 deliveryStep = DeliveryStep.PICKED_UP
