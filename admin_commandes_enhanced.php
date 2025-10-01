@@ -1798,68 +1798,11 @@ body.admin-commandes-page {
 
 <!-- Modal supprimé - système simplifié sans tracking complexe -->
 
-<?php $mapsApiKey = defined('GOOGLE_MAPS_API_KEY') ? GOOGLE_MAPS_API_KEY : (getenv('GOOGLE_MAPS_API_KEY') ?: ''); ?>
-
 <script>
-const ADMIN_MAPS_API_KEY = <?= json_encode($mapsApiKey) ?>;
-window.GOOGLE_MAPS_API_KEY = ADMIN_MAPS_API_KEY || '';
-const TRACKING_DEFAULT_CENTER = { lat: 5.359951, lng: -4.008256 };
-
-function escapeHtml(value) {
-    if (value === undefined || value === null) {
-        return '';
-    }
-    return String(value)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-}
-
-function formatDateTime(value) {
-    if (!value) {
-        return '--';
-    }
-    const dt = new Date(value);
-    if (Number.isNaN(dt.getTime())) {
-        return value;
-    }
-    return dt.toLocaleString('fr-FR', { hour12: false });
-}
-
-function humanizeStatus(status) {
-    if (!status) return '';
-    const normalized = String(status).toLowerCase();
-    const map = {
-        'nouvelle': 'Nouvelle commande',
-        'en_attente': 'En attente',
-        'pending': 'En attente',
-        'assignee': 'Coursier assigné',
-        'acceptee': 'Acceptée',
-        'en_cours': 'En cours de livraison',
-        'livree': 'Livrée',
-        'delivered': 'Livrée',
-        'annulee': 'Annulée',
-        'annule': 'Annulée'
-    };
-    return map[normalized] || status.replace(/_/g, ' ');
-}
-
-let trackingModal = null;
-let currentCommandeId = null;
-let trackingTimer = null;
-let trackingIntervalMs = 20000;
-let trackingMapInstance = null;
-let trackingMarker = null;
-let trackingPickupMarker = null;
-let trackingDropoffMarker = null;
-let googleMapsScriptLoading = false;
-let googleMapsInitQueue = [];
+// ✅ SYSTÈME SIMPLIFIÉ - Focus sur synchronisation et actions essentielles
+console.log('✅ Admin commandes - Initialisation système simplifié');
 
 document.addEventListener('DOMContentLoaded', () => {
-    trackingModal = document.getElementById('trackingModal');
-
     const filterForm = document.getElementById('commandesFilterForm');
     const statsContainer = document.getElementById('statsContainer');
     const coursiersContainer = document.getElementById('coursiersContainer');
