@@ -217,6 +217,8 @@ fun CoursierScreenNew(
             it.statut == "recuperee" ||
             it.statut == "livree"
         }
+        android.util.Log.d("CoursierScreenNew", "📋 currentOrder sélectionnée: ${currentOrder?.id} (statut: ${currentOrder?.statut})")
+        android.util.Log.d("CoursierScreenNew", "📊 Commandes disponibles: ${commandes.map { "ID=${it.id} statut=${it.statut}" }}")
         // Mapper le statut de la commande au deliveryStep approprié
         deliveryStep = when (currentOrder?.statut) {
             "nouvelle", "attente" -> DeliveryStep.PENDING
