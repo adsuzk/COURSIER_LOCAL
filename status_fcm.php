@@ -364,6 +364,7 @@ if ($pdo) {
         <ol>
           <li>Installez/lancez l'app coursier en mode debug.</li>
           <li>Assurez-vous d'avoir le VRAI <code>google-services.json</code> côté Android.</li>
+      <li>Assurez-vous d'avoir le VRAI <code>google-services.json</code> côté Android (fichier canonique : <code>CoursierAppV7/app/google-services.json</code>).</li>
           <li>Autorisez la permission Notifications sur le téléphone.</li>
           <li>Connectez-vous avec <strong>CM20250001 / g4mKU</strong> pour enregistrer le token.</li>
           <li>Revenez ici: la page se rafraîchit toutes les 15s.</li>
