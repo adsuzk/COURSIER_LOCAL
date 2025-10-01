@@ -645,6 +645,22 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                     Log.d("MainActivity", "Commandes data received: ${commandesData.size} orders")
                     commandesReelles = try {
                         commandesData.map { cmdMap ->
+                            // Extraire les coordonnées GPS
+                            val latEnlevement = toDoubleSafe(cmdMap["latitudeEnlevement"])
+                            val lonEnlevement = toDoubleSafe(cmdMap["longitudeEnlevement"])
+                            val latLivraison = toDoubleSafe(cmdMap["latitudeLivraison"])
+                            val lonLivraison = toDoubleSafe(cmdMap["longitudeLivraison"])
+                            
+                            val coordEnlevement = if (latEnlevement != 0.0 && lonEnlevement != 0.0 && 
+                                                       latEnlevement.isFinite() && lonEnlevement.isFinite()) {
+                                com.suzosky.coursier.data.models.Coordonnees(latEnlevement, lonEnlevement)
+                            } else null
+                            
+                            val coordLivraison = if (latLivraison != 0.0 && lonLivraison != 0.0 && 
+                                                     latLivraison.isFinite() && lonLivraison.isFinite()) {
+                                com.suzosky.coursier.data.models.Coordonnees(latLivraison, lonLivraison)
+                            } else null
+                            
                             Commande(
                                 id = toStringSafe(cmdMap["id"]),
                                 clientNom = toStringSafe(cmdMap["clientNom"]),
@@ -652,8 +668,8 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                 telephoneDestinataire = toStringSafe(cmdMap["telephoneDestinataire"]),
                                 adresseEnlevement = toStringSafe(cmdMap["adresseEnlevement"]),
                                 adresseLivraison = toStringSafe(cmdMap["adresseLivraison"]),
-                                coordonneesEnlevement = null, // À implémenter plus tard
-                                coordonneesLivraison = null, // À implémenter plus tard
+                                coordonneesEnlevement = coordEnlevement,
+                                coordonneesLivraison = coordLivraison,
                                 distance = toDoubleSafe(cmdMap["distance"]).let { if (it.isFinite()) it else 0.0 },
                                 tempsEstime = toIntFromDistanceKm(cmdMap["distance"]),
                                 prixTotal = toDoubleSafe(cmdMap["prixLivraison"]).let { if (it.isFinite()) it else 0.0 },
