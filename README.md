@@ -116,8 +116,19 @@ cp config.example.php config.php
 mysql -u root -p < database/schema.sql
 
 # 4. Configurer CinetPay
-# Éditer cinetpay/config.php avec vos clés API
+# Les credentials sont déjà dans config.php
+# API Key: 8338609805877a8eaac7eb6.01734650
+# Site ID: 5875732
+# Secret Key: 830006136690110164ddb1.29156844
 ```
+
+### 2. Accéder au Site
+
+```
+http://localhost/COURSIER_LOCAL/
+```
+
+**IMPORTANT** : L'URL se termine par `/` (pas de `index.php` !)
 
 ### 2. Configuration Firebase
 
