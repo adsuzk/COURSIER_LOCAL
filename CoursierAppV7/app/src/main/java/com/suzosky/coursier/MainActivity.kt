@@ -42,6 +42,12 @@ import okhttp3.Response
 import java.io.IOException
 import dagger.hilt.android.AndroidEntryPoint
 import com.google.firebase.messaging.FirebaseMessaging
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.suzosky.coursier.messaging.FCMService
 
 // Fonction utilitaire pour désactiver le token FCM côté serveur
 fun deactivateFcmTokenOnServer(context: android.content.Context) {
@@ -135,6 +141,9 @@ class MainActivity : ComponentActivity() {
                     requestPermissions(permissionsToRequest.toTypedArray(), 1001)
                 }
             }
+            
+            // Configuration du BroadcastReceiver pour les nouvelles commandes
+            setupCommandeReceiver()
             
             // Démarrer le service de mise à jour automatique avec protection Android 14
             val canStartService = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
