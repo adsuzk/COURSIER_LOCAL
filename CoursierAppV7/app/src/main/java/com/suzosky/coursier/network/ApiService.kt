@@ -1363,23 +1363,70 @@ object ApiService {
      * Ping instantané pour signaler que le coursier est en ligne
      * Met à jour last_ping pour déclencher l'ouverture immédiate du formulaire
      */
-    fun pingDeviceToken(context: Context, token: String? = null) {
-        val finalToken = token ?: run {
-            val prefs = context.getSharedPreferences("suzosky_prefs", Context.MODE_PRIVATE)
-            prefs.getString("fcm_token", null)
-        }
-        
+    fun pingDeviceToken(context: Context, token: String? = null, attempt: Int = 0) {
+        val prefs = context.getSharedPreferences("suzosky_prefs", Context.MODE_PRIVATE)
+        val finalToken = token ?: prefs.getString("fcm_token", null)
+
         if (finalToken.isNullOrBlank()) {
             android.util.Log.w("ApiService", "🚨 pingDeviceToken: Aucun token disponible")
             return
         }
 
-        android.util.Log.d("ApiService", "🚀 pingDeviceToken START - Token: ${finalToken.substring(0, 20)}...")
-        
+        val coursierId = prefs.getInt("coursier_id", -1)
+        if (coursierId <= 0) {
+            android.util.Log.w(
+                "ApiService",
+                "🚨 pingDeviceToken: Aucun coursier_id stocké (attempt=$attempt), récupération session..."
+            )
+
+            if (attempt == 0) {
+                checkCoursierSession { id, err ->
+                    if (id != null && id > 0) {
+                        try {
+                            prefs.edit { putInt("coursier_id", id) }
+                        } catch (_: Exception) {
+                        }
+                        android.util.Log.d(
+                            "ApiService",
+                            "✅ pingDeviceToken: coursier_id=$id récupéré via session"
+                        )
+                        val refreshedToken = prefs.getString("fcm_token", finalToken)
+                        if (!refreshedToken.isNullOrBlank()) {
+                            pingDeviceToken(context, refreshedToken, attempt + 1)
+                        } else {
+                            android.util.Log.w(
+                                "ApiService",
+                                "🚨 pingDeviceToken: Token introuvable après récupération session"
+                            )
+                        }
+                    } else {
+                        android.util.Log.e(
+                            "ApiService",
+                            "❌ pingDeviceToken: session invalide, coursier_id indisponible (${err ?: "inconnu"})"
+                        )
+                    }
+                }
+            } else {
+                android.util.Log.e(
+                    "ApiService",
+                    "❌ pingDeviceToken: coursier_id toujours manquant après récupération session"
+                )
+            }
+            return
+        }
+
+        android.util.Log.d(
+            "ApiService",
+            "🚀 pingDeviceToken START - coursier_id=$coursierId, token=${finalToken.substring(0, 20)}..."
+        )
+
         val form = FormBody.Builder()
+            .add("coursier_id", coursierId.toString())
             .add("token", finalToken)
+            .add("platform", "android")
+            .add("app_version", BuildConfig.VERSION_NAME)
             .build()
-            
+
         executeWithFallback(
             buildRequest = { base ->
                 val pingUrl = buildApi(base, "ping_device_token.php")
