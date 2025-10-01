@@ -327,7 +327,7 @@ function renderCommandesContent(array $commandes): string
             $statut = $commande['statut'] ?? 'nouvelle';
             $statusClass = 'status-' . preg_replace('/[^a-z0-9_]/i', '_', $statut);
             $hasCoursier = !empty($commande['coursier_id']);
-            $isActive = in_array($statut, ['assignee', 'en_cours'], true);
+            $isActive = in_array($statut, ['attribuee', 'acceptee', 'en_cours'], true);
             $isCompleted = in_array($statut, ['livree', 'annulee'], true);
 
             if (!$hasCoursier) {
