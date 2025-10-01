@@ -35,8 +35,8 @@ try {
         'apikey' => CINETPAY_API_KEY,
         'site_id' => CINETPAY_SITE_ID,
         'notify_url' => $baseUrl . '/COURSIER_LOCAL/api/cinetpay_callback.php',
-        'return_url' => $baseUrl . '/COURSIER_LOCAL/index.php?payment_success=1',
-        'cancel_url' => $baseUrl . '/COURSIER_LOCAL/index.php?payment_cancelled=1',
+        'return_url' => $baseUrl . '/COURSIER_LOCAL/?payment_success=1',
+        'cancel_url' => $baseUrl . '/COURSIER_LOCAL/?payment_cancelled=1',
     ];
     
     // Préparer la requête CinetPay
