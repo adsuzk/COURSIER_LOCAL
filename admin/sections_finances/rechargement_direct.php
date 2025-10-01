@@ -81,20 +81,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                         
                         $result = $fcm->envoyerNotification($token, $title, $body, $data);
                         
-                        // Log détaillé de la notification FCM
-                        $stmt = $pdo->prepare("
-                            INSERT INTO notifications_log_fcm 
-                            (coursier_id, token_used, message, type, status, response_data, created_at)
-                            VALUES (?, ?, ?, 'wallet_recharge', ?, ?, NOW())
-                        ");
-                        
-                        $stmt->execute([
-                            $coursier_id, 
-                            $token, 
-                            $body,
-                            $result['success'] ? 'sent' : 'failed',
-                            json_encode($result)
-                        ]);
+                        // Log détaillé de la notification FCM en fonction de la structure disponible
+                        $logStatus = $result['success'] ? 'sent' : 'failed';
+                        $logPayload = [
+                            'coursier_id' => $coursier_id,
+                            'token_used' => $token,
+                            'message' => $body,
+                            'type' => 'wallet_recharge',
+                            'status' => $logStatus,
+                            'response_data' => json_encode($result, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+                        ];
+                        logFcmNotification($pdo, $logPayload);
                         
                         if ($result['success']) {
                             $notificationsSent++;
