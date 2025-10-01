@@ -2164,26 +2164,9 @@ function closeCoursierModal(event) {
     }
 }
 
-function startTrackingInterval(intervalMs) {
-    if (trackingTimer) {
-        clearInterval(trackingTimer);
-    }
-    trackingIntervalMs = intervalMs;
-    trackingTimer = setInterval(fetchTrackingData, trackingIntervalMs);
-}
-
-function applyRefreshInterval(seconds) {
-    const numeric = Number(seconds);
-    if (!Number.isFinite(numeric) || numeric <= 0) {
-        return;
-    }
-    const intervalMs = Math.max(10000, Math.round(numeric * 1000));
-    if (intervalMs !== trackingIntervalMs) {
-        startTrackingInterval(intervalMs);
-    }
-}
-
-function openTrackingModal(commandeId, coursierId, mode) {
+// ✅ FIN DU SYSTÈME SIMPLIFIÉ
+console.log('✅ Admin commandes - Système simplifié prêt');
+});
     console.log('🔍 openTrackingModal appelée:', { commandeId, coursierId, mode });
     
     // Validation des paramètres
