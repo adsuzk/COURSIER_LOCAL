@@ -166,41 +166,18 @@ fun WalletHeader(
                 
                 Spacer(modifier = Modifier.height(20.dp))
                 
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.fillMaxWidth()
+                // Bouton Recharger seul, pleine largeur
+                Button(
+                    onClick = onRecharge,
+                    modifier = Modifier.fillMaxWidth().height(56.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = PrimaryDark
+                    ),
+                    shape = RoundedCornerShape(16.dp)
                 ) {
-                    // Bouton Recharger
-                    Button(
-                        onClick = onRecharge,
-                        modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = PrimaryDark
-                        ),
-                        shape = RoundedCornerShape(16.dp)
-                    ) {
-                        Icon(Icons.Filled.Add, contentDescription = null, tint = PrimaryGold)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Recharger", color = PrimaryGold, fontWeight = FontWeight.Bold)
-                    }
-                    
-                    // Bouton Retirer
-                    OutlinedButton(
-                        onClick = onRetrait,
-                        modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = PrimaryDark
-                        ),
-                        shape = RoundedCornerShape(16.dp),
-                        border = ButtonDefaults.outlinedButtonBorder.copy(
-                            width = 2.dp,
-                            brush = SolidColor(PrimaryDark)
-                        )
-                    ) {
-                        Icon(Icons.Filled.AccountBalance, contentDescription = null)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Retirer", fontWeight = FontWeight.Bold)
-                    }
+                    Icon(Icons.Filled.Add, contentDescription = null, tint = PrimaryGold, modifier = Modifier.size(24.dp))
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text("💳 Recharger mon compte", color = PrimaryGold, fontWeight = FontWeight.Bold, fontSize = 16.sp)
                 }
             }
         }
@@ -324,14 +301,7 @@ fun QuickActions(
             QuickActionCard(
                 icon = Icons.Filled.Receipt,
                 label = "Factures",
-                onClick = { /* TODO */ },
-                modifier = Modifier.weight(1f)
-            )
-            
-            QuickActionCard(
-                icon = Icons.Filled.Help,
-                label = "Aide",
-                onClick = { /* TODO */ },
+                onClick = onHistorique,
                 modifier = Modifier.weight(1f)
             )
         }
@@ -523,6 +493,8 @@ fun WalletRechargeDialog(
     onConfirm: (Int) -> Unit
 ) {
     var selectedAmount by remember { mutableStateOf(0) }
+    var customAmount by remember { mutableStateOf("") }
+    var isCustomMode by remember { mutableStateOf(false) }
     val amounts = listOf(1000, 2000, 5000, 10000, 20000, 50000)
     
     AlertDialog(
@@ -537,37 +509,67 @@ fun WalletRechargeDialog(
         text = {
             Column {
                 Text(
-                    "Sélectionnez le montant à recharger :",
+                    "Sélectionnez ou saisissez un montant :",
                     fontSize = 14.sp,
                     color = Color.White.copy(alpha = 0.8f)
                 )
                 
                 Spacer(modifier = Modifier.height(16.dp))
                 
-                amounts.chunked(2).forEach { rowAmounts ->
+                // Montants prédéfinis
+                amounts.chunked(3).forEach { rowAmounts ->
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         rowAmounts.forEach { amount ->
                             Button(
-                                onClick = { selectedAmount = amount },
+                                onClick = {
+                                    selectedAmount = amount
+                                    isCustomMode = false
+                                    customAmount = ""
+                                },
                                 modifier = Modifier.weight(1f),
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = if (selectedAmount == amount) PrimaryGold else GlassBg
+                                    containerColor = if (selectedAmount == amount && !isCustomMode) PrimaryGold else GlassBg
                                 ),
                                 shape = RoundedCornerShape(12.dp)
                             ) {
                                 Text(
                                     "${amount.formatCurrency()} F",
-                                    fontSize = 12.sp,
-                                    color = if (selectedAmount == amount) PrimaryDark else Color.White
+                                    fontSize = 11.sp,
+                                    color = if (selectedAmount == amount && !isCustomMode) PrimaryDark else Color.White
                                 )
                             }
                         }
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                 }
+                
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                // Champ de saisie manuelle
+                OutlinedTextField(
+                    value = customAmount,
+                    onValueChange = {
+                        if (it.all { char -> char.isDigit() }) {
+                            customAmount = it
+                            isCustomMode = it.isNotEmpty()
+                            selectedAmount = it.toIntOrNull() ?: 0
+                        }
+                    },
+                    label = { Text("Montant personnalisé (FCFA)", color = Color.White.copy(alpha = 0.7f)) },
+                    placeholder = { Text("Ex: 15000") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = PrimaryGold,
+                        unfocusedBorderColor = Color.White.copy(alpha = 0.3f),
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White
+                    ),
+                    singleLine = true
+                )
             }
         },
         confirmButton = {
