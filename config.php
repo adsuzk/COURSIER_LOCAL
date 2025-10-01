@@ -334,3 +334,11 @@ function getCinetPayConfig(): array {
         'endpoint'   => 'https://api-checkout.cinetpay.com/v2/payment'
     ];
 }
+
+/**
+ * Google Maps API Key pour le tracking en temps réel
+ * Peut être remplacée par une variable d'environnement GOOGLE_MAPS_API_KEY
+ */
+if (!defined('GOOGLE_MAPS_API_KEY')) {
+    define('GOOGLE_MAPS_API_KEY', getenv('GOOGLE_MAPS_API_KEY') ?: 'AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8');
+}
