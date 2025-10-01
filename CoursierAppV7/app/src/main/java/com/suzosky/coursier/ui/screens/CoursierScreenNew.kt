@@ -62,6 +62,7 @@ fun CoursierScreenNew(
     onStartDelivery: (String) -> Unit = {},
     onPickupPackage: (String) -> Unit = {},
     onMarkDelivered: (String) -> Unit = {},
+    onConfirmCash: (String) -> Unit = {},
     onNavigateToProfile: () -> Unit = {},
     onNavigateToHistorique: () -> Unit = {},
     onNavigateToGains: () -> Unit = {},
