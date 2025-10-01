@@ -181,12 +181,12 @@ try {
     
     echo "=== DONNÉES COMMANDE POUR L'APP ===\n";
     echo "ID Commande: $orderId\n";
-    echo "Départ: {$commandeData['lieu_depart']}\n";
-    echo "Destination: {$commandeData['lieu_destination']}\n";
-    echo "Client: Client Test (+225 07 08 09 10 11)\n";
-    echo "Destinataire: {$commandeData['nom_destinataire']} ({$commandeData['telephone_destinataire']})\n";
-    echo "Prix estimé: {$commandeData['prix_estimatif']} FCFA\n";
-    echo "Description: {$commandeData['description']}\n\n";
+    echo "Départ: {$commandeData['adresse_depart']}\n";
+    echo "Destination: {$commandeData['adresse_arrivee']}\n";
+    echo "Client: {$commandeData['client_nom']} ({$commandeData['client_telephone']})\n";
+    echo "Destinataire: Test Destinataire (+225 01 02 03 04 05)\n";
+    echo "Prix estimé: {$commandeData['prix_total']} FCFA\n";
+    echo "Description: {$commandeData['description_colis']}\n\n";
     
 } catch (Exception $e) {
     echo "❌ ERREUR: " . $e->getMessage() . "\n";
