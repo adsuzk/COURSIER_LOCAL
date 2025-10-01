@@ -1895,6 +1895,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const syncCard = document.getElementById('syncStatusCard');
     const syncContent = document.getElementById('syncStatusContent');
 
+    // ⚡ SYNCHRONISATION TEMPS RÉEL - Rechargement automatique toutes les 30 secondes
+    console.log('🔄 Activation synchronisation temps réel admin commandes');
+    setInterval(() => {
+        console.log('🔄 Rechargement auto page commandes...');
+        window.location.reload();
+    }, 30000); // 30 secondes
+
     const formatAgo = (seconds) => {
         if (Number.isNaN(seconds) || seconds === null) return 'inconnue';
         if (seconds < 60) return 'il y a quelques secondes';

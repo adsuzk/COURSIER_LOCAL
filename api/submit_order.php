@@ -216,7 +216,104 @@ try {
 	if (function_exists('logMessage')) {
 		logMessage('diagnostics_errors.log', 'Commande insérée: ' . json_encode($fields) . ' | id=' . $commande_id);
 	}
-	echo json_encode(["success" => true, "message" => "Commande insérée en base", "commande_id" => $commande_id, "commande" => $fields]);
+	
+	// ⚡ ATTRIBUTION AUTOMATIQUE + NOTIFICATION FCM
+	try {
+		// Rechercher un coursier connecté et disponible
+		$stmtCoursier = $pdo->query("
+			SELECT id, nom, prenoms, matricule, telephone
+			FROM agents_suzosky 
+			WHERE statut_connexion = 'en_ligne' 
+			AND COALESCE(solde_wallet, 0) >= 100
+			ORDER BY COALESCE(solde_wallet, 0) DESC, last_login_at DESC
+			LIMIT 1
+		");
+		$coursier = $stmtCoursier->fetch(PDO::FETCH_ASSOC);
+		
+		if ($coursier) {
+			// Assigner le coursier à la commande
+			$stmtAssign = $pdo->prepare("UPDATE commandes SET coursier_id = ?, statut = 'attribuee', updated_at = NOW() WHERE id = ?");
+			$stmtAssign->execute([$coursier['id'], $commande_id]);
+			
+			if (function_exists('logMessage')) {
+				logMessage('diagnostics_errors.log', "Coursier #{$coursier['id']} ({$coursier['nom']}) attribué à commande #{$commande_id}");
+			}
+			
+			// Envoyer notification FCM
+			$stmtToken = $pdo->prepare("
+				SELECT token FROM fcm_tokens 
+				WHERE coursier_id = ? AND is_active = 1 
+				ORDER BY last_ping DESC LIMIT 1
+			");
+			$stmtToken->execute([$coursier['id']]);
+			$tokenData = $stmtToken->fetch(PDO::FETCH_ASSOC);
+			
+			if ($tokenData && !empty($tokenData['token'])) {
+				// Charger le système FCM
+				require_once __DIR__ . '/../lib/fcm_enhanced.php';
+				
+				$title = "🚚 Nouvelle commande #{$fields['code_commande']}";
+				$body = "De: {$fields['adresse_depart']}\nVers: {$fields['adresse_arrivee']}\nPrix: {$fields['prix_estime']} FCFA";
+				
+				$notifData = [
+					'type' => 'new_order',
+					'commande_id' => $commande_id,
+					'code_commande' => $fields['code_commande'],
+					'adresse_depart' => $fields['adresse_depart'],
+					'adresse_arrivee' => $fields['adresse_arrivee'],
+					'prix_estime' => $fields['prix_estime'],
+					'priorite' => $fields['priorite']
+				];
+				
+				$fcmResult = fcm_send_with_log(
+					[$tokenData['token']], 
+					$title, 
+					$body, 
+					$notifData,
+					$coursier['id'],
+					'SUBMIT_ORDER_AUTO'
+				);
+				
+				if (function_exists('logMessage')) {
+					$notifStatus = $fcmResult['success'] ? 'envoyée' : 'échec';
+					logMessage('diagnostics_errors.log', "Notification FCM $notifStatus pour coursier #{$coursier['id']}");
+				}
+			} else {
+				if (function_exists('logMessage')) {
+					logMessage('diagnostics_errors.log', "Aucun token FCM actif pour coursier #{$coursier['id']}");
+				}
+			}
+			
+			$assignationInfo = [
+				'coursier_assigne' => true,
+				'coursier_id' => $coursier['id'],
+				'coursier_nom' => $coursier['nom'] . ' ' . $coursier['prenoms'],
+				'matricule' => $coursier['matricule'],
+				'notification_envoyee' => !empty($tokenData)
+			];
+		} else {
+			if (function_exists('logMessage')) {
+				logMessage('diagnostics_errors.log', 'Aucun coursier disponible pour commande #' . $commande_id);
+			}
+			$assignationInfo = [
+				'coursier_assigne' => false,
+				'message' => 'Commande créée, en attente de coursier disponible'
+			];
+		}
+	} catch (Throwable $eAttr) {
+		if (function_exists('logMessage')) {
+			logMessage('diagnostics_errors.log', 'Erreur attribution: ' . $eAttr->getMessage());
+		}
+		$assignationInfo = ['attribution_error' => $eAttr->getMessage()];
+	}
+	
+	echo json_encode([
+		"success" => true, 
+		"message" => "Commande insérée en base", 
+		"commande_id" => $commande_id, 
+		"commande" => $fields,
+		"assignation" => $assignationInfo ?? null
+	]);
 } catch (Throwable $e) {
 	if (function_exists('logMessage')) {
 		logMessage('diagnostics_errors.log', 'Erreur insertion commande: ' . $e->getMessage());
