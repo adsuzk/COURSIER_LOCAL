@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur App Mobile - Polling 1 seconde</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .phone-simulator {
+            max-width: 400px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .phone-header {
+            background: linear-gradient(135deg, #D4A853, #B8941F);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .phone-header h1 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        
+        .phone-header .coursier-info {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .status-bar {
+            background: #f8f9fa;
+            padding: 15px;
+            border-bottom: 2px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+        
+        .status-dot.active {
+            background: #27ae60;
+        }
+        
+        .status-dot.polling {
+            background: #3498db;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.9); }
+        }
+        
+        .polling-info {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .commandes-list {
+            padding: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .commande-card {
+            background: #fff;
+            border: 2px solid #D4A853;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .commande-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .commande-code {
+            font-weight: bold;
+            color: #D4A853;
+            font-size: 1.1rem;
+        }
+        
+        .commande-prix {
+            background: #27ae60;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        .commande-details {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+        
+        .commande-details div {
+            display: flex;
+            align-items: flex-start;
+            margin: 8px 0;
+            gap: 8px;
+        }
+        
+        .commande-details .icon {
+            min-width: 20px;
+        }
+        
+        .commande-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+        
+        .btn-accept {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .btn-accept:hover {
+            background: #229954;
+            transform: translateY(-2px);
+        }
+        
+        .btn-refuse {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-refuse:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+        
+        .no-commandes {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        
+        .no-commandes .icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        
+        .logs {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        .log-entry {
+            padding: 3px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .log-time {
+            color: #3498db;
+        }
+        
+        .log-success {
+            color: #27ae60;
+        }
+        
+        .log-error {
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-simulator">
+        <div class="phone-header">
+            <h1>🚚 Coursier Suzosky</h1>
+            <div class="coursier-info">Coursier #5 - ZALLE Ismael</div>
+        </div>
+        
+        <div class="status-bar">
+            <div class="status-indicator">
+                <div class="status-dot polling"></div>
+                <span class="polling-info">Polling: <strong id="polling-interval">1s</strong></span>
+            </div>
+            <div class="status-indicator">
+                <div class="status-dot active"></div>
+                <span class="polling-info">Connecté</span>
+            </div>
+        </div>
+        
+        <div class="commandes-list" id="commandes-list">
+            <div class="no-commandes">
+                <div class="icon">📦</div>
+                <p>En attente de nouvelles commandes...</p>
+                <small>Polling actif toutes les 1 seconde</small>
+            </div>
+        </div>
+        
+        <div class="logs" id="logs">
+            <div class="log-entry">
+                <span class="log-time">[--:--:--]</span> Démarrage du polling...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost/COURSIER_LOCAL';
+        const COURSIER_ID = 5;
+        const POLLING_INTERVAL = 1000; // 1 seconde
+        
+        let lastCommandes = [];
+        let pollingCount = 0;
+        
+        function addLog(message, type = 'info') {
+            const logs = document.getElementById('logs');
+            const time = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            
+            let className = '';
+            if (type === 'success') className = 'log-success';
+            if (type === 'error') className = 'log-error';
+            
+            entry.innerHTML = `<span class="log-time">[${time}]</span> <span class="${className}">${message}</span>`;
+            logs.appendChild(entry);
+            logs.scrollTop = logs.scrollHeight;
+            
+            // Garder seulement les 50 derniers logs
+            while (logs.children.length > 50) {
+                logs.removeChild(logs.firstChild);
+            }
+        }
+        
+        async function pollCommandes() {
+            pollingCount++;
+            
+            try {
+                const response = await fetch(`${API_BASE}/mobile_sync_api.php?action=get_commandes&coursier_id=${COURSIER_ID}`);
+                const data = await response.json();
+                
+                if (data.success && data.commandes && data.commandes.length > 0) {
+                    // Filtrer seulement les nouvelles
+                    const nouvelles = data.commandes.filter(c => c.statut === 'nouvelle');
+                    
+                    if (nouvelles.length !== lastCommandes.length) {
+                        addLog(`✅ ${nouvelles.length} commande(s) trouvée(s)`, 'success');
+                        displayCommandes(nouvelles);
+                        lastCommandes = nouvelles;
+                        
+                        // Notification sonore (si autorisé)
+                        if (nouvelles.length > 0) {
+                            playNotificationSound();
+                        }
+                    } else if (pollingCount % 10 === 0) {
+                        addLog(`🔄 Polling #${pollingCount} - ${nouvelles.length} commande(s) en attente`);
+                    }
+                } else {
+                    if (lastCommandes.length > 0) {
+                        addLog('ℹ️ Plus de commandes en attente');
+                        displayNoCommandes();
+                        lastCommandes = [];
+                    } else if (pollingCount % 10 === 0) {
+                        addLog(`🔄 Polling #${pollingCount} - Aucune commande`);
+                    }
+                }
+            } catch (error) {
+                addLog(`❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        function displayCommandes(commandes) {
+            const container = document.getElementById('commandes-list');
+            container.innerHTML = '';
+            
+            commandes.forEach(cmd => {
+                const card = document.createElement('div');
+                card.className = 'commande-card';
+                card.innerHTML = `
+                    <div class="commande-header">
+                        <div class="commande-code">#${cmd.code_commande}</div>
+                        <div class="commande-prix">${parseFloat(cmd.prix_total).toFixed(0)} FCFA</div>
+                    </div>
+                    
+                    <div class="commande-details">
+                        <div>
+                            <span class="icon">📍</span>
+                            <span><strong>De:</strong> ${cmd.adresse_depart}</span>
+                        </div>
+                        <div>
+                            <span class="icon">🎯</span>
+                            <span><strong>Vers:</strong> ${cmd.adresse_arrivee}</span>
+                        </div>
+                        <div>
+                            <span class="icon">📞</span>
+                            <span>${cmd.client_telephone}</span>
+                        </div>
+                        ${cmd.description ? `
+                        <div>
+                            <span class="icon">📦</span>
+                            <span>${cmd.description}</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="commande-actions">
+                        <button class="btn btn-accept" onclick="acceptCommande(${cmd.id}, '${cmd.code_commande}')">
+                            ✅ Accepter
+                        </button>
+                        <button class="btn btn-refuse" onclick="refuseCommande(${cmd.id}, '${cmd.code_commande}')">
+                            ❌ Refuser
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+        
+        function displayNoCommandes() {
+            const container = document.getElementById('commandes-list');
+            container.innerHTML = `
+                <div class="no-commandes">
+                    <div class="icon">📦</div>
+                    <p>Aucune nouvelle commande</p>
+                    <small>Polling actif toutes les 1 seconde</small>
+                </div>
+            `;
+        }
+        
+        async function acceptCommande(commandeId, code) {
+            addLog(`🚀 Acceptation de la commande ${code}...`);
+            
+            try {
+                const response = await fetch(`${API_BASE}/mobile_sync_api.php?action=accept_commande&coursier_id=${COURSIER_ID}&commande_id=${commandeId}`, {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    addLog(`✅ Commande ${code} acceptée!`, 'success');
+                    // Recharger immédiatement
+                    setTimeout(pollCommandes, 500);
+                } else {
+                    addLog(`❌ Erreur: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                addLog(`❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        async function refuseCommande(commandeId, code) {
+            addLog(`❌ Refus de la commande ${code}...`);
+            
+            try {
+                const response = await fetch(`${API_BASE}/mobile_sync_api.php?action=refuse_commande&coursier_id=${COURSIER_ID}&commande_id=${commandeId}&raison=Refus depuis simulateur`, {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    addLog(`✅ Commande ${code} refusée`, 'success');
+                    // Recharger immédiatement
+                    setTimeout(pollCommandes, 500);
+                } else {
+                    addLog(`❌ Erreur: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                addLog(`❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        function playNotificationSound() {
+            // Créer un son de notification simple
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = 800;
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+        
+        // Démarrer le polling
+        addLog('🚀 Simulateur démarré - Polling: 1 seconde', 'success');
+        pollCommandes();
+        setInterval(pollCommandes, POLLING_INTERVAL);
+    </script>
+</body>
+</html>
