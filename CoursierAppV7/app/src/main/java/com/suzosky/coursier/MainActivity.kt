@@ -873,9 +873,22 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                             onStatutChange = { nouveauStatut -> coursierStatut = nouveauStatut },
                             onCommandeAccept = { commandeId ->
                                 try { OrderRingService.stop(context) } catch (_: Exception) {}
+                                
+                                // 🔊 Annonce vocale
+                                voiceGuidance?.announceOrderAccepted()
+                                
                                 // Accepter la commande via API
                                 ApiService.respondToOrder(commandeId, coursierId.toString(), "accept") { success, message ->
                                     if (success) {
+                                        // Trouver la commande pour récupérer les adresses
+                                        val commande = commandesReelles.find { it.id == commandeId }
+                                        if (commande != null) {
+                                            // 🗺️ Lancer Google Maps vers le point de départ
+                                            val depart = commande.adresseEnlevement
+                                            if (depart.isNotBlank()) {
+                                                launchGoogleMaps("Ma position", depart)
+                                            }
+                                        }
                                         // Déclencher un rechargement des commandes
                                         shouldRefreshCommandes = true
                                     }
@@ -893,14 +906,36 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                             },
                             onCommandeAttente = { /* TODO: Waiting logic */ },
                             onStartDelivery = { commandeId ->
+                                val commande = commandesReelles.find { it.id == commandeId }
+                                
+                                // 🔊 Annonce vocale
+                                if (commande != null) {
+                                    voiceGuidance?.announceDeliveryStarted(commande.adresseLivraison)
+                                }
+                                
                                 ApiService.startDelivery(commandeId.toIntOrNull() ?: 0, coursierId) { success, message ->
                                     if (success) {
+                                        // 🗺️ Lancer Google Maps vers destination
+                                        if (commande != null) {
+                                            val depart = commande.adresseEnlevement
+                                            val arrivee = commande.adresseLivraison
+                                            if (depart.isNotBlank() && arrivee.isNotBlank()) {
+                                                launchGoogleMaps(depart, arrivee)
+                                            }
+                                        }
                                         // Déclencher un rechargement des commandes
                                         shouldRefreshCommandes = true
                                     }
                                 }
                             },
                             onPickupPackage = { commandeId ->
+                                val commande = commandesReelles.find { it.id == commandeId }
+                                
+                                // 🔊 Annonce vocale
+                                if (commande != null) {
+                                    voiceGuidance?.announcePackagePickedUp(commande.adresseLivraison)
+                                }
+                                
                                 ApiService.pickupPackage(commandeId.toIntOrNull() ?: 0, coursierId) { success, message ->
                                     if (success) {
                                         // Déclencher un rechargement des commandes
@@ -909,6 +944,9 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                 }
                             },
                             onMarkDelivered = { commandeId ->
+                                // 🔊 Annonce vocale
+                                voiceGuidance?.announceDeliveryCompleted()
+                                
                                 ApiService.markDelivered(commandeId.toIntOrNull() ?: 0, coursierId) { success, message ->
                                     if (success) {
                                         // Déclencher un rechargement des commandes
@@ -917,6 +955,13 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                 }
                             },
                             onConfirmCash = { commandeId ->
+                                val commande = commandesReelles.find { it.id == commandeId }
+                                
+                                // 🔊 Annonce vocale
+                                if (commande != null) {
+                                    voiceGuidance?.announceCashReceived(commande.prixTotal)
+                                }
+                                
                                 ApiService.confirmCashReceived(commandeId.toIntOrNull() ?: 0, coursierId) { success, message ->
                                     if (success) {
                                         // Déclencher un rechargement des commandes
