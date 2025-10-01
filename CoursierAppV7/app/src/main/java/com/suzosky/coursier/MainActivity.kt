@@ -345,7 +345,8 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    // Configuration du BroadcastReceiver pour les nouvelles commandes
+    /*
+    // Configuration du BroadcastReceiver pour les nouvelles commandes - TEMPORAIREMENT DÉSACTIVÉ
     private fun setupCommandeReceiver() {
         commandeReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
@@ -388,6 +389,7 @@ class MainActivity : ComponentActivity() {
         println("✅ BroadcastReceiver configuré pour ACTION_REFRESH_DATA")
         Log.d("MainActivity", "✅ BroadcastReceiver configuré pour ACTION_REFRESH_DATA")
     }
+    */
 
     override fun onDestroy() {
         super.onDestroy()
