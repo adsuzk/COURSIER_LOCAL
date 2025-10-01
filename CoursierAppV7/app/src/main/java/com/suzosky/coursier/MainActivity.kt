@@ -147,7 +147,7 @@ class MainActivity : ComponentActivity() {
             }
             
             // Configuration du BroadcastReceiver pour les nouvelles commandes
-            setupCommandeReceiver()
+            // setupCommandeReceiver() // TEMPORAIREMENT DÉSACTIVÉ
             
             // Démarrer le service de mise à jour automatique avec protection Android 14
             val canStartService = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
