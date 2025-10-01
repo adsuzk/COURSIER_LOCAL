@@ -76,14 +76,42 @@ fun deactivateFcmTokenOnServer(context: android.content.Context) {
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    // 🔊 Service de guidage vocal
+    private var voiceGuidance: VoiceGuidanceService? = null
+    
     // BroadcastReceiver pour les nouvelles commandes
     // private var commandeReceiver: BroadcastReceiver? = null // TEMPORAIREMENT DÉSACTIVÉ
+    
+    // 🗺️ Fonction pour lancer Google Maps avec itinéraire
+    fun launchGoogleMaps(depart: String, arrivee: String) {
+        try {
+            val uri = Uri.parse("https://www.google.com/maps/dir/?api=1&origin=${Uri.encode(depart)}&destination=${Uri.encode(arrivee)}&travelmode=driving")
+            val intent = Intent(Intent.ACTION_VIEW, uri)
+            intent.setPackage("com.google.android.apps.maps")
+            startActivity(intent)
+            Log.d("MainActivity", "🗺️ Google Maps lancé: $depart → $arrivee")
+        } catch (e: Exception) {
+            // Fallback: navigateur web
+            try {
+                val webUri = Uri.parse("https://www.google.com/maps/dir/?api=1&origin=${Uri.encode(depart)}&destination=${Uri.encode(arrivee)}")
+                val webIntent = Intent(Intent.ACTION_VIEW, webUri)
+                startActivity(webIntent)
+                Log.d("MainActivity", "🌐 Maps via navigateur: $depart → $arrivee")
+            } catch (e2: Exception) {
+                Log.e("MainActivity", "❌ Impossible de lancer Maps", e2)
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
         try {
             println("🚀 MainActivity.onCreate - Début de l'initialisation")
+            
+            // 🔊 Initialiser le guidage vocal
+            voiceGuidance = VoiceGuidanceService(this)
+            Log.d("MainActivity", "🔊 Service de guidage vocal initialisé")
             
             // Configuration pour le mode edge-to-edge
             enableEdgeToEdge()
