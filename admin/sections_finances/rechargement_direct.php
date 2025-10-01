@@ -143,7 +143,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         }
         
         // Redirection pour éviter double soumission
-        echo '<script>window.location.href="admin.php?section=finances&tab=rechargement_direct";</script>';
+        $redirectUrl = 'admin.php?section=finances&tab=rechargement_direct';
+        if (!headers_sent()) {
+            header('Location: ' . $redirectUrl);
+        } else {
+            echo '<script>window.location.href="' . addslashes($redirectUrl) . '";</script>';
+        }
         exit;
     }
 }
