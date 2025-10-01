@@ -241,11 +241,12 @@ fun CoursierScreenNew(
         ) {
             when (currentTab) {
                 NavigationTab.COURSES -> {
-                    CoursesScreen(
+                    // Utiliser le nouvel écran unifié sans modal
+                    UnifiedCoursesScreen(
                         currentOrder = currentOrder,
                         deliveryStep = deliveryStep,
-                        banner = timelineBanner,
                         pendingOrdersCount = pendingOrdersCount,
+                        courierLocation = courierLocation,
                         onAcceptOrder = {
                             currentOrder?.let { order ->
                                 if (hasNewOrder) {
