@@ -1713,6 +1713,20 @@ if (trim((string)$defaultUnavailableMessage) === '') {
                 // Mode unique: toujours en inline
                 const method = (document.querySelector('input[name="paymentMethod"]:checked') || {}).value || 'cash';
                 if (typeof window.currentClient !== 'undefined' && !window.currentClient) {
+                    ev.preventDefault();
+                    window.__orderFlowHandled = false;
+                    if (typeof window.openConnexionModal === 'function') {
+                        window.openConnexionModal();
+                    } else {
+                        const trigger = document.getElementById('openConnexionLink') || document.getElementById('openConnexionLinkMobile');
+                        if (trigger) {
+                            trigger.click();
+                        } else if (typeof window.showModal === 'function' && document.getElementById('connexionModal')) {
+                            window.showModal('connexionModal');
+                        } else {
+                            alert('Veuillez vous connecter pour commander.');
+                        }
+                    }
                     return;
                 }
                 window.__orderFlowHandled = true;
