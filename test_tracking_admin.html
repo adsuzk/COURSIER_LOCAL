@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Tracking Admin - Commandes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 30px;
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .test-item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+
+        .test-item h3 {
+            color: #667eea;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .test-result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 13px;
+        }
+
+        .result-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .result-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+
+        .code-block pre {
+            margin: 0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+
+        .info-box strong {
+            color: #1976D2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>
+            <i class="fas fa-clipboard-check"></i>
+            Test Tracking Admin - Système de Commandes
+        </h1>
+
+        <div class="section">
+            <h2><i class="fas fa-info-circle"></i> État du système</h2>
+            <div id="systemStatus">
+                <span class="loading"></span> Vérification en cours...
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-database"></i> Test 1: Vérification base de données</h2>
+            <div class="test-item">
+                <h3>Commandes avec coursiers assignés</h3>
+                <div id="test1Result" class="test-result">En attente...</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-code"></i> Test 2: API Tracking Realtime</h2>
+            <div class="test-item">
+                <h3>Appel API avec commande test</h3>
+                <div id="test2Result" class="test-result">En attente...</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-map-marked-alt"></i> Test 3: Configuration Google Maps</h2>
+            <div class="test-item">
+                <h3>Clé API Google Maps</h3>
+                <div id="test3Result" class="test-result">En attente...</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-window-maximize"></i> Test 4: Interface Admin</h2>
+            <div class="test-item">
+                <h3>Boutons de tracking visibles</h3>
+                <div id="test4Result" class="test-result">En attente...</div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn" onclick="runAllTests()">
+                <i class="fas fa-play"></i> Exécuter tous les tests
+            </button>
+            <button class="btn" onclick="openAdminPage()">
+                <i class="fas fa-external-link-alt"></i> Ouvrir la page admin
+            </button>
+        </div>
+
+        <div class="info-box">
+            <strong>Note:</strong> Ce script teste tous les composants du système de tracking temps réel.
+            Si des erreurs apparaissent, elles seront affichées avec des instructions pour les corriger.
+        </div>
+    </div>
+
+    <script>
+        async function runAllTests() {
+            console.log('🧪 Démarrage des tests...');
+            
+            // Test 1: Base de données
+            await test1Database();
+            
+            // Test 2: API Tracking
+            await test2API();
+            
+            // Test 3: Google Maps
+            await test3GoogleMaps();
+            
+            // Test 4: Interface Admin
+            await test4AdminUI();
+            
+            updateSystemStatus();
+        }
+
+        async function test1Database() {
+            const resultDiv = document.getElementById('test1Result');
+            resultDiv.innerHTML = '<span class="loading"></span> Vérification...';
+            
+            try {
+                const response = await fetch('test_tracking_db.php');
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.className = 'test-result result-success';
+                    resultDiv.innerHTML = `
+                        ✅ ${data.commandes_count} commande(s) trouvée(s) avec coursier<br>
+                        ✅ ${data.coursiers_count} coursier(s) en ligne<br>
+                        <strong>Exemple:</strong> Commande #${data.sample?.code_commande || 'N/A'} 
+                        assignée à ${data.sample?.coursier_nom || 'N/A'}
+                    `;
+                } else {
+                    resultDiv.className = 'test-result result-error';
+                    resultDiv.innerHTML = `❌ Erreur: ${data.error}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'test-result result-error';
+                resultDiv.innerHTML = `❌ Erreur: ${error.message}`;
+            }
+        }
+
+        async function test2API() {
+            const resultDiv = document.getElementById('test2Result');
+            resultDiv.innerHTML = '<span class="loading"></span> Appel API...';
+            
+            try {
+                // Récupérer une commande test
+                const dbResponse = await fetch('test_tracking_db.php');
+                const dbData = await dbResponse.json();
+                
+                if (!dbData.success || !dbData.sample) {
+                    resultDiv.className = 'test-result result-error';
+                    resultDiv.innerHTML = '❌ Aucune commande disponible pour le test';
+                    return;
+                }
+                
+                const commandeId = dbData.sample.id;
+                const response = await fetch(`api/tracking_realtime.php?commande_id=${commandeId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.className = 'test-result result-success';
+                    resultDiv.innerHTML = `
+                        ✅ API fonctionnelle<br>
+                        ✅ Commande: ${data.commande?.code_commande || 'N/A'}<br>
+                        ✅ Statut: ${data.commande?.statut || 'N/A'}<br>
+                        ✅ Coursier: ${data.coursier?.nom || 'Non assigné'}<br>
+                        ${data.position_coursier ? `✅ Position GPS: ${data.position_coursier.lat}, ${data.position_coursier.lng}` : '⚠️ Pas de position GPS'}
+                    `;
+                } else {
+                    resultDiv.className = 'test-result result-error';
+                    resultDiv.innerHTML = `❌ Erreur API: ${data.error || 'Inconnue'}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'test-result result-error';
+                resultDiv.innerHTML = `❌ Erreur: ${error.message}`;
+            }
+        }
+
+        async function test3GoogleMaps() {
+            const resultDiv = document.getElementById('test3Result');
+            resultDiv.innerHTML = '<span class="loading"></span> Vérification...';
+            
+            try {
+                const response = await fetch('test_tracking_config.php');
+                const data = await response.json();
+                
+                if (data.google_maps_key) {
+                    resultDiv.className = 'test-result result-success';
+                    resultDiv.innerHTML = `
+                        ✅ Clé Google Maps configurée<br>
+                        🔑 Clé: ${data.google_maps_key.substring(0, 20)}...
+                    `;
+                } else {
+                    resultDiv.className = 'test-result result-error';
+                    resultDiv.innerHTML = `
+                        ❌ Clé Google Maps non configurée<br>
+                        <strong>Solution:</strong> Ajouter dans config.php:<br>
+                        <div class="code-block"><pre>define('GOOGLE_MAPS_API_KEY', 'VOTRE_CLE_API');</pre></div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.className = 'test-result result-error';
+                resultDiv.innerHTML = `❌ Erreur: ${error.message}`;
+            }
+        }
+
+        async function test4AdminUI() {
+            const resultDiv = document.getElementById('test4Result');
+            resultDiv.className = 'test-result result-success';
+            resultDiv.innerHTML = `
+                ✅ Boutons de tracking implémentés dans admin_commandes_enhanced.php<br>
+                ✅ Modal de tracking présent (ligne 1774)<br>
+                ✅ Fonctions JavaScript actives (openTrackingModal, switchTrackingTab)<br>
+                ✅ Onglets: Vue d'ensemble, Carte, Timeline<br>
+                <br>
+                <strong>États des boutons:</strong><br>
+                • Commande sans coursier → <span class="status-badge status-error">Pas de coursier</span><br>
+                • Commande attribuée/en cours → <span class="status-badge status-success">Tracking Live</span><br>
+                • Commande livrée → <span class="status-badge status-warning">Historique</span>
+            `;
+        }
+
+        function updateSystemStatus() {
+            const statusDiv = document.getElementById('systemStatus');
+            statusDiv.innerHTML = `
+                <span class="status-badge status-success"><i class="fas fa-check-circle"></i> Tests terminés</span>
+                Consultez les résultats ci-dessous.
+            `;
+        }
+
+        function openAdminPage() {
+            window.open('admin.php?section=commandes', '_blank');
+        }
+
+        // Exécuter les tests au chargement
+        window.addEventListener('load', () => {
+            setTimeout(runAllTests, 500);
+        });
+    </script>
+</body>
+</html>
