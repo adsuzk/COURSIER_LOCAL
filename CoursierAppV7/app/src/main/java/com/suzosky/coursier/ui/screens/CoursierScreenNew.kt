@@ -199,41 +199,37 @@ fun CoursierScreenNew(
                                     notificationService.playActionSound()
                                     hasNewOrder = false
                                 }
-                                // Empêcher les doubles acceptations
-                                val cmdId = order.id.toIntOrNull() ?: 0
-                                if (cmdId <= 0 || coursierId <= 0) {
-                                    Toast.makeText(context, "Commande/coursier invalide", Toast.LENGTH_SHORT).show()
-                                    return@let
-                                }
-                                ApiService.assignWithLock(cmdId, coursierId, action = "accept", ttlSeconds = 60) { ok, err ->
-                                    if (!ok) {
+                                
+                                Log.d("CoursierScreenNew", "Acceptation de la commande ${order.id} par coursier $coursierId")
+                                Toast.makeText(context, "Acceptation en cours...", Toast.LENGTH_SHORT).show()
+                                
+                                // Appeler la nouvelle API order_response.php
+                                ApiService.respondToOrder(order.id, coursierId.toString(), "accept") { success, message ->
+                                    if (success) {
+                                        Log.d("CoursierScreenNew", "Commande acceptée: $message")
+                                        Toast.makeText(context, "Commande acceptée !", Toast.LENGTH_SHORT).show()
+                                        
+                                        deliveryStep = DeliveryStep.ACCEPTED
+                                        pendingOrdersCount = maxOf(0, pendingOrdersCount - 1)
+                                        onCommandeAccept(order.id)
+                                        
+                                        // Activer le suivi en temps réel pour le client
+                                        ApiService.setActiveOrder(coursierId, order.id, active = true) { activeOk ->
+                                            if (!activeOk) {
+                                                Log.w("CoursierScreenNew", "Impossible d'activer le suivi en direct")
+                                            }
+                                        }
+                                    } else {
+                                        Log.e("CoursierScreenNew", "Échec acceptation: $message")
                                         timelineBanner = TimelineBanner(
-                                            message = err ?: "Commande déjà acceptée",
+                                            message = message ?: "Erreur lors de l'acceptation",
                                             severity = BannerSeverity.ERROR,
                                             actionLabel = "Réessayer",
-                                            onAction = {
-                                                bannerVersion++
-                                                // Retry accept lock
-                                                ApiService.assignWithLock(cmdId, coursierId, action = "accept", ttlSeconds = 60) { ok2, err2 ->
-                                                    if (!ok2) {
-                                                        timelineBanner = TimelineBanner(err2 ?: "Commande déjà acceptée", BannerSeverity.ERROR, "Réessayer") {
-                                                            bannerVersion++; /* re-click */
-                                                        }
-                                                    } else {
-                                                        timelineBanner = null
-                                                        deliveryStep = DeliveryStep.ACCEPTED
-                                                        pendingOrdersCount = maxOf(0, pendingOrdersCount - 1)
-                                                        onCommandeAccept(order.id)
-                                                    }
-                                                }
-                                            }
+                                            onAction = { bannerVersion++ }
                                         )
-                                        Toast.makeText(context, err ?: "Commande déjà acceptée", Toast.LENGTH_LONG).show()
-                                        return@assignWithLock
+                                        Toast.makeText(context, message ?: "Erreur", Toast.LENGTH_LONG).show()
                                     }
-                                    deliveryStep = DeliveryStep.ACCEPTED
-                                    pendingOrdersCount = maxOf(0, pendingOrdersCount - 1)
-                                    onCommandeAccept(order.id)
+                                }
                                     ApiService.setActiveOrder(coursierId, order.id, active = true) { activeOk ->
                                         if (!activeOk) {
                                             timelineBanner = TimelineBanner(
