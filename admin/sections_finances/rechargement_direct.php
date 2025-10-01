@@ -179,6 +179,13 @@ include __DIR__ . '/../functions.php';
 
 <style>
     .finance-recharge {
+        --primary-color: #D4A853;
+        --secondary-color: #1A1A2E;
+        --accent-color: #16213E;
+        --success-color: #27AE60;
+        --warning-color: #F39C12;
+        --danger-color: #E94560;
+        --text-light: #ECF0F1;
         padding: 24px;
         background: linear-gradient(135deg, #1A1A2E 0%, #16213E 100%);
         border-radius: 20px;
