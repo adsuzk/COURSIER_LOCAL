@@ -345,10 +345,15 @@ fun CoursierScreenNew(
                             }
                         },
                         onConfirmCash = {
+                            android.util.Log.d("CoursierScreenNew", "🔴 BOUTON CASH CLIQUÉ! currentOrder=${currentOrder?.id}, deliveryStep=$deliveryStep")
                             currentOrder?.let { order ->
+                                android.util.Log.d("CoursierScreenNew", "✅ currentOrder EXISTS - Appel onConfirmCash avec ID=${order.id}")
                                 Toast.makeText(context, "Cash récupéré confirmé!", Toast.LENGTH_SHORT).show()
                                 onConfirmCash(order.id)
                                 deliveryStep = DeliveryStep.CASH_CONFIRMED
+                            } ?: run {
+                                android.util.Log.e("CoursierScreenNew", "❌ currentOrder EST NULL - impossible d'appeler onConfirmCash!")
+                                Toast.makeText(context, "ERREUR: Aucune commande active", Toast.LENGTH_LONG).show()
                             }
                         },
                         onPickupValidation = {
