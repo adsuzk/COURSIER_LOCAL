@@ -203,14 +203,16 @@ Réponse ERREUR:
 
 **IMPORTANT** : Cette API est appelée **uniquement** après confirmation du paiement.
 
-### Modal de Paiement
+### Modal de Paiement (Index Web)
 
-#### showPaymentModal(url, callback)
+La fonction `window.showPaymentModal(url, callback)` est définie dans `sections_index/js_payment.php`.
+
+**Utilisation** :
 ```javascript
 window.showPaymentModal(paymentUrl, function(success) {
     if (success) {
         console.log('✅ Paiement confirmé !');
-        // Enregistrer la commande
+        // Appeler create_order_after_payment.php
     } else {
         console.log('❌ Paiement échoué/annulé');
         // Permettre réessai
@@ -219,11 +221,49 @@ window.showPaymentModal(paymentUrl, function(success) {
 ```
 
 **Fonctionnalités** :
-- Modal avec iframe CinetPay
+- Modal full-screen avec iframe CinetPay
+- Branding Suzosky (header doré, logo)
 - Écoute des messages `postMessage` de CinetPay
-- Détecte : `status: 'success'` ou `payment_status: 'ACCEPTED'`
-- Fermeture automatique après succès
-- Callback avec `true`/`false`
+- Détection auto: `status: 'success'`, `status: 'ACCEPTED'`, `payment_status: 'ACCEPTED'`, `code: '00'`
+- Bouton fermer avec animation
+- Loading indicator
+- Responsive (mobile + desktop)
+
+**Détection du paiement réussi** :
+Le modal écoute les événements `postMessage` envoyés par CinetPay et détecte automatiquement:
+- `data.status === 'success'`
+- `data.status === 'ACCEPTED'`
+- `data.payment_status === 'ACCEPTED'`
+- `data.code === '00'`
+- Messages texte contenant "success" ou "accepted"
+
+---
+
+## 🎙️ GUIDAGE VOCAL (Application Mobile)
+
+### Système Text-to-Speech Intégré
+
+Le guidage vocal est géré par **NavigationScreen** avec l'API Android Text-to-Speech (TTS).
+
+**Fonctionnalités** :
+- ✅ Instructions vocales en temps réel
+- ✅ Calcul automatique de la distance restante
+- ✅ Alertes de proximité ("Vous arrivez à destination")
+- ✅ Annonces de changement de direction
+- ✅ Fonctionne entièrement DANS l'application (pas de Google Maps externe)
+- ✅ Bouton activation/désactivation dans Mes Courses
+
+**Activation** :
+- Bouton micro dans l'écran "Mes Courses" (en haut à droite)
+- Visible uniquement pendant: ACCEPTED, EN_ROUTE_PICKUP, EN_ROUTE_DELIVERY
+- Couleur verte = activé, gris = désactivé
+
+**Avantages** :
+- Pas besoin d'ouvrir Google Maps
+- Le coursier reste dans l'app
+- Instructions en français
+- Économie de batterie
+- Contrôle total sur les instructions
 
 ---
 
