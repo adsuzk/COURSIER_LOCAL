@@ -1,0 +1,227 @@
+╔═══════════════════════════════════════════════════════════════════╗
+║                                                                   ║
+║   ✅ CORRECTIONS ADMIN COMMANDES - STATUTS ET VISIBILITÉ        ║
+║                                                                   ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+
+🔧 PROBLÈMES RÉSOLUS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ PROBLÈME 1: Statuts incomplets
+   AVANT: Manquait 'recuperee' dans les filtres et statistiques
+   APRÈS: 
+   - ✅ Ajouté statut 'recuperee' dans les stats
+   - ✅ Tous les statuts du cycle de vie sont présents
+   - ✅ Statistiques affichent maintenant 9 états distincts
+
+✅ PROBLÈME 2: Statut "en_cours" invisible dans les stats
+   AVANT: Pas de carte statistique dédiée visible
+   APRÈS:
+   - ✅ Carte orange vif avec icône 🚚
+   - ✅ Mise en évidence "En cours (Actives)"
+   - ✅ Permet de voir rapidement les commandes actives
+
+✅ PROBLÈME 3: Menu déroulant statut tout blanc
+   AVANT: Texte blanc sur fond blanc = invisible
+   APRÈS:
+   - ✅ Fond blanc pour le select avec texte noir
+   - ✅ Chaque option a sa propre couleur de fond
+   - ✅ Icônes emoji pour identification rapide
+   - ✅ Option "en_cours" en gras pour visibilité
+
+
+📊 LISTE COMPLÈTE DES STATUTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. 🆕 NOUVELLE
+   - Commande vient d'être créée
+   - En attente d'attribution à un coursier
+   - Couleur: Bleu clair (#e3f2fd)
+
+2. ⏳ EN_ATTENTE
+   - Commande créée mais pas encore attribuée
+   - Ou coursier a refusé
+   - Couleur: Orange clair (#fff3e0)
+
+3. 📌 ATTRIBUEE
+   - Commande assignée à un coursier
+   - Coursier n'a pas encore accepté
+   - Couleur: Violet clair (#f3e5f5)
+
+4. ✅ ACCEPTEE
+   - Coursier a accepté la commande
+   - Prêt à démarrer la course
+   - Couleur: Vert clair (#e8f5e9)
+
+5. 🚚 EN_COURS ⭐ (Commandes actives dans l'app)
+   - Coursier est en route
+   - Livraison en cours
+   - Couleur: Jaune vif (#fff9c4) - EN GRAS
+   - **C'EST CE STATUT QUI MONTRE LES COMMANDES ACTIVES**
+
+6. 📦 RECUPEREE
+   - Coursier a récupéré le colis
+   - En route vers la destination
+   - Couleur: Cyan (#b2dfdb)
+
+7. 🎉 LIVREE
+   - Commande livrée avec succès
+   - Transaction terminée
+   - Couleur: Vert foncé (#c8e6c9)
+
+8. ❌ ANNULEE
+   - Commande annulée
+   - Raison enregistrée
+   - Couleur: Rouge (#ffcdd2)
+
+
+🎨 AMÉLIORATION VISUELLE DU MENU DÉROULANT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+AVANT:
+┌─────────────────────┐
+│                     │  ← Tout blanc, invisible
+│                     │
+│                     │
+└─────────────────────┘
+
+APRÈS:
+┌─────────────────────────────┐
+│ 📋 Tous les statuts        │ ← Blanc avec texte noir
+│ 🆕 Nouvelles (bleu)        │ ← Fond bleu clair
+│ ⏳ En attente (orange)     │ ← Fond orange
+│ 📌 Attribuées (violet)     │ ← Fond violet
+│ ✅ Acceptées (vert)        │ ← Fond vert
+│ 🚚 EN COURS (jaune) 🔥     │ ← GRAS + jaune vif
+│ 📦 Récupérées (cyan)       │ ← Fond cyan
+│ 🎉 Livrées (vert foncé)    │ ← Fond vert
+│ ❌ Annulées (rouge)        │ ← Fond rouge
+└─────────────────────────────┘
+
+
+📈 NOUVELLES CARTES STATISTIQUES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Avant: 7 cartes (manquait recuperee, en_cours pas visible)
+Après: 9 cartes avec couleurs distinctes
+
+┌──────────────┐ ┌──────────────┐ ┌──────────────┐
+│ Total        │ │ Nouvelles    │ │ En attente   │
+│   XXX        │ │   XX         │ │   XX         │
+└──────────────┘ └──────────────┘ └──────────────┘
+
+┌──────────────┐ ┌──────────────┐ ┌──────────────┐
+│ Attribuées   │ │ Acceptées    │ │ 🚚 EN COURS  │ ← ORANGE VIF
+│   XX         │ │   XX         │ │   XX         │
+└──────────────┘ └──────────────┘ └──────────────┘
+
+┌──────────────┐ ┌──────────────┐ ┌──────────────┐
+│ 📦 Récupérées│ │ ✅ Livrées   │ │ ❌ Annulées  │
+│   XX  (CYAN) │ │   XX (VERT)  │ │   XX (ROUGE) │
+└──────────────┘ └──────────────┘ └──────────────┘
+
+
+🎯 COMMENT UTILISER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. VOIR LES COMMANDES ACTIVES DANS L'APP:
+   → Ouvrir: http://localhost/COURSIER_LOCAL/admin.php?section=commandes
+   → Sélectionner dans le menu déroulant "Statut": 🚚 En cours
+   → Cliquer "Filtrer"
+   → Résultat: Toutes les commandes avec coursiers en route
+
+2. VOIR LES NOUVELLES COMMANDES:
+   → Sélectionner: 🆕 Nouvelles
+   → Cliquer "Filtrer"
+
+3. VOIR LES COMMANDES LIVRÉES AUJOURD'HUI:
+   → Sélectionner: 🎉 Livrées
+   → Choisir la date du jour
+   → Cliquer "Filtrer"
+
+4. STATISTIQUES EN UN COUP D'ŒIL:
+   → Regarder les cartes en haut de la page
+   → La carte orange "🚚 En cours" montre les actives
+   → Les couleurs permettent l'identification rapide
+
+
+🔄 CYCLE DE VIE D'UNE COMMANDE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CLIENT CRÉE COMMANDE
+        ↓
+   🆕 NOUVELLE ────────→ ⏳ EN_ATTENTE (si aucun coursier)
+        ↓
+   📌 ATTRIBUEE (système assigne coursier)
+        ↓
+   ✅ ACCEPTEE (coursier accepte)
+        ↓
+   🚚 EN_COURS ⭐ (coursier en route) ← **COMMANDES ACTIVES**
+        ↓
+   📦 RECUPEREE (colis récupéré)
+        ↓
+   🎉 LIVREE (livraison terminée)
+
+   Ou à tout moment:
+        ↓
+   ❌ ANNULEE (annulation)
+
+
+💡 ASTUCES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+• Menu déroulant maintenant lisible au premier coup d'œil
+• Plus besoin de survoler pour voir les options
+• Chaque statut a son emoji pour reconnaissance rapide
+• Option "En cours" en gras = commandes actives prioritaires
+• Cartes statistiques colorées pour monitoring rapide
+• Tous les statuts du système sont maintenant présents
+
+
+🐛 BUGS CORRIGÉS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ Menu déroulant blanc illisible → Maintenant blanc avec texte noir
+✅ Options invisibles → Chaque option a fond coloré
+✅ Statut "recuperee" manquant → Ajouté partout
+✅ Pas de filtre "en_cours" visible → Maintenant en gras
+✅ Statistiques incomplètes → 9 cartes complètes
+✅ Cartes sans couleurs → Couleurs gradient pour états finaux
+
+
+📋 FICHIERS MODIFIÉS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. admin_commandes_enhanced.php
+   Ligne ~200: Ajout 'recuperee' dans array $stats
+   Ligne ~250: Cartes statistiques avec couleurs
+   Ligne ~2010: Menu déroulant statut amélioré
+
+
+✅ TEST DE VALIDATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+□ Ouvrir http://localhost/COURSIER_LOCAL/admin.php?section=commandes
+□ Vérifier que le menu "Statut" a un fond blanc
+□ Vérifier que toutes les options sont visibles sans survol
+□ Vérifier que "En cours" est en gras et jaune
+□ Compter 9 cartes statistiques en haut
+□ Vérifier que la carte "🚚 En cours" est orange
+□ Vérifier que la carte "📦 Récupérées" est cyan
+□ Sélectionner "En cours" dans le filtre
+□ Cliquer "Filtrer"
+□ Vérifier que seules les commandes actives s'affichent
+
+
+═══════════════════════════════════════════════════════════════════
+
+Date: 2025-10-01 22:35
+Version: Admin Commandes v2.1 - Statuts complets + Visibilité
+Statut: ✅ CORRECTIONS APPLIQUÉES
+
+═══════════════════════════════════════════════════════════════════
+
+URL: http://localhost/COURSIER_LOCAL/admin.php?section=commandes
+
+═══════════════════════════════════════════════════════════════════
