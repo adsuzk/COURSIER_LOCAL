@@ -1136,6 +1136,12 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
 
     override fun onDestroy() {
         super.onDestroy()
+        
+        // 🔊 Arrêter le TTS
+        voiceGuidance?.shutdown()
+        voiceGuidance = null
+        Log.d("MainActivity", "🔊 Service vocal arrêté")
+        
         // Désinscrire le BroadcastReceiver
         commandeReceiver?.let {
             try {
