@@ -238,7 +238,7 @@ if (basename(__FILE__) == basename($_SERVER['PHP_SELF'])) {
             $result = $fcm->envoyerNotification(
                 $tokenData['token'],
                 '🎉 FCM v1 Activé!',
-                'Le système de notifications moderne est maintenant opérationnel pour ' . $tokenData['prenom'] . ' ' . $tokenData['nom'],
+                'Le système de notifications moderne est maintenant opérationnel pour ' . $tokenData['nom'],
                 [
                     'type' => 'test_fcm_v1',
                     'timestamp' => time()
