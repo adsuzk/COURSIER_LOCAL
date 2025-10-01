@@ -905,7 +905,7 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                 try { OrderRingService.stop(context) } catch (_: Exception) {}
                                 
                                 // 🔊 Annonce vocale
-                                voiceGuidance?.announceOrderAccepted()
+                                this@MainActivity.voiceGuidance?.announceOrderAccepted()
                                 
                                 // Accepter la commande via API
                                 ApiService.respondToOrder(commandeId, coursierId.toString(), "accept") { success, message ->
@@ -916,7 +916,7 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                             // 🗺️ Lancer Google Maps vers le point de départ
                                             val depart = commande.adresseEnlevement
                                             if (depart.isNotBlank()) {
-                                                launchGoogleMaps("Ma position", depart)
+                                                this@MainActivity.launchGoogleMaps("Ma position", depart)
                                             }
                                         }
                                         // Déclencher un rechargement des commandes
@@ -940,7 +940,7 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                 
                                 // 🔊 Annonce vocale
                                 if (commande != null) {
-                                    voiceGuidance?.announceDeliveryStarted(commande.adresseLivraison)
+                                    this@MainActivity.voiceGuidance?.announceDeliveryStarted(commande.adresseLivraison)
                                 }
                                 
                                 ApiService.startDelivery(commandeId.toIntOrNull() ?: 0, coursierId) { success, message ->
@@ -950,7 +950,7 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                             val depart = commande.adresseEnlevement
                                             val arrivee = commande.adresseLivraison
                                             if (depart.isNotBlank() && arrivee.isNotBlank()) {
-                                                launchGoogleMaps(depart, arrivee)
+                                                this@MainActivity.launchGoogleMaps(depart, arrivee)
                                             }
                                         }
                                         // Déclencher un rechargement des commandes
@@ -963,7 +963,7 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                 
                                 // 🔊 Annonce vocale
                                 if (commande != null) {
-                                    voiceGuidance?.announcePackagePickedUp(commande.adresseLivraison)
+                                    this@MainActivity.voiceGuidance?.announcePackagePickedUp(commande.adresseLivraison)
                                 }
                                 
                                 ApiService.pickupPackage(commandeId.toIntOrNull() ?: 0, coursierId) { success, message ->
@@ -975,7 +975,7 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                             },
                             onMarkDelivered = { commandeId ->
                                 // 🔊 Annonce vocale
-                                voiceGuidance?.announceDeliveryCompleted()
+                                this@MainActivity.voiceGuidance?.announceDeliveryCompleted()
                                 
                                 ApiService.markDelivered(commandeId.toIntOrNull() ?: 0, coursierId) { success, message ->
                                     if (success) {
@@ -989,7 +989,7 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                 
                                 // 🔊 Annonce vocale
                                 if (commande != null) {
-                                    voiceGuidance?.announceCashReceived(commande.prixTotal)
+                                    this@MainActivity.voiceGuidance?.announceCashReceived(commande.prixTotal)
                                 }
                                 
                                 ApiService.confirmCashReceived(commandeId.toIntOrNull() ?: 0, coursierId) { success, message ->
