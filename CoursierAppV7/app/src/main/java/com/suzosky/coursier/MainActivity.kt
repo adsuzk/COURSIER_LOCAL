@@ -507,6 +507,9 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
     // Persist a simple login flag in SharedPreferences to stabilize navigation after login
     val prefs = remember { context.getSharedPreferences("suzosky_prefs", android.content.Context.MODE_PRIVATE) }
     
+    // 🔥 Capturer référence à l'Activity pour Voice + Maps
+    val activity = context as? MainActivity
+    
     println("🔄 SuzoskyCoursierApp - Initialisation")
     
     // État global avec vraies données
