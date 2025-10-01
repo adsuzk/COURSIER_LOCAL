@@ -865,6 +865,9 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                             
                             Log.d("MainActivity", "📊 Polling: ${nbCommandesRecues} commandes (avant: ${nbCommandesActuelles})")
                             
+                            // 🩺 Mettre à jour le timestamp de dernière sync réussie
+                            activity?.lastSyncTimestamp = System.currentTimeMillis()
+                            
                             // Si le nombre de commandes a changé, déclencher un refresh complet
                             if (nbCommandesRecues > nbCommandesActuelles) {
                                 Log.d("MainActivity", "🆕 NOUVELLE COMMANDE DÉTECTÉE ! Refresh automatique...")
