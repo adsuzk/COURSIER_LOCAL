@@ -1,7 +1,13 @@
 <?php
 // Script de test : Créer une commande et vérifier la réception dans l'app
 
-require_once 'config.php';
+// Connexion directe à la BDD
+try {
+    $pdo = new PDO('mysql:host=127.0.0.1;port=3306;dbname=coursier_local;charset=utf8mb4', 'root', '');
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Erreur connexion : " . $e->getMessage());
+}
 
 echo "🧪 TEST DE POLLING AUTOMATIQUE\n";
 echo "================================\n\n";
