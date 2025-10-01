@@ -641,6 +641,13 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                         .let { if (it.isFinite()) it else 0.0 }
                     gainsDuJour = toDoubleSafe(data["gains_du_jour"]) 
                         .let { if (it.isFinite()) it else 0.0 }
+                    
+                    // Récupérer le matricule réel depuis l'API
+                    val matriculeFromApi = toStringSafe(data["matricule"])
+                    if (matriculeFromApi.isNotBlank()) {
+                        coursierMatricule = matriculeFromApi
+                        try { prefs.edit { putString("coursier_matricule", matriculeFromApi) } } catch (_: Exception) {}
+                    }
 
                     // Convertir les commandes
                     @Suppress("UNCHECKED_CAST")
