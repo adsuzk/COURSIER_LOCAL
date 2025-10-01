@@ -208,8 +208,15 @@ fun CoursierScreenNew(
                 ApiService.setActiveOrder(coursierId, order.id, active = false) { _ -> }
             }
         }
-        // Passer à la prochaine commande en attente
-        currentOrder = commandes.firstOrNull { it.statut == "nouvelle" || it.statut == "attente" || it.statut == "acceptee" }
+        // Passer à la prochaine commande active (inclut TOUTES les étapes de livraison)
+        currentOrder = commandes.firstOrNull { 
+            it.statut == "nouvelle" || 
+            it.statut == "attente" || 
+            it.statut == "acceptee" ||
+            it.statut == "en_cours" ||
+            it.statut == "recuperee" ||
+            it.statut == "livree"
+        }
         // Mapper le statut de la commande au deliveryStep approprié
         deliveryStep = when (currentOrder?.statut) {
             "nouvelle", "attente" -> DeliveryStep.PENDING
