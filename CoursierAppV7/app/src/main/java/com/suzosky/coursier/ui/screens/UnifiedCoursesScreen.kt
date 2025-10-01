@@ -527,12 +527,42 @@ fun CourseActionPanel(
                     }
                 }
                 
+                DeliveryStep.ACCEPTED -> {
+                    // Bouton pour commencer la livraison (acceptee → en_cours)
+                    ActionButton(
+                        text = "🚀 Commencer la livraison",
+                        icon = Icons.Filled.LocalShipping,
+                        onClick = onStartDelivery,
+                        color = SuccessGreen
+                    )
+                }
+                
+                DeliveryStep.EN_ROUTE_PICKUP -> {
+                    // Bouton pour marquer le colis comme récupéré (en_cours → recuperee)
+                    ActionButton(
+                        text = "📦 J'ai récupéré le colis",
+                        icon = Icons.Filled.ShoppingBag,
+                        onClick = onPickupPackage,
+                        color = PrimaryGold
+                    )
+                }
+                
                 DeliveryStep.PICKUP_ARRIVED -> {
                     ActionButton(
                         text = "✅ J'ai récupéré le colis",
                         icon = Icons.Filled.Inventory,
-                        onClick = onPickupValidation,
+                        onClick = onPickupPackage,
                         color = PrimaryGold
+                    )
+                }
+                
+                DeliveryStep.PICKED_UP, DeliveryStep.EN_ROUTE_DELIVERY -> {
+                    // Bouton pour marquer comme livrée (recuperee → livree)
+                    ActionButton(
+                        text = "🏁 Marquer comme livrée",
+                        icon = Icons.Filled.CheckCircle,
+                        onClick = onMarkDelivered,
+                        color = SuccessGreen
                     )
                 }
                 
