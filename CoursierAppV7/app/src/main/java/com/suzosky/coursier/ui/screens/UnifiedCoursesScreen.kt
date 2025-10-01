@@ -3,6 +3,7 @@ package com.suzosky.coursier.ui.screens
 import android.location.Location
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -303,19 +304,17 @@ fun CourseInfoPanel(
                 )
                 InfoRow(
                     icon = Icons.Filled.Phone,
-                    label = "Téléphone",
-                    value = currentOrder.clientTelephone
+                    label = "Tél. Client",
+                    value = currentOrder.clientTelephone,
+                    isPhoneNumber = true
                 )
                 
-                if (deliveryStep in listOf(
-                    DeliveryStep.PICKED_UP,
-                    DeliveryStep.EN_ROUTE_DELIVERY,
-                    DeliveryStep.DELIVERY_ARRIVED
-                ) && currentOrder.telephoneDestinataire.isNotEmpty()) {
+                if (currentOrder.telephoneDestinataire.isNotEmpty()) {
                     InfoRow(
                         icon = Icons.Filled.ContactPhone,
-                        label = "Destinataire",
-                        value = currentOrder.telephoneDestinataire
+                        label = "Tél. Destinataire",
+                        value = currentOrder.telephoneDestinataire,
+                        isPhoneNumber = true
                     )
                 }
                 
@@ -385,16 +384,25 @@ fun InfoChip(
 fun InfoRow(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     label: String,
-    value: String
+    value: String,
+    isPhoneNumber: Boolean = false
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = if (isPhoneNumber) Modifier.clickable {
+            val intent = android.content.Intent(android.content.Intent.ACTION_DIAL).apply {
+                data = android.net.Uri.parse("tel:$value")
+            }
+            context.startActivity(intent)
+        } else Modifier
     ) {
         Icon(
             icon,
             contentDescription = null,
-            tint = PrimaryGold,
+            tint = if (isPhoneNumber) SuccessGreen else PrimaryGold,
             modifier = Modifier.size(16.dp)
         )
         Text(
@@ -405,10 +413,18 @@ fun InfoRow(
         Text(
             text = value,
             fontSize = 13.sp,
-            fontWeight = FontWeight.Medium,
-            color = PrimaryDark,
+            fontWeight = FontWeight.Bold,
+            color = if (isPhoneNumber) SuccessGreen else PrimaryDark,
             modifier = Modifier.weight(1f)
         )
+        if (isPhoneNumber) {
+            Icon(
+                Icons.Filled.Phone,
+                contentDescription = "Appeler",
+                tint = SuccessGreen,
+                modifier = Modifier.size(20.dp)
+            )
+        }
     }
 }
 
