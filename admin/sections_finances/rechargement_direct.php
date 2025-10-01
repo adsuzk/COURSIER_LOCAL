@@ -292,7 +292,7 @@ include __DIR__ . '/../functions.php';
     .finance-recharge .coursiers-grid {
         display: grid;
         gap: 22px;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        grid-template-columns: 1fr;
     }
 
     .finance-recharge .coursier-card {
