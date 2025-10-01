@@ -541,6 +541,9 @@
     // DOM Content Loaded pour les événements du formulaire
     document.addEventListener('DOMContentLoaded', () => {
         const form = document.getElementById('orderForm');
+        if (!window.currentClient && typeof window.forceCoursierAvailabilityForGuests === 'function') {
+            window.forceCoursierAvailabilityForGuests();
+        }
         if (typeof window.orderFormDirty === 'undefined') {
             window.orderFormDirty = false;
         }
