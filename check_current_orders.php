@@ -26,8 +26,8 @@ if (empty($rows)) {
         echo "Statut: " . $row['statut'] . "\n";
         echo "Coursier ID: " . ($row['coursier_id'] ?? 'NULL') . "\n";
         echo "Client: " . $row['client_nom'] . "\n";
-        echo "Pickup: " . $row['pickup_address'] . "\n";
-        echo "Delivery: " . $row['delivery_address'] . "\n";
+        echo "Pickup: " . $row['adresse_retrait'] . "\n";
+        echo "Delivery: " . $row['adresse_livraison'] . "\n";
         echo "Créée le: " . $row['created_at'] . "\n";
         echo str_repeat("-", 50) . "\n";
     }
