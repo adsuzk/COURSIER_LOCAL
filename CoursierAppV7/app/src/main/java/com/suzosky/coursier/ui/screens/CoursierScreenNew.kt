@@ -54,7 +54,10 @@ fun CoursierScreenNew(
     onNavigateToHistorique: () -> Unit = {},
     onNavigateToGains: () -> Unit = {},
     onLogout: () -> Unit = {},
-    onRecharge: (Int) -> Unit = {}
+    onRecharge: (Int) -> Unit = {},
+    // Nouveaux paramètres pour le rafraîchissement automatique
+    shouldRefreshCommandes: Boolean = false,
+    onCommandesRefreshed: () -> Unit = {}
 ) {
     val context = LocalContext.current
     var currentTab by remember { mutableStateOf(NavigationTab.COURSES) }
