@@ -201,7 +201,7 @@ try {
             break;
             
         case 'accept_commande':
-            // Accepter une commande
+            // Accepter une commande AVEC DÉBIT AUTOMATIQUE
             $commande_id = intval($_REQUEST['commande_id'] ?? 0);
             
             if (!$coursier_id || !$commande_id) {
@@ -211,7 +211,7 @@ try {
             
             // Vérifier que la commande est bien attribuée au coursier
             $stmt = $pdo->prepare("
-                SELECT id, code_commande, statut, prix_total 
+                SELECT id, code_commande, statut, prix_total, prix_estime
                 FROM commandes 
                 WHERE id = ? AND coursier_id = ? AND statut IN ('nouvelle', 'attribuee')
             ");
@@ -223,24 +223,110 @@ try {
                 break;
             }
             
-            // Accepter la commande
-            $stmt = $pdo->prepare("
-                UPDATE commandes 
-                SET statut = 'acceptee', heure_acceptation = NOW()
-                WHERE id = ?
-            ");
+            $prixTotal = $commande['prix_total'] ?: $commande['prix_estime'] ?: 0;
             
-            if ($stmt->execute([$commande_id])) {
+            if ($prixTotal <= 0) {
+                $response = ['success' => false, 'message' => 'Prix de la commande invalide'];
+                break;
+            }
+            
+            // ⚠️ VÉRIFIER LE SOLDE AVANT D'ACCEPTER
+            $stmt = $pdo->prepare("SELECT COALESCE(solde_wallet, 0) as solde FROM agents_suzosky WHERE id = ?");
+            $stmt->execute([$coursier_id]);
+            $coursier = $stmt->fetch(PDO::FETCH_ASSOC);
+            $soldeActuel = $coursier['solde'] ?? 0;
+            
+            // Calculer les frais
+            $frais = calculerFraisService($prixTotal, $pdo);
+            
+            // Vérifier si le coursier a assez de solde
+            if ($soldeActuel < $frais['frais_service']) {
+                $response = [
+                    'success' => false,
+                    'message' => "Solde insuffisant. Requis: {$frais['frais_service']} FCFA, Disponible: {$soldeActuel} FCFA",
+                    'solde_requis' => $frais['frais_service'],
+                    'solde_actuel' => $soldeActuel,
+                    'manquant' => $frais['frais_service'] - $soldeActuel,
+                    'details_frais' => $frais
+                ];
+                break;
+            }
+            
+            // 🔒 TRANSACTION ATOMIQUE
+            $pdo->beginTransaction();
+            
+            try {
+                // 1. Accepter la commande
+                $stmt = $pdo->prepare("
+                    UPDATE commandes 
+                    SET statut = 'acceptee', 
+                        heure_acceptation = NOW(),
+                        frais_service = ?,
+                        commission_suzosky = ?,
+                        gain_coursier = ?,
+                        updated_at = NOW()
+                    WHERE id = ?
+                ");
+                $stmt->execute([
+                    $frais['frais_service'],
+                    $frais['commission_suzosky'],
+                    $frais['gain_coursier'],
+                    $commande_id
+                ]);
+                
+                // 2. Débiter le solde du coursier
+                $stmt = $pdo->prepare("
+                    UPDATE agents_suzosky 
+                    SET solde_wallet = solde_wallet - ?
+                    WHERE id = ?
+                ");
+                $stmt->execute([$frais['frais_service'], $coursier_id]);
+                
+                // 3. Enregistrer la transaction de débit
+                $refTransaction = 'DELIV_' . $commande['code_commande'] . '_FEE';
+                $stmt = $pdo->prepare("
+                    INSERT INTO transactions_financieres 
+                    (type, montant, compte_type, compte_id, reference, description, statut, date_creation)
+                    VALUES ('debit', ?, 'coursier', ?, ?, ?, 'reussi', NOW())
+                ");
+                $stmt->execute([
+                    $frais['frais_service'],
+                    $coursier_id,
+                    $refTransaction,
+                    "Frais d'acceptation commande #{$commande['code_commande']}"
+                ]);
+                
+                $pdo->commit();
+                
+                // Récupérer le nouveau solde
+                $stmt = $pdo->prepare("SELECT COALESCE(solde_wallet, 0) as solde FROM agents_suzosky WHERE id = ?");
+                $stmt->execute([$coursier_id]);
+                $nouveauSolde = $stmt->fetchColumn();
+                
                 $response = [
                     'success' => true,
-                    'message' => 'Commande acceptée',
-                    'commande' => $commande
+                    'message' => 'Commande acceptée et solde débité',
+                    'commande' => $commande,
+                    'frais_debites' => $frais['frais_service'],
+                    'gain_previsionnel' => $frais['gain_coursier'],
+                    'ancien_solde' => $soldeActuel,
+                    'nouveau_solde' => $nouveauSolde,
+                    'details_frais' => $frais
                 ];
                 
                 // Log de l'acceptation
-                logRequest('accept_commande', ['commande_id' => $commande_id, 'coursier_id' => $coursier_id], $response);
-            } else {
-                $response = ['success' => false, 'message' => 'Erreur lors de l\'acceptation'];
+                logRequest('accept_commande', [
+                    'commande_id' => $commande_id,
+                    'coursier_id' => $coursier_id,
+                    'frais_debites' => $frais['frais_service']
+                ], $response);
+                
+            } catch (Exception $e) {
+                $pdo->rollBack();
+                $response = [
+                    'success' => false,
+                    'message' => 'Erreur lors de l\'acceptation: ' . $e->getMessage()
+                ];
             }
             break;
             
