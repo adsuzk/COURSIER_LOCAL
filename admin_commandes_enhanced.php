@@ -332,7 +332,7 @@ function renderCommandesContent(array $commandes): string
 
             // Sécurisation des IDs pour éviter erreurs JS
             $safeCommandeId = (int) $commande['id'];
-            $safeCoursierId = !empty($commande['coursier_id']) ? (int) $commande['coursier_id'] : 'null';
+            $safeCoursierId = !empty($commande['coursier_id']) ? (int) $commande['coursier_id'] : null;
 
             if (!$hasCoursier) {
                 $trackClass = 'btn-track disabled';
