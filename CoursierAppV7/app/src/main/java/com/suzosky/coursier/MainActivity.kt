@@ -793,6 +793,20 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                 description = toStringSafe(cmdMap["description"]),
                                 typeCommande = "Standard"
                             )
+                        }.filter { commande ->
+                            // ⚠️ FILTRER LES COMMANDES TERMINÉES (livree, annulee, refusee, cash_recu)
+                            val statut = commande.statut.lowercase()
+                            val estActive = statut != "livree" && 
+                                           statut != "annulee" && 
+                                           statut != "refusee" &&
+                                           statut != "cash_recu" &&
+                                           statut != "terminee"
+                            
+                            if (!estActive) {
+                                Log.d("MainActivity", "🚫 Commande ${commande.id} FILTRÉE (statut: $statut)")
+                            }
+                            
+                            estActive
                         }
                     } catch (e: Exception) {
                         TelemetrySDK.getInstance()?.reportCrash(
