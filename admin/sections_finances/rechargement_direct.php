@@ -5,7 +5,7 @@
  * Respect des coloris Suzosky et UI/UX moderne
  */
 
-require_once __DIR__ . '/../../fcm_manager.php';
+require_once __DIR__ . '/../../fcm_v1_manager.php';
 
 /**
  * Insère un log FCM en s'adaptant dynamiquement à la structure de la table.
