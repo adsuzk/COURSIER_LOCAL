@@ -298,6 +298,9 @@ document.addEventListener('DOMContentLoaded', () => {
           hideModal();
           window.currentClient = data.client;
           updateUIForLoggedInUser(data.client);
+          if (typeof window.refreshCoursierAvailabilityForClient === 'function') {
+            window.refreshCoursierAvailabilityForClient();
+          }
           showNotification(data.message || 'Connexion réussie', 'success');
         } else {
           alert(data.error || 'Erreur de connexion');
