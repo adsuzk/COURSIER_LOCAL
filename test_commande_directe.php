@@ -136,7 +136,7 @@ try {
     // Préparer les données de notification
     $notificationData = [
         'type' => 'new_order',
-        'order_id' => $commandeId,
+        'order_id' => $orderId,
         'order_number' => $commandeData['order_number'],
         'code_commande' => $commandeData['code_commande'],
         'client_nom' => $commandeData['client_nom'],
