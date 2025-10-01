@@ -697,6 +697,12 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                 } else {
                                     // TODO: Show Compose snackbar for invalid amount
                                 }
+                            },
+                            // Paramètres pour le rafraîchissement automatique des commandes
+                            shouldRefreshCommandes = shouldRefreshCommandes,
+                            onCommandesRefreshed = {
+                                shouldRefreshCommandes = false
+                                newOrderId = null
                             }
                         )
                         if (isInitiatingPayment) {
