@@ -290,20 +290,21 @@ include __DIR__ . '/../functions.php';
     }
 
     .finance-recharge .coursiers-grid {
-        display: grid;
+        display: flex;
+        flex-direction: column;
         gap: 22px;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     }
 
     .finance-recharge .coursier-card {
         background: rgba(22, 33, 62, 0.82);
         border-radius: 16px;
         border: 1px solid rgba(212, 168, 83, 0.28);
-        padding: 22px;
+        padding: 24px;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
         display: flex;
-        flex-direction: column;
-        gap: 18px;
+        flex-wrap: wrap;
+        align-items: stretch;
+        gap: 24px;
     }
 
     .finance-recharge .coursier-card:hover {
@@ -316,6 +317,8 @@ include __DIR__ . '/../functions.php';
         justify-content: space-between;
         align-items: flex-start;
         gap: 16px;
+        flex: 2 1 340px;
+        min-width: 280px;
     }
 
     .finance-recharge .coursier-info h3 {
@@ -382,8 +385,13 @@ include __DIR__ . '/../functions.php';
         font-size: 1.55rem;
         font-weight: 700;
         text-align: center;
-        padding: 12px;
+        padding: 12px 18px;
         border-radius: 12px;
+        flex: 0 0 220px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 200px;
     }
 
     .finance-recharge .solde-positive {
@@ -401,6 +409,8 @@ include __DIR__ . '/../functions.php';
         grid-template-columns: 1fr 1fr auto;
         gap: 12px;
         align-items: end;
+        flex: 1 1 320px;
+        min-width: 280px;
     }
 
     .finance-recharge .form-group {
@@ -471,6 +481,20 @@ include __DIR__ . '/../functions.php';
     @media (max-width: 1024px) {
         .finance-recharge {
             padding: 18px;
+        }
+    }
+
+    @media (max-width: 1024px) {
+        .finance-recharge .coursier-card {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .finance-recharge .coursier-header,
+        .finance-recharge .solde-display,
+        .finance-recharge .recharge-form {
+            flex: 1 1 100%;
+            min-width: 0;
         }
     }
 
