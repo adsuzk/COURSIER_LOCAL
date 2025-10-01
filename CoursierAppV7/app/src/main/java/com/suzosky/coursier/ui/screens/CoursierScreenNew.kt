@@ -321,6 +321,13 @@ fun CoursierScreenNew(
                                 deliveryStep = DeliveryStep.DELIVERED
                             }
                         },
+                        onConfirmCash = {
+                            currentOrder?.let { order ->
+                                Toast.makeText(context, "Cash récupéré confirmé!", Toast.LENGTH_SHORT).show()
+                                onConfirmCash(order.id)
+                                deliveryStep = DeliveryStep.CASH_CONFIRMED
+                            }
+                        },
                         onPickupValidation = {
                             currentOrder?.let { order ->
                                 deliveryStep = DeliveryStep.PICKED_UP
