@@ -361,6 +361,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data.success) {
           window.currentClient = data.client;
           updateUIForLoggedInUser(data.client);
+          if (typeof window.refreshCoursierAvailabilityForClient === 'function') {
+            window.refreshCoursierAvailabilityForClient();
+          }
           if (modal) {
             modal.style.display = 'none';
           }
@@ -376,6 +379,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (sessionData && sessionData.success && sessionData.client) {
           window.currentClient = sessionData.client;
           updateUIForLoggedInUser(sessionData.client);
+          if (typeof window.refreshCoursierAvailabilityForClient === 'function') {
+            window.refreshCoursierAvailabilityForClient();
+          }
         }
       })
       .catch(err => {
