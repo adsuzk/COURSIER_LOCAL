@@ -51,6 +51,7 @@ fun CoursierScreenNew(
     coursierTelephone: String = "",
     coursierEmail: String = "",
     dateInscription: String = "",
+    coursierMatricule: String = "",
     commandes: List<Commande> = emptyList(),
     balance: Int = 0,
     gainsDuJour: Int = 0,
