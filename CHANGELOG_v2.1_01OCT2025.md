@@ -1,4 +1,15 @@
-# 📋 CHANGELOG v2.1 - **CONFIGURATION CINETPAY** :
+# 📋 CHANGELOG v2.1 - **CONFIGURA**CONFIGURATION CINETPAY** :
+```php
+// Dans config.php - Credentials mis à jour 1er Octobre 2025
+function getCinetPayConfig(): array {
+    return [
+        'apikey'     => '8338609805877a8eaac7eb6.01734650',
+        'site_id'    => '5875732',
+        'secret_key' => '830006136690110164ddb1.29156844',
+        'endpoint'   => 'https://api-checkout.cinetpay.com/v2/payment'
+    ];
+}
+```Y** :
 ```php
 // Dans config.php - Credentials mis à jour 1er Octobre 2025
 function getCinetPayConfig(): array {
