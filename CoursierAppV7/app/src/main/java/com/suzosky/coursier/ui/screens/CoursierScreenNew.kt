@@ -84,7 +84,7 @@ fun CoursierScreenNew(
     }
     
     // Extraire la position du coursier
-    val courierLocation = mapUi.myLocation
+    val courierLocation = mapUi.currentLocation
     
     // État pour tracker les nouvelles commandes et déclencher le son
     var previousCommandesCount by remember { mutableStateOf(commandes.size) }
