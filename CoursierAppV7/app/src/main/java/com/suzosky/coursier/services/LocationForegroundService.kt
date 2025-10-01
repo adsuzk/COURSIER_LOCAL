@@ -54,6 +54,10 @@ class LocationForegroundService : Service() {
     // Backoff state
     @Volatile
     private var backoffMillis = 0L
+    
+    // FCM ping state
+    @Volatile
+    private var fcmPingJob: Job? = null
 
     override fun onCreate() {
         super.onCreate()
