@@ -371,6 +371,23 @@ fun ErrorFallbackScreen(error: String) {
 
 @Composable
 fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
+    val context = LocalContext.current
+    
+    // Gestion de l'intent pour ouvrir une commande spécifique
+    LaunchedEffect(Unit) {
+        val activity = context as? ComponentActivity
+        activity?.intent?.let { intent ->
+            val openOrderId = intent.getStringExtra("open_order_id")
+            if (!openOrderId.isNullOrBlank()) {
+                println("🎯 Intent détecté: Ouverture commande ID $openOrderId")
+                Log.d("MainActivity", "🎯 Intent détecté: Ouverture commande ID $openOrderId")
+                
+                // Forcer le rafraîchissement et l'ouverture de l'onglet Courses
+                // Cette logique sera gérée par les paramètres de CoursierScreenNew
+            }
+        }
+    }
+    
     // Affichage du dialog de mise à jour si besoin
     val updateInfo = updateInfoToShow[0]
     val uriHandler = androidx.compose.ui.platform.LocalUriHandler.current
