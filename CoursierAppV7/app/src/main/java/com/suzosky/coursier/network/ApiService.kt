@@ -1390,7 +1390,7 @@ object ApiService {
                             "ApiService",
                             "✅ pingDeviceToken: coursier_id=$id récupéré via session"
                         )
-                        val refreshedToken = prefs.getString("fcm_token", finalToken)
+                        val refreshedToken = prefs.getString("fcm_token", null) ?: finalToken
                         if (!refreshedToken.isNullOrBlank()) {
                             pingDeviceToken(context, refreshedToken, attempt + 1)
                         } else {
@@ -1417,7 +1417,7 @@ object ApiService {
 
         android.util.Log.d(
             "ApiService",
-            "🚀 pingDeviceToken START - coursier_id=$coursierId, token=${finalToken.substring(0, 20)}..."
+            "🚀 pingDeviceToken START - coursier_id=$coursierId, token=${finalToken.take(20)}..."
         )
 
         val form = FormBody.Builder()
