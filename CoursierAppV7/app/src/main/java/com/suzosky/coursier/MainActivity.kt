@@ -791,10 +791,6 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                     println("🔔 BroadcastReceiver: Nouvelle commande reçue - Order ID: $orderId")
                     Log.d("MainActivity", "🔔 BroadcastReceiver: Nouvelle commande reçue - Order ID: $orderId")
                     
-                    // Forcer le rafraîchissement des commandes
-                    shouldRefreshCommandes = true
-                    newOrderId = orderId
-                    
                     // Déclencher un rafraîchissement des données API
                     lifecycleScope.launch {
                         try {
