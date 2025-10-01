@@ -288,6 +288,106 @@ class CoursesViewModel @Inject constructor(
     }
     
     /**
+     * Démarre la livraison (acceptee → en_cours)
+     */
+    fun startDelivery() {
+        viewModelScope.launch {
+            try {
+                val activeOrder = _uiState.value.activeOrder ?: return@launch
+                val prefs = context.getSharedPreferences("suzosky_prefs", Context.MODE_PRIVATE)
+                val coursierId = prefs.getInt("coursier_id", -1)
+                
+                if (coursierId <= 0) {
+                    _uiState.value = _uiState.value.copy(error = "ID coursier non trouvé")
+                    return@launch
+                }
+                
+                val commandeId = activeOrder.id.toIntOrNull() ?: return@launch
+                
+                ApiService.startDelivery(commandeId, coursierId) { success, message ->
+                    if (success) {
+                        Log.d("CoursesViewModel", "Livraison démarrée: $message")
+                        _uiState.value = _uiState.value.copy(
+                            currentStep = CourseStep.GOING_TO_PICKUP
+                        )
+                    } else {
+                        Log.e("CoursesViewModel", "Erreur démarrage: $message")
+                        _uiState.value = _uiState.value.copy(error = message)
+                    }
+                }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(error = "Erreur: ${e.message}")
+            }
+        }
+    }
+    
+    /**
+     * Marque le colis comme récupéré (en_cours → recuperee)
+     */
+    fun pickupPackage() {
+        viewModelScope.launch {
+            try {
+                val activeOrder = _uiState.value.activeOrder ?: return@launch
+                val prefs = context.getSharedPreferences("suzosky_prefs", Context.MODE_PRIVATE)
+                val coursierId = prefs.getInt("coursier_id", -1)
+                
+                if (coursierId <= 0) {
+                    _uiState.value = _uiState.value.copy(error = "ID coursier non trouvé")
+                    return@launch
+                }
+                
+                val commandeId = activeOrder.id.toIntOrNull() ?: return@launch
+                
+                ApiService.pickupPackage(commandeId, coursierId) { success, message ->
+                    if (success) {
+                        Log.d("CoursesViewModel", "Colis récupéré: $message")
+                        _uiState.value = _uiState.value.copy(
+                            currentStep = CourseStep.GOING_TO_DELIVERY
+                        )
+                    } else {
+                        Log.e("CoursesViewModel", "Erreur récupération: $message")
+                        _uiState.value = _uiState.value.copy(error = message)
+                    }
+                }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(error = "Erreur: ${e.message}")
+            }
+        }
+    }
+    
+    /**
+     * Marque la commande comme livrée (recuperee → livree)
+     */
+    fun markDelivered() {
+        viewModelScope.launch {
+            try {
+                val activeOrder = _uiState.value.activeOrder ?: return@launch
+                val prefs = context.getSharedPreferences("suzosky_prefs", Context.MODE_PRIVATE)
+                val coursierId = prefs.getInt("coursier_id", -1)
+                
+                if (coursierId <= 0) {
+                    _uiState.value = _uiState.value.copy(error = "ID coursier non trouvé")
+                    return@launch
+                }
+                
+                val commandeId = activeOrder.id.toIntOrNull() ?: return@launch
+                
+                ApiService.markDelivered(commandeId, coursierId) { success, message ->
+                    if (success) {
+                        Log.d("CoursesViewModel", "Commande livrée: $message")
+                        completeCurrentOrder()
+                    } else {
+                        Log.e("CoursesViewModel", "Erreur livraison: $message")
+                        _uiState.value = _uiState.value.copy(error = message)
+                    }
+                }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(error = "Erreur: ${e.message}")
+            }
+        }
+    }
+    
+    /**
      * Termine la commande actuelle et active la suivante
      */
     private fun completeCurrentOrder() {
