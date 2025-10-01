@@ -1,8 +1,19 @@
 <?php
 /**
- * SYSTÈME INTELLIGENT D'ATTRIBUTION DES COMMANDES
- * Attribution automatique aux coursiers connectés et disponibles
+ * ⚠️ FICHIER DÉSACTIVÉ - 2025-10-01
+ * SYSTÈME INTELLIGENT D'ATTRIBUTION DES COMMANDES - REMPLACÉ
+ * Attribution automatique maintenant gérée directement dans api/submit_order.php
+ * Voir AUDIT_NETTOYAGE_COMMANDES.md pour la documentation du flux unifié.
  */
+exit(json_encode([
+    'disabled' => true,
+    'message' => 'Ce système est désactivé. Attribution gérée par api/submit_order.php',
+    'redirect_to' => 'api/submit_order.php',
+    'documentation' => 'AUDIT_NETTOYAGE_COMMANDES.md'
+]));
+
+// Code original conservé pour référence:
+// Attribution automatique aux coursiers connectés et disponibles
 
 require_once 'config.php';
 

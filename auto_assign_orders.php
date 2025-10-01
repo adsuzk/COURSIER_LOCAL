@@ -1,4 +1,16 @@
 <?php
+/**
+ * ⚠️ FICHIER DÉSACTIVÉ - 2025-10-01
+ * Ce système est redondant avec api/submit_order.php qui gère maintenant l'attribution automatique.
+ * Voir AUDIT_NETTOYAGE_COMMANDES.md pour la documentation du système unifié.
+ */
+exit(json_encode([
+    'disabled' => true,
+    'message' => 'Ce fichier est désactivé. Attribution gérée par api/submit_order.php',
+    'redirect_to' => 'api/submit_order.php'
+]));
+
+// Code original conservé pour référence:
 // Processus d'attribution automatique simple
 
 require_once 'config.php';
