@@ -63,7 +63,8 @@
             pendingMessage: '',
             isLocked: initialAvailability === undefined ? false : !initialAvailability,
             lastAvailableAt: initialAvailability ? Date.now() : null,
-            meta: null
+            meta: null,
+            latestPayload: null
         };
 
         const getOrderFormElements = () => {
