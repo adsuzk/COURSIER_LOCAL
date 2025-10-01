@@ -6,16 +6,17 @@ try {
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
     ]);
 
-    echo "=== COURSIERS DISPONIBLES ===\n";
-    $stmt = $pdo->query("SELECT id, nom, prenom, telephone, statut FROM coursiers LIMIT 10");
+    echo "=== COURSIERS TABLE STRUCTURE ===\n";
+    $stmt = $pdo->query("DESCRIBE coursiers");
     while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        echo "ID: {$row['id']} - {$row['nom']} {$row['prenom']} ({$row['statut']})\n";
+        echo "{$row['Field']} - {$row['Type']} ({$row['Null']} - {$row['Key']})\n";
     }
 
-    echo "\n=== FOREIGN KEY INFO ===\n";
-    $stmt = $pdo->query("SHOW CREATE TABLE commandes");
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    echo $result['Create Table']."\n";
+    echo "\n=== COURSIERS DISPONIBLES ===\n";
+    $stmt = $pdo->query("SELECT * FROM coursiers LIMIT 5");
+    while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        echo "ID: {$row['id']} - " . json_encode($row) . "\n";
+    }
 
 } catch (Exception $e) {
     echo "❌ ERREUR: " . $e->getMessage() . "\n";
