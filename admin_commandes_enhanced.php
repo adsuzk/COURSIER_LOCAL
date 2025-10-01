@@ -205,6 +205,7 @@ function getStatistics(): array
         'attribuee' => 0,
         'acceptee' => 0,
         'en_cours' => 0,
+        'recuperee' => 0,
         'livree' => 0,
         'annulee' => 0,
     ];
@@ -248,6 +249,10 @@ function renderStatsContent(array $stats): string
         <div class="stat-card">
             <h3>Acceptées</h3>
             <strong><?= (int) ($stats['acceptee'] ?? 0) ?></strong>
+        </div>
+        <div class="stat-card" style="background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); color: white;">
+            <h3>🚚 En cours</h3>
+            <strong><?= (int) ($stats['en_cours'] ?? 0) ?></strong>
         </div>
         <div class="stat-card">
             <h3>En cours</h3>
@@ -2004,11 +2009,16 @@ body.admin-commandes-page {
             <input type="hidden" name="section" value="commandes">
             <div>
                 <label for="statut">Statut</label>
-                <select id="statut" name="statut">
-                    <option value="">Tous</option>
-                    <?php foreach (['nouvelle' => 'Nouvelles', 'en_attente' => 'En attente', 'attribuee' => 'Attribuées', 'acceptee' => 'Acceptées', 'en_cours' => 'En cours', 'livree' => 'Livrées', 'annulee' => 'Annulées'] as $value => $label): ?>
-                        <option value="<?= $value ?>" <?= $filtreStatut === $value ? 'selected' : '' ?>><?= $label ?></option>
-                    <?php endforeach; ?>
+                <select id="statut" name="statut" style="background-color: white; color: #333; padding: 8px;">
+                    <option value="" style="background: white; color: #333;">📋 Tous les statuts</option>
+                    <option value="nouvelle" <?= $filtreStatut === 'nouvelle' ? 'selected' : '' ?> style="background: #e3f2fd; color: #1976d2;">🆕 Nouvelles</option>
+                    <option value="en_attente" <?= $filtreStatut === 'en_attente' ? 'selected' : '' ?> style="background: #fff3e0; color: #f57c00;">⏳ En attente</option>
+                    <option value="attribuee" <?= $filtreStatut === 'attribuee' ? 'selected' : '' ?> style="background: #f3e5f5; color: #7b1fa2;">📌 Attribuées</option>
+                    <option value="acceptee" <?= $filtreStatut === 'acceptee' ? 'selected' : '' ?> style="background: #e8f5e9; color: #388e3c;">✅ Acceptées</option>
+                    <option value="en_cours" <?= $filtreStatut === 'en_cours' ? 'selected' : '' ?> style="background: #fff9c4; color: #f57f17; font-weight: bold;">🚚 En cours (Actives)</option>
+                    <option value="recuperee" <?= $filtreStatut === 'recuperee' ? 'selected' : '' ?> style="background: #b2dfdb; color: #00695c;">📦 Récupérées</option>
+                    <option value="livree" <?= $filtreStatut === 'livree' ? 'selected' : '' ?> style="background: #c8e6c9; color: #2e7d32;">🎉 Livrées</option>
+                    <option value="annulee" <?= $filtreStatut === 'annulee' ? 'selected' : '' ?> style="background: #ffcdd2; color: #c62828;">❌ Annulées</option>
                 </select>
             </div>
             <div>
