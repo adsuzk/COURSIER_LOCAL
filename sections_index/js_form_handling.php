@@ -4,7 +4,11 @@
 
 <script>
     // Initialize currentClient flag from PHP session
-    window.currentClient = <?php echo !empty($_SESSION['client_id']) ? 'true' : 'false'; ?>;
+    window.currentClient = <?php echo (
+        !empty($_SESSION['client_id']) ||
+        !empty($_SESSION['client_email']) ||
+        !empty($_SESSION['client_telephone'])
+    ) ? 'true' : 'false'; ?>;
 
     console.log('🚀 js_form_handling.php - Chargement des fonctions modales');
 
