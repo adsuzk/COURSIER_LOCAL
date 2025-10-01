@@ -211,42 +211,21 @@
             }
         };
 
-        window.setFCMCoursierStatus = function(isAvailable, message, options) {
-            options = options || {};
-            const normalizedMessage = (message && String(message).trim() !== '')
-                ? String(message)
-                : (window.COMMERCIAL_FALLBACK_MESSAGE || window.initialCoursierMessage || 'Nos coursiers sont momentanément indisponibles.');
-
-            if (typeof options.lockDelayMs === 'number' && options.lockDelayMs > 0) {
-                state.lockDelayMs = options.lockDelayMs;
-            } else if (typeof window.COURSIER_LOCK_DELAY_MS === 'number' && window.COURSIER_LOCK_DELAY_MS > 0) {
-                state.lockDelayMs = window.COURSIER_LOCK_DELAY_MS;
-            }
-
-            if (options.meta && typeof options.meta === 'object') {
-                state.meta = {
-                    ...options.meta,
-                    receivedAt: Date.now()
-                };
-            }
-
-            window.fcmCoursierAvailable = Boolean(isAvailable);
-            window.fcmCoursierMessage = normalizedMessage;
-
-            console.log('📡 FCM coursier status set:', window.fcmCoursierAvailable, window.fcmCoursierMessage, options);
-
+        const updateCoursierBanner = (available, text) => {
             try {
                 const banner = document.getElementById('coursier-unavailable-banner');
-                if (!window.fcmCoursierAvailable) {
-                    const text = window.fcmCoursierMessage || 'Aucun coursier disponible pour le moment.';
+                if (!available) {
+                    const messageText = (text && String(text).trim() !== '')
+                        ? String(text)
+                        : (window.COMMERCIAL_FALLBACK_MESSAGE || 'Aucun coursier disponible pour le moment.');
                     if (!banner) {
                         const b = document.createElement('div');
                         b.id = 'coursier-unavailable-banner';
                         b.style = 'position:fixed;top:0;left:0;right:0;z-index:99999;padding:10px;text-align:center;background:linear-gradient(90deg,#D9534F,#F0AD4E);color:#fff;font-weight:700;';
-                        b.textContent = text;
+                        b.textContent = messageText;
                         document.body.appendChild(b);
                     } else {
-                        banner.textContent = text;
+                        banner.textContent = messageText;
                         banner.style.display = '';
                     }
                 } else if (banner) {
@@ -255,10 +234,33 @@
             } catch (e) {
                 console.warn('⚠️ setFCMCoursierStatus banner update failed', e);
             }
+        };
 
-            const forceImmediate = Boolean(options.forceImmediate || options.immediate);
+        const applyCoursierPayload = (payload) => {
+            if (!payload) return;
+            const localOptions = payload.options ? { ...payload.options } : {};
 
-            if (window.fcmCoursierAvailable) {
+            if (localOptions.meta && typeof localOptions.meta === 'object') {
+                state.meta = { ...localOptions.meta, receivedAt: Date.now() };
+            } else {
+                state.meta = null;
+            }
+
+            if (typeof localOptions.lockDelayMs === 'number' && localOptions.lockDelayMs > 0) {
+                state.lockDelayMs = localOptions.lockDelayMs;
+            } else if (typeof window.COURSIER_LOCK_DELAY_MS === 'number' && window.COURSIER_LOCK_DELAY_MS > 0) {
+                state.lockDelayMs = window.COURSIER_LOCK_DELAY_MS;
+            }
+
+            window.fcmCoursierAvailable = payload.available;
+            window.fcmCoursierMessage = payload.message;
+            updateCoursierBanner(payload.available, payload.message);
+
+            console.log('📡 FCM coursier status set:', window.fcmCoursierAvailable, window.fcmCoursierMessage, localOptions);
+
+            const forceImmediate = Boolean(localOptions.forceImmediate || localOptions.immediate);
+
+            if (payload.available) {
                 state.available = true;
                 state.lastAvailableAt = Date.now();
                 if (state.lockTimer) {
@@ -267,20 +269,23 @@
                 }
                 stopCountdown();
 
-                if (!options.preventUnlock) {
+                if (!localOptions.preventUnlock) {
                     const { container, form } = getOrderFormElements();
                     const formHidden = form && form.classList.contains('order-form-hidden');
                     const containerLocked = container && container.classList.contains('order-form--locked');
                     if (state.isLocked || formHidden || containerLocked) {
                         unlockOrderForm();
+                    } else {
+                        toggleFormDisabled(false);
                     }
                 }
                 state.isLocked = false;
+                state.pendingMessage = '';
                 return;
             }
 
             state.available = false;
-            const effectiveMessage = normalizedMessage;
+            const effectiveMessage = payload.message;
 
             if (forceImmediate) {
                 if (state.lockTimer) {
@@ -296,8 +301,8 @@
                 return;
             }
 
-            const delay = (typeof options.lockDelayMs === 'number' && options.lockDelayMs > 0)
-                ? options.lockDelayMs
+            const delay = (typeof localOptions.lockDelayMs === 'number' && localOptions.lockDelayMs > 0)
+                ? localOptions.lockDelayMs
                 : state.lockDelayMs;
 
             state.pendingMessage = effectiveMessage;
@@ -310,6 +315,66 @@
                     state.pendingMessage = '';
                 }, delay);
             }
+        };
+
+        window.setFCMCoursierStatus = function(isAvailable, message, options) {
+            const rawOptions = options && typeof options === 'object' ? { ...options } : {};
+            if (rawOptions.meta && typeof rawOptions.meta === 'object') {
+                rawOptions.meta = { ...rawOptions.meta };
+            }
+
+            const normalizedMessage = (message && String(message).trim() !== '')
+                ? String(message)
+                : (window.COMMERCIAL_FALLBACK_MESSAGE || window.initialCoursierMessage || 'Nos coursiers sont momentanément indisponibles.');
+
+            const payload = {
+                available: Boolean(isAvailable),
+                message: normalizedMessage,
+                options: rawOptions
+            };
+
+            state.latestPayload = payload;
+
+            if (!window.currentClient && !rawOptions.applyForGuests) {
+                console.log('👤 Visiteur non connecté : formulaire maintenu ouvert, statut FCM mémorisé.');
+                state.available = payload.available;
+                state.pendingMessage = normalizedMessage;
+                if (rawOptions.meta && typeof rawOptions.meta === 'object') {
+                    state.meta = { ...rawOptions.meta, receivedAt: Date.now() };
+                } else {
+                    state.meta = null;
+                }
+                if (state.lockTimer) {
+                    clearTimeout(state.lockTimer);
+                    state.lockTimer = null;
+                }
+                stopCountdown();
+                updateCoursierBanner(payload.available, payload.message);
+                unlockOrderForm({ preserveMeta: true, preserveMessage: true });
+                return;
+            }
+
+            applyCoursierPayload(payload);
+        };
+
+        window.refreshCoursierAvailabilityForClient = function() {
+            if (!window.currentClient) return;
+            if (state.latestPayload) {
+                applyCoursierPayload(state.latestPayload);
+            } else if (state.available === false) {
+                lockOrderForm(state.pendingMessage || window.COMMERCIAL_FALLBACK_MESSAGE);
+            }
+        };
+
+        window.forceCoursierAvailabilityForGuests = function() {
+            if (window.currentClient) return;
+            if (state.lockTimer) {
+                clearTimeout(state.lockTimer);
+                state.lockTimer = null;
+            }
+            stopCountdown();
+            unlockOrderForm({ preserveMeta: true, preserveMessage: true });
+            updateCoursierBanner(state.available ?? true, state.pendingMessage || window.initialCoursierMessage);
         };
 
         window.showCoursierUnavailableMessage = function(msg) {
