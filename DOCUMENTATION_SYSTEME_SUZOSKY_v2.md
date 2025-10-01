@@ -489,12 +489,12 @@ chmod 777 /path/to/COURSIER_LOCAL/diagnostic_logs
 
 **CONFIGURATION CINETPAY** :
 ```php
-// Dans config.php
+// Dans config.php - Credentials mis à jour 1er Octobre 2025
 function getCinetPayConfig(): array {
     return [
         'apikey'     => '8338609805877a8eaac7eb6.01734650',
-        'site_id'    => '219503',
-        'secret_key' => '17153003105e7ca6606cc157.46703056',
+        'site_id'    => '5875732',
+        'secret_key' => '830006136690110164ddb1.29156844',
         'endpoint'   => 'https://api-checkout.cinetpay.com/v2/payment'
     ];
 }
