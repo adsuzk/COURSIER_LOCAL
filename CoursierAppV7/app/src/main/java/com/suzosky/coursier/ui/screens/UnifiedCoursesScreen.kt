@@ -638,7 +638,7 @@ fun VoiceGuidanceButton(
         shape = CircleShape
     ) {
         Icon(
-            imageVector = if (isEnabled) Icons.Filled.VolumeUp else Icons.Filled.VolumeOff,
+            imageVector = if (isEnabled) Icons.AutoMirrored.Filled.VolumeUp else Icons.AutoMirrored.Filled.VolumeOff,
             contentDescription = if (isEnabled) "Désactiver guidage vocal" else "Activer guidage vocal",
             tint = if (isEnabled) Color.White else PrimaryGold,
             modifier = Modifier.size(28.dp)
