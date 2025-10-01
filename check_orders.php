@@ -7,5 +7,5 @@ $stmt = $pdo->query('SELECT id, statut, cash_recupere FROM commandes WHERE cours
 
 echo "=== COMMANDES COURSIER #5 ===\n";
 while($row = $stmt->fetch()) {
-    echo "ID: {$row['id']} | Statut: {$row['statut']} | Cash: {$row['cash_recupere']} | Méthode: {$row['methode_paiement']}\n";
+    echo "ID: {$row['id']} | Statut: {$row['statut']} | Cash: {$row['cash_recupere']}\n";
 }
