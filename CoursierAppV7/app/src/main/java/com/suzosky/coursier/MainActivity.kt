@@ -391,6 +391,7 @@ class MainActivity : ComponentActivity() {
     }
     */
 
+    /*
     override fun onDestroy() {
         super.onDestroy()
         // Désinscrire le BroadcastReceiver
@@ -405,6 +406,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+    */
 }
 
 // TODO: Replace with Compose-native UpdateDialog
