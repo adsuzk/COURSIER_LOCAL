@@ -326,11 +326,11 @@ function generateUnifiedAgentPassword(int $length = null): string {
  * @return array
  */
 function getCinetPayConfig(): array {
-    // CinetPay credentials - CORRIGÉS 2025-09-18
+    // CinetPay credentials - CORRIGÉS 1er Octobre 2025
     return [
         'apikey'     => '8338609805877a8eaac7eb6.01734650',
-        'site_id'    => '219503',
-        'secret_key' => '17153003105e7ca6606cc157.46703056',
+        'site_id'    => '5875732',
+        'secret_key' => '830006136690110164ddb1.29156844',
         'endpoint'   => 'https://api-checkout.cinetpay.com/v2/payment'
     ];
 }
