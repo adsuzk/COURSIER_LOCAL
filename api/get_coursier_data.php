@@ -202,6 +202,7 @@ try {
             'id' => $cmd['id'],
             'clientNom' => $cmd['client_nom'],
             'clientTelephone' => $cmd['client_telephone'],
+            'telephoneDestinataire' => $cmd['telephone_destinataire'],
             'adresseEnlevement' => $cmd['adresse_enlevement'],
             'adresseLivraison' => $cmd['adresse_livraison'],
             'distance' => floatval($cmd['distance'] ?? 0),
