@@ -1360,61 +1360,93 @@ body.admin-commandes-page {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
+    align-items: center;
 }
 
-.btn-track {
+/* ✅ BADGES D'INFORMATION SIMPLIFIÉS */
+.info-badge {
     display: inline-flex;
     align-items: center;
     gap: 8px;
     padding: 10px 18px;
     border-radius: 12px;
-    border: none;
     font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    font-size: 14px;
 }
 
-.btn-track i { font-size: 16px; }
-
-.btn-track.live {
-    background: linear-gradient(135deg, #2563eb, #60a5fa);
-    color: #0b1120;
+.info-badge i {
+    font-size: 16px;
 }
 
-.btn-track.history {
-    background: rgba(37, 99, 235, 0.18);
-    color: #93c5fd;
-}
-
-.btn-track.pending {
-    background: rgba(234, 179, 8, 0.12);
+.info-badge.status-warning {
+    background: rgba(234, 179, 8, 0.15);
     color: #facc15;
+    border: 1px solid rgba(234, 179, 8, 0.3);
 }
 
-.btn-track.disabled {
-    background: rgba(148,163,184,0.12);
-    color: rgba(148,163,184,0.6);
-    cursor: not-allowed;
+.info-badge.status-active {
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+    border: 1px solid rgba(34, 197, 94, 0.3);
 }
 
-.btn-track:not(.disabled):hover {
-    transform: translateY(-1px);
-    box-shadow: 0 15px 25px rgba(0,0,0,0.2);
+.info-badge.status-completed {
+    background: rgba(37, 99, 235, 0.15);
+    color: #60a5fa;
+    border: 1px solid rgba(37, 99, 235, 0.3);
 }
 
+.info-badge.status-pending {
+    background: rgba(148, 163, 184, 0.15);
+    color: #94a3b8;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+/* ✅ BOUTON TERMINER AMÉLIORÉ */
 .btn-terminate {
-    border: 1px solid rgba(233, 69, 96, 0.4);
-    background: transparent;
-    color: rgba(233, 69, 96, 0.9);
-    padding: 10px 16px;
+    border: 2px solid rgba(34, 197, 94, 0.5);
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.05));
+    color: #4ade80;
+    padding: 11px 20px;
     border-radius: 12px;
-    font-weight: 600;
+    font-weight: 700;
+    font-size: 14px;
     cursor: pointer;
-    transition: background 0.2s ease, color 0.2s ease;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-terminate i {
+    font-size: 16px;
 }
 
 .btn-terminate:hover {
-    background: rgba(233, 69, 96, 0.12);
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.25), rgba(34, 197, 94, 0.15));
+    border-color: #4ade80;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
+}
+
+.btn-terminate:active {
+    transform: translateY(0);
+}
+
+/* ✅ BADGE TERMINÉ */
+.badge-completed {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 12px;
+    background: rgba(37, 99, 235, 0.15);
+    color: #60a5fa;
+    border: 1px solid rgba(37, 99, 235, 0.3);
+    font-weight: 600;
+    font-size: 14px;
 }
 
 .empty-state {
