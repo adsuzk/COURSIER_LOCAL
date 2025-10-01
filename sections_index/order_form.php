@@ -1713,6 +1713,16 @@ if (trim((string)$defaultUnavailableMessage) === '') {
                 // Mode unique: toujours en inline
                 const method = (document.querySelector('input[name="paymentMethod"]:checked') || {}).value || 'cash';
                 if (typeof window.currentClient !== 'undefined' && !window.currentClient) {
+                    ev.preventDefault();
+                    // Afficher un message d'erreur dans la timeline/messages
+                    if (typeof renderTimelineMessages === 'function') {
+                        renderTimelineMessages([
+                            { text: '❌ Veuillez vous connecter pour commander.', type: 'error' }
+                        ]);
+                    } else {
+                        alert('❌ Veuillez vous connecter pour commander.');
+                    }
+                    window.__orderFlowHandled = false;
                     return;
                 }
                 window.__orderFlowHandled = true;
