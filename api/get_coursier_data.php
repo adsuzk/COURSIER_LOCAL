@@ -172,6 +172,7 @@ try {
                     COALESCE(adresse_depart, adresse_retrait) as adresse_enlevement,
                     COALESCE(adresse_arrivee, adresse_livraison) as adresse_livraison,
                     COALESCE(prix_total, prix_estime, 0) as prix_livraison,
+                    COALESCE(mode_paiement, 'especes') as mode_paiement,
                     statut,
                     created_at as date_commande,
                     description_colis as description,
