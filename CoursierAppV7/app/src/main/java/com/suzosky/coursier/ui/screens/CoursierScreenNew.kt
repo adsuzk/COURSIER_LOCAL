@@ -413,6 +413,7 @@ fun CoursierScreenNew(
                     ModernProfileScreen(
                         coursierNom = coursierNom,
                         coursierTelephone = coursierTelephone.ifBlank { "+225" },
+                        coursierMatricule = "C$coursierId",
                         stats = CoursierStats(
                             totalCourses = totalCommandes,
                             completedToday = commandes.count { it.statut == "livree" },

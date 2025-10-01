@@ -56,6 +56,7 @@ data class CoursierStats(
 fun ModernProfileScreen(
     coursierNom: String,
     coursierTelephone: String,
+    coursierMatricule: String = "",
     stats: CoursierStats = CoursierStats(),
     onLogout: () -> Unit,
     onEditProfile: () -> Unit = {},
@@ -79,6 +80,7 @@ fun ModernProfileScreen(
         item {
             ProfileHeader(
                 coursierNom = coursierNom,
+                coursierMatricule = coursierMatricule,
                 stats = stats,
                 onEditProfile = onEditProfile
             )
@@ -120,6 +122,7 @@ fun ModernProfileScreen(
 @Composable
 fun ProfileHeader(
     coursierNom: String,
+    coursierMatricule: String,
     stats: CoursierStats,
     onEditProfile: () -> Unit
 ) {
@@ -203,6 +206,17 @@ fun ProfileHeader(
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )
+            
+            // Matricule
+            if (coursierMatricule.isNotEmpty()) {
+                Text(
+                    text = "ID: $coursierMatricule",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = PrimaryGold.copy(alpha = 0.8f),
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
             
             // Rating
             Row(

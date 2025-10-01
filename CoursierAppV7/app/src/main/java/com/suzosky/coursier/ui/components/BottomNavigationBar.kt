@@ -90,8 +90,8 @@ fun BottomNavigationBar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(70.dp)
-                .padding(horizontal = 8.dp, vertical = 8.dp),
+                .height(80.dp)
+                .padding(horizontal = 8.dp, vertical = 6.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -136,14 +136,14 @@ fun ModernNavItem(
         onClick = onClick,
         modifier = modifier
             .fillMaxHeight()
-            .padding(4.dp),
+            .padding(2.dp),
         color = if (isSelected) GlassBg else Color.Transparent,
         shape = RoundedCornerShape(16.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(vertical = 4.dp),
+                .padding(vertical = 2.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -173,12 +173,12 @@ fun ModernNavItem(
                 )
             }
             
-            Spacer(modifier = Modifier.height(2.dp))
+            Spacer(modifier = Modifier.height(1.dp))
             
             Text(
                 text = item.title,
                 color = textColor,
-                fontSize = if (isSelected) 11.sp else 10.sp,
+                fontSize = if (isSelected) 10.sp else 9.sp,
                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
             )
         }
