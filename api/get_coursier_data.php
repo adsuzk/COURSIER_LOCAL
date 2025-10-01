@@ -132,7 +132,7 @@ try {
                 FROM commandes 
                 WHERE coursier_id = ? 
                 AND statut = 'livree' 
-                AND DATE(COALESCE(created_at, date_creation)) = CURDATE()
+                AND DATE(created_at) = CURDATE()
             ");
             $stmt->execute([$coursierId]);
             $gainsDuJour = floatval($stmt->fetchColumn());
