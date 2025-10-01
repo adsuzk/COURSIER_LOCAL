@@ -597,11 +597,16 @@
             // }
             
             if (paymentMethod === 'cash') {
+                // Paiement en espèces : soumettre directement
+                console.log('💵 Paiement espèces : soumission directe');
                 window.orderFormDirty = false;
                 window.skipBeforeUnload = true;
                 window._skipBeforeUnloadCheck = true;
                 form.submit();
             } else {
+                // Paiement en ligne : D'ABORD ouvrir le modal CinetPay
+                console.log('💳 Paiement en ligne : ouverture modal CinetPay AVANT enregistrement');
+                
                 const formData = new FormData(form);
                 const orderNumber = 'SZK' + Date.now();
                 const priceElement = document.getElementById('total-price');
@@ -611,23 +616,62 @@
                 formData.append('order_number', orderNumber);
                 formData.append('amount', amount);
                 
-                console.log('💳 Initiation paiement CinetPay:', {orderNumber, amount});
-                
-                const endpoint = `${ROOT_PATH}/api/initiate_order_payment.php`;
+                // ÉTAPE 1 : Initier le paiement CinetPay (sans enregistrer la commande)
+                const endpoint = `${ROOT_PATH}/api/initiate_payment_only.php`;
                 fetch(endpoint, {
                     method: 'POST',
                     body: formData
                 })
                 .then(res => res.json())
-                .then data => {
+                .then(data => {
                     if (data.success && data.payment_url) {
-                        console.log('✅ Paiement initié, ouverture modal');
-                        window.orderFormDirty = false;
-                        window.skipBeforeUnload = true;
-                        window._skipBeforeUnloadCheck = true;
-                        window.showPaymentModal(data.payment_url);
+                        console.log('✅ URL paiement générée, ouverture modal');
+                        
+                        // Sauvegarder les données du formulaire pour après le paiement
+                        window._pendingOrderData = Object.fromEntries(formData.entries());
+                        
+                        // Ouvrir le modal CinetPay
+                        window.showPaymentModal(data.payment_url, function(paymentSuccess) {
+                            if (paymentSuccess) {
+                                // ÉTAPE 2 : Paiement confirmé, MAINTENANT enregistrer la commande
+                                console.log('✅ Paiement confirmé ! Enregistrement de la commande...');
+                                
+                                const saveEndpoint = `${ROOT_PATH}/api/create_order_after_payment.php`;
+                                fetch(saveEndpoint, {
+                                    method: 'POST',
+                                    body: new FormData(form)
+                                })
+                                .then(res => res.json())
+                                .then(saveData => {
+                                    if (saveData.success) {
+                                        console.log('✅ Commande enregistrée ! Lancement recherche coursier...');
+                                        window.orderFormDirty = false;
+                                        window.skipBeforeUnload = true;
+                                        window._skipBeforeUnloadCheck = true;
+                                        
+                                        // Rediriger vers la page de suivi
+                                        if (saveData.redirect_url) {
+                                            window.location.href = saveData.redirect_url;
+                                        } else {
+                                            alert('✅ Commande validée ! Recherche de coursier en cours...');
+                                            window.location.reload();
+                                        }
+                                    } else {
+                                        console.error('❌ Erreur enregistrement commande:', saveData);
+                                        alert('❌ Paiement accepté mais erreur enregistrement : ' + (saveData.message || 'Erreur inconnue'));
+                                    }
+                                })
+                                .catch(err => {
+                                    console.error('❌ Erreur enregistrement:', err);
+                                    alert('❌ Paiement accepté mais erreur système. Contactez le support.');
+                                });
+                            } else {
+                                console.log('❌ Paiement annulé ou échoué');
+                                alert('❌ Paiement non complété. Vous pouvez réessayer.');
+                            }
+                        });
                     } else {
-                        console.error('❌ Erreur paiement:', data);
+                        console.error('❌ Erreur initialisation paiement:', data);
                         alert('Erreur lors de l\'initialisation du paiement: ' + (data.message || 'Erreur inconnue'));
                     }
                 })
