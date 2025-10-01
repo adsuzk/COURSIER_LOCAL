@@ -2167,7 +2167,10 @@ function closeCoursierModal(event) {
 // ✅ FIN DU SYSTÈME SIMPLIFIÉ
 console.log('✅ Admin commandes - Système simplifié prêt');
 });
-    console.log('🔍 openTrackingModal appelée:', { commandeId, coursierId, mode });
+</script>
+
+</body>
+</html>
     
     // Validation des paramètres
     if (!commandeId || isNaN(commandeId)) {
