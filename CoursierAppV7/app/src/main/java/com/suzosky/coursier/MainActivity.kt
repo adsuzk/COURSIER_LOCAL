@@ -803,10 +803,8 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                 // Accepter la commande via API
                                 ApiService.respondToOrder(commandeId, coursierId.toString(), "accept") { success, message ->
                                     if (success) {
-                                        // Rafraîchir les commandes
-                                        loadCoursierCommandes(coursierId) { nouvCommandes ->
-                                            commandesReelles = nouvCommandes
-                                        }
+                                        // Déclencher un rechargement des commandes
+                                        shouldRefreshCommandes = true
                                     }
                                 }
                             },
@@ -815,10 +813,8 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                 // Refuser la commande via API
                                 ApiService.respondToOrder(commandeId, coursierId.toString(), "refuse") { success, message ->
                                     if (success) {
-                                        // Rafraîchir les commandes
-                                        loadCoursierCommandes(coursierId) { nouvCommandes ->
-                                            commandesReelles = nouvCommandes
-                                        }
+                                        // Déclencher un rechargement des commandes
+                                        shouldRefreshCommandes = true
                                     }
                                 }
                             },
@@ -826,30 +822,24 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                             onStartDelivery = { commandeId ->
                                 ApiService.startDelivery(commandeId.toIntOrNull() ?: 0, coursierId) { success, message ->
                                     if (success) {
-                                        // Rafraîchir les commandes
-                                        loadCoursierCommandes(coursierId) { nouvCommandes ->
-                                            commandesReelles = nouvCommandes
-                                        }
+                                        // Déclencher un rechargement des commandes
+                                        shouldRefreshCommandes = true
                                     }
                                 }
                             },
                             onPickupPackage = { commandeId ->
                                 ApiService.pickupPackage(commandeId.toIntOrNull() ?: 0, coursierId) { success, message ->
                                     if (success) {
-                                        // Rafraîchir les commandes
-                                        loadCoursierCommandes(coursierId) { nouvCommandes ->
-                                            commandesReelles = nouvCommandes
-                                        }
+                                        // Déclencher un rechargement des commandes
+                                        shouldRefreshCommandes = true
                                     }
                                 }
                             },
                             onMarkDelivered = { commandeId ->
                                 ApiService.markDelivered(commandeId.toIntOrNull() ?: 0, coursierId) { success, message ->
                                     if (success) {
-                                        // Rafraîchir les commandes
-                                        loadCoursierCommandes(coursierId) { nouvCommandes ->
-                                            commandesReelles = nouvCommandes
-                                        }
+                                        // Déclencher un rechargement des commandes
+                                        shouldRefreshCommandes = true
                                     }
                                 }
                             },
