@@ -425,10 +425,23 @@ function renderCommandesContent(array $commandes): string
                 </div>
 
                 <div class="commande-actions">
-                    <div class="info-badge <?= $infoClass ?>">
-                        <i class="fas fa-<?= $infoIcon ?>"></i>
-                        <span><?= $infoLabel ?></span>
-                    </div>
+                    <?php if ($hasCoursier && $isActive): ?>
+                        <!-- Bouton Tracking Live pour commandes en cours -->
+                        <button class="btn-track live" onclick="openTrackingPopup(<?= (int) $commande['id'] ?>, 'live')" title="Suivi en temps réel">
+                            <i class="fas fa-satellite"></i> Tracking Live
+                        </button>
+                    <?php elseif ($hasCoursier && $isCompleted): ?>
+                        <!-- Bouton Historique pour commandes terminées -->
+                        <button class="btn-track history" onclick="openTrackingPopup(<?= (int) $commande['id'] ?>, 'history')" title="Voir l'historique de la course">
+                            <i class="fas fa-history"></i> Historique
+                        </button>
+                    <?php else: ?>
+                        <!-- Badge info pour commandes sans coursier -->
+                        <div class="info-badge status-warning">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span>Pas de coursier</span>
+                        </div>
+                    <?php endif; ?>
 
                     <?php if (!$isCompleted && $hasCoursier): ?>
                         <form method="POST" onsubmit="return confirm('⚠️ Êtes-vous sûr de vouloir terminer cette commande maintenant ?\n\nCette action est irréversible.');" style="display: inline-block;">
