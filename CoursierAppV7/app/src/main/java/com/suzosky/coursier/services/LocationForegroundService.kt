@@ -286,6 +286,7 @@ class LocationForegroundService : Service() {
 
     override fun onDestroy() {
         stopLocationUpdates()
+        stopFcmPing() // ⚡ Arrêter le ping FCM périodique
         scope.cancel()
         super.onDestroy()
     }
