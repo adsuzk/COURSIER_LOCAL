@@ -387,6 +387,35 @@ class CoursesViewModel @Inject constructor(
         }
     }
     
+    fun confirmCashReceived() {
+        viewModelScope.launch {
+            try {
+                val activeOrder = _uiState.value.activeOrder ?: return@launch
+                val prefs = context.getSharedPreferences("suzosky_prefs", Context.MODE_PRIVATE)
+                val coursierId = prefs.getInt("coursier_id", -1)
+                
+                if (coursierId <= 0) {
+                    _uiState.value = _uiState.value.copy(error = "ID coursier non trouvé")
+                    return@launch
+                }
+                
+                val commandeId = activeOrder.id.toIntOrNull() ?: return@launch
+                
+                ApiService.confirmCashReceived(commandeId, coursierId) { success, message ->
+                    if (success) {
+                        Log.d("CoursesViewModel", "Cash confirmé récupéré: $message")
+                        completeCurrentOrder()
+                    } else {
+                        Log.e("CoursesViewModel", "Erreur confirmation cash: $message")
+                        _uiState.value = _uiState.value.copy(error = message)
+                    }
+                }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(error = "Erreur: ${e.message}")
+            }
+        }
+    }
+    
     /**
      * Termine la commande actuelle et active la suivante
      */
