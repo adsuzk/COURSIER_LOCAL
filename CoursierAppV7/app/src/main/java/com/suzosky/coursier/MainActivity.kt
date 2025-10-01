@@ -491,6 +491,7 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
         val coursierTelephoneState = remember { mutableStateOf("") }
         val coursierEmailState = remember { mutableStateOf("") }
         val dateInscriptionState = remember { mutableStateOf("") }
+        val coursierMatriculeState = remember { mutableStateOf("") }
         
         // Variables pour le rafraîchissement automatique des commandes
         val shouldRefreshCommandesState = remember { mutableStateOf(false) }
@@ -507,6 +508,7 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
         var coursierTelephone by coursierTelephoneState
         var coursierEmail by coursierEmailState
         var dateInscription by dateInscriptionState
+        var coursierMatricule by coursierMatriculeState
         var shouldRefreshCommandes by shouldRefreshCommandesState
         var newOrderId by newOrderIdState
         
