@@ -535,7 +535,7 @@ fun CoursierScreenNew(
                 NavigationScreen(
                     currentOrder = currentOrder!!,
                     deliveryStep = deliveryStep,
-                    courierLocation = null, // TODO: Obtenir la position du coursier en temps réel
+                    courierLocation = courierLocation,
                     onBack = {
                         showNavigationScreen = false
                         currentTab = NavigationTab.COURSES
