@@ -575,6 +575,7 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
 
         // Charger les VRAIES données au login
         LaunchedEffect(isLoggedIn, coursierId) {
+            Log.d("MainActivity", "LaunchedEffect triggered - isLoggedIn=$isLoggedIn, coursierId=$coursierId")
             if (!isLoggedIn) return@LaunchedEffect
 
             if (coursierId <= 0) {
