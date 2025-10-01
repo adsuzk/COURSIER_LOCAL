@@ -233,7 +233,28 @@ fun CoursierScreenNew(
                             }
                         },
                         onRejectOrder = {
-                            Toast.makeText(context, "Commande refusée", Toast.LENGTH_SHORT).show()
+                            currentOrder?.let { order ->
+                                if (hasNewOrder) {
+                                    notificationService.stopNotificationSound()
+                                    hasNewOrder = false
+                                }
+                                
+                                Log.d("CoursierScreenNew", "Refus de la commande ${order.id} par coursier $coursierId")
+                                Toast.makeText(context, "Refus en cours...", Toast.LENGTH_SHORT).show()
+                                
+                                // Appeler l'API pour refuser
+                                ApiService.respondToOrder(order.id, coursierId.toString(), "refuse") { success, message ->
+                                    if (success) {
+                                        Log.d("CoursierScreenNew", "Commande refusée: $message")
+                                        Toast.makeText(context, "Commande refusée", Toast.LENGTH_SHORT).show()
+                                        pendingOrdersCount = maxOf(0, pendingOrdersCount - 1)
+                                        onCommandeReject(order.id)
+                                    } else {
+                                        Log.e("CoursierScreenNew", "Échec refus: $message")
+                                        Toast.makeText(context, "Erreur: ${message ?: "Impossible de refuser"}", Toast.LENGTH_LONG).show()
+                                    }
+                                }
+                            }
                         },
                         onPickupValidation = {
                             currentOrder?.let { order ->
