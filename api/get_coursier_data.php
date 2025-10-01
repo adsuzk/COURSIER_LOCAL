@@ -40,14 +40,20 @@ try {
         $legacyComptesBalance = null;
 
         // 0) TABLE PRINCIPALE selon documentation: agents_suzosky.solde_wallet (PRIORITÉ ABSOLUE)
+        $matricule = '';
         try {
-            $stmt = $pdo->prepare("SELECT solde_wallet FROM agents_suzosky WHERE id = ? LIMIT 1");
+            $stmt = $pdo->prepare("SELECT solde_wallet, matricule FROM agents_suzosky WHERE id = ? LIMIT 1");
             $stmt->execute([$coursierId]);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            if ($row && isset($row['solde_wallet'])) {
-                $balance = (float)$row['solde_wallet'];
-                $rechargeBalance = $balance;
-                $balanceFound = true;
+            if ($row) {
+                if (isset($row['solde_wallet'])) {
+                    $balance = (float)$row['solde_wallet'];
+                    $rechargeBalance = $balance;
+                    $balanceFound = true;
+                }
+                if (isset($row['matricule'])) {
+                    $matricule = trim($row['matricule']);
+                }
             }
         } catch (Throwable $e) {
             // Si agents_suzosky indisponible, continuer avec les anciennes tables
