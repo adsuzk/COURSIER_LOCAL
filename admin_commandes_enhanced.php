@@ -1885,7 +1885,27 @@ body.admin-commandes-page {
     </div>
 </div>
 
-<!-- Modal supprimé - système simplifié sans tracking complexe -->
+<!-- ✅ MODAL DE TRACKING SIMPLE ET FONCTIONNEL -->
+<div id="trackingModal" class="tracking-modal-overlay" onclick="closeTrackingModal(event)">
+    <div class="tracking-modal-card" onclick="event.stopPropagation()">
+        <div class="tracking-modal-header">
+            <div>
+                <h2 id="trackingModalTitle">Suivi de commande</h2>
+                <p id="trackingModalSubtitle" style="color: rgba(255,255,255,0.7); font-size: 14px; margin: 5px 0 0 0;"></p>
+            </div>
+            <button class="tracking-modal-close" onclick="closeTrackingModal()" aria-label="Fermer">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="tracking-modal-body" id="trackingModalContent">
+            <div style="text-align: center; padding: 40px; color: rgba(255,255,255,0.6);">
+                <i class="fas fa-spinner fa-spin" style="font-size: 32px; margin-bottom: 15px;"></i>
+                <p>Chargement des données...</p>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
 // ✅ SYSTÈME SIMPLIFIÉ - Focus sur synchronisation et actions essentielles
