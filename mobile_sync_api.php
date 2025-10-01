@@ -137,8 +137,18 @@ try {
                     latitude_depart, longitude_depart, distance_estimee
                 FROM commandes 
                 WHERE coursier_id = ? 
-                AND statut IN ('nouvelle', 'attribuee', 'acceptee', 'en_cours', 'retiree')
-                ORDER BY created_at DESC
+                AND statut IN ('nouvelle', 'attribuee', 'acceptee', 'en_cours', 'recuperee', 'retiree')
+                ORDER BY 
+                    CASE statut
+                        WHEN 'en_cours' THEN 1
+                        WHEN 'recuperee' THEN 2
+                        WHEN 'acceptee' THEN 3
+                        WHEN 'attribuee' THEN 4
+                        WHEN 'nouvelle' THEN 5
+                        WHEN 'retiree' THEN 6
+                        ELSE 7
+                    END,
+                    created_at DESC
                 LIMIT 20
             ");
             $stmt->execute([$coursier_id]);
