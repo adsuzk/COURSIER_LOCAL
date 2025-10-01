@@ -165,6 +165,8 @@ fun UnifiedCoursesScreen(
         }
         
         // OVERLAY : Bouton guidage vocal (si en route)
+        // Note: Le guidage vocal est géré AUTOMATIQUEMENT par le NavigationScreen
+        // Ce bouton sert juste à activer/désactiver la fonctionnalité
         if (currentOrder != null && deliveryStep in listOf(
             DeliveryStep.ACCEPTED,
             DeliveryStep.EN_ROUTE_PICKUP,
@@ -174,18 +176,8 @@ fun UnifiedCoursesScreen(
                 isEnabled = isVoiceGuidanceEnabled,
                 onToggle = { enabled ->
                     isVoiceGuidanceEnabled = enabled
-                    if (enabled) {
-                        // Lancer guidage vocal Google Maps
-                        val destination = if (deliveryStep in listOf(DeliveryStep.ACCEPTED, DeliveryStep.EN_ROUTE_PICKUP)) {
-                            currentOrder.coordonneesEnlevement
-                        } else {
-                            currentOrder.coordonneesLivraison
-                        }
-                        
-                        destination?.let {
-                            launchVoiceGuidance(context, it.latitude, it.longitude)
-                        }
-                    }
+                    // Le guidage vocal est maintenant géré par NavigationScreen
+                    // qui utilise l'API Text-to-Speech Android pour les instructions vocales
                 },
                 modifier = Modifier
                     .align(Alignment.TopEnd)
@@ -648,27 +640,14 @@ fun VoiceGuidanceButton(
 }
 
 /**
- * Lance Google Maps en mode navigation avec guidage vocal
+ * NOTE: Le guidage vocal est maintenant géré automatiquement par NavigationScreen
+ * qui utilise l'API Android Text-to-Speech (TTS) pour donner des instructions vocales
+ * en temps réel pendant la navigation.
+ * 
+ * Les instructions incluent:
+ * - Distance restante
+ * - Direction à prendre (tourner à gauche/droite)
+ * - Alertes de proximité ("Vous arrivez à destination")
+ * 
+ * Le système TTS est intégré dans l'application, pas besoin d'ouvrir Google Maps.
  */
-fun launchVoiceGuidance(context: android.content.Context, latitude: Double, longitude: Double) {
-    try {
-        // URI pour Google Maps Navigation avec guidage vocal
-        val gmmIntentUri = Uri.parse("google.navigation:q=$latitude,$longitude&mode=d")
-        val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-        mapIntent.setPackage("com.google.android.apps.maps")
-        
-        // Vérifier si Google Maps est installé
-        if (mapIntent.resolveActivity(context.packageManager) != null) {
-            context.startActivity(mapIntent)
-            android.util.Log.d("VoiceGuidance", "✅ Guidage vocal lancé vers: $latitude, $longitude")
-        } else {
-            // Fallback : ouvrir dans le navigateur
-            val webUri = Uri.parse("https://www.google.com/maps/dir/?api=1&destination=$latitude,$longitude&travelmode=driving")
-            val webIntent = Intent(Intent.ACTION_VIEW, webUri)
-            context.startActivity(webIntent)
-            android.util.Log.w("VoiceGuidance", "⚠️ Google Maps non installé, ouverture navigateur")
-        }
-    } catch (e: Exception) {
-        android.util.Log.e("VoiceGuidance", "❌ Erreur lancement guidage vocal: ${e.message}")
-    }
-}
