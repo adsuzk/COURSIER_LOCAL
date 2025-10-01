@@ -344,6 +344,65 @@ class MainActivity : ComponentActivity() {
             // TODO: Show Compose snackbar for location permission result
         }
     }
+
+    // Configuration du BroadcastReceiver pour les nouvelles commandes
+    private fun setupCommandeReceiver() {
+        commandeReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                if (intent?.action == FCMService.ACTION_REFRESH_DATA) {
+                    val orderId = intent.getStringExtra(FCMService.EXTRA_ORDER_ID)
+                    println("🔔 BroadcastReceiver: Nouvelle commande reçue - Order ID: $orderId")
+                    Log.d("MainActivity", "🔔 BroadcastReceiver: Nouvelle commande reçue - Order ID: $orderId")
+                    
+                    // Déclencher un rafraîchissement des données API
+                    lifecycleScope.launch {
+                        try {
+                            val prefs = getSharedPreferences("suzosky_prefs", MODE_PRIVATE)
+                            val coursierId = prefs.getInt("coursier_id", -1)
+                            if (coursierId > 0) {
+                                println("🔄 Rafraîchissement des commandes depuis l'API...")
+                                
+                                // Appeler l'API pour récupérer les nouvelles commandes
+                                ApiService.getCoursierDetails(coursierId) { data, error ->
+                                    if (data != null && error == null) {
+                                        println("✅ Nouvelles commandes récupérées de l'API")
+                                        // Les données seront automatiquement mises à jour par le LaunchedEffect existant
+                                    } else {
+                                        println("❌ Erreur lors du rafraîchissement des commandes: $error")
+                                    }
+                                }
+                            }
+                        } catch (e: Exception) {
+                            println("❌ Exception lors du rafraîchissement: ${e.message}")
+                            Log.e("MainActivity", "Exception lors du rafraîchissement", e)
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Enregistrer le receiver pour les broadcasts locaux
+        val filter = IntentFilter(FCMService.ACTION_REFRESH_DATA)
+        registerReceiver(commandeReceiver, filter)
+        
+        println("✅ BroadcastReceiver configuré pour ACTION_REFRESH_DATA")
+        Log.d("MainActivity", "✅ BroadcastReceiver configuré pour ACTION_REFRESH_DATA")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Désinscrire le BroadcastReceiver
+        commandeReceiver?.let {
+            try {
+                unregisterReceiver(it)
+                println("✅ BroadcastReceiver désinscrit")
+                Log.d("MainActivity", "✅ BroadcastReceiver désinscrit")
+            } catch (e: Exception) {
+                println("❌ Erreur lors de la désinscription du receiver: ${e.message}")
+                Log.e("MainActivity", "❌ Erreur lors de la désinscription du receiver", e)
+            }
+        }
+    }
 }
 
 // TODO: Replace with Compose-native UpdateDialog
