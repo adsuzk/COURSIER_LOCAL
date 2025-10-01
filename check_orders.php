@@ -3,7 +3,7 @@ require 'config.php';
 
 $pdo = getDBConnection();
 
-$stmt = $pdo->query('SELECT id, statut, cash_recupere, methode_paiement FROM commandes WHERE coursier_id=5 ORDER BY id DESC LIMIT 5');
+$stmt = $pdo->query('SELECT id, statut, cash_recupere FROM commandes WHERE coursier_id=5 ORDER BY id DESC LIMIT 5');
 
 echo "=== COMMANDES COURSIER #5 ===\n";
 while($row = $stmt->fetch()) {
