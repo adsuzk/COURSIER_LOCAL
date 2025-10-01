@@ -819,7 +819,7 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                 // 🔔 NOTIFICATION SONORE + VIBRATION
                                 try {
                                     // Vibration
-                                    val vibrator = this@MainActivity.getSystemService(Context.VIBRATOR_SERVICE) as? android.os.Vibrator
+                                    val vibrator = activity.getSystemService(Context.VIBRATOR_SERVICE) as? android.os.Vibrator
                                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                                         vibrator?.vibrate(android.os.VibrationEffect.createWaveform(longArrayOf(0, 200, 100, 200), -1))
                                     } else {
@@ -829,14 +829,14 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                     
                                     // Son de notification
                                     val notification = android.media.RingtoneManager.getDefaultUri(android.media.RingtoneManager.TYPE_NOTIFICATION)
-                                    val ringtone = android.media.RingtoneManager.getRingtone(this@MainActivity.applicationContext, notification)
+                                    val ringtone = android.media.RingtoneManager.getRingtone(activity.applicationContext, notification)
                                     ringtone.play()
                                     
                                     // 🔊 Annonce vocale
                                     val newCommande = commandesData.firstOrNull()
                                     val clientName = newCommande?.get("clientNom")?.toString() ?: "un client"
                                     val destination = newCommande?.get("adresseLivraison")?.toString() ?: "destination inconnue"
-                                    this@MainActivity.voiceGuidance?.announceNewOrder(clientName, destination)
+                                    activity.voiceGuidance?.announceNewOrder(clientName, destination)
                                     
                                     Log.d("MainActivity", "🔔 Notification émise: vibration + son + voix")
                                 } catch (e: Exception) {
@@ -908,7 +908,7 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                 try { OrderRingService.stop(context) } catch (_: Exception) {}
                                 
                                 // 🔊 Annonce vocale
-                                this@MainActivity.voiceGuidance?.announceOrderAccepted()
+                                activity.voiceGuidance?.announceOrderAccepted()
                                 
                                 // Accepter la commande via API
                                 ApiService.respondToOrder(commandeId, coursierId.toString(), "accept") { success, message ->
@@ -919,7 +919,7 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                             // 🗺️ Lancer Google Maps vers le point de départ
                                             val depart = commande.adresseEnlevement
                                             if (depart.isNotBlank()) {
-                                                this@MainActivity.launchGoogleMaps("Ma position", depart)
+                                                activity.launchGoogleMaps("Ma position", depart)
                                             }
                                         }
                                         // Déclencher un rechargement des commandes
@@ -943,7 +943,7 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                 
                                 // 🔊 Annonce vocale
                                 if (commande != null) {
-                                    this@MainActivity.voiceGuidance?.announceDeliveryStarted(commande.adresseLivraison)
+                                    activity.voiceGuidance?.announceDeliveryStarted(commande.adresseLivraison)
                                 }
                                 
                                 ApiService.startDelivery(commandeId.toIntOrNull() ?: 0, coursierId) { success, message ->
@@ -953,7 +953,7 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                             val depart = commande.adresseEnlevement
                                             val arrivee = commande.adresseLivraison
                                             if (depart.isNotBlank() && arrivee.isNotBlank()) {
-                                                this@MainActivity.launchGoogleMaps(depart, arrivee)
+                                                activity.launchGoogleMaps(depart, arrivee)
                                             }
                                         }
                                         // Déclencher un rechargement des commandes
@@ -966,7 +966,7 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                 
                                 // 🔊 Annonce vocale
                                 if (commande != null) {
-                                    this@MainActivity.voiceGuidance?.announcePackagePickedUp(commande.adresseLivraison)
+                                    activity.voiceGuidance?.announcePackagePickedUp(commande.adresseLivraison)
                                 }
                                 
                                 ApiService.pickupPackage(commandeId.toIntOrNull() ?: 0, coursierId) { success, message ->
@@ -978,7 +978,7 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                             },
                             onMarkDelivered = { commandeId ->
                                 // 🔊 Annonce vocale
-                                this@MainActivity.voiceGuidance?.announceDeliveryCompleted()
+                                activity.voiceGuidance?.announceDeliveryCompleted()
                                 
                                 ApiService.markDelivered(commandeId.toIntOrNull() ?: 0, coursierId) { success, message ->
                                     if (success) {
@@ -992,7 +992,7 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                 
                                 // 🔊 Annonce vocale
                                 if (commande != null) {
-                                    this@MainActivity.voiceGuidance?.announceCashReceived(commande.prixTotal)
+                                    activity.voiceGuidance?.announceCashReceived(commande.prixTotal)
                                 }
                                 
                                 ApiService.confirmCashReceived(commandeId.toIntOrNull() ?: 0, coursierId) { success, message ->
