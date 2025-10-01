@@ -77,7 +77,7 @@ fun deactivateFcmTokenOnServer(context: android.content.Context) {
 class MainActivity : ComponentActivity() {
 
     // 🔊 Service de guidage vocal
-    private var voiceGuidance: VoiceGuidanceService? = null
+    internal var voiceGuidance: VoiceGuidanceService? = null
     
     // BroadcastReceiver pour les nouvelles commandes
     // private var commandeReceiver: BroadcastReceiver? = null // TEMPORAIREMENT DÉSACTIVÉ
