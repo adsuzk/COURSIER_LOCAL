@@ -138,12 +138,17 @@ fun CoursesScreen(
             Box(
                 modifier = Modifier.fillMaxSize()
             ) {
-                // Position par défaut : Abidjan
-                val defaultPosition = LatLng(5.3596966, -4.0082592)
+                // Convertir les coordonnées du modèle Commande en LatLng pour Google Maps
+                val pickupLatLng = currentOrder?.coordonneesEnlevement?.let { 
+                    LatLng(it.latitude, it.longitude) 
+                }
+                val deliveryLatLng = currentOrder?.coordonneesLivraison?.let { 
+                    LatLng(it.latitude, it.longitude) 
+                }
                 
                 SimpleMapView(
-                    pickupLocation = null,
-                    deliveryLocation = null,
+                    pickupLocation = pickupLatLng,
+                    deliveryLocation = deliveryLatLng,
                     modifier = Modifier.fillMaxSize()
                 )
                 
