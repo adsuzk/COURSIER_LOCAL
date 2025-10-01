@@ -55,6 +55,22 @@ fun CoursesScreen(
         mapViewModel.startLocationTracking()
     }
 
+    // Debug: Logger les informations de la commande
+    LaunchedEffect(currentOrder) {
+        android.util.Log.d("CoursesScreen", "=== DEBUG COMMANDE ===")
+        android.util.Log.d("CoursesScreen", "currentOrder null? ${currentOrder == null}")
+        currentOrder?.let {
+            android.util.Log.d("CoursesScreen", "ID: ${it.id}")
+            android.util.Log.d("CoursesScreen", "Client: ${it.clientNom}")
+            android.util.Log.d("CoursesScreen", "Tel client: ${it.clientTelephone}")
+            android.util.Log.d("CoursesScreen", "Tel destinataire: ${it.telephoneDestinataire}")
+            android.util.Log.d("CoursesScreen", "Coords enlèvement: ${it.coordonneesEnlevement}")
+            android.util.Log.d("CoursesScreen", "Coords livraison: ${it.coordonneesLivraison}")
+            android.util.Log.d("CoursesScreen", "Statut: ${it.statut}")
+        }
+        android.util.Log.d("CoursesScreen", "DeliveryStep: $deliveryStep")
+    }
+
     // Aucun OTP: la validation de livraison est déléguée au parent
 
     Column(
