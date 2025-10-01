@@ -642,6 +642,7 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                     // Convertir les commandes
                     @Suppress("UNCHECKED_CAST")
                     val commandesData = data["commandes"] as? List<Map<String, Any>> ?: emptyList()
+                    Log.d("MainActivity", "Commandes data received: ${commandesData.size} orders")
                     commandesReelles = try {
                         commandesData.map { cmdMap ->
                             Commande(
