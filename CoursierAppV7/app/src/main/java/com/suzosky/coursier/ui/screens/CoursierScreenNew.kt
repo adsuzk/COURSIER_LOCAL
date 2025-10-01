@@ -521,60 +521,6 @@ fun CoursierScreenNew(
                 }
             } // end when
 
-            // NavigationScreen en plein écran (overlay)
-            if (showNavigationScreen && currentOrder != null) {
-                NavigationScreen(
-                    currentOrder = currentOrder!!,
-                    deliveryStep = deliveryStep,
-                    courierLocation = courierLocation,
-                    onBack = {
-                        showNavigationScreen = false
-                        currentTab = NavigationTab.COURSES
-                    },
-                    onPickupValidation = {
-                        showNavigationScreen = false
-                        currentOrder?.let { order ->
-                            deliveryStep = DeliveryStep.PICKED_UP
-                            if (DeliveryStatusMapper.requiresApiCall(DeliveryStep.PICKED_UP)) {
-                                val serverStatus = DeliveryStatusMapper.mapStepToServerStatus(DeliveryStep.PICKED_UP)
-                                ApiService.updateOrderStatus(order.id, serverStatus) { success ->
-                                    if (success) {
-                                        timelineBanner = null
-                                        Toast.makeText(context, DeliveryStatusMapper.getSuccessMessage(DeliveryStep.PICKED_UP, order.methodePaiement), Toast.LENGTH_SHORT).show()
-                                        deliveryStep = DeliveryStep.EN_ROUTE_DELIVERY
-                                        showNavigationScreen = true
-                                    } else {
-                                        Toast.makeText(context, "Erreur synchronisation serveur", Toast.LENGTH_SHORT).show()
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    onDeliveryValidation = {
-                        showNavigationScreen = false
-                        currentOrder?.let { order ->
-                            if (order.methodePaiement.equals("especes", ignoreCase = true)) {
-                                deliveryStep = DeliveryStep.DELIVERED
-                                showCashDialog = true
-                            } else {
-                                deliveryStep = DeliveryStep.CASH_CONFIRMED
-                                val serverStatus = DeliveryStatusMapper.mapStepToServerStatus(DeliveryStep.DELIVERED)
-                                ApiService.updateOrderStatus(order.id, serverStatus) { success ->
-                                    if (success) {
-                                        timelineBanner = null
-                                        Toast.makeText(context, DeliveryStatusMapper.getSuccessMessage(DeliveryStep.DELIVERED, order.methodePaiement), Toast.LENGTH_SHORT).show()
-                                        resetToNextOrder()
-                                    } else {
-                                        Toast.makeText(context, "Erreur synchronisation serveur", Toast.LENGTH_SHORT).show()
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    onStepAction = { step -> }
-                )
-            }
-
             // Dialog de paiement
             if (showPayment && paymentUrl != null) {
                 PaymentWebViewDialog(
