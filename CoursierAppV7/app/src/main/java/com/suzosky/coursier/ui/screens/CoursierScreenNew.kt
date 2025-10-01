@@ -478,10 +478,15 @@ fun CoursierScreenNew(
                 }
                 
                 NavigationTab.WALLET -> {
-                    WalletScreen(
+                    ModernWalletScreen(
                         coursierId = coursierId,
                         balance = balance,
-                        onRecharge = onRecharge
+                        gainsDuJour = gainsDuJour,
+                        gainsHebdo = 0, // TODO: Ajouter depuis l'API
+                        gainsMensuel = 0, // TODO: Ajouter depuis l'API
+                        onRecharge = onRecharge,
+                        onRetrait = { Toast.makeText(context, "Retrait - À venir", Toast.LENGTH_SHORT).show() },
+                        onHistorique = onNavigateToHistorique
                     )
                 }
                 
