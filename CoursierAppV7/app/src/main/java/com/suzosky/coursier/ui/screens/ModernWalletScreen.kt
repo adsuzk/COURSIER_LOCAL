@@ -221,7 +221,7 @@ fun StatsCards(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        StatCard(
+        StatWalletCard(
             icon = Icons.Filled.TrendingUp,
             label = "Aujourd'hui",
             value = "${gainsDuJour.formatCurrency()} F",
@@ -229,7 +229,7 @@ fun StatsCards(
             modifier = Modifier.weight(1f)
         )
         
-        StatCard(
+        StatWalletCard(
             icon = Icons.Filled.CalendarMonth,
             label = "Ce mois",
             value = "${gainsMensuel.formatCurrency()} F",
@@ -240,7 +240,7 @@ fun StatsCards(
 }
 
 @Composable
-fun StatCard(
+fun StatWalletCard(
     icon: ImageVector,
     label: String,
     value: String,
