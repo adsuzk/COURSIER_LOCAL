@@ -21,6 +21,7 @@ import com.suzosky.coursier.ui.components.NoActiveOrderScreen
 import com.suzosky.coursier.ui.components.TimelineBanner
 import com.suzosky.coursier.ui.components.BannerSeverity
 import com.suzosky.coursier.ui.screens.CoursesScreen
+import com.suzosky.coursier.ui.screens.UnifiedCoursesScreen
 import com.suzosky.coursier.ui.screens.ChatScreen
 import com.suzosky.coursier.ui.screens.WalletScreen
 import com.suzosky.coursier.ui.screens.ModernWalletScreen
