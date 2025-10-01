@@ -28,7 +28,6 @@ import com.suzosky.coursier.ui.screens.ModernWalletScreen
 import com.suzosky.coursier.ui.screens.ProfileScreen
 import com.suzosky.coursier.ui.screens.DeliveryStep
 import com.suzosky.coursier.ui.screens.ChatMessage
-import com.suzosky.coursier.ui.screens.NavigationScreen
 import com.suzosky.coursier.services.NotificationSoundService
 import com.suzosky.coursier.viewmodel.MapViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -184,22 +183,6 @@ fun CoursierScreenNew(
             kotlinx.coroutines.delay(8000)
             // Ne ferme que si pas remplacée depuis
             timelineBanner = null
-        }
-    }
-    
-    // État pour afficher le NavigationScreen en plein écran
-    var showNavigationScreen by remember { mutableStateOf(false) }
-    
-    // Ouvrir automatiquement la navigation quand la commande est acceptée
-    LaunchedEffect(deliveryStep) {
-        if (deliveryStep in listOf(
-            DeliveryStep.ACCEPTED,
-            DeliveryStep.EN_ROUTE_PICKUP,
-            DeliveryStep.PICKED_UP,
-            DeliveryStep.EN_ROUTE_DELIVERY,
-            DeliveryStep.DELIVERY_ARRIVED
-        )) {
-            showNavigationScreen = true
         }
     }
     
