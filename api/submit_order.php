@@ -231,12 +231,13 @@ try {
 		$coursier = $stmtCoursier->fetch(PDO::FETCH_ASSOC);
 		
 		if ($coursier) {
-			// Assigner le coursier à la commande
-			$stmtAssign = $pdo->prepare("UPDATE commandes SET coursier_id = ?, statut = 'attribuee', updated_at = NOW() WHERE id = ?");
+			// ✅ CORRECTION: Assigner coursier SANS changer le statut (reste 'nouvelle')
+			// Le coursier doit ACCEPTER la commande sur son app mobile
+			$stmtAssign = $pdo->prepare("UPDATE commandes SET coursier_id = ?, statut = 'nouvelle', updated_at = NOW() WHERE id = ?");
 			$stmtAssign->execute([$coursier['id'], $commande_id]);
 			
 			if (function_exists('logMessage')) {
-				logMessage('diagnostics_errors.log', "Coursier #{$coursier['id']} ({$coursier['nom']}) attribué à commande #{$commande_id}");
+				logMessage('diagnostics_errors.log', "Coursier #{$coursier['id']} ({$coursier['nom']}) proposé pour commande #{$commande_id} - En attente d'acceptation");
 			}
 			
 			// Envoyer notification FCM
