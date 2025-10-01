@@ -107,8 +107,10 @@ class CoursesViewModel @Inject constructor(
                                 clientTelephone = commande["clientTelephone"] as? String ?: "",
                                 adresseEnlevement = commande["adresseEnlevement"] as? String ?: "",
                                 adresseLivraison = commande["adresseLivraison"] as? String ?: "",
-                                distanceKm = (commande["distanceKm"] as? Double) ?: 0.0,
-                                prix = (commande["prix"] as? Double) ?: 0.0,
+                                distance = (commande["distanceKm"] as? Double) ?: 0.0,
+                                tempsEstime = 30, // Valeur par défaut
+                                prixTotal = (commande["prix"] as? Double) ?: 0.0,
+                                prixLivraison = (commande["prix"] as? Double) ?: 0.0,
                                 statut = commande["statut"] as? String ?: "",
                                 dateCommande = commande["dateCommande"] as? String ?: "",
                                 heureCommande = commande["heureCommande"] as? String ?: ""
