@@ -164,6 +164,36 @@ fun UnifiedCoursesScreen(
             )
         }
         
+        // OVERLAY : Bouton guidage vocal (si en route)
+        if (currentOrder != null && deliveryStep in listOf(
+            DeliveryStep.ACCEPTED,
+            DeliveryStep.EN_ROUTE_PICKUP,
+            DeliveryStep.EN_ROUTE_DELIVERY
+        )) {
+            VoiceGuidanceButton(
+                isEnabled = isVoiceGuidanceEnabled,
+                onToggle = { enabled ->
+                    isVoiceGuidanceEnabled = enabled
+                    if (enabled) {
+                        // Lancer guidage vocal Google Maps
+                        val destination = if (deliveryStep in listOf(DeliveryStep.ACCEPTED, DeliveryStep.EN_ROUTE_PICKUP)) {
+                            currentOrder.coordonneesEnlevement
+                        } else {
+                            currentOrder.coordonneesLivraison
+                        }
+                        
+                        destination?.let {
+                            launchVoiceGuidance(context, it.latitude, it.longitude)
+                        }
+                    }
+                },
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(16.dp)
+                    .offset(y = 200.dp)
+            )
+        }
+        
         // OVERLAY : Panneau d'actions en bas
         if (currentOrder != null) {
             CourseActionPanel(
