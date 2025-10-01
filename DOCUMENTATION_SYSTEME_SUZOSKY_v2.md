@@ -60,7 +60,10 @@
 #### 4. **Mon Profil** (`ModernProfileScreen.kt`)
 - **Header** :
   - Avatar avec initiales
-  - **Matricule** affiché : `ID: C{coursier_id}`
+  - **Matricule coursier RÉEL** : `ID: CM20250003` (récupéré depuis `agents_suzosky.matricule`)
+    - Format: CM + YYYYMMDD + numéro séquentiel
+    - Couleur dorée (#D4A853)
+    - Fallback vers `C{coursier_id}` si matricule vide en BDD
   - Badge de niveau dans cercle doré
   - Rating 5 étoiles
 - **4 Stats Cards** :
