@@ -23,7 +23,20 @@
 
 ## ⚙️ Mise à jour rapide — 01 Oct 2025
 
-- **Disponibilité FCM** : le formulaire reste ouvert tant qu'au moins un token possède `device_tokens.is_active = 1`. Le champ `seconds_since_last_active` n'est utilisé qu'en information ; le compte à rebours ne démarre plus qu'une fois `active_count = 0`.
+### 🔧 CORRECTIONS APPLIQUÉES - PINGS FCM
+
+- **PROBLÈME RÉSOLU** : Les pings périodiques Android échouaient (HTTP 400) car le payload ne contenait que le token sans `coursier_id`
+- **SOLUTION** : Mise à jour de `ApiService.pingDeviceToken()` pour :
+  - Récupérer automatiquement le `coursier_id` stocké localement
+  - Auto-récupération via `checkCoursierSession()` si `coursier_id` manquant
+  - Payload enrichi : `coursier_id`, `token`, `platform=android`, `app_version`
+- **VALIDATION** : Tests réels sur device physique confirmés - pings réussissent maintenant (HTTP 200)
+- **LOGCAT PREUVE** : `✅ Ping response: {"success":true,"message":"Ping enregistré","coursier_id":5,...}`
+
+### 📋 ÉTAT ACTUEL
+
+- **Disponibilité FCM** : ✅ FONCTIONNEL - le formulaire reste ouvert tant qu'au moins un token possède `device_tokens.is_active = 1` avec `last_ping` récent
+- **Pings périodiques** : ✅ CORRIGÉ - Android envoie des heartbeats valides toutes les 30s
 - **Nettoyage tokens FCM** : `Scripts/Scripts cron/fcm_auto_cleanup.php` est désormais en *dry-run* par défaut (aucune désactivation automatique). Utilisez `--apply` si vous devez purger manuellement des tokens invalides.
 - **Comportement client** : si aucun coursier n'est disponible (`active_count = 0`), le formulaire affiche le message d'indisponibilité, lance un compte à rebours de 60 s puis se verrouille. Dès qu'un seul coursier redevient actif, le formulaire se rouvre immédiatement.
 - **Protection commande publique** : lorsque l'utilisateur n'est pas connecté, le clic sur « Commander » ouvre la modale de connexion existante et aucune requête `/api/submit_order.php` n'est envoyée tant qu'aucune session client n'est active.
