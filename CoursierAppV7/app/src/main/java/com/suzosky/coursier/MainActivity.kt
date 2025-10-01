@@ -843,6 +843,14 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                     }
                                 }
                             },
+                            onConfirmCash = { commandeId ->
+                                ApiService.confirmCashReceived(commandeId.toIntOrNull() ?: 0, coursierId) { success, message ->
+                                    if (success) {
+                                        // Déclencher un rechargement des commandes
+                                        shouldRefreshCommandes = true
+                                    }
+                                }
+                            },
                             onNavigateToProfile = { /* TODO: Navigation */ },
                             onNavigateToHistorique = { /* TODO: Navigation */ },
                             onNavigateToGains = { /* TODO: Navigation */ },
