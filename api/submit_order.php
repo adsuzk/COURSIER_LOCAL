@@ -250,7 +250,7 @@ try {
 			
 			if ($tokenData && !empty($tokenData['token'])) {
 				// Charger le système FCM
-				require_once __DIR__ . '/../lib/fcm_enhanced.php';
+				require_once __DIR__ . '/lib/fcm_enhanced.php';
 				
 				$title = "🚚 Nouvelle commande #{$fields['code_commande']}";
 				$body = "De: {$fields['adresse_depart']}\nVers: {$fields['adresse_arrivee']}\nPrix: {$fields['prix_estime']} FCFA";
