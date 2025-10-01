@@ -95,8 +95,11 @@ try {
             $available = true;
             $message = 'Coursiers disponibles';
         } elseif ($activeCount > 0) {
-            $available = false;
-            $message = 'Coursiers connectés, synchronisation en cours.';
+            // Au moins un coursier reste connecté (is_active = 1).
+            // Consigne : tant qu'un coursier est connecté, le formulaire doit rester ouvert.
+            $available = true;
+            $message = 'Coursiers connectés (activité arrière-plan).';
+            // Conserver secondsSinceLastActive pour afficher une indication sans fermer le formulaire.
         } else {
             $available = false;
             if ($secondsSinceLastActive !== null) {
@@ -140,7 +143,7 @@ try {
         'fresh_count' => $freshCount,
         'seconds_since_last_active' => $secondsSinceLastActive,
         'last_active_at' => $lastActiveAt,
-        'lock_delay_seconds' => $lockDelaySeconds,
+    'lock_delay_seconds' => $available ? null : $lockDelaySeconds,
         'stale_active_count' => max(0, $activeCount - $freshCount),
         'data_source' => $dataSource,
     ]);
