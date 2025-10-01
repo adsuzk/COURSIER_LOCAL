@@ -647,12 +647,22 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                     val commandesData = data["commandes"] as? List<Map<String, Any>> ?: emptyList()
                     Log.d("MainActivity", "Commandes data received: ${commandesData.size} orders")
                     commandesReelles = try {
-                        commandesData.map { cmdMap ->
+                        commandesData.mapIndexed { index, cmdMap ->
+                            // DEBUG: Logger les données brutes
+                            Log.d("MainActivity", "=== ORDER $index RAW DATA ===")
+                            Log.d("MainActivity", "telephoneDestinataire raw: ${cmdMap["telephoneDestinataire"]}")
+                            Log.d("MainActivity", "latitudeEnlevement raw: ${cmdMap["latitudeEnlevement"]}")
+                            Log.d("MainActivity", "longitudeEnlevement raw: ${cmdMap["longitudeEnlevement"]}")
+                            Log.d("MainActivity", "latitudeLivraison raw: ${cmdMap["latitudeLivraison"]}")
+                            Log.d("MainActivity", "longitudeLivraison raw: ${cmdMap["longitudeLivraison"]}")
+                            
                             // Extraire les coordonnées GPS
                             val latEnlevement = toDoubleSafe(cmdMap["latitudeEnlevement"])
                             val lonEnlevement = toDoubleSafe(cmdMap["longitudeEnlevement"])
                             val latLivraison = toDoubleSafe(cmdMap["latitudeLivraison"])
                             val lonLivraison = toDoubleSafe(cmdMap["longitudeLivraison"])
+                            
+                            Log.d("MainActivity", "Parsed: lat=$latEnlevement, lon=$lonEnlevement")
                             
                             val coordEnlevement = if (latEnlevement != 0.0 && lonEnlevement != 0.0 && 
                                                        latEnlevement.isFinite() && lonEnlevement.isFinite()) {
@@ -663,6 +673,8 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                                      latLivraison.isFinite() && lonLivraison.isFinite()) {
                                 com.suzosky.coursier.data.models.Coordonnees(latLivraison, lonLivraison)
                             } else null
+                            
+                            Log.d("MainActivity", "Created coords: enlevement=$coordEnlevement, livraison=$coordLivraison")
                             
                             Commande(
                                 id = toStringSafe(cmdMap["id"]),
