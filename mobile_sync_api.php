@@ -133,7 +133,7 @@ try {
                     heure_acceptation, heure_retrait, heure_livraison
                 FROM commandes 
                 WHERE coursier_id = ? 
-                AND statut IN ('attribuee', 'acceptee', 'en_cours', 'retiree')
+                AND statut IN ('nouvelle', 'attribuee', 'acceptee', 'en_cours', 'retiree')
                 ORDER BY created_at DESC
                 LIMIT 20
             ");
@@ -160,7 +160,7 @@ try {
             $stmt = $pdo->prepare("
                 SELECT id, code_commande, statut, prix_total 
                 FROM commandes 
-                WHERE id = ? AND coursier_id = ? AND statut = 'attribuee'
+                WHERE id = ? AND coursier_id = ? AND statut IN ('nouvelle', 'attribuee')
             ");
             $stmt->execute([$commande_id, $coursier_id]);
             $commande = $stmt->fetch(PDO::FETCH_ASSOC);
