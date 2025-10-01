@@ -12,7 +12,41 @@
 
     console.log('🚀 js_form_handling.php - Chargement des fonctions modales');
 
-    // FCM-driven control: expose a function for FCM code to notify whether coursiers are available.
+    // FCM-driven control: expose a function for FCM code to    // Fonction closePaymentModal
+    if (typeof window.closePaymentModal !== 'function') {
+        window.closePaymentModal = function(forceCancel = false) {
+            console.log('🚺 closePaymentModal appelée, forceCancel:', forceCancel);
+            
+            const modal = document.getElementById('payment-modal');
+            if (modal) {
+                modal.style.animation = 'fadeOut 0.3s ease-in';
+                
+                setTimeout(() => {
+                    modal.remove();
+                    document.body.style.overflow = '';
+                    console.log('✅ Modal fermé et scroll restauré');
+                    
+                    // Si fermé manuellement sans succès, notifier échec
+                    if (forceCancel && typeof window._paymentCompleteCallback === 'function') {
+                        window._paymentCompleteCallback(false);
+                        delete window._paymentCompleteCallback;
+                    }
+                }, 300);
+            }
+        };
+    }
+    
+    // Fonction helper pour gérer la fermeture du paiement
+    if (typeof window.handlePaymentClose !== 'function') {
+        window.handlePaymentClose = function(success) {
+            console.log('🔒 handlePaymentClose appelée, succès:', success);
+            closePaymentModal(!success);
+            if (typeof window._paymentCompleteCallback === 'function') {
+                window._paymentCompleteCallback(success);
+                delete window._paymentCompleteCallback;
+            }
+        };
+    }oursiers are available.
     // Usage from FCM layer: window.setFCMCoursierStatus(true|false, optionalMessage)
     if (typeof window.setFCMCoursierStatus !== 'function') {
         window.fcmCoursierAvailable = undefined;
@@ -391,13 +425,24 @@
         console.info('⚙️  __cashFlowEnhancedCash absent, activation automatique du mode enrichi.');
     }
 
-    // Fonction showPaymentModal
+    // Fonction showPaymentModal avec callback de succès/échec
     if (typeof window.showPaymentModal !== 'function') {
-        window.showPaymentModal = function(paymentUrl) {
+        window.showPaymentModal = function(paymentUrl, onComplete) {
             console.log('🚀 showPaymentModal appelée avec URL:', paymentUrl);
+            
+            // Callback par défaut si non fourni
+            if (typeof onComplete !== 'function') {
+                onComplete = function(success) {
+                    console.log('⚠️ Aucun callback fourni, succès:', success);
+                };
+            }
+            
+            // Stocker le callback globalement
+            window._paymentCompleteCallback = onComplete;
             
             if (!paymentUrl || typeof paymentUrl !== 'string') {
                 console.error('❌ URL de paiement invalide');
+                onComplete(false);
                 return;
             }
 
@@ -407,6 +452,26 @@
                 existingModal.remove();
                 console.log('🗑️ Modal existant supprimé');
             }
+            
+            // Listener pour détecter le retour CinetPay
+            window.addEventListener('message', function paymentListener(event) {
+                console.log('📨 Message reçu:', event.data);
+                
+                // Vérifier si c'est un message de CinetPay
+                if (event.data && typeof event.data === 'object') {
+                    if (event.data.status === 'success' || event.data.payment_status === 'ACCEPTED') {
+                        console.log('✅ Paiement réussi détecté!');
+                        window.removeEventListener('message', paymentListener);
+                        closePaymentModal();
+                        onComplete(true);
+                    } else if (event.data.status === 'failed' || event.data.status === 'cancelled') {
+                        console.log('❌ Paiement échoué/annulé');
+                        window.removeEventListener('message', paymentListener);
+                        closePaymentModal();
+                        onComplete(false);
+                    }
+                }
+            });
 
             // Créer le modal avec design Suzosky élégant (ANCIEN VERSION QUI MARCHAIT)
             const modal = document.createElement('div');
