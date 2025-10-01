@@ -600,8 +600,11 @@ document.addEventListener('DOMContentLoaded', () => {
         hideModal();
         updateUIForGuestUser();
         showNotification(data.message || 'Déconnexion réussie', 'success');
-        // Rediriger vers la page d'accueil
-        window.location.href = 'index.php';
+        // Rediriger vers la page d'accueil (chemin racine sans imposer index.php)
+        const basePath = (typeof window.ROOT_PATH === 'string' && window.ROOT_PATH.length)
+          ? window.ROOT_PATH
+          : (window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, ''));
+        window.location.href = basePath || '/';
       } else {
         showNotification(data.error || 'Erreur de déconnexion', 'error');
       }
