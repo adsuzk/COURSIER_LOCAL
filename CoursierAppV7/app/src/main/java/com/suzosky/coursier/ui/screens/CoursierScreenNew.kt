@@ -23,9 +23,11 @@ import com.suzosky.coursier.ui.components.BannerSeverity
 import com.suzosky.coursier.ui.screens.CoursesScreen
 import com.suzosky.coursier.ui.screens.UnifiedCoursesScreen
 import com.suzosky.coursier.ui.screens.ChatScreen
+import com.suzosky.coursier.ui.screens.ModernChatScreen
 import com.suzosky.coursier.ui.screens.WalletScreen
 import com.suzosky.coursier.ui.screens.ModernWalletScreen
 import com.suzosky.coursier.ui.screens.ProfileScreen
+import com.suzosky.coursier.ui.screens.ModernProfileScreen
 import com.suzosky.coursier.ui.screens.DeliveryStep
 import com.suzosky.coursier.ui.screens.ChatMessage
 import com.suzosky.coursier.services.NotificationSoundService
@@ -376,7 +378,7 @@ fun CoursierScreenNew(
                 }
                 
                 NavigationTab.CHAT -> {
-                    ChatScreen(
+                    ModernChatScreen(
                         coursierNom = coursierNom,
                         messages = chatMessages,
                         onSendMessage = { message ->
@@ -408,15 +410,21 @@ fun CoursierScreenNew(
                 }
                 
                 NavigationTab.PROFILE -> {
-                    ProfileScreen(
+                    ModernProfileScreen(
                         coursierNom = coursierNom,
-                        coursierStatut = coursierStatut,
-                        totalCommandes = totalCommandes,
-                        noteGlobale = noteGlobale.toFloat(),
                         coursierTelephone = coursierTelephone.ifBlank { "+225" },
-                        coursierEmail = coursierEmail,
-                        dateInscription = if (dateInscription.isNotBlank()) dateInscription else "",
-                        onLogout = onLogout
+                        stats = CoursierStats(
+                            totalCourses = totalCommandes,
+                            completedToday = commandes.count { it.statut == "livree" },
+                            rating = noteGlobale.toFloat(),
+                            totalEarnings = balance,
+                            level = (totalCommandes / 20) + 1, // 20 courses = 1 niveau
+                            experiencePercent = ((totalCommandes % 20) / 20f),
+                            memberSince = if (dateInscription.isNotBlank()) dateInscription else "2025"
+                        ),
+                        onLogout = onLogout,
+                        onEditProfile = { Toast.makeText(context, "Édition du profil - À venir", Toast.LENGTH_SHORT).show() },
+                        onSettings = { Toast.makeText(context, "Paramètres - À venir", Toast.LENGTH_SHORT).show() }
                     )
                 }
             } // end when
