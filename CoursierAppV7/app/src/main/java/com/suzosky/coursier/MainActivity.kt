@@ -810,8 +810,38 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                             Log.d("MainActivity", "📊 Polling: ${nbCommandesRecues} commandes (avant: ${nbCommandesActuelles})")
                             
                             // Si le nombre de commandes a changé, déclencher un refresh complet
-                            if (nbCommandesRecues != nbCommandesActuelles) {
+                            if (nbCommandesRecues > nbCommandesActuelles) {
                                 Log.d("MainActivity", "🆕 NOUVELLE COMMANDE DÉTECTÉE ! Refresh automatique...")
+                                
+                                // 🔔 NOTIFICATION SONORE + VIBRATION
+                                try {
+                                    // Vibration
+                                    val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as? android.os.Vibrator
+                                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                                        vibrator?.vibrate(android.os.VibrationEffect.createWaveform(longArrayOf(0, 200, 100, 200), -1))
+                                    } else {
+                                        @Suppress("DEPRECATION")
+                                        vibrator?.vibrate(500)
+                                    }
+                                    
+                                    // Son de notification
+                                    val notification = android.media.RingtoneManager.getDefaultUri(android.media.RingtoneManager.TYPE_NOTIFICATION)
+                                    val ringtone = android.media.RingtoneManager.getRingtone(applicationContext, notification)
+                                    ringtone.play()
+                                    
+                                    // 🔊 Annonce vocale
+                                    val newCommande = commandesData.firstOrNull()
+                                    val clientName = newCommande?.get("clientNom")?.toString() ?: "un client"
+                                    val destination = newCommande?.get("adresseLivraison")?.toString() ?: "destination inconnue"
+                                    voiceGuidance?.announceNewOrder(clientName, destination)
+                                    
+                                    Log.d("MainActivity", "🔔 Notification émise: vibration + son + voix")
+                                } catch (e: Exception) {
+                                    Log.e("MainActivity", "❌ Erreur notification", e)
+                                }
+                                
+                                refreshTrigger++
+                            } else if (nbCommandesRecues != nbCommandesActuelles) {
                                 refreshTrigger++
                             } else {
                                 // Vérifier si le statut d'une commande a changé
