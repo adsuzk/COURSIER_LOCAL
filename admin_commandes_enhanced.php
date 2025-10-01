@@ -332,7 +332,8 @@ function renderCommandesContent(array $commandes): string
 
             // Sécurisation des IDs pour éviter erreurs JS
             $safeCommandeId = (int) $commande['id'];
-            $safeCoursierId = !empty($commande['coursier_id']) ? (int) $commande['coursier_id'] : null;
+            $safeCoursierId = !empty($commande['coursier_id']) ? (int) $commande['coursier_id'] : 0;
+            $safeCoursierId JS = $safeCoursierId > 0 ? $safeCoursierId : 'null';
 
             if (!$hasCoursier) {
                 $trackClass = 'btn-track disabled';
@@ -346,21 +347,21 @@ function renderCommandesContent(array $commandes): string
                 $trackLabel = 'Tracking Live';
                 $trackIcon = 'satellite';
                 $trackTitle = 'Suivi en temps réel';
-                $trackAction = "openTrackingModal({$safeCommandeId}, {$safeCoursierId}, 'live');";
+                $trackAction = "openTrackingModal({$safeCommandeId}, {$safeCoursierId_JS}, 'live');";
                 $trackDisabled = '';
             } elseif ($isCompleted) {
                 $trackClass = 'btn-track history';
                 $trackLabel = 'Historique';
                 $trackIcon = 'history';
                 $trackTitle = 'Consulter la course';
-                $trackAction = "openTrackingModal({$safeCommandeId}, {$safeCoursierId}, 'history');";
+                $trackAction = "openTrackingModal({$safeCommandeId}, {$safeCoursierId_JS}, 'history');";
                 $trackDisabled = '';
             } else {
                 $trackClass = 'btn-track pending';
                 $trackLabel = 'En attente';
                 $trackIcon = 'clock';
                 $trackTitle = 'Commande en attente';
-                $trackAction = "openTrackingModal({$safeCommandeId}, {$safeCoursierId}, 'pending');";
+                $trackAction = "openTrackingModal({$safeCommandeId}, {$safeCoursierId_JS}, 'pending');";
                 $trackDisabled = '';
             }
 
