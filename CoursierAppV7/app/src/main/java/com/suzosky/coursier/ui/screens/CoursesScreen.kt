@@ -367,9 +367,23 @@ fun CoursesScreen(
                             val context = androidx.compose.ui.platform.LocalContext.current
                             Button(
                                 onClick = {
+                                    android.util.Log.d("CoursesScreen", "=== CLICK NAVIGATION ===")
+                                    android.util.Log.d("CoursesScreen", "currentOrder: $currentOrder")
+                                    android.util.Log.d("CoursesScreen", "coordonneesEnlevement: ${currentOrder?.coordonneesEnlevement}")
+                                    
                                     currentOrder?.coordonneesEnlevement?.let { pickup ->
+                                        android.util.Log.d("CoursesScreen", "Lancement navigation vers: (${pickup.latitude}, ${pickup.longitude})")
                                         val pickupLatLng = LatLng(pickup.latitude, pickup.longitude)
-                                        launchTurnByTurn(context, pickupLatLng)
+                                        try {
+                                            launchTurnByTurn(context, pickupLatLng)
+                                            android.util.Log.d("CoursesScreen", "Navigation lancée avec succès")
+                                        } catch (e: Exception) {
+                                            android.util.Log.e("CoursesScreen", "Erreur lancement navigation: ${e.message}")
+                                            android.widget.Toast.makeText(context, "Erreur: ${e.message}", android.widget.Toast.LENGTH_LONG).show()
+                                        }
+                                    } ?: run {
+                                        android.util.Log.w("CoursesScreen", "Pas de coordonnées d'enlèvement!")
+                                        android.widget.Toast.makeText(context, "Coordonnées d'enlèvement manquantes", android.widget.Toast.LENGTH_SHORT).show()
                                     }
                                 },
                                 modifier = Modifier.fillMaxWidth(),
