@@ -1,6 +1,8 @@
 
 package com.suzosky.coursier
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -23,6 +25,7 @@ import com.suzosky.coursier.data.models.Commande
 import com.suzosky.coursier.network.ApiService
 import com.suzosky.coursier.services.AutoUpdateService
 import com.suzosky.coursier.services.OrderRingService
+import com.suzosky.coursier.services.VoiceGuidanceService
 import com.suzosky.coursier.telemetry.TelemetrySDK
 import com.suzosky.coursier.telemetry.UpdateInfo
 import com.suzosky.coursier.ui.components.PaymentStatusDialog
@@ -44,7 +47,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import com.google.firebase.messaging.FirebaseMessaging
 import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
 import android.content.IntentFilter
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.suzosky.coursier.messaging.FCMService
