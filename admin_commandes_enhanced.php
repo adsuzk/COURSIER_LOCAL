@@ -2087,6 +2087,142 @@ body.admin-commandes-page {
 // ✅ SYSTÈME SIMPLIFIÉ - Focus sur synchronisation et actions essentielles
 console.log('✅ Admin commandes - Initialisation système simplifié');
 
+// ========== FONCTIONS MODAL TRACKING ==========
+function openTrackingPopup(commandeId, mode) {
+    console.log('🔍 Ouverture modal tracking:', { commandeId, mode });
+    
+    const modal = document.getElementById('trackingModal');
+    const modalTitle = document.getElementById('trackingModalTitle');
+    const modalSubtitle = document.getElementById('trackingModalSubtitle');
+    const modalContent = document.getElementById('trackingModalContent');
+    
+    if (!modal || !modalContent) {
+        console.error('❌ Modal introuvable !');
+        return;
+    }
+    
+    // Afficher le modal
+    modal.classList.add('active');
+    
+    // Mettre à jour le titre
+    modalTitle.textContent = mode === 'live' ? '📡 Tracking Live' : '📊 Historique de course';
+    modalSubtitle.textContent = `Commande #${commandeId}`;
+    
+    // Loader
+    modalContent.innerHTML = `
+        <div style="text-align: center; padding: 40px; color: rgba(255,255,255,0.6);">
+            <i class="fas fa-spinner fa-spin" style="font-size: 32px; margin-bottom: 15px;"></i>
+            <p>Chargement des données de tracking...</p>
+        </div>
+    `;
+    
+    // Charger les données via API
+    fetch(`api/tracking_simple.php?commande_id=${commandeId}&mode=${mode}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                renderTrackingData(data, mode);
+            } else {
+                modalContent.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #ef4444;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 32px; margin-bottom: 15px;"></i>
+                        <p>${data.error || 'Erreur lors du chargement des données'}</p>
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('❌ Erreur tracking:', error);
+            modalContent.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: #ef4444;">
+                    <i class="fas fa-wifi" style="font-size: 32px; margin-bottom: 15px; opacity: 0.5;"></i>
+                    <p>Erreur de connexion au serveur</p>
+                </div>
+            `;
+        });
+}
+
+function closeTrackingModal(event) {
+    const modal = document.getElementById('trackingModal');
+    if (event && event.target !== modal && event.type !== 'click') return;
+    
+    if (modal) {
+        modal.classList.remove('active');
+    }
+}
+
+function renderTrackingData(data, mode) {
+    const modalContent = document.getElementById('trackingModalContent');
+    const commande = data.commande || {};
+    const coursier = data.coursier || {};
+    const duree = data.duree || {};
+    
+    let html = '<div class="tracking-info-grid">';
+    
+    // Carte Coursier
+    html += `
+        <div class="tracking-info-card">
+            <h3><i class="fas fa-motorcycle"></i> Coursier</h3>
+            <p><strong>${coursier.nom || 'N/A'}</strong></p>
+            <p><i class="fas fa-phone"></i> ${coursier.telephone || 'N/A'}</p>
+            ${coursier.statut ? `<p><span class="status-badge ${coursier.statut === 'en_ligne' ? 'online' : 'offline'}">${coursier.statut === 'en_ligne' ? '🟢 En ligne' : '🔴 Hors ligne'}</span></p>` : ''}
+        </div>
+    `;
+    
+    // Carte Itinéraire
+    html += `
+        <div class="tracking-info-card">
+            <h3><i class="fas fa-route"></i> Itinéraire</h3>
+            <p><strong>Départ :</strong><br>${commande.adresse_depart || 'N/A'}</p>
+            <p><strong>Arrivée :</strong><br>${commande.adresse_arrivee || 'N/A'}</p>
+        </div>
+    `;
+    
+    // Carte Temps & Prix
+    html += `
+        <div class="tracking-info-card">
+            <h3><i class="fas fa-clock"></i> Temps & Prix</h3>
+            ${duree.debut ? `<p><strong>⏰ Début :</strong> ${duree.debut}</p>` : ''}
+            ${duree.fin ? `<p><strong>✅ Fin :</strong> ${duree.fin}</p>` : ''}
+            ${duree.duree_formatted ? `<p><strong>⏱️ Durée :</strong> ${duree.duree_formatted}</p>` : ''}
+            <p><strong>💰 Prix :</strong> ${commande.prix_estime ? Number(commande.prix_estime).toLocaleString('fr-FR') + ' FCFA' : 'N/A'}</p>
+        </div>
+    `;
+    
+    html += '</div>';
+    
+    // Carte si disponible
+    if (data.position || (data.positions && data.positions.length > 0)) {
+        html += `
+            <div class="tracking-map-container">
+                <div id="trackingMap" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.5);">
+                    <div style="text-align: center;">
+                        <i class="fas fa-map-marked-alt" style="font-size: 48px; margin-bottom: 15px; opacity: 0.3;"></i>
+                        <p>Carte Google Maps bientôt disponible</p>
+                        <p style="font-size: 12px; margin-top: 10px;">Position: ${data.position ? `Lat ${data.position.lat}, Lng ${data.position.lng}` : 'Non disponible'}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    } else {
+        html += `
+            <div style="text-align: center; padding: 30px; background: rgba(30, 41, 59, 0.6); border-radius: 14px; color: rgba(226, 232, 240, 0.6);">
+                <i class="fas fa-map-marked-alt" style="font-size: 32px; margin-bottom: 10px; opacity: 0.5;"></i>
+                <p>Aucune donnée de géolocalisation disponible</p>
+            </div>
+        `;
+    }
+    
+    modalContent.innerHTML = html;
+}
+
+// Fermer le modal avec Echap
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeTrackingModal({ type: 'click' });
+    }
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     const filterForm = document.getElementById('commandesFilterForm');
     const statsContainer = document.getElementById('statsContainer');
