@@ -578,6 +578,29 @@ fun CourseActionPanel(
                     )
                 }
                 
+                DeliveryStep.DELIVERED -> {
+                    // Si c'est une commande en espèces, afficher bouton "Cash récupéré"
+                    val isEspeces = currentOrder.methodePaiement?.lowercase() == "especes"
+                    
+                    if (isEspeces) {
+                        ActionButton(
+                            text = "💵 J'ai récupéré le cash",
+                            icon = Icons.Filled.AccountBalance,
+                            onClick = onConfirmCash,
+                            color = PrimaryGold
+                        )
+                    } else {
+                        Text(
+                            "✅ Commande terminée !",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = SuccessGreen,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+                
                 else -> {
                     // En route : afficher progression
                     ProgressIndicator(deliveryStep)
