@@ -119,7 +119,10 @@ Les scripts de maintenance peuvent par ailleurs valider activement les tokens vi
 ## 🔐 Flux commande / Authentification côté index
 
 - **UX attendue** : si le formulaire est visible mais que l'utilisateur public n'est pas connecté, cliquer sur « Commander » ouvre la modale de connexion existante (`openConnexionModal`) et aucune requête n'est envoyée tant que la session n'est pas créée.
-- **Front** : `js_form_handling.php` et `order_form.php` bloquent la soumission (`preventDefault`) lorsque `window.currentClient = false`, déclenchent la modale et réinitialisent `window.__orderFlowHandled`.
+- **Front** :
+    - `order_form.php` force `window.initialCoursierAvailability = true` pour les visiteurs et expose `window.hasClientSession`.
+    - `js_form_handling.php` empêche toute soumission (`preventDefault`) lorsque `window.currentClient = false`, ouvre la modale et mémorise le statut FCM (verrouillage uniquement une fois la session cliente active via `refreshCoursierAvailabilityForClient()`). `forceCoursierAvailabilityForGuests()` maintient le formulaire ouvert tant que l’utilisateur n’est pas connecté.
+    - `connexion_modal.js` met à jour `window.currentClient`, rafraîchit l’état FCM après chaque login/inscription (`refreshCoursierAvailabilityForClient()`) et relâche le formulaire lors de la déconnexion (`forceCoursierAvailabilityForGuests()`).
 - **Backend** : `/api/submit_order.php` refuse toute requête sans session client active (`client_id`, `client_email` ou `client_telephone` en session). Le script renvoie `401 Unauthorized` et n'insère aucune commande en base.
 - **Tests** : vider les cookies/session, recharger l'index, cliquer sur « Commander » → la modale s'affiche, puis se connecter et valider pour autoriser l'appel API.
 
