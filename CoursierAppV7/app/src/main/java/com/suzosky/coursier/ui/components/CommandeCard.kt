@@ -55,6 +55,9 @@ fun CommandeCard(
     onRefuser: () -> Unit,
     onMettreEnAttente: () -> Unit,
     onVoirDetails: () -> Unit,
+    onStartDelivery: () -> Unit = {},
+    onPickupPackage: () -> Unit = {},
+    onMarkDelivered: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -99,7 +102,10 @@ fun CommandeCard(
                 onAccepter = onAccepter,
                 onRefuser = onRefuser,
                 onMettreEnAttente = onMettreEnAttente,
-                onVoirDetails = onVoirDetails
+                onVoirDetails = onVoirDetails,
+                onStartDelivery = onStartDelivery,
+                onPickupPackage = onPickupPackage,
+                onMarkDelivered = onMarkDelivered
             )
         }
     }
