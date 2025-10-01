@@ -648,6 +648,67 @@
             }
         }
         
+        // NOUVELLES FONCTIONS POUR LA PROGRESSION DE LA TIMELINE
+        async function startDelivery(commandeId, code) {
+            addLog(`🚀 Démarrage de la livraison ${code}...`);
+            
+            try {
+                const response = await fetch(`${API_BASE}/mobile_sync_api.php?action=start_delivery&coursier_id=${COURSIER_ID}&commande_id=${commandeId}`, {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    addLog(`✅ Livraison ${code} démarrée! Statut: en_cours`, 'success');
+                    setTimeout(pollCommandes, 500);
+                } else {
+                    addLog(`❌ Erreur: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                addLog(`❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        async function pickupPackage(commandeId, code) {
+            addLog(`📦 Récupération du colis ${code}...`);
+            
+            try {
+                const response = await fetch(`${API_BASE}/mobile_sync_api.php?action=pickup_package&coursier_id=${COURSIER_ID}&commande_id=${commandeId}`, {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    addLog(`✅ Colis ${code} récupéré! Statut: recuperee`, 'success');
+                    setTimeout(pollCommandes, 500);
+                } else {
+                    addLog(`❌ Erreur: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                addLog(`❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        async function markDelivered(commandeId, code) {
+            addLog(`🏁 Finalisation de la livraison ${code}...`);
+            
+            try {
+                const response = await fetch(`${API_BASE}/mobile_sync_api.php?action=mark_delivered&coursier_id=${COURSIER_ID}&commande_id=${commandeId}`, {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    addLog(`✅ Commande ${code} livrée avec succès! 🎉`, 'success');
+                    setTimeout(pollCommandes, 500);
+                } else {
+                    addLog(`❌ Erreur: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                addLog(`❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
         function playNotificationSound() {
             // Son de notification FORT et répétitif
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
