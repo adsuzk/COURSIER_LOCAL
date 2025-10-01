@@ -240,6 +240,7 @@ try {
             'balance' => $balance,
             'recharge_balance' => $rechargeBalance,
             'legacy_balance' => $legacyComptesBalance,
+            'matricule' => $matricule,
             'commandes_attente' => $commandesAttente,
             'gains_du_jour' => $gainsDuJour,
             'commandes' => $commandesFormatees
