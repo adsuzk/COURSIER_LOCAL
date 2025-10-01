@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Tracking Modal - Diagnostic</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1a1a2e;
+            color: #fff;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .test-section {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .success { color: #27ae60; }
+        .error { color: #e94560; }
+        .warning { color: #ffc107; }
+        button {
+            background: #d4a853;
+            color: #1a1a2e;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+        }
+        button:hover {
+            background: #e8c468;
+        }
+        pre {
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .iframe-container {
+            background: #fff;
+            border: 2px solid #d4a853;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        iframe {
+            width: 100%;
+            height: 800px;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Test Tracking Modal - Diagnostic Complet</h1>
+    
+    <div class="test-section">
+        <h2>📋 Étape 1 : Vérification de la page admin</h2>
+        <p>Chargement de la page dans l'iframe ci-dessous...</p>
+        <button onclick="reloadFrame()">🔄 Recharger la page</button>
+        <button onclick="checkConsole()">📊 Vérifier la console</button>
+        <button onclick="testStubs()">🧪 Tester les stubs</button>
+        <button onclick="clearBrowserCache()">🗑️ Vider le cache</button>
+    </div>
+
+    <div class="test-section">
+        <h2>🐛 Résultats des tests</h2>
+        <pre id="testResults">En attente des tests...</pre>
+    </div>
+
+    <div class="iframe-container">
+        <iframe id="adminFrame" src="http://localhost/COURSIER_LOCAL/admin/admin.php?section=commandes"></iframe>
+    </div>
+
+    <script>
+        const frame = document.getElementById('adminFrame');
+        const results = document.getElementById('testResults');
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️';
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : type === 'warning' ? 'warning' : '';
+            results.innerHTML += `<span class="${className}">[${timestamp}] ${prefix} ${message}</span>\n`;
+            results.scrollTop = results.scrollHeight;
+        }
+
+        function reloadFrame() {
+            log('Rechargement de la page admin...', 'info');
+            frame.contentWindow.location.reload(true);
+            setTimeout(() => {
+                log('Page rechargée, attendez 2 secondes...', 'info');
+                setTimeout(checkConsole, 2000);
+            }, 1000);
+        }
+
+        function checkConsole() {
+            try {
+                const win = frame.contentWindow;
+                log('=== VÉRIFICATION DES FONCTIONS GLOBALES ===', 'info');
+                
+                // Vérifier openTrackingModal
+                if (typeof win.openTrackingModal === 'function') {
+                    log('openTrackingModal: DÉFINI ✅', 'success');
+                } else {
+                    log('openTrackingModal: INTROUVABLE ❌', 'error');
+                    log(`  Type détecté: ${typeof win.openTrackingModal}`, 'warning');
+                }
+
+                // Vérifier closeTrackingModal
+                if (typeof win.closeTrackingModal === 'function') {
+                    log('closeTrackingModal: DÉFINI ✅', 'success');
+                } else {
+                    log('closeTrackingModal: INTROUVABLE ❌', 'error');
+                }
+
+                // Vérifier showTrackingUnavailable
+                if (typeof win.showTrackingUnavailable === 'function') {
+                    log('showTrackingUnavailable: DÉFINI ✅', 'success');
+                } else {
+                    log('showTrackingUnavailable: INTROUVABLE ❌', 'error');
+                }
+
+                // Vérifier le modal dans le DOM
+                const modal = win.document.getElementById('trackingModal');
+                if (modal) {
+                    log('Modal DOM: TROUVÉ ✅', 'success');
+                    log(`  Classes: ${modal.className}`, 'info');
+                } else {
+                    log('Modal DOM: INTROUVABLE ❌', 'error');
+                }
+
+                // Compter les boutons de tracking
+                const buttons = win.document.querySelectorAll('button[onclick*="openTrackingModal"]');
+                log(`Boutons de tracking trouvés: ${buttons.length}`, buttons.length > 0 ? 'success' : 'error');
+
+                if (buttons.length > 0) {
+                    const firstBtn = buttons[0];
+                    const onclickAttr = firstBtn.getAttribute('onclick');
+                    log(`  Premier bouton onclick: ${onclickAttr}`, 'info');
+                }
+
+            } catch (err) {
+                log(`ERREUR D'ACCÈS À L'IFRAME: ${err.message}`, 'error');
+                log('  (Possible problème de CORS ou page non chargée)', 'warning');
+            }
+        }
+
+        function testStubs() {
+            try {
+                const win = frame.contentWindow;
+                log('=== TEST DES FONCTIONS STUBS ===', 'info');
+                
+                // Tester l'appel
+                if (typeof win.openTrackingModal === 'function') {
+                    log('Appel de openTrackingModal(999, 1, "live")...', 'info');
+                    win.openTrackingModal(999, 1, 'live');
+                    log('Appel réussi (vérifiez si le modal s\'ouvre dans l\'iframe)', 'success');
+                } else {
+                    log('Impossible de tester : fonction non définie', 'error');
+                }
+
+            } catch (err) {
+                log(`ERREUR LORS DU TEST: ${err.message}`, 'error');
+            }
+        }
+
+        function clearBrowserCache() {
+            log('Pour vider le cache navigateur:', 'warning');
+            log('  1. Appuyez sur Ctrl + Shift + Delete', 'info');
+            log('  2. Ou appuyez sur Ctrl + Shift + R dans l\'iframe', 'info');
+            log('  3. Ou fermez et rouvrez votre navigateur', 'info');
+        }
+
+        // Auto-check après chargement de l'iframe
+        frame.addEventListener('load', function() {
+            log('Page admin chargée dans l\'iframe', 'success');
+            setTimeout(checkConsole, 2000);
+        });
+
+        // Log initial
+        log('🚀 Test Tracking Modal initialisé', 'success');
+        log('Chargement de l\'admin en cours...', 'info');
+    </script>
+</body>
+</html>

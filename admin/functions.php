@@ -1482,12 +1482,16 @@ function renderFooter() {
     ?>
             </div>
         </div>
-        <script src="../assets/js/admin.js"></script>
+        <script>
+        // admin.js minimal inline pour éviter 404
+        // (Les fonctions de tracking sont définies dans admin_commandes_enhanced.php)
+        console.log('✅ Admin footer chargé');
+        </script>
         <?php
         // Injecter l'auto-refresh pour les pages critiques de synchronisation APK
         $section = $_GET['section'] ?? '';
         if (in_array($section, ['app_updates', 'applications'], true)) {
-            echo '<script src="/admin/assets/js/auto_refresh_app_updates.js"></script>';
+            echo '<script src="assets/js/auto_refresh_app_updates.js"></script>';
         }
         ?>
         <?php 

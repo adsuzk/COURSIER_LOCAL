@@ -330,6 +330,10 @@ function renderCommandesContent(array $commandes): string
             $isActive = in_array($statut, ['attribuee', 'acceptee', 'en_cours'], true);
             $isCompleted = in_array($statut, ['livree', 'annulee'], true);
 
+            // Sécurisation des IDs pour éviter erreurs JS
+            $safeCommandeId = (int) $commande['id'];
+            $safeCoursierId = !empty($commande['coursier_id']) ? (int) $commande['coursier_id'] : 'null';
+
             if (!$hasCoursier) {
                 $trackClass = 'btn-track disabled';
                 $trackLabel = 'Pas de coursier';
@@ -342,21 +346,21 @@ function renderCommandesContent(array $commandes): string
                 $trackLabel = 'Tracking Live';
                 $trackIcon = 'satellite';
                 $trackTitle = 'Suivi en temps réel';
-                $trackAction = "openTrackingModal({$commande['id']}, {$commande['coursier_id']}, 'live');";
+                $trackAction = "openTrackingModal({$safeCommandeId}, {$safeCoursierId}, 'live');";
                 $trackDisabled = '';
             } elseif ($isCompleted) {
                 $trackClass = 'btn-track history';
                 $trackLabel = 'Historique';
                 $trackIcon = 'history';
                 $trackTitle = 'Consulter la course';
-                $trackAction = "openTrackingModal({$commande['id']}, {$commande['coursier_id']}, 'history');";
+                $trackAction = "openTrackingModal({$safeCommandeId}, {$safeCoursierId}, 'history');";
                 $trackDisabled = '';
             } else {
                 $trackClass = 'btn-track pending';
                 $trackLabel = 'En attente';
                 $trackIcon = 'clock';
                 $trackTitle = 'Commande en attente';
-                $trackAction = "openTrackingModal({$commande['id']}, {$commande['coursier_id']}, 'pending');";
+                $trackAction = "openTrackingModal({$safeCommandeId}, {$safeCoursierId}, 'pending');";
                 $trackDisabled = '';
             }
 
@@ -386,7 +390,26 @@ function renderCommandesContent(array $commandes): string
                         <p><strong>Nom :</strong> <?= htmlspecialchars($commande['client_nom'] ?? 'N/A', ENT_QUOTES) ?></p>
                         <p><strong>Téléphone :</strong> <?= htmlspecialchars($commande['client_telephone'] ?? 'N/A', ENT_QUOTES) ?></p>
                         <?php if (!empty($commande['created_at'])): ?>
-                            <p><strong>Créée :</strong> <?= date('d/m/Y H:i', strtotime($commande['created_at'])) ?></p>
+                            <p><strong>📅 Créée :</strong> <?= date('d/m/Y à H:i:s', strtotime($commande['created_at'])) ?></p>
+                        <?php endif; ?>
+                        
+                        <?php if ($isCompleted && !empty($commande['updated_at'])): ?>
+                            <?php
+                            $debut = strtotime($commande['created_at']);
+                            $fin = strtotime($commande['updated_at']);
+                            $duree_secondes = $fin - $debut;
+                            $duree_minutes = floor($duree_secondes / 60);
+                            $duree_heures = floor($duree_minutes / 60);
+                            $duree_min_restant = $duree_minutes % 60;
+                            $duree_formatted = '';
+                            if ($duree_heures > 0) {
+                                $duree_formatted = "{$duree_heures}h {$duree_min_restant}min";
+                            } else {
+                                $duree_formatted = "{$duree_minutes} min";
+                            }
+                            ?>
+                            <p><strong>⏱️ Durée :</strong> <?= $duree_formatted ?></p>
+                            <p><strong>✅ Terminée :</strong> <?= date('d/m/Y à H:i:s', $fin) ?></p>
                         <?php endif; ?>
                     </div>
                     <div class="commande-section">
@@ -474,6 +497,33 @@ $formAction = htmlspecialchars($baseScript, ENT_QUOTES);
 $resetUrl = htmlspecialchars($baseScript . '?section=commandes', ENT_QUOTES);
 $ajaxEndpoint = htmlspecialchars(basename(__FILE__), ENT_QUOTES);
 ?>
+
+<!-- ✅ STUBS GLOBAUX : Définir les fonctions AVANT le HTML pour éviter "not defined" -->
+<script>
+// Déclarations anticipées des fonctions de tracking (implémentations réelles plus bas)
+window.openTrackingModal = window.openTrackingModal || function(commandeId, coursierId, mode) {
+    console.warn('⚠️ openTrackingModal stub appelé, implémentation réelle en chargement...', {commandeId, coursierId, mode});
+};
+window.closeTrackingModal = window.closeTrackingModal || function() {
+    console.warn('⚠️ closeTrackingModal stub appelé');
+};
+window.showTrackingUnavailable = window.showTrackingUnavailable || function() {
+    alert("Aucun coursier n'est encore assigné à cette commande.");
+};
+window.switchTrackingTab = window.switchTrackingTab || function(tab) {
+    console.warn('⚠️ switchTrackingTab stub appelé:', tab);
+};
+window.refreshTracking = window.refreshTracking || function() {
+    console.warn('⚠️ refreshTracking stub appelé');
+};
+window.closeCoursierModal = window.closeCoursierModal || function(event) {
+    const modal = document.getElementById('coursierModal');
+    if (modal && (!event || event.target === modal)) {
+        modal.style.display = 'none';
+    }
+};
+console.log('✅ Stubs de tracking initialisés');
+</script>
 
 <style>
 :root {
@@ -2397,15 +2447,32 @@ function applyRefreshInterval(seconds) {
 }
 
 function openTrackingModal(commandeId, coursierId, mode) {
+    console.log('🔍 openTrackingModal appelée:', { commandeId, coursierId, mode });
+    
+    // Validation des paramètres
+    if (!commandeId || isNaN(commandeId)) {
+        console.error('❌ ID de commande invalide:', commandeId);
+        alert('Erreur: ID de commande invalide.');
+        return;
+    }
+    
+    if (coursierId !== null && (isNaN(coursierId) || coursierId <= 0)) {
+        console.warn('⚠️ ID coursier invalide, passage en null:', coursierId);
+        coursierId = null;
+    }
+    
     currentCommandeId = commandeId;
     if (!trackingModal) {
         trackingModal = document.getElementById('trackingModal');
+        console.log('📋 trackingModal élément:', trackingModal);
     }
     if (!trackingModal) {
-        console.warn('Tracking modal introuvable');
+        console.error('❌ Modal de tracking introuvable dans le DOM!');
+        alert('Erreur: Le modal de tracking est introuvable. Veuillez rafraîchir la page.');
         return;
     }
 
+    console.log('✅ Ouverture du modal en mode:', mode, '| Coursier ID:', coursierId);
     trackingModal.classList.add('visible');
     document.body.classList.add('modal-open');
 
@@ -2430,6 +2497,11 @@ function openTrackingModal(commandeId, coursierId, mode) {
     fetchTrackingData(true);
     startTrackingInterval(trackingIntervalMs);
 }
+
+// ✅ EXPOSITION GLOBALE pour permettre les appels depuis onclick HTML
+window.openTrackingModal = openTrackingModal;
+window.closeTrackingModal = closeTrackingModal;
+window.showTrackingUnavailable = showTrackingUnavailable;
 
 function closeTrackingModal() {
     if (trackingModal) {

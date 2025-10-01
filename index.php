@@ -123,9 +123,7 @@ $mapsApiKey = getenv('GOOGLE_MAPS_API_KEY');
 if (!$mapsApiKey && defined('GOOGLE_MAPS_API_KEY')) {
     $mapsApiKey = GOOGLE_MAPS_API_KEY;
 }
-if (!$mapsApiKey) {
-    $mapsApiKey = 'AIzaSyBjUgj9KM0SNj847a_bIsf6chWp9L8Hr1A';
-}
+// Utiliser toujours la clé de config.php (pas de fallback différent)
 $schemaData = [
     '@context' => 'https://schema.org',
     '@type' => 'LocalBusiness',
@@ -254,16 +252,7 @@ $schemaData = [
     
     <!-- 🗺️ GOOGLE MAPS API - CHARGEMENT PRIORITAIRE -->
     <?php include __DIR__ . '/sections_index/js_google_maps.php'; ?>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=<?php echo htmlspecialchars($mapsApiKey, ENT_QUOTES); ?>&libraries=places,geometry&callback=initGoogleMapsEarly"></script>
-    <script>
-        window.initGoogleMapsEarly = function() {
-            console.log('✅ Google Maps API chargée en priorité');
-            window.googleMapsReady = true;
-            if (typeof window.initializeMapAfterLoad === 'function') {
-                window.initializeMapAfterLoad();
-            }
-        };
-    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=<?php echo htmlspecialchars($mapsApiKey, ENT_QUOTES); ?>&libraries=places,geometry&callback=initMap"></script>
     <meta name="bingbot" content="index, follow">
     
     <!-- ⚡ PERFORMANCE ET VITESSE -->

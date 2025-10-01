@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Direct - Tracking Modal</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            padding: 30px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(212, 168, 83, 0.1);
+            border: 2px solid #d4a853;
+            border-radius: 15px;
+        }
+        .header h1 {
+            margin: 0;
+            color: #d4a853;
+            font-size: 2em;
+        }
+        .test-card {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .test-card h2 {
+            color: #d4a853;
+            margin-top: 0;
+        }
+        button {
+            background: linear-gradient(135deg, #d4a853 0%, #e8c468 100%);
+            color: #1a1a2e;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            margin: 8px 5px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(212, 168, 83, 0.3);
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 168, 83, 0.5);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .results {
+            background: rgba(0,0,0,0.4);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .success { color: #27ae60; }
+        .error { color: #e94560; }
+        .warning { color: #ffc107; }
+        .info { color: #3b82f6; }
+        .link {
+            display: inline-block;
+            margin: 10px 5px;
+            padding: 10px 20px;
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid #3b82f6;
+            border-radius: 8px;
+            color: #3b82f6;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .link:hover {
+            background: rgba(59, 130, 246, 0.4);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔍 Test Direct Tracking Modal</h1>
+        <p>Diagnostic des fonctions JavaScript sur la page admin</p>
+    </div>
+
+    <div class="test-card">
+        <h2>📋 Instructions</h2>
+        <p>1. Ouvrez la page admin dans un nouvel onglet :</p>
+        <a href="http://localhost/COURSIER_LOCAL/admin/admin.php?section=commandes" target="_blank" class="link">
+            🚀 Ouvrir Admin Commandes
+        </a>
+        <p>2. Une fois sur la page, ouvrez la console (F12)</p>
+        <p>3. Copiez et collez ces commandes dans la console :</p>
+    </div>
+
+    <div class="test-card">
+        <h2>🧪 Tests à exécuter dans la console</h2>
+        
+        <h3>Test 1 : Vérifier les stubs</h3>
+        <button onclick="copyToClipboard('test1')">📋 Copier</button>
+        <pre id="test1" class="results">console.log('=== TEST 1: STUBS ===');
+console.log('openTrackingModal:', typeof openTrackingModal);
+console.log('closeTrackingModal:', typeof closeTrackingModal);
+console.log('showTrackingUnavailable:', typeof showTrackingUnavailable);</pre>
+
+        <h3>Test 2 : Vérifier le modal dans le DOM</h3>
+        <button onclick="copyToClipboard('test2')">📋 Copier</button>
+        <pre id="test2" class="results">console.log('=== TEST 2: DOM ===');
+const modal = document.getElementById('trackingModal');
+console.log('Modal trouvé:', modal ? '✅ OUI' : '❌ NON');
+if (modal) {
+    console.log('Classes:', modal.className);
+    console.log('Visible:', modal.classList.contains('visible'));
+}</pre>
+
+        <h3>Test 3 : Compter les boutons de tracking</h3>
+        <button onclick="copyToClipboard('test3')">📋 Copier</button>
+        <pre id="test3" class="results">console.log('=== TEST 3: BOUTONS ===');
+const buttons = document.querySelectorAll('button[onclick*="openTrackingModal"]');
+console.log('Boutons trouvés:', buttons.length);
+if (buttons.length > 0) {
+    console.log('Premier bouton onclick:', buttons[0].getAttribute('onclick'));
+    console.log('Classe du bouton:', buttons[0].className);
+}</pre>
+
+        <h3>Test 4 : Tester l'ouverture du modal (SAFE)</h3>
+        <button onclick="copyToClipboard('test4')">📋 Copier</button>
+        <pre id="test4" class="results">console.log('=== TEST 4: OUVERTURE MODAL ===');
+try {
+    if (typeof openTrackingModal === 'function') {
+        console.log('✅ Fonction trouvée, appel avec ID 999...');
+        openTrackingModal(999, 1, 'live');
+        console.log('✅ Appel réussi (le modal devrait s\'ouvrir)');
+    } else {
+        console.error('❌ openTrackingModal n\'est pas une fonction');
+    }
+} catch (err) {
+    console.error('❌ Erreur:', err.message);
+}</pre>
+
+        <h3>Test 5 : Vérifier les erreurs de console</h3>
+        <button onclick="copyToClipboard('test5')">📋 Copier</button>
+        <pre id="test5" class="results">console.log('=== TEST 5: ERREURS ===');
+console.log('Si vous voyez des erreurs "openTrackingModal is not defined" ci-dessus,');
+console.log('cela signifie que les stubs ne sont pas chargés AVANT les boutons.');
+console.log('');
+console.log('Vérifiez la présence du script stub en recherchant dans le code source:');
+console.log('Ctrl+U puis Ctrl+F et cherchez: "Stubs de tracking initialisés"');</pre>
+
+        <h3>Test 6 : Vérifier window.openTrackingModal</h3>
+        <button onclick="copyToClipboard('test6')">📋 Copier</button>
+        <pre id="test6" class="results">console.log('=== TEST 6: WINDOW.OPENTRACKINGMODAL ===');
+console.log('window.openTrackingModal:', typeof window.openTrackingModal);
+console.log('openTrackingModal === window.openTrackingModal:', openTrackingModal === window.openTrackingModal);
+console.log('');
+console.log('Si "undefined", les fonctions ne sont pas exposées sur window');
+console.log('Si "function", tout est OK ✅');</pre>
+    </div>
+
+    <div class="test-card">
+        <h2>🔧 Actions de dépannage</h2>
+        <button onclick="openAdminAndClear()">🚀 Ouvrir admin + Instructions clear cache</button>
+        <button onclick="showSourceCheck()">📄 Vérifier le code source</button>
+        
+        <div id="instructions" class="results" style="display:none; margin-top:15px;"></div>
+    </div>
+
+    <div class="test-card">
+        <h2>📊 Résultats attendus</h2>
+        <div class="results">
+<span class="success">✅ SUCCÈS si vous voyez :</span>
+- openTrackingModal: function
+- Modal trouvé: ✅ OUI
+- Boutons trouvés: 10 (ou plus)
+- Appel réussi (le modal devrait s'ouvrir)
+
+<span class="error">❌ ÉCHEC si vous voyez :</span>
+- openTrackingModal: undefined
+- Modal trouvé: ❌ NON
+- Boutons trouvés: 0
+- Erreur: openTrackingModal is not defined
+
+<span class="warning">⚠️ SI ÉCHEC :</span>
+1. Faites Ctrl+Shift+R pour vider le cache
+2. Vérifiez que vous êtes connecté (admin/suzosky2024)
+3. Vérifiez l'URL: doit être /admin/admin.php (pas /admin.php)
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                // Feedback visuel
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Copié !';
+                btn.style.background = '#27ae60';
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                }, 2000);
+            }).catch(err => {
+                alert('Erreur de copie: ' + err);
+            });
+        }
+
+        function openAdminAndClear() {
+            const instructions = document.getElementById('instructions');
+            instructions.style.display = 'block';
+            instructions.innerHTML = `
+                <span class="info">📋 INSTRUCTIONS POUR VIDER LE CACHE :</span>
+                
+                1️⃣ Appuyez sur <strong>Ctrl + Shift + R</strong> (Windows)
+                   ou <strong>Cmd + Shift + R</strong> (Mac)
+                
+                2️⃣ Ou ouvrez DevTools (F12) > Onglet Network > 
+                   Clic droit sur Refresh > "Empty Cache and Hard Reload"
+                
+                3️⃣ Ou dans les paramètres du navigateur :
+                   - Chrome: Paramètres > Confidentialité > Effacer les données
+                   - Edge: Paramètres > Confidentialité > Choisir les éléments à effacer
+                   - Firefox: Options > Vie privée > Effacer l'historique récent
+                
+                <span class="warning">⚠️ Important :</span> Cochez "Images et fichiers en cache" uniquement
+                (pas besoin de supprimer cookies/mots de passe)
+            `;
+            
+            // Ouvrir dans un nouvel onglet
+            window.open('http://localhost/COURSIER_LOCAL/admin/admin.php?section=commandes', '_blank');
+        }
+
+        function showSourceCheck() {
+            const instructions = document.getElementById('instructions');
+            instructions.style.display = 'block';
+            instructions.innerHTML = `
+                <span class="info">📄 VÉRIFIER LE CODE SOURCE :</span>
+                
+                1️⃣ Sur la page admin, appuyez sur <strong>Ctrl + U</strong>
+                   (affiche le code source HTML)
+                
+                2️⃣ Appuyez sur <strong>Ctrl + F</strong> et recherchez :
+                   <code>"Stubs de tracking initialisés"</code>
+                
+                <span class="success">✅ SI TROUVÉ :</span> Les stubs sont bien dans le code
+                   → Problème de timing/cache navigateur
+                   → Videz le cache et rechargez
+                
+                <span class="error">❌ SI NON TROUVÉ :</span> Les stubs ne sont pas générés
+                   → Problème dans admin_commandes_enhanced.php
+                   → Vérifiez que le fichier a bien été modifié
+                
+                3️⃣ Recherchez aussi :
+                   <code>"window.openTrackingModal = openTrackingModal"</code>
+                
+                <span class="info">ℹ️ Cela devrait apparaître 2 fois :</span>
+                - Une fois dans les stubs (ligne ~530)
+                - Une fois dans l'implémentation réelle (ligne ~2475)
+            `;
+        }
+    </script>
+</body>
+</html>
