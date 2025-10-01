@@ -617,6 +617,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (d.success) {
         window.currentClient = d.client;
         updateUIForLoggedInUser(d.client);
+        if (typeof window.refreshCoursierAvailabilityForClient === 'function') {
+          window.refreshCoursierAvailabilityForClient();
+        }
       }
     })
     .catch(console.error);
