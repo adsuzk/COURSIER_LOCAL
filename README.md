@@ -325,8 +325,12 @@ adb shell am broadcast -a com.suzosky.coursier.TEST_NOTIFICATION
 ### Problème : Modal paiement ne s'ouvre pas
 **Solution** :
 1. Vérifier console navigateur (F12)
-2. Vérifier `ROOT_PATH` défini dans index.php
-3. Vérifier clés CinetPay dans `cinetpay/config.php`
+2. Vérifier que l'URL est `http://localhost/COURSIER_LOCAL/` (sans index.php)
+3. Vérifier credentials CinetPay dans `config.php`:
+   - API Key: 8338609805877a8eaac7eb6.01734650
+   - Site ID: 5875732
+   - Secret Key: 830006136690110164ddb1.29156844
+4. Tester avec mode de paiement autre que "espèce"
 
 ### Problème : Notifications FCM non reçues
 **Solution** :
