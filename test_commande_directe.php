@@ -165,14 +165,12 @@ try {
         $commandeId
     );
     
-    if ($result['success']) {
+    if ($result && is_array($result)) {
         echo "✅ Notification envoyée avec succès\n";
-        if (isset($result['response'])) {
-            echo "Réponse FCM: " . json_encode($result['response']) . "\n";
-        }
+        echo "Réponse FCM: " . json_encode($result, JSON_PRETTY_PRINT) . "\n";
     } else {
         echo "❌ Échec envoi notification\n";
-        echo "Erreur: " . ($result['error'] ?? 'Inconnue') . "\n";
+        echo "Résultat: " . json_encode($result) . "\n";
     }
     
     echo "\n=== VÉRIFICATION APP ANDROID ===\n";
