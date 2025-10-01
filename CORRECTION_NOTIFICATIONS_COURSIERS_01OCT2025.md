@@ -1,38 +1,34 @@
 # 🔧 CORRECTION SYSTÈME NOTIFICATIONS COURSIERS
 **Date:** 1er Octobre 2025  
-**Version:** 2.1.2
+**Version:** 2.2.0  
+**Dernière mise à jour:** 1er Octobre 2025 - 07:15
 
 ---
 
-## ❌ PROBLÈMES IDENTIFIÉS
+## ❌ PROBLÈMES IDENTIFIÉS ET RÉSOLUS
 
-### 1. **Coursiers ne reçoivent pas les commandes en mode espèces**
-
-**Symptômes:**
-- Client passe commande depuis l'index
-- Commande enregistrée en base de données
-- Coursier connecté mais ne reçoit AUCUNE notification
-- Commande reste en statut "nouvelle"
+### 1. **Coursiers ne recevaient pas les commandes en mode espèces** ✅ RÉSOLU
 
 **Cause racine:**
-Le fichier `api/submit_order.php` (utilisé pour les commandes en espèces) **N'APPELAIT PAS** le système d'attribution automatique ni n'envoyait de notifications FCM.
+Le fichier `api/submit_order.php` **N'APPELAIT PAS** le système d'attribution automatique ni n'envoyait de notifications FCM.
 
-```php
-// ❌ AVANT - Code incomplet
-$commande_id = $pdo->lastInsertId();
-echo json_encode(["success" => true, "commande_id" => $commande_id]);
-// FIN - Pas d'attribution, pas de notification!
-```
-
-### 2. **Page admin commandes non synchronisée en temps réel**
-
-**Symptômes:**
-- Admin doit recharger manuellement la page
-- Pas de mise à jour automatique des statuts
-- Fonctionnalités temps réel désactivées
+### 2. **Page admin non synchronisée en temps réel** ✅ RÉSOLU
 
 **Cause racine:**
-Aucun `setInterval()` pour recharger automatiquement la page admin/commandes.
+Aucun `setInterval()` pour recharger automatiquement la page.
+
+### 3. **Commandes invisibles dans l'admin malgré présence en base** ✅ RÉSOLU
+
+**Symptômes:**
+- Commandes visibles dans l'app mobile coursier
+- ABSENTES de la page admin commandes
+- Base de données contient bien les commandes
+
+**Cause racine CRITIQUE:**
+Incohérence dans les noms de statuts entre la base de données et les filtres HTML:
+- **Base de données:** utilise `attribuee` (avec "e")
+- **Filtre admin HTML:** cherchait `assignee` (orthographe différente)
+- **Résultat:** Les commandes avec statut `attribuee` n'apparaissaient JAMAIS car le filtre cherchait un statut inexistant!
 
 ---
 
