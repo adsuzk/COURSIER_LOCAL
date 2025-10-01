@@ -154,9 +154,16 @@ fun CoursierScreenNew(
         when (currentOrder?.statut) {
             "nouvelle", "attente" -> DeliveryStep.PENDING
             "acceptee" -> DeliveryStep.ACCEPTED
-            "en_cours", "recupere" -> DeliveryStep.PICKED_UP
-            "en_livraison" -> DeliveryStep.EN_ROUTE_DELIVERY
-            "livree" -> DeliveryStep.DELIVERED
+            "en_cours" -> DeliveryStep.EN_ROUTE_PICKUP  // En route vers récupération
+            "recuperee" -> DeliveryStep.PICKED_UP  // Colis récupéré
+            "livree" -> {
+                // Si paiement espèces, attendre confirmation cash
+                if (currentOrder?.methodePaiement?.lowercase() == "especes") {
+                    DeliveryStep.DELIVERED
+                } else {
+                    DeliveryStep.CASH_CONFIRMED
+                }
+            }
             else -> DeliveryStep.PENDING
         }
     ) }
