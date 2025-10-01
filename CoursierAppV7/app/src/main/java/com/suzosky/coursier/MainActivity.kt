@@ -572,10 +572,13 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
     var pendingRechargeAmount by remember { mutableStateOf<Double?>(null) }
     var isInitiatingPayment by remember { mutableStateOf(false) }
     var isPollingBalance by remember { mutableStateOf(false) }
+    
+    // Compteur pour forcer le rechargement
+    var refreshTrigger by remember { mutableStateOf(System.currentTimeMillis()) }
 
-        // Charger les VRAIES données au login
-        LaunchedEffect(isLoggedIn, coursierId) {
-            Log.d("MainActivity", "LaunchedEffect triggered - isLoggedIn=$isLoggedIn, coursierId=$coursierId")
+        // Charger les VRAIES données au login - SE DÉCLENCHE À CHAQUE CHANGEMENT DE refreshTrigger
+        LaunchedEffect(isLoggedIn, coursierId, refreshTrigger) {
+            Log.d("MainActivity", "LaunchedEffect triggered - isLoggedIn=$isLoggedIn, coursierId=$coursierId, refreshTrigger=$refreshTrigger")
             if (!isLoggedIn) return@LaunchedEffect
 
             if (coursierId <= 0) {
