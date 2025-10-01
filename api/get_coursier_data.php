@@ -168,6 +168,7 @@ try {
                     id,
                     COALESCE(client_nom, 'Client') as client_nom,
                     COALESCE(client_telephone, telephone_expediteur) as client_telephone,
+                    COALESCE(telephone_destinataire, '') as telephone_destinataire,
                     COALESCE(adresse_depart, adresse_retrait) as adresse_enlevement,
                     COALESCE(adresse_arrivee, adresse_livraison) as adresse_livraison,
                     COALESCE(prix_total, prix_estime, 0) as prix_livraison,
