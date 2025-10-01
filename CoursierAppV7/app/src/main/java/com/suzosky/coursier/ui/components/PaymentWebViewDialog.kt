@@ -84,7 +84,7 @@ fun PaymentWebViewDialog(
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(text = "Paiement sécurisé", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                 Text(
-                    text = "CinetPay traité au sein de l'application",
+                    text = "Paiement Suzosky traité au sein de l'application",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                 )
@@ -226,7 +226,7 @@ private fun LoadingOverlay(progress: Float) {
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
             CircularProgressIndicator()
-            Text("Chargement du module CinetPay… ${(progress * 100).toInt()}%", style = MaterialTheme.typography.bodySmall)
+            Text("Chargement du module Suzosky… ${(progress * 100).toInt()}%", style = MaterialTheme.typography.bodySmall)
         }
     }
 }
@@ -249,7 +249,7 @@ private fun ErrorOverlay(message: String, onRetry: () -> Unit) {
             Icon(Icons.Filled.Warning, contentDescription = null, tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(32.dp))
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text = message.ifBlank { "Impossible de charger la page CinetPay." },
+                text = message.ifBlank { "Impossible de charger la page de paiement Suzosky." },
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center
