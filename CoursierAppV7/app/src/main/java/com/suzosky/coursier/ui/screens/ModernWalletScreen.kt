@@ -105,7 +105,7 @@ fun ModernWalletScreen(
     
     // Dialog de recharge
     if (showRechargeDialog) {
-        RechargeDialog(
+        WalletRechargeDialog(
             onDismiss = { showRechargeDialog = false },
             onConfirm = { amount ->
                 selectedAmount = amount
