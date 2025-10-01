@@ -224,8 +224,8 @@ try {
 			SELECT id, nom, prenoms, matricule, telephone
 			FROM agents_suzosky 
 			WHERE statut_connexion = 'en_ligne' 
-			AND COALESCE(solde_wallet, 0) >= 100
-			ORDER BY COALESCE(solde_wallet, 0) DESC, last_login_at DESC
+			AND status = 'actif'
+			ORDER BY last_login_at DESC
 			LIMIT 1
 		");
 		$coursier = $stmtCoursier->fetch(PDO::FETCH_ASSOC);

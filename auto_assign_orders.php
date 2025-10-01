@@ -19,7 +19,7 @@ if ($db->connect_error) {
 
 // Récupérer tous les coursiers actifs (agents_suzosky)
 $coursiers = [];
-$result = $db->query("SELECT id FROM agents_suzosky WHERE statut_connexion = 'en_ligne' AND solde_wallet > 0");
+$result = $db->query("SELECT id FROM agents_suzosky WHERE statut_connexion = 'en_ligne' AND status = 'actif'");
 while ($row = $result->fetch_assoc()) {
     $coursiers[] = $row['id'];
 }
