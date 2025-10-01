@@ -1,8 +1,6 @@
 package com.suzosky.coursier.ui.screens
 
-import android.content.Intent
 import android.location.Location
-import android.net.Uri
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
