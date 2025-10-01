@@ -382,4 +382,219 @@
     });
     
     console.log('💳 js_payment.php chargé');
+    
+    // ============================================================================
+    // NOUVEAU SYSTÈME DE PAIEMENT CINETPAY AVEC MODAL
+    // ============================================================================
+    
+    /**
+     * Afficher le modal de paiement CinetPay avec iframe
+     * @param {string} paymentUrl - URL de paiement CinetPay
+     * @param {function} callback - Fonction de callback (success: boolean)
+     */
+    window.showPaymentModal = function(paymentUrl, callback) {
+        console.log('🔷 showPaymentModal appelé avec URL:', paymentUrl);
+        
+        // Créer le modal s'il n'existe pas
+        let modal = document.getElementById('cinetpay-payment-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'cinetpay-payment-modal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.85);
+                z-index: 999999;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+                box-sizing: border-box;
+            `;
+            
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                width: min(900px, 100%);
+                height: min(85vh, 800px);
+                background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+                border-radius: 20px;
+                overflow: hidden;
+                position: relative;
+                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+                border: 2px solid rgba(212, 168, 83, 0.3);
+            `;
+            
+            // Header avec branding Suzosky
+            const header = document.createElement('div');
+            header.style.cssText = `
+                background: linear-gradient(135deg, #D4A853 0%, #F4E4B8 50%, #D4A853 100%);
+                padding: 20px;
+                text-align: center;
+                font-weight: bold;
+                font-size: 1.3rem;
+                color: #000;
+                position: relative;
+            `;
+            header.innerHTML = '🚀 Paiement Sécurisé - Suzosky Conciergerie';
+            
+            // Bouton fermer
+            const closeBtn = document.createElement('button');
+            closeBtn.innerHTML = '✕';
+            closeBtn.style.cssText = `
+                position: absolute;
+                top: 15px;
+                right: 15px;
+                background: rgba(0, 0, 0, 0.3);
+                color: #fff;
+                border: none;
+                width: 35px;
+                height: 35px;
+                border-radius: 50%;
+                cursor: pointer;
+                font-size: 1.3rem;
+                line-height: 1;
+                transition: all 0.3s;
+            `;
+            closeBtn.onmouseover = () => closeBtn.style.background = 'rgba(255, 0, 0, 0.7)';
+            closeBtn.onmouseout = () => closeBtn.style.background = 'rgba(0, 0, 0, 0.3)';
+            closeBtn.onclick = () => {
+                console.log('❌ Modal de paiement fermé par l\'utilisateur');
+                document.body.removeChild(modal);
+                if (callback) callback(false);
+            };
+            header.appendChild(closeBtn);
+            
+            // Instructions
+            const instructions = document.createElement('div');
+            instructions.style.cssText = `
+                background: rgba(212, 168, 83, 0.1);
+                padding: 15px;
+                text-align: center;
+                color: rgba(255, 255, 255, 0.9);
+                font-size: 0.95rem;
+                border-bottom: 1px solid rgba(212, 168, 83, 0.2);
+            `;
+            instructions.innerHTML = '💳 Choisissez votre mode de paiement (Orange Money, MTN Mobile Money, etc.)';
+            
+            // Iframe CinetPay
+            const iframe = document.createElement('iframe');
+            iframe.id = 'cinetpay-iframe';
+            iframe.src = paymentUrl;
+            iframe.title = 'Paiement CinetPay';
+            iframe.allow = 'payment *; clipboard-read; clipboard-write;';
+            iframe.style.cssText = `
+                width: 100%;
+                height: calc(100% - 120px);
+                border: none;
+                display: block;
+            `;
+            
+            // Loading indicator
+            const loading = document.createElement('div');
+            loading.style.cssText = `
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                text-align: center;
+                color: #D4A853;
+            `;
+            loading.innerHTML = `
+                <div style="width: 50px; height: 50px; border: 4px solid rgba(212,168,83,0.2); border-top-color: #D4A853; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px;"></div>
+                <div>Chargement du paiement sécurisé...</div>
+            `;
+            
+            // Cacher le loading quand l'iframe est chargée
+            iframe.onload = () => {
+                loading.style.display = 'none';
+                console.log('✅ Iframe CinetPay chargée');
+            };
+            
+            modalContent.appendChild(header);
+            modalContent.appendChild(instructions);
+            modalContent.appendChild(loading);
+            modalContent.appendChild(iframe);
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+            
+            // Ajouter l'animation de rotation
+            const style = document.createElement('style');
+            style.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
+            document.head.appendChild(style);
+        } else {
+            // Modal existe déjà, mettre à jour l'URL
+            const iframe = modal.querySelector('#cinetpay-iframe');
+            if (iframe) iframe.src = paymentUrl;
+            modal.style.display = 'flex';
+        }
+        
+        // Écouter les messages postMessage de CinetPay
+        const messageHandler = (event) => {
+            console.log('📨 Message reçu de CinetPay:', event.data);
+            
+            // Vérifier l'origine (sécurité)
+            if (!event.origin.includes('cinetpay.com') && !event.origin.includes('localhost')) {
+                console.warn('⚠️ Message ignoré (origine non autorisée):', event.origin);
+                return;
+            }
+            
+            try {
+                let data = event.data;
+                
+                // Parser si string JSON
+                if (typeof data === 'string') {
+                    try {
+                        data = JSON.parse(data);
+                    } catch (e) {
+                        // Pas du JSON, vérifier si c'est un message texte de succès
+                        if (data.toLowerCase().includes('success') || data.toLowerCase().includes('accepted')) {
+                            console.log('✅ Paiement confirmé (message texte)');
+                            document.body.removeChild(modal);
+                            window.removeEventListener('message', messageHandler);
+                            if (callback) callback(true);
+                            return;
+                        }
+                    }
+                }
+                
+                // Vérifier les différents formats de réponse CinetPay
+                const isSuccess = 
+                    data.status === 'success' ||
+                    data.status === 'ACCEPTED' ||
+                    data.payment_status === 'ACCEPTED' ||
+                    data.code === '00' ||
+                    (data.data && data.data.status === 'ACCEPTED');
+                
+                const isFailed = 
+                    data.status === 'failed' ||
+                    data.status === 'REFUSED' ||
+                    data.payment_status === 'REFUSED' ||
+                    data.code === '01';
+                
+                if (isSuccess) {
+                    console.log('✅ Paiement confirmé par CinetPay');
+                    document.body.removeChild(modal);
+                    window.removeEventListener('message', messageHandler);
+                    if (callback) callback(true);
+                } else if (isFailed) {
+                    console.log('❌ Paiement refusé par CinetPay');
+                    document.body.removeChild(modal);
+                    window.removeEventListener('message', messageHandler);
+                    if (callback) callback(false);
+                }
+                
+            } catch (error) {
+                console.error('Erreur traitement message CinetPay:', error);
+            }
+        };
+        
+        // Ajouter l'écouteur de messages
+        window.addEventListener('message', messageHandler);
+        
+        console.log('✅ Modal de paiement CinetPay affiché');
+    };
+    
     </script>
