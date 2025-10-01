@@ -135,6 +135,12 @@ class CoursesViewModel @Inject constructor(
                     }
                 }
             } else {
+                Log.w("CoursesViewModel", "getUserId() returned null - user not logged in")
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = "Utilisateur non connecté"
+                )
+            } else {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     error = "Coursier non connecté"
