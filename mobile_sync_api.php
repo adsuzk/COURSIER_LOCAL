@@ -373,6 +373,56 @@ try {
             }
             break;
             
+        case 'confirm_cash_received':
+            // Confirmer que le cash a été récupéré (pour commandes en espèces)
+            $commande_id = intval($_REQUEST['commande_id'] ?? 0);
+            
+            if (!$commande_id || !$coursier_id) {
+                $response = ['success' => false, 'message' => 'ID commande requis'];
+                break;
+            }
+            
+            // Vérifier que la commande est bien livrée et en espèces
+            $check = $pdo->prepare("SELECT statut, mode_paiement FROM commandes WHERE id = ? AND coursier_id = ?");
+            $check->execute([$commande_id, $coursier_id]);
+            $commande = $check->fetch();
+            
+            if (!$commande) {
+                $response = ['success' => false, 'message' => 'Commande non trouvée'];
+                break;
+            }
+            
+            if ($commande['statut'] !== 'livree') {
+                $response = ['success' => false, 'message' => 'Commande pas encore livrée'];
+                break;
+            }
+            
+            if ($commande['mode_paiement'] !== 'especes') {
+                $response = ['success' => false, 'message' => 'Cette commande n\'est pas en espèces'];
+                break;
+            }
+            
+            // Marquer le cash comme récupéré
+            $stmt = $pdo->prepare("
+                UPDATE commandes 
+                SET cash_recupere = 1,
+                    updated_at = NOW()
+                WHERE id = ? AND coursier_id = ?
+            ");
+            
+            if ($stmt->execute([$commande_id, $coursier_id])) {
+                $response = [
+                    'success' => true,
+                    'message' => 'Cash confirmé récupéré',
+                    'commande_id' => $commande_id,
+                    'cash_recupere' => true
+                ];
+                logRequest('confirm_cash_received', ['commande_id' => $commande_id], $response);
+            } else {
+                $response = ['success' => false, 'message' => 'Erreur lors de la confirmation'];
+            }
+            break;
+            
         case 'update_position':
             // Mettre à jour position GPS
             $latitude = floatval($_REQUEST['latitude'] ?? 0);
