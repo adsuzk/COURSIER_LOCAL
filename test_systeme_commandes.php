@@ -139,7 +139,7 @@ try {
         
         // Récupérer token FCM actif
         $stmt = $pdo->prepare("
-            SELECT token, last_ping, device_info
+            SELECT token, last_ping
             FROM device_tokens 
             WHERE coursier_id = ? AND is_active = 1 
             ORDER BY updated_at DESC 
@@ -154,8 +154,7 @@ try {
         } else {
             echo "✅ Token FCM trouvé\n";
             echo "   Token: " . substr($tokenData['token'], 0, 30) . "...\n";
-            echo "   Dernier ping: {$tokenData['last_ping']}\n";
-            echo "   Device: {$tokenData['device_info']}\n\n";
+            echo "   Dernier ping: {$tokenData['last_ping']}\n\n";
             
             // Charger système FCM
             require_once __DIR__ . '/lib/fcm_enhanced.php';
