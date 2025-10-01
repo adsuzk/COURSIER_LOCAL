@@ -942,6 +942,25 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                             Text("Erreur: $error")
                         }
                     }
+                    // 🩺 SI AUCUNE COMMANDE ACTIVE → Écran d'attente avec voyant système
+                    commandesReelles.isEmpty() -> {
+                        println("⏸️ Aucune commande active - Affichage écran d'attente")
+                        val systemHealth = activity?.calculateSystemHealth(prefs, hasRecentData = true) 
+                            ?: SystemHealth(
+                                status = HealthStatus.WARNING,
+                                databaseConnected = false,
+                                fcmTokenActive = false,
+                                syncWorking = false,
+                                lastSyncTimestamp = System.currentTimeMillis(),
+                                message = "Impossible de calculer l'état système"
+                            )
+                        
+                        WaitingForOrdersScreen(
+                            systemHealth = systemHealth,
+                            nbCommandesEnAttente = 0,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
                     else -> {
                         println("✅ Affichage CoursierScreenNew avec VRAIES données")
                         // VRAIES DONNÉES de l'API
