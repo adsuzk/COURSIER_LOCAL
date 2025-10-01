@@ -29,9 +29,11 @@ echo "🆕 Étape 2 : Création d'une nouvelle commande de test\n";
 
 // Générer un code unique
 $code = 'TEST-' . strtoupper(substr(md5(microtime()), 0, 8));
+$orderNumber = 'ORDER-' . time() . '-' . rand(1000, 9999);
 
 $insertCmd = $pdo->prepare("
     INSERT INTO commandes (
+        order_number,
         code_commande,
         client_nom,
         client_telephone,
@@ -46,10 +48,11 @@ $insertCmd = $pdo->prepare("
         mode_paiement,
         distance_estimee,
         created_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
 ");
 
 $insertCmd->execute([
+    $orderNumber,
     $code,
     'Client Test Polling',
     '+225 07 00 00 00 00',
