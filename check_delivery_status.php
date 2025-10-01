@@ -1,5 +1,7 @@
 <?php
-$db = new PDO('sqlite:C:/xampp/htdocs/COURSIER_LOCAL/coursier_local.db');
+require_once 'config.php';
+
+$db = getDbConnection();
 $stmt = $db->query("SELECT id, code_commande, statut, methode_paiement, heure_livraison, cash_recupere FROM commandes WHERE coursier_id=5 ORDER BY id DESC LIMIT 3");
 
 echo "=== État des commandes coursier #5 ===" . PHP_EOL;
