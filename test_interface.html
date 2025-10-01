@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Modal + Son - Suzosky</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .container {
+            background: white;
+            color: #333;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #D4A853;
+            text-align: center;
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #D4A853, #B8941F);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(212, 168, 83, 0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(52, 152, 219, 0.4);
+        }
+        
+        .status {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+        
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 2px solid #bee5eb;
+        }
+        
+        .checklist {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .checklist li {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+        }
+        
+        .log {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚨 Test Modal + Son de Notification</h1>
+        
+        <div class="status info" id="status">
+            ℹ️ Prêt à tester le système de notification
+        </div>
+        
+        <button class="btn btn-primary" onclick="creerCommandeTest()">
+            🚀 CRÉER UNE COMMANDE TEST
+        </button>
+        
+        <button class="btn btn-secondary" onclick="ouvrirSimulateur()">
+            📱 OUVRIR LE SIMULATEUR
+        </button>
+        
+        <div class="checklist">
+            <h3>✅ Checklist après création de commande:</h3>
+            <ul>
+                <li>✓ Le simulateur affiche un MODAL popup</li>
+                <li>✓ Vous entendez 3 BIPS sonores forts</li>
+                <li>✓ Le téléphone "vibre" visuellement</li>
+                <li>✓ Une notification Windows apparaît</li>
+                <li>✓ Le modal contient les boutons ACCEPTER/REFUSER</li>
+            </ul>
+        </div>
+        
+        <div id="log" class="log">
+            [--:--:--] En attente de test...<br>
+        </div>
+    </div>
+
+    <script>
+        function addLog(message) {
+            const log = document.getElementById('log');
+            const time = new Date().toLocaleTimeString();
+            log.innerHTML += `[${time}] ${message}<br>`;
+            log.scrollTop = log.scrollHeight;
+        }
+        
+        function setStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.className = `status ${type}`;
+            status.innerHTML = message;
+        }
+        
+        async function creerCommandeTest() {
+            setStatus('🔄 Création de la commande en cours...', 'info');
+            addLog('Envoi de la requête au serveur...');
+            
+            try {
+                const response = await fetch('http://localhost/COURSIER_LOCAL/test_modal_notification.php');
+                const text = await response.text();
+                
+                addLog('✅ Réponse reçue du serveur');
+                
+                if (text.includes('COMMANDE CRÉÉE')) {
+                    setStatus('✅ Commande créée avec succès! Vérifiez le simulateur!', 'success');
+                    addLog('🎉 Commande créée avec succès!');
+                    addLog('👀 Regardez le simulateur maintenant!');
+                    addLog('🔊 Vous devriez entendre des bips!');
+                    
+                    // Ouvrir automatiquement le simulateur s'il n'est pas déjà ouvert
+                    setTimeout(() => {
+                        if (confirm('Voulez-vous ouvrir le simulateur maintenant?')) {
+                            ouvrirSimulateur();
+                        }
+                    }, 1000);
+                } else {
+                    setStatus('❌ Erreur lors de la création', 'error');
+                    addLog('❌ Erreur: ' + text.substring(0, 200));
+                }
+            } catch (error) {
+                setStatus('❌ Erreur de connexion: ' + error.message, 'error');
+                addLog('❌ Erreur: ' + error.message);
+            }
+        }
+        
+        function ouvrirSimulateur() {
+            addLog('📱 Ouverture du simulateur...');
+            window.open('http://localhost/COURSIER_LOCAL/simulateur_app_mobile.html', '_blank', 'width=450,height=800');
+        }
+        
+        addLog('✅ Interface de test chargée');
+        addLog('💡 Cliquez sur "CRÉER UNE COMMANDE TEST" pour commencer');
+    </script>
+</body>
+</html>
