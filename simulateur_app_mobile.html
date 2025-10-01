@@ -460,7 +460,12 @@
                 const data = await response.json();
                 
                 if (data.success && data.commandes && data.commandes.length > 0) {
-                    // Filtrer seulement les nouvelles
+                    // Filtrer les commandes actives (nouvelle, attribuee, acceptee, en_cours, recuperee)
+                    const actives = data.commandes.filter(c => 
+                        ['nouvelle', 'attribuee', 'acceptee', 'en_cours', 'recuperee'].includes(c.statut)
+                    );
+                    
+                    // Filtrer seulement les nouvelles pour la notification
                     const nouvelles = data.commandes.filter(c => c.statut === 'nouvelle');
                     
                     // Détecter une NOUVELLE commande (pas dans lastCommandes)
@@ -472,26 +477,25 @@
                         addLog(`🚨 NOUVELLE COMMANDE DÉTECTÉE: ${nouvelleCommande.code_commande}`, 'success');
                         showCommandeModal(nouvelleCommande);
                         showSystemNotification(nouvelleCommande);
+                        playNotificationSound();
                     }
                     
-                    if (nouvelles.length !== lastCommandes.length) {
-                        addLog(`✅ ${nouvelles.length} commande(s) trouvée(s)`, 'success');
-                        displayCommandes(nouvelles);
-                        lastCommandes = nouvelles;
-                        
-                        // Notification sonore (si autorisé)
-                        if (nouvelles.length > 0) {
-                            playNotificationSound();
-                        }
-                    } else if (pollingCount % 10 === 0) {
-                        addLog(`🔄 Polling #${pollingCount} - ${nouvelles.length} commande(s) en attente`);
+                    // Afficher toutes les commandes actives
+                    displayCommandes(actives);
+                    
+                    if (pollingCount % 10 === 0) {
+                        addLog(`🔄 Polling #${pollingCount} - ${actives.length} commande(s) active(s)`);
                     }
+                    
+                    lastCommandes = nouvelles; // On garde seulement les nouvelles pour la détection
                 } else {
                     if (lastCommandes.length > 0) {
                         addLog('ℹ️ Plus de commandes en attente');
-                        displayNoCommandes();
                         lastCommandes = [];
-                    } else if (pollingCount % 10 === 0) {
+                    }
+                    displayNoCommandes();
+                    
+                    if (pollingCount % 10 === 0) {
                         addLog(`🔄 Polling #${pollingCount} - Aucune commande`);
                     }
                 }
