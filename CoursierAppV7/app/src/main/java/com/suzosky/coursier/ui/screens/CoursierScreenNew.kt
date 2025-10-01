@@ -23,6 +23,7 @@ import com.suzosky.coursier.ui.components.BannerSeverity
 import com.suzosky.coursier.ui.screens.CoursesScreen
 import com.suzosky.coursier.ui.screens.ChatScreen
 import com.suzosky.coursier.ui.screens.WalletScreen
+import com.suzosky.coursier.ui.screens.ModernWalletScreen
 import com.suzosky.coursier.ui.screens.ProfileScreen
 import com.suzosky.coursier.ui.screens.DeliveryStep
 import com.suzosky.coursier.ui.screens.ChatMessage
