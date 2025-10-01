@@ -527,10 +527,11 @@ try {
                 break;
             }
             
-            // Marquer le cash comme récupéré
+            // Marquer le cash comme récupéré ET TERMINER LA COMMANDE
             $stmt = $pdo->prepare("
                 UPDATE commandes 
                 SET cash_recupere = 1,
+                    statut = 'terminee',
                     updated_at = NOW()
                 WHERE id = ? AND coursier_id = ?
             ");
@@ -540,7 +541,8 @@ try {
                     'success' => true,
                     'message' => 'Cash confirmé récupéré',
                     'commande_id' => $commande_id,
-                    'cash_recupere' => true
+                    'cash_recupere' => true,
+                    'statut' => 'terminee'
                 ];
                 logRequest('confirm_cash_received', ['commande_id' => $commande_id], $response);
             } else {
