@@ -1,5 +1,6 @@
 <?php
 require 'config.php';
+global $pdo;
 
 $stmt = $pdo->query('SELECT id, statut, cash_recupere, methode_paiement FROM commandes WHERE coursier_id=5 ORDER BY id DESC LIMIT 5');
 
