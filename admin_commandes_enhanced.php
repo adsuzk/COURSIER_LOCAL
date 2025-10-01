@@ -2241,12 +2241,124 @@ document.addEventListener('DOMContentLoaded', () => {
     const syncCard = document.getElementById('syncStatusCard');
     const syncContent = document.getElementById('syncStatusContent');
 
-    // ⚡ SYNCHRONISATION TEMPS RÉEL - Rechargement automatique toutes les 30 secondes
-    console.log('🔄 Activation synchronisation temps réel admin commandes');
-    setInterval(() => {
-        console.log('🔄 Rechargement auto page commandes...');
-        window.location.reload();
-    }, 30000); // 30 secondes
+    // 🔥 TEMPS RÉEL AVEC SERVER-SENT EVENTS - CHAQUE SECONDE !
+    console.log('🚀 Activation TEMPS RÉEL avec SSE');
+    
+    let eventSource = null;
+    let lastHash = null;
+    
+    const connectSSE = () => {
+        if (eventSource) {
+            eventSource.close();
+        }
+        
+        eventSource = new EventSource('api/commandes_sse.php');
+        
+        eventSource.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                
+                if (data.error) {
+                    console.error('❌ Erreur SSE:', data.error);
+                    return;
+                }
+                
+                // Détecter changements
+                if (lastHash && data.hash !== lastHash) {
+                    console.log('🆕 CHANGEMENT DÉTECTÉ ! Refresh des commandes...');
+                    refreshCommandesList(data.commandes);
+                } else if (!lastHash) {
+                    console.log('� Commandes initiales chargées:', data.count);
+                }
+                
+                lastHash = data.hash;
+                
+            } catch (e) {
+                console.error('❌ Erreur parsing SSE:', e);
+            }
+        };
+        
+        eventSource.onerror = (error) => {
+            console.error('❌ Erreur connexion SSE, reconnexion dans 3s...', error);
+            eventSource.close();
+            setTimeout(connectSSE, 3000);
+        };
+        
+        eventSource.onopen = () => {
+            console.log('✅ Connexion SSE établie');
+        };
+    };
+    
+    const refreshCommandesList = (commandes) => {
+        if (!commandesContainer) return;
+        
+        // Sauvegarder l'état actuel (expand/collapse)
+        const expandedIds = Array.from(document.querySelectorAll('.commande-card.expanded'))
+            .map(card => card.dataset.commandeId);
+        
+        // Vider et reconstruire
+        commandesContainer.innerHTML = '';
+        
+        commandes.forEach(cmd => {
+            const card = generateCommandeCard(cmd);
+            commandesContainer.appendChild(card);
+            
+            // Restaurer l'état expanded
+            if (expandedIds.includes(String(cmd.id))) {
+                card.classList.add('expanded');
+            }
+        });
+        
+        console.log(`✅ ${commandes.length} commandes affichées`);
+    };
+    
+    const generateCommandeCard = (cmd) => {
+        const div = document.createElement('div');
+        div.className = 'commande-card';
+        div.dataset.commandeId = cmd.id;
+        
+        const statusClass = cmd.statut || 'nouvelle';
+        const statusLabel = {
+            'nouvelle': 'Nouvelle',
+            'assignee': 'Assignée',
+            'acceptee': 'Acceptée',
+            'en_cours': 'En cours',
+            'recuperee': 'Récupérée',
+            'livree': 'Livrée',
+            'annulee': 'Annulée'
+        }[cmd.statut] || cmd.statut;
+        
+        div.innerHTML = `
+            <div class="commande-header">
+                <strong>#${cmd.code_commande || cmd.id}</strong>
+                <span class="badge badge-${statusClass}">${statusLabel}</span>
+                <span>${cmd.prix_total || 0} FCFA</span>
+                <small>${new Date(cmd.created_at).toLocaleString('fr-FR')}</small>
+            </div>
+            <div class="commande-details" style="display: none;">
+                <p><strong>Coursier:</strong> ${cmd.coursier_nom || 'Non assigné'} ${cmd.coursier_prenoms || ''}</p>
+                <p><strong>Départ:</strong> ${cmd.adresse_depart || cmd.adresse_retrait || 'N/A'}</p>
+                <p><strong>Arrivée:</strong> ${cmd.adresse_arrivee || cmd.adresse_livraison || 'N/A'}</p>
+                <p><strong>Mode:</strong> ${cmd.mode_paiement || 'especes'}</p>
+                ${cmd.heure_acceptation ? `<p><small>✅ Acceptée: ${new Date(cmd.heure_acceptation).toLocaleTimeString()}</small></p>` : ''}
+                ${cmd.heure_debut ? `<p><small>🚀 Débutée: ${new Date(cmd.heure_debut).toLocaleTimeString()}</small></p>` : ''}
+                ${cmd.heure_retrait ? `<p><small>📦 Récupérée: ${new Date(cmd.heure_retrait).toLocaleTimeString()}</small></p>` : ''}
+                ${cmd.heure_livraison ? `<p><small>🏁 Livrée: ${new Date(cmd.heure_livraison).toLocaleTimeString()}</small></p>` : ''}
+            </div>
+        `;
+        
+        // Toggle details au clic
+        div.querySelector('.commande-header').addEventListener('click', () => {
+            const details = div.querySelector('.commande-details');
+            const isExpanded = div.classList.toggle('expanded');
+            details.style.display = isExpanded ? 'block' : 'none';
+        });
+        
+        return div;
+    };
+    
+    // Démarrer SSE
+    connectSSE();
 
     const formatAgo = (seconds) => {
         if (Number.isNaN(seconds) || seconds === null) return 'inconnue';
