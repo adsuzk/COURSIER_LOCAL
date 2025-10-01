@@ -30,7 +30,8 @@ data class ChatMessage(
     val message: String,
     val isFromCoursier: Boolean, // true = coursier, false = admin
     val timestamp: Date,
-    val senderName: String
+    val senderName: String,
+    val isRead: Boolean = false
 )
 
 @Composable

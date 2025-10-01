@@ -34,15 +34,6 @@ private val SecondaryBlue = Color(0xFF16213E)
 private val SuccessGreen = Color(0xFF27AE60)
 private val GlassBg = Color(0x14FFFFFF)
 
-data class ChatMessage(
-    val id: String,
-    val message: String,
-    val isFromCoursier: Boolean, // true = coursier, false = admin
-    val timestamp: Date,
-    val senderName: String,
-    val isRead: Boolean = false
-)
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ModernChatScreen(
