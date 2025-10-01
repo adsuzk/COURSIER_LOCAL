@@ -115,6 +115,13 @@ Les scripts de maintenance peuvent par ailleurs valider activement les tokens vi
     ```
 - Les exports de tokens et la validation active (`fcm_validate_tokens.php`) restent optionnels et réservés à l'audit ou à la maintenance avancée.
 
+## 🔐 Flux commande / Authentification côté index
+
+- **UX attendue** : si le formulaire est visible mais que l'utilisateur public n'est pas connecté, cliquer sur « Commander » ouvre la modale de connexion existante (`openConnexionModal`) et aucune requête n'est envoyée tant que la session n'est pas créée.
+- **Front** : `js_form_handling.php` et `order_form.php` bloquent la soumission (`preventDefault`) lorsque `window.currentClient = false`, déclenchent la modale et réinitialisent `window.__orderFlowHandled`.
+- **Backend** : `/api/submit_order.php` refuse toute requête sans session client active (`client_id`, `client_email` ou `client_telephone` en session). Le script renvoie `401 Unauthorized` et n'insère aucune commande en base.
+- **Tests** : vider les cookies/session, recharger l'index, cliquer sur « Commander » → la modale s'affiche, puis se connecter et valider pour autoriser l'appel API.
+
 ---
 
 
