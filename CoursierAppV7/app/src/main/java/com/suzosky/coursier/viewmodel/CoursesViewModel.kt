@@ -46,6 +46,15 @@ class CoursesViewModel @Inject constructor(
     }
     
     /**
+     * Récupère l'ID du coursier connecté depuis SharedPreferences
+     */
+    private fun getUserId(): Int? {
+        val prefs = context.getSharedPreferences("suzosky_prefs", Context.MODE_PRIVATE)
+        val coursierId = prefs.getInt("coursier_id", -1)
+        return if (coursierId > 0) coursierId else null
+    }
+    
+    /**
      * Démarre le polling des nouvelles commandes
      */
     private fun startOrdersPolling() {
