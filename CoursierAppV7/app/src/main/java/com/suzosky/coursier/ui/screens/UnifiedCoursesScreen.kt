@@ -621,3 +621,53 @@ fun ProgressIndicator(step: DeliveryStep) {
         }
     }
 }
+
+/**
+ * Bouton flottant pour activer/désactiver le guidage vocal
+ */
+@Composable
+fun VoiceGuidanceButton(
+    isEnabled: Boolean,
+    onToggle: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    FloatingActionButton(
+        onClick = { onToggle(!isEnabled) },
+        modifier = modifier.size(56.dp),
+        containerColor = if (isEnabled) SuccessGreen else GlassBg,
+        shape = CircleShape
+    ) {
+        Icon(
+            imageVector = if (isEnabled) Icons.Filled.VolumeUp else Icons.Filled.VolumeOff,
+            contentDescription = if (isEnabled) "Désactiver guidage vocal" else "Activer guidage vocal",
+            tint = if (isEnabled) Color.White else PrimaryGold,
+            modifier = Modifier.size(28.dp)
+        )
+    }
+}
+
+/**
+ * Lance Google Maps en mode navigation avec guidage vocal
+ */
+fun launchVoiceGuidance(context: android.content.Context, latitude: Double, longitude: Double) {
+    try {
+        // URI pour Google Maps Navigation avec guidage vocal
+        val gmmIntentUri = Uri.parse("google.navigation:q=$latitude,$longitude&mode=d")
+        val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+        mapIntent.setPackage("com.google.android.apps.maps")
+        
+        // Vérifier si Google Maps est installé
+        if (mapIntent.resolveActivity(context.packageManager) != null) {
+            context.startActivity(mapIntent)
+            android.util.Log.d("VoiceGuidance", "✅ Guidage vocal lancé vers: $latitude, $longitude")
+        } else {
+            // Fallback : ouvrir dans le navigateur
+            val webUri = Uri.parse("https://www.google.com/maps/dir/?api=1&destination=$latitude,$longitude&travelmode=driving")
+            val webIntent = Intent(Intent.ACTION_VIEW, webUri)
+            context.startActivity(webIntent)
+            android.util.Log.w("VoiceGuidance", "⚠️ Google Maps non installé, ouverture navigateur")
+        }
+    } catch (e: Exception) {
+        android.util.Log.e("VoiceGuidance", "❌ Erreur lancement guidage vocal: ${e.message}")
+    }
+}
