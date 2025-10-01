@@ -77,8 +77,8 @@ while (true) {
         flush();
     }
     
-    // Attendre 2 secondes avant prochaine vérification
-    sleep(2);
+    // Attendre 1 SECONDE avant prochaine vérification
+    sleep(1);
     
     $lastCheck = time();
 }
