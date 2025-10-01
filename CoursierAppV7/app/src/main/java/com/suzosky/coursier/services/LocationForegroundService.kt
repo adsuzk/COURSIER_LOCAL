@@ -266,6 +266,7 @@ class LocationForegroundService : Service() {
 
                     startForeground(NOTIF_ID, buildNotification())
                     startLocationUpdates()
+                    startFcmPing() // ⚡ Démarrer le ping FCM périodique
                     Log.d(TAG, "Started foreground tracking (coursier=$coursierId)")
                 }
                 ACTION_STOP -> {
