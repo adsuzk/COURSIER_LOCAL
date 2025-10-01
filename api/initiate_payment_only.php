@@ -30,12 +30,13 @@ try {
     error_log("[PAYMENT_ONLY] Génération URL paiement - Commande: $orderNumber, Montant: $amount FCFA");
     
     // Configuration CinetPay
+    $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'];
     $cinetpay_config = [
         'apikey' => CINETPAY_API_KEY,
         'site_id' => CINETPAY_SITE_ID,
-        'notify_url' => SITE_URL . '/api/cinetpay_callback.php',
-        'return_url' => SITE_URL . '/index.php?payment_success=1',
-        'cancel_url' => SITE_URL . '/index.php?payment_cancelled=1',
+        'notify_url' => $baseUrl . '/COURSIER_LOCAL/api/cinetpay_callback.php',
+        'return_url' => $baseUrl . '/COURSIER_LOCAL/index.php?payment_success=1',
+        'cancel_url' => $baseUrl . '/COURSIER_LOCAL/index.php?payment_cancelled=1',
     ];
     
     // Préparer la requête CinetPay
