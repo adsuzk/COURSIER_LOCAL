@@ -774,8 +774,29 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                     shouldRefreshCommandes = true
                     newOrderId = orderId
                     
-                    // Déclencher un recompose en modifiant un état observé
-                    // Cette approche force le rafraîchissement de l'interface
+                    // Déclencher un rafraîchissement des données API
+                    lifecycleScope.launch {
+                        try {
+                            val prefs = getSharedPreferences("suzosky_prefs", MODE_PRIVATE)
+                            val coursierId = prefs.getInt("coursier_id", -1)
+                            if (coursierId > 0) {
+                                println("🔄 Rafraîchissement des commandes depuis l'API...")
+                                
+                                // Appeler l'API pour récupérer les nouvelles commandes
+                                ApiService.getCoursierDetails(coursierId) { data, error ->
+                                    if (data != null && error == null) {
+                                        println("✅ Nouvelles commandes récupérées de l'API")
+                                        // Les données seront automatiquement mises à jour par le LaunchedEffect existant
+                                    } else {
+                                        println("❌ Erreur lors du rafraîchissement des commandes: $error")
+                                    }
+                                }
+                            }
+                        } catch (e: Exception) {
+                            println("❌ Exception lors du rafraîchissement: ${e.message}")
+                            Log.e("MainActivity", "Exception lors du rafraîchissement", e)
+                        }
+                    }
                 }
             }
         }
