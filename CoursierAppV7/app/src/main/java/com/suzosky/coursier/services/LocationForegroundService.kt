@@ -271,6 +271,7 @@ class LocationForegroundService : Service() {
                 }
                 ACTION_STOP -> {
                     stopLocationUpdates()
+                    stopFcmPing() // ⚡ Arrêter le ping FCM périodique
                     stopForeground(true)
                     stopSelf()
                     Log.d(TAG, "Stopped foreground tracking")
