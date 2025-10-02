@@ -522,9 +522,13 @@ fun WalletScreen(
     
     // Dialog historique des courses
     if (showHistoryDialog) {
+        android.util.Log.d("WalletScreen", "🟢 AFFICHAGE CourseHistoryDialog - commandes: ${historiqueCommandes.size}")
         CourseHistoryDialog(
             commandes = historiqueCommandes,
-            onDismiss = { showHistoryDialog = false }
+            onDismiss = { 
+                android.util.Log.d("WalletScreen", "🔴 FERMETURE CourseHistoryDialog")
+                showHistoryDialog = false 
+            }
         )
     }
     
