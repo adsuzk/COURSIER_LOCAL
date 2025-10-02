@@ -85,8 +85,8 @@ class MainActivity : ComponentActivity() {
     // BroadcastReceiver pour les nouvelles commandes
     // private var commandeReceiver: BroadcastReceiver? = null // TEMPORAIREMENT DÉSACTIVÉ
     
-    // 🩺 Variables de monitoring système - FIX: initialisé à NOW pour éviter "BD perdue" au démarrage
-    internal var lastSyncTimestamp = System.currentTimeMillis()
+    // 🩺 Variables de monitoring système - initialisées à 0 pour forcer la première sync
+    internal var lastSyncTimestamp = 0L
     internal var lastDatabaseCheck = false
     internal var lastFcmTokenCheck = false
     internal var lastSyncCheck = false
@@ -866,6 +866,12 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
         LaunchedEffect(isLoggedIn, coursierId) {
             if (isLoggedIn && coursierId > 0) {
                 Log.d("MainActivity", "🔄 Démarrage du polling automatique ULTRA-RAPIDE (1s)")
+                
+                // 🔥 SET pour tracker les IDs déjà vus
+                val commandesVues = mutableSetOf<String>()
+                // Initialiser avec les commandes actuelles
+                commandesReelles.forEach { cmd -> commandesVues.add(cmd.id) }
+                
                 while (isLoggedIn && coursierId > 0) {
                     kotlinx.coroutines.delay(1000) // CHAQUE SECONDE !
                     
@@ -879,47 +885,57 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                             
                             Log.d("MainActivity", "📊 Polling: ${nbCommandesRecues} commandes (avant: ${nbCommandesActuelles})")
                             
-                            // 🩺 Mettre à jour le timestamp de dernière sync réussie - FIX: accès direct
-                            if (activity != null) {
-                                activity.lastSyncTimestamp = System.currentTimeMillis()
-                                Log.d("MainActivity", "✅ Sync timestamp mis à jour")
-                            } else {
-                                Log.w("MainActivity", "⚠️ activity NULL - impossible de mettre à jour lastSyncTimestamp")
+                            // 🩺 Mettre à jour le timestamp de dernière sync réussie
+                            activity?.lastSyncTimestamp = System.currentTimeMillis()
+                            
+                            // 🔥 NOUVELLE DÉTECTION : Chercher les IDs nouvelles
+                            val nouvellesCommandes = commandesData.filter { cmdMap ->
+                                val cmdId = cmdMap["id"]?.toString() ?: ""
+                                cmdId.isNotEmpty() && !commandesVues.contains(cmdId)
                             }
                             
-                            // Si le nombre de commandes a changé, déclencher un refresh complet
-                            if (nbCommandesRecues > nbCommandesActuelles) {
-                                Log.d("MainActivity", "🆕 NOUVELLE COMMANDE DÉTECTÉE ! Refresh automatique...")
+                            if (nouvellesCommandes.isNotEmpty()) {
+                                Log.d("MainActivity", "🆕 ${nouvellesCommandes.size} NOUVELLES COMMANDES DÉTECTÉES ! Refresh + notification...")
                                 
-                                // 🔔 NOTIFICATION SONORE + VIBRATION
-                                try {
-                                    // Vibration
-                                    val vibrator = activity?.getSystemService(Context.VIBRATOR_SERVICE) as? android.os.Vibrator
-                                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                                        vibrator?.vibrate(android.os.VibrationEffect.createWaveform(longArrayOf(0, 200, 100, 200), -1))
-                                    } else {
-                                        @Suppress("DEPRECATION")
-                                        vibrator?.vibrate(500)
+                                // Ajouter les nouveaux IDs au set
+                                nouvellesCommandes.forEach { cmdMap ->
+                                    val cmdId = cmdMap["id"]?.toString() ?: ""
+                                    if (cmdId.isNotEmpty()) {
+                                        commandesVues.add(cmdId)
                                     }
-                                    
-                                    // Son de notification
-                                    val notification = android.media.RingtoneManager.getDefaultUri(android.media.RingtoneManager.TYPE_NOTIFICATION)
-                                    val ringtone = android.media.RingtoneManager.getRingtone(activity?.applicationContext, notification)
-                                    ringtone.play()
-                                    
-                                    // 🔊 Annonce vocale
-                                    val newCommande = commandesData.firstOrNull()
-                                    val clientName = newCommande?.get("clientNom")?.toString() ?: "un client"
-                                    val destination = newCommande?.get("adresseLivraison")?.toString() ?: "destination inconnue"
-                                    activity?.voiceGuidance?.announceNewOrder(clientName, destination)
-                                    
-                                    Log.d("MainActivity", "🔔 Notification émise: vibration + son + voix")
-                                } catch (e: Exception) {
-                                    Log.e("MainActivity", "❌ Erreur notification", e)
+                                }
+                                
+                                // 🔔 NOTIFICATION SONORE + VIBRATION pour CHAQUE nouvelle commande
+                                nouvellesCommandes.forEach { newCommande ->
+                                    try {
+                                        // Vibration
+                                        val vibrator = activity?.getSystemService(Context.VIBRATOR_SERVICE) as? android.os.Vibrator
+                                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                                            vibrator?.vibrate(android.os.VibrationEffect.createWaveform(longArrayOf(0, 200, 100, 200), -1))
+                                        } else {
+                                            @Suppress("DEPRECATION")
+                                            vibrator?.vibrate(500)
+                                        }
+                                        
+                                        // Son de notification
+                                        val notification = android.media.RingtoneManager.getDefaultUri(android.media.RingtoneManager.TYPE_NOTIFICATION)
+                                        val ringtone = android.media.RingtoneManager.getRingtone(activity?.applicationContext, notification)
+                                        ringtone.play()
+                                        
+                                        // 🔊 Annonce vocale
+                                        val clientName = newCommande["client_nom"]?.toString() ?: "un client"
+                                        val destination = newCommande["adresse_livraison"]?.toString() ?: "destination inconnue"
+                                        activity?.voiceGuidance?.announceNewOrder(clientName, destination)
+                                        
+                                        Log.d("MainActivity", "🔔 Notification émise: commande ${newCommande["id"]} - $clientName vers $destination")
+                                    } catch (e: Exception) {
+                                        Log.e("MainActivity", "❌ Erreur notification", e)
+                                    }
                                 }
                                 
                                 refreshTrigger++
                             } else if (nbCommandesRecues != nbCommandesActuelles) {
+                                // Nombre changé mais pas de nouvelles IDs → mise à jour statut
                                 refreshTrigger++
                             } else {
                                 // Vérifier si le statut d'une commande a changé
