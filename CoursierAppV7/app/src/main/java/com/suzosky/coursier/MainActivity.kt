@@ -446,7 +446,7 @@ class MainActivity : ComponentActivity() {
                                 println("🔄 Rafraîchissement des commandes depuis l'API...")
                                 
                                 // Appeler l'API pour récupérer les nouvelles commandes
-                                ApiService.getCoursierDetails(coursierId) { data, error ->
+                                ApiService.getCoursierData(coursierId) { data, error ->
                                     if (data != null && error == null) {
                                         println("✅ Nouvelles commandes récupérées de l'API")
                                         // Les données seront automatiquement mises à jour par le LaunchedEffect existant
@@ -1168,7 +1168,7 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                 println("🔄 Rafraîchissement des commandes depuis l'API...")
                                 
                                 // Appeler l'API pour récupérer les nouvelles commandes
-                                ApiService.getCoursierDetails(coursierId) { data, error ->
+                                ApiService.getCoursierData(coursierId) { data, error ->
                                     if (data != null && error == null) {
                                         println("✅ Nouvelles commandes récupérées de l'API")
                                         // Les données seront automatiquement mises à jour par le LaunchedEffect existant
