@@ -73,6 +73,8 @@ fun UnifiedCoursesScreen(
         else -> null
     }
     
+    android.util.Log.d("UnifiedCoursesScreen", "🧭 Current destination: $currentDestination")
+    
     // Calcul distance et ETA
     val distanceInfo = remember(courierLocation, currentDestination) {
         calculateDistanceAndETA(courierLocation, currentDestination)
