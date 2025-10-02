@@ -85,8 +85,8 @@ class MainActivity : ComponentActivity() {
     // BroadcastReceiver pour les nouvelles commandes
     // private var commandeReceiver: BroadcastReceiver? = null // TEMPORAIREMENT DÉSACTIVÉ
     
-    // 🩺 Variables de monitoring système - initialisées à 0 pour forcer la première sync
-    internal var lastSyncTimestamp = 0L
+    // 🩺 Variables de monitoring système - initialisées correctement
+    internal var lastSyncTimestamp = System.currentTimeMillis() // ✅ Initialisé à MAINTENANT au lieu de 1970
     internal var lastDatabaseCheck = false
     internal var lastFcmTokenCheck = false
     internal var lastSyncCheck = false
