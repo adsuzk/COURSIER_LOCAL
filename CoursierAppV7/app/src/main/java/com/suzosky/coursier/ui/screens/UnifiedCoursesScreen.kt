@@ -36,6 +36,49 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 
 /**
+ * Calcule la distance entre deux points GPS (en mètres)
+ */
+fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+    val earthRadius = 6371000.0 // Rayon de la Terre en mètres
+    val dLat = Math.toRadians(lat2 - lat1)
+    val dLon = Math.toRadians(lon2 - lon1)
+    val a = sin(dLat / 2) * sin(dLat / 2) +
+            cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) *
+            sin(dLon / 2) * sin(dLon / 2)
+    val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+    return earthRadius * c
+}
+
+/**
+ * Calcule le bearing (direction) entre deux points GPS (en degrés)
+ */
+fun calculateBearing(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+    val dLon = Math.toRadians(lon2 - lon1)
+    val y = sin(dLon) * cos(Math.toRadians(lat2))
+    val x = cos(Math.toRadians(lat1)) * sin(Math.toRadians(lat2)) -
+            sin(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) * cos(dLon)
+    val bearing = Math.toDegrees(atan2(y, x))
+    return (bearing + 360) % 360
+}
+
+/**
+ * Convertit un bearing en direction textuelle
+ */
+fun bearingToDirection(bearing: Double): String {
+    return when {
+        bearing < 22.5 || bearing >= 337.5 -> "tout droit"
+        bearing < 67.5 -> "à droite"
+        bearing < 112.5 -> "complètement à droite"
+        bearing < 157.5 -> "faites demi-tour à droite"
+        bearing < 202.5 -> "faites demi-tour"
+        bearing < 247.5 -> "faites demi-tour à gauche"
+        bearing < 292.5 -> "complètement à gauche"
+        bearing < 337.5 -> "à gauche"
+        else -> "tout droit"
+    }
+}
+
+/**
  * Écran Mes Courses UNIFIÉ - Navigation + Actions + Infos
  * Tout intégré dans un seul écran, pas de modal
  */
