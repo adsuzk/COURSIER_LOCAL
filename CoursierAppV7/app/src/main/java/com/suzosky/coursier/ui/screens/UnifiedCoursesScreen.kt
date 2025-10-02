@@ -111,11 +111,6 @@ fun UnifiedCoursesScreen(
             // CARTE PLEIN ÉCRAN
             val context = LocalContext.current
             
-            // Créer les icônes emoji personnalisées
-            val courierIcon = remember { context.createEmojiMarker("🚴", android.graphics.Color.parseColor("#00BCD4")) }
-            val pickupIcon = remember { context.createEmojiMarker("📦", android.graphics.Color.parseColor("#FF9800")) }
-            val deliveryIcon = remember { context.createEmojiMarker("🎯", android.graphics.Color.parseColor("#4CAF50")) }
-            
             GoogleMap(
                 modifier = Modifier.fillMaxSize(),
                 cameraPositionState = cameraPositionState,
@@ -132,7 +127,7 @@ fun UnifiedCoursesScreen(
                         state = MarkerState(position = it),
                         title = "🚴 Vous (Livreur)",
                         snippet = "Position actuelle",
-                        icon = courierIcon
+                        icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)
                     )
                 }
                 
@@ -142,7 +137,7 @@ fun UnifiedCoursesScreen(
                         state = MarkerState(position = it),
                         title = "📦 Point d'enlèvement",
                         snippet = currentOrder.adresseEnlevement,
-                        icon = pickupIcon
+                        icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)
                     )
                 }
                 
@@ -152,7 +147,7 @@ fun UnifiedCoursesScreen(
                         state = MarkerState(position = it),
                         title = "🎯 Point de livraison",
                         snippet = currentOrder.adresseLivraison,
-                        icon = deliveryIcon
+                        icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
                     )
                 }
                 
