@@ -24,7 +24,6 @@ import com.suzosky.coursier.ui.screens.CoursesScreen
 import com.suzosky.coursier.ui.screens.UnifiedCoursesScreen
 import com.suzosky.coursier.ui.screens.ChatScreen
 import com.suzosky.coursier.ui.screens.ModernChatScreen
-import com.suzosky.coursier.ui.screens.WalletScreen
 import com.suzosky.coursier.ui.screens.ModernWalletScreen
 import com.suzosky.coursier.ui.screens.ProfileScreen
 import com.suzosky.coursier.ui.screens.ModernProfileScreen
@@ -427,11 +426,16 @@ fun CoursierScreenNew(
                 }
                 
                 NavigationTab.WALLET -> {
-                    android.util.Log.d("CoursierScreenNew", "📱 Affichage WalletScreen avec modal historique complet")
-                    WalletScreen(
+                    android.util.Log.d("CoursierScreenNew", "📱 Affichage ModernWalletScreen")
+                    ModernWalletScreen(
                         coursierId = coursierId,
                         balance = balance,
+                        gainsDuJour = gainsDuJour,
+                        gainsHebdo = 0,
+                        gainsMensuel = 0,
                         onRecharge = onRecharge,
+                        onRetrait = {},
+                        onHistorique = {},
                         modifier = Modifier.fillMaxSize()
                     )
                 }
