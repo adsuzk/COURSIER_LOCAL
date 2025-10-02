@@ -427,15 +427,12 @@ fun CoursierScreenNew(
                 }
                 
                 NavigationTab.WALLET -> {
-                    ModernWalletScreen(
+                    android.util.Log.d("CoursierScreenNew", "📱 Affichage WalletScreen avec modal historique complet")
+                    WalletScreen(
                         coursierId = coursierId,
                         balance = balance,
-                        gainsDuJour = gainsDuJour,
-                        gainsHebdo = 0, // TODO: Ajouter depuis l'API
-                        gainsMensuel = 0, // TODO: Ajouter depuis l'API
                         onRecharge = onRecharge,
-                        onRetrait = { Toast.makeText(context, "Retrait - À venir", Toast.LENGTH_SHORT).show() },
-                        onHistorique = onNavigateToHistorique
+                        modifier = Modifier.fillMaxSize()
                     )
                 }
                 
