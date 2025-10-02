@@ -1205,13 +1205,6 @@ $tarification = array_merge([
             </div>
         </div>
         
-        <?php elseif ($tab === 'comptabilite'): ?>
-        <!-- COMPTABILITÉ COMPLÈTE -->
-        <?php 
-        define('ADMIN_CONTEXT', true);
-        include __DIR__ . '/comptabilite.php'; 
-        ?>
-        
         <?php elseif ($tab === 'coursiers'): ?>
         <!-- COMPTES COURSIERS -->
         <div class="finances-container">
