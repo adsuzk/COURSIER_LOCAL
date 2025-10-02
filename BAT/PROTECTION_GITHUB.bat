@@ -1,32 +1,39 @@
 @echo off
-title SUZOSKY - Protection GitHub Automatique
+title SUZOSKY - Protection GitHub + Base de Donn?es AUTO
 color 0A
 echo.
-echo ===============================================
-echo       SUZOSKY - PROTECTION GITHUB AUTOMATIQUE
-echo              VERSION SEPTEMBRE 2025
-echo ===============================================
+echo =====================================================
+echo   SUZOSKY - PROTECTION GITHUB + BASE DE DONNEES
+echo           VERSION OCTOBRE 2025 - AMELIOREE
+echo =====================================================
 echo.
 echo  + Sauvegarde automatique COURSIER_LOCAL vers GitHub
+echo  + Sauvegarde automatique de la BASE DE DONNEES
+echo  + Export structure SQL a chaque commit
+echo  + Export complet avec donnees
+echo  + Historique des modifications de colonnes
 echo  + Protection en temps reel toutes les 5 secondes
-echo  + Git Credential Manager securise
-echo  + Commits automatiques avec timestamps
-echo  + Repository: https://github.com/adsuzk/COURSIER_LOCAL
 echo.
-echo  IMPORTANT: Cette protection sauvegarde uniquement
-echo  le projet COURSIER_LOCAL vers GitHub.
-echo  Pour synchroniser vers coursier_prod, utilisez
-echo  SYNC_COURSIER_PROD.bat separement.
+echo  AVANTAGES DE CETTE VERSION:
+echo  ---------------------------
+echo  ^> Structure DB toujours synchronisee
+echo  ^> Plus jamais de colonnes manquantes
+echo  ^> Restauration facile en cas de probleme
+echo  ^> Historique complet des changements
+echo.
+echo  Repository: https://github.com/adsuzk/COURSIER_LOCAL
+echo.
+echo  NOTE: L'ancienne version est disponible dans
+echo        PROTECTION_GITHUB_OLD.bat si besoin
 echo.
 echo  GARDEZ CETTE FENETRE OUVERTE
 echo.
 echo Appuyez sur ENTREE pour demarrer la protection...
-pause > nul
+pause ^> nul
 
 cd /d "C:\xampp\htdocs\COURSIER_LOCAL"
-REM Correction: chemin vers le script PowerShell dans le bon dossier PS1
-powershell -ExecutionPolicy Bypass -File "PS1\PROTECTION_GITHUB_SIMPLE.ps1"
+powershell -ExecutionPolicy Bypass -File "PS1\PROTECTION_GITHUB_AVEC_DB.ps1"
 
 echo.
-echo Protection GitHub arretee. Appuyez sur une touche pour fermer.
-pause > nul
+echo Protection arretee. Appuyez sur une touche pour fermer.
+pause ^> nul
