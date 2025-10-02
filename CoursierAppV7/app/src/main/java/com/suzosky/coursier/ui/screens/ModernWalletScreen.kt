@@ -158,6 +158,15 @@ fun ModernWalletScreen(
             }
         )
     }
+    
+    // Modal historique complet
+    if (showHistoryDialog) {
+        CourseHistoryDialog(
+            commandes = allCommandes,
+            isLoading = isLoadingHistory,
+            onDismiss = { showHistoryDialog = false }
+        )
+    }
 }
 
 /**
