@@ -658,3 +658,452 @@ fun WalletRechargeDialog(
 fun Int.formatCurrency(): String {
     return String.format(Locale.FRANCE, "%,d", this).replace(',', ' ')
 }
+
+/**
+ * Data class pour représenter une course dans l'historique
+ */
+data class WalletHistoryItem(
+    val id: Int,
+    val clientNom: String,
+    val montant: Double,
+    val date: String,
+    val statut: String,
+    val adresseDepart: String = "",
+    val adresseArrivee: String = "",
+    val distance: Double = 0.0
+)
+
+/**
+ * Modal full-screen pour afficher l'historique complet avec filtres
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun CourseHistoryDialog(
+    commandes: List<WalletHistoryItem>,
+    isLoading: Boolean,
+    onDismiss: () -> Unit
+) {
+    var selectedFilter by remember { mutableStateOf<String?>(null) }
+    
+    val filteredCommandes = if (selectedFilter == null) {
+        commandes
+    } else {
+        commandes.filter { it.statut == selectedFilter }
+    }
+    
+    val statusCounts = commandes.groupBy { it.statut }.mapValues { it.value.size }
+    
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.9f)
+                .padding(8.dp),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(containerColor = PrimaryDark)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
+                // Header avec bouton fermer
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Text(
+                            text = "Historique Complet",
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = PrimaryGold
+                        )
+                        if (!isLoading) {
+                            Text(
+                                text = "${filteredCommandes.size} course${if (filteredCommandes.size > 1) "s" else ""}",
+                                fontSize = 14.sp,
+                                color = Color.White.copy(alpha = 0.6f)
+                            )
+                        }
+                    }
+                    IconButton(onClick = onDismiss) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Fermer",
+                            tint = PrimaryGold
+                        )
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                if (isLoading) {
+                    // Indicateur de chargement
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            CircularProgressIndicator(color = PrimaryGold)
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                text = "Chargement de l'historique...",
+                                color = Color.White.copy(alpha = 0.7f)
+                            )
+                        }
+                    }
+                } else {
+                    // Filtres horizontaux avec scroll
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        FilterChip(
+                            selected = selectedFilter == null,
+                            onClick = { selectedFilter = null },
+                            label = { Text("Tout (${commandes.size})") },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = PrimaryGold,
+                                selectedLabelColor = PrimaryDark
+                            )
+                        )
+                        
+                        FilterChip(
+                            selected = selectedFilter == "livree",
+                            onClick = { selectedFilter = "livree" },
+                            label = { Text("Livrées (${statusCounts["livree"] ?: 0})") },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = SuccessGreen,
+                                selectedLabelColor = Color.White
+                            )
+                        )
+                        
+                        FilterChip(
+                            selected = selectedFilter == "en_cours" || selectedFilter == "recuperee",
+                            onClick = { 
+                                selectedFilter = if (selectedFilter == "en_cours") "recuperee" else "en_cours"
+                            },
+                            label = { 
+                                val count = (statusCounts["en_cours"] ?: 0) + (statusCounts["recuperee"] ?: 0)
+                                Text("En cours ($count)") 
+                            },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = SecondaryBlue,
+                                selectedLabelColor = Color.White
+                            )
+                        )
+                        
+                        FilterChip(
+                            selected = selectedFilter == "acceptee",
+                            onClick = { selectedFilter = "acceptee" },
+                            label = { Text("Acceptées (${statusCounts["acceptee"] ?: 0})") },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = PrimaryGold,
+                                selectedLabelColor = PrimaryDark
+                            )
+                        )
+                        
+                        FilterChip(
+                            selected = selectedFilter == "annulee",
+                            onClick = { selectedFilter = "annulee" },
+                            label = { Text("Annulées (${statusCounts["annulee"] ?: 0})") },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = AccentRed,
+                                selectedLabelColor = Color.White
+                            )
+                        )
+                        
+                        FilterChip(
+                            selected = selectedFilter == "refusee",
+                            onClick = { selectedFilter = "refusee" },
+                            label = { Text("Refusées (${statusCounts["refusee"] ?: 0})") },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = Color.Red,
+                                selectedLabelColor = Color.White
+                            )
+                        )
+                        
+                        FilterChip(
+                            selected = selectedFilter == "terminee",
+                            onClick = { selectedFilter = "terminee" },
+                            label = { Text("Terminées (${statusCounts["terminee"] ?: 0})") },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = SuccessGreen.copy(alpha = 0.7f),
+                                selectedLabelColor = Color.White
+                            )
+                        )
+                    }
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    // Liste des courses
+                    if (filteredCommandes.isEmpty()) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Icon(
+                                    imageVector = Icons.Default.SearchOff,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(64.dp),
+                                    tint = Color.White.copy(alpha = 0.3f)
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    text = "Aucune course dans cette catégorie",
+                                    color = Color.White.copy(alpha = 0.5f)
+                                )
+                            }
+                        }
+                    } else {
+                        LazyColumn(
+                            verticalArrangement = Arrangement.spacedBy(10.dp),
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            items(filteredCommandes) { commande ->
+                                CourseHistoryItemDetailed(commande)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Card détaillée pour une course dans l'historique
+ */
+@Composable
+private fun CourseHistoryItemDetailed(commande: WalletHistoryItem) {
+    val statusColor = when (commande.statut) {
+        "livree" -> SuccessGreen
+        "recuperee", "en_cours" -> SecondaryBlue
+        "annulee" -> AccentRed
+        "refusee" -> Color.Red
+        "terminee" -> SuccessGreen.copy(alpha = 0.7f)
+        else -> PrimaryGold
+    }
+    
+    val statusIcon = when (commande.statut) {
+        "livree" -> Icons.Default.CheckCircle
+        "recuperee", "en_cours" -> Icons.Default.LocalShipping
+        "acceptee" -> Icons.Default.ThumbUp
+        "annulee" -> Icons.Default.Cancel
+        "refusee" -> Icons.Default.Block
+        "terminee" -> Icons.Default.CheckCircle
+        else -> Icons.Default.HourglassEmpty
+    }
+    
+    val statusLabel = when (commande.statut) {
+        "livree" -> "✓ Livrée"
+        "recuperee" -> "📦 Récupérée"
+        "en_cours" -> "🚚 En cours"
+        "acceptee" -> "👍 Acceptée"
+        "annulee" -> "✗ Annulée"
+        "refusee" -> "🚫 Refusée"
+        "terminee" -> "✓ Terminée"
+        else -> commande.statut
+    }
+    
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = when (commande.statut) {
+                "livree" -> SuccessGreen.copy(alpha = 0.08f)
+                "recuperee", "en_cours" -> SecondaryBlue.copy(alpha = 0.08f)
+                "annulee" -> AccentRed.copy(alpha = 0.08f)
+                "refusee" -> Color.Red.copy(alpha = 0.08f)
+                else -> GlassBg
+            }
+        ),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            // Header: Statut + ID
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = statusIcon,
+                        contentDescription = null,
+                        tint = statusColor,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = statusLabel,
+                        fontWeight = FontWeight.Bold,
+                        color = statusColor,
+                        fontSize = 16.sp
+                    )
+                }
+                Text(
+                    text = "#${commande.id}",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = PrimaryGold
+                )
+            }
+            
+            Spacer(modifier = Modifier.height(12.dp))
+            
+            // Client + Montant
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = commande.clientNom.ifEmpty { "Client anonyme" },
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White,
+                        fontSize = 15.sp
+                    )
+                }
+                Text(
+                    text = "${commande.montant.toInt()} FCFA",
+                    fontWeight = FontWeight.Bold,
+                    color = PrimaryGold,
+                    fontSize = 16.sp
+                )
+            }
+            
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            // Date
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.CalendarToday,
+                    contentDescription = null,
+                    tint = Color.White.copy(alpha = 0.6f),
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = formatDate(commande.date),
+                    color = Color.White.copy(alpha = 0.7f),
+                    fontSize = 13.sp
+                )
+            }
+            
+            // Trajet si disponible
+            if (commande.adresseDepart.isNotEmpty() || commande.adresseArrivee.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.White.copy(alpha = 0.05f)
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(12.dp)
+                    ) {
+                        // Départ
+                        if (commande.adresseDepart.isNotEmpty()) {
+                            Row(verticalAlignment = Alignment.Top) {
+                                Icon(
+                                    imageVector = Icons.Default.LocationOn,
+                                    contentDescription = null,
+                                    tint = SuccessGreen,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = commande.adresseDepart,
+                                    color = Color.White.copy(alpha = 0.8f),
+                                    fontSize = 13.sp,
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+                        }
+                        
+                        // Ligne de séparation
+                        if (commande.adresseDepart.isNotEmpty() && commande.adresseArrivee.isNotEmpty()) {
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Box(
+                                modifier = Modifier
+                                    .padding(start = 9.dp)
+                                    .width(2.dp)
+                                    .height(16.dp)
+                                    .background(Color.White.copy(alpha = 0.3f))
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                        }
+                        
+                        // Arrivée
+                        if (commande.adresseArrivee.isNotEmpty()) {
+                            Row(verticalAlignment = Alignment.Top) {
+                                Icon(
+                                    imageVector = Icons.Default.Place,
+                                    contentDescription = null,
+                                    tint = AccentRed,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = commande.adresseArrivee,
+                                    color = Color.White.copy(alpha = 0.8f),
+                                    fontSize = 13.sp,
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+                        }
+                        
+                        // Distance si disponible
+                        if (commande.distance > 0) {
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.End,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.DirectionsRun,
+                                    contentDescription = null,
+                                    tint = SecondaryBlue,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = "%.1f km".format(commande.distance),
+                                    color = SecondaryBlue,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Formatte une date ISO en format lisible
+ */
+private fun formatDate(isoDate: String): String {
+    return try {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.FRANCE)
+        val outputFormat = SimpleDateFormat("dd MMM yyyy à HH:mm", Locale.FRANCE)
+        val date = inputFormat.parse(isoDate)
+        date?.let { outputFormat.format(it) } ?: isoDate
+    } catch (e: Exception) {
+        isoDate
+    }
+}
