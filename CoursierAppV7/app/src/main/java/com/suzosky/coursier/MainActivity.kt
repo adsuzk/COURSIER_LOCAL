@@ -466,7 +466,11 @@ class MainActivity : ComponentActivity() {
         
         // Enregistrer le receiver pour les broadcasts locaux
         val filter = IntentFilter(FCMService.ACTION_REFRESH_DATA)
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {`n            registerReceiver(commandeReceiver, filter, Context.RECEIVER_NOT_EXPORTED)`n        } else {`n            registerReceiver(commandeReceiver, filter)`n        }
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(commandeReceiver, filter, Context.RECEIVER_NOT_EXPORTED)
+        } else {
+            registerReceiver(commandeReceiver, filter)
+        }
         
         println("✅ BroadcastReceiver configuré pour ACTION_REFRESH_DATA")
         Log.d("MainActivity", "✅ BroadcastReceiver configuré pour ACTION_REFRESH_DATA")
@@ -1188,7 +1192,11 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
         
         // Enregistrer le receiver pour les broadcasts locaux
         val filter = IntentFilter(FCMService.ACTION_REFRESH_DATA)
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {`n            registerReceiver(commandeReceiver, filter, Context.RECEIVER_NOT_EXPORTED)`n        } else {`n            registerReceiver(commandeReceiver, filter)`n        }
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(commandeReceiver, filter, Context.RECEIVER_NOT_EXPORTED)
+        } else {
+            registerReceiver(commandeReceiver, filter)
+        }
         
         println("✅ BroadcastReceiver configuré pour ACTION_REFRESH_DATA")
         Log.d("MainActivity", "✅ BroadcastReceiver configuré pour ACTION_REFRESH_DATA")
