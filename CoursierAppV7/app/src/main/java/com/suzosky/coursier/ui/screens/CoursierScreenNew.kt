@@ -254,21 +254,35 @@ fun CoursierScreenNew(
     // Fonction pour réinitialiser vers prochaine commande
     fun resetToNextOrder() {
         // Désactiver l'ordre actif côté serveur (best-effort)
-        currentOrder?.let { order ->
+        val previousOrder = currentOrder
+        if (previousOrder != null) {
             if (coursierId > 0) {
-                ApiService.setActiveOrder(coursierId, order.id, active = false) { _ -> }
+                ApiService.setActiveOrder(coursierId, previousOrder.id, active = false) { ok ->
+                    android.util.Log.d("CoursierScreenNew", "setActiveOrder(${previousOrder.id}, false) -> $ok")
+                }
             }
-            // ⚠️ RETIRER LA COMMANDE TERMINÉE DE LA LISTE LOCALE
-            localCommandes = localCommandes.filter { it.id != order.id }
-            android.util.Log.d("CoursierScreenNew", "✅ Commande ${order.id} retirée de la liste locale")
+            val filtered = localCommandes.filter { it.id != previousOrder.id }
+            localCommandes = filtered
+            android.util.Log.d("CoursierScreenNew", "✅ Commande ${previousOrder.id} retirée de la liste locale")
         }
-        // Passer à la prochaine commande en attente
+
+        // Passer à la prochaine commande active disponible
         deliveryStep = DeliveryStep.PENDING
-        val nextOrder = localCommandes.firstOrNull { it.statut == "nouvelle" || it.statut == "attente" }
+        val nextOrder = localCommandes.firstOrNull { it.statut.lowercase() in activeStatuses }
         currentOrder = nextOrder
         currentOrderId = nextOrder?.id  // ⚠️ Sauvegarder l'ID pour la rotation
-        pendingOrdersCount = localCommandes.count { it.statut == "nouvelle" || it.statut == "attente" }
-        android.util.Log.d("CoursierScreenNew", "📋 Prochaine commande: ${currentOrder?.id ?: "AUCUNE"}, pending: $pendingOrdersCount")
+        pendingOrdersCount = localCommandes.count { it.statut.lowercase() in pendingStatuses }
+
+        if (nextOrder != null) {
+            android.util.Log.d("CoursierScreenNew", "📋 Prochaine commande attribuée: ${nextOrder.id} (statut: ${nextOrder.statut})")
+            if (coursierId > 0) {
+                ApiService.setActiveOrder(coursierId, nextOrder.id, active = true) { ok ->
+                    android.util.Log.d("CoursierScreenNew", "setActiveOrder(${nextOrder.id}, true) -> $ok")
+                }
+            }
+        } else {
+            android.util.Log.d("CoursierScreenNew", "📋 Aucune autre commande active disponible")
+        }
     }
     // paymentUrl déjà déclaré plus haut
 
