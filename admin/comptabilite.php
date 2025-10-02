@@ -404,26 +404,41 @@ $margeNetteSuzosky = $comptaData['ca_total'] > 0 ? ($comptaData['revenus_nets_su
 ?>
 
 <style>
-/* Styles spécifiques au module comptabilité */
+/* === COMPTABILITÉ SUZOSKY - COLORIS OFFICIELS === */
+:root {
+    --suzosky-gold: #D4A853;
+    --suzosky-dark: #1A1A2E;
+    --suzosky-blue: #16213E;
+    --suzosky-accent: #0F3460;
+    --suzosky-red: #E94560;
+    --suzosky-green: #27AE60;
+    --glass-bg: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --gradient-gold: linear-gradient(135deg, #D4A853 0%, #F4E4B8 50%, #D4A853 100%);
+    --gradient-dark: linear-gradient(135deg, #1A1A2E 0%, #16213E 100%);
+}
+
 .compta-container {
     max-width: 1400px;
     margin: 0 auto;
-    padding: var(--space-6);
+    padding: 2rem;
 }
 
 .compta-header {
-    background: linear-gradient(135deg, var(--primary-gold), var(--secondary-gold));
-    color: var(--primary-dark);
-    padding: var(--space-6);
-    border-radius: var(--radius-lg);
-    margin-bottom: var(--space-6);
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    background: var(--gradient-gold);
+    color: var(--suzosky-dark);
+    padding: 2rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(212, 168, 83, 0.3);
+    border: 1px solid rgba(212, 168, 83, 0.3);
 }
 
 .compta-header h1 {
-    margin: 0 0 var(--space-4) 0;
+    margin: 0 0 0.5rem 0;
     font-size: 2rem;
-    font-weight: 700;
+    font-weight: 800;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .filter-bar {
