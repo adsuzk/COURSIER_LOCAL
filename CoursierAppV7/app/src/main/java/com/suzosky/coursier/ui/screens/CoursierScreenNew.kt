@@ -112,7 +112,14 @@ fun CoursierScreenNew(
         commandes.firstOrNull { it.statut == "en_cours" || it.statut == "acceptee" }
             ?: commandes.firstOrNull { it.statut == "nouvelle" || it.statut == "attente" }
     ) }
-    var deliveryStep by remember { mutableStateOf(DeliveryStep.PENDING) }
+    // Initialiser deliveryStep selon le statut de la commande actuelle
+    var deliveryStep by remember { mutableStateOf(
+        when (currentOrder?.statut) {
+            "acceptee" -> DeliveryStep.ACCEPTED
+            "en_cours", "recuperee" -> DeliveryStep.PICKED_UP
+            else -> DeliveryStep.PENDING
+        }
+    ) }
     
     // États pour le chat
     var chatMessages by remember { 
