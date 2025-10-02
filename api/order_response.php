@@ -54,9 +54,7 @@ try {
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode(['success' => false, 'error' => 'Méthode non autorisée']);
-    exit;
+    sendJsonResponse(['success' => false, 'error' => 'Méthode non autorisée'], 405);
 }
 
 $input = json_decode(file_get_contents('php://input'), true);
@@ -67,21 +65,17 @@ $coursier_id = $input['coursier_id'] ?? null;
 $action = $input['action'] ?? null; // 'accept' ou 'refuse'
 
 if (!$order_id || !$coursier_id || !$action) {
-    http_response_code(400);
-    echo json_encode([
+    sendJsonResponse([
         'success' => false, 
         'error' => 'Paramètres manquants: order_id, coursier_id, action requis'
-    ]);
-    exit;
+    ], 400);
 }
 
 if (!in_array($action, ['accept', 'refuse'])) {
-    http_response_code(400);
-    echo json_encode([
+    sendJsonResponse([
         'success' => false, 
         'error' => 'Action invalide. Utilisez "accept" ou "refuse"'
-    ]);
-    exit;
+    ], 400);
 }
 
 try {
