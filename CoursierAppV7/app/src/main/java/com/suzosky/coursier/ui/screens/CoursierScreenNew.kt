@@ -6,7 +6,6 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -95,22 +94,26 @@ fun CoursierScreenNew(
     var hasNewOrder by remember { mutableStateOf(false) }
     
     // États pour les courses - DÉCLARATION AVANT LaunchedEffect
-    // Prioriser les commandes nouvelles/attente (pour afficher la modal), NE PAS prendre les anciennes courses terminées
-    var currentOrder by remember { mutableStateOf<Commande?>(
-        localCommandes.firstOrNull { 
-            val statut = it.statut.lowercase()
-            // Chercher toute commande ACTIVE (pas termin�e)
-            statut == "nouvelle" || statut == "attente" || statut == "acceptee" || statut == "en_cours" || statut == "recuperee"
-        }
+    // ⚠️ UTILISER rememberSaveable pour survivre à la rotation d'écran
+    
+    // Sauvegarder l'ID de la commande active (String est Parcelable)
+    var currentOrderId by rememberSaveable { mutableStateOf<String?>(
+        localCommandes.firstOrNull { it.statut == "nouvelle" || it.statut == "attente" }?.id
     ) }
-    // Initialiser deliveryStep selon le statut de la commande actuelle
-    // Utiliser rememberSaveable avec Saver personnalisé pour survivre aux rotations d'écran
-    var deliveryStep by rememberSaveable(
-        stateSaver = Saver(
-            save = { it.ordinal }, // Sauvegarder l'ordinal (Int)
-            restore = { DeliveryStep.values()[it] } // Restaurer depuis l'ordinal
-        )
-    ) { mutableStateOf(DeliveryStep.PENDING) } // Toujours démarrer à PENDING, la synchro se fera après
+    
+    // Sauvegarder le deliveryStep (enum ordinal est sauvegardable)
+    var deliveryStep by rememberSaveable { mutableStateOf(DeliveryStep.PENDING) }
+    
+    // Reconstruire currentOrder depuis l'ID sauvegardé
+    var currentOrder by remember { mutableStateOf<Commande?>(
+        currentOrderId?.let { id -> localCommandes.find { it.id == id } }
+    ) }
+    
+    // Synchroniser currentOrder quand currentOrderId change
+    LaunchedEffect(currentOrderId, localCommandes) {
+        currentOrder = currentOrderId?.let { id -> localCommandes.find { it.id == id } }
+        android.util.Log.d("CoursierScreenNew", "🔄 currentOrder reconstructed: ${currentOrder?.id} (step: $deliveryStep)")
+    }
     
     // Synchroniser localCommandes avec commandes (quand de nouvelles arrivent)
     LaunchedEffect(commandes) {
@@ -162,7 +165,6 @@ fun CoursierScreenNew(
     
     // Synchroniser deliveryStep avec le statut de la commande actuelle
     // ⚠️ FIX: Ne synchroniser que si le statut serveur est plus avancé que l'état local
-    // ET seulement si deliveryStep est à PENDING (pas restauré par Saver)
     LaunchedEffect(currentOrder?.statut) {
         currentOrder?.let { order ->
             val newStep = when (order.statut) {
@@ -173,13 +175,11 @@ fun CoursierScreenNew(
                 else -> deliveryStep
             }
             
-            // Ne mettre à jour QUE si:
-            // 1. On progresse (pas de retour en arrière) OU
-            // 2. deliveryStep est encore à PENDING (première initialisation)
+            // Ne mettre à jour QUE si on progresse (pas de retour en arrière)
             val currentStepOrder = deliveryStep.ordinal
             val newStepOrder = newStep.ordinal
             
-            if (deliveryStep == DeliveryStep.PENDING || newStepOrder > currentStepOrder) {
+            if (newStepOrder >= currentStepOrder) {
                 deliveryStep = newStep
                 android.util.Log.d("CoursierScreenNew", "🔄 Synced deliveryStep to $deliveryStep for order ${order.id} (statut: ${order.statut})")
             } else {
@@ -208,8 +208,7 @@ fun CoursierScreenNew(
     var paymentUrl by remember { mutableStateOf<String?>(null) }
     
     // États pour la timeline et cash dialog
-    // Utiliser rememberSaveable pour survivre aux rotations
-    var showCashDialog by rememberSaveable { mutableStateOf(false) }
+    var showCashDialog by remember { mutableStateOf(false) }
     var timelineBanner by remember { mutableStateOf<TimelineBanner?>(null) }
     var bannerVersion by remember { mutableStateOf(0) }
     // Auto-dismiss des bannières après 8s
@@ -234,11 +233,7 @@ fun CoursierScreenNew(
         }
         // Passer à la prochaine commande en attente
         deliveryStep = DeliveryStep.PENDING
-        currentOrder = localCommandes.firstOrNull { 
-            val statut = it.statut.lowercase()
-            // Chercher toute commande ACTIVE (pas termin�e)
-            statut == "nouvelle" || statut == "attente" || statut == "acceptee" || statut == "en_cours" || statut == "recuperee"
-        }
+        currentOrder = localCommandes.firstOrNull { it.statut == "nouvelle" || it.statut == "attente" }
         pendingOrdersCount = localCommandes.count { it.statut == "nouvelle" || it.statut == "attente" }
         android.util.Log.d("CoursierScreenNew", "📋 Prochaine commande: ${currentOrder?.id ?: "AUCUNE"}, pending: $pendingOrdersCount")
     }
@@ -473,23 +468,8 @@ fun CoursierScreenNew(
                                     ApiService.updateOrderStatus(order.id, serverStatus) { success ->
                                         if (success) {
                                             timelineBanner = null
-                                            Toast.makeText(context, "Colis recupere ! Direction livraison", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, DeliveryStatusMapper.getSuccessMessage(DeliveryStep.PICKED_UP, order.methodePaiement), Toast.LENGTH_SHORT).show()
                                             deliveryStep = DeliveryStep.EN_ROUTE_DELIVERY
-                                            
-                                            // Lancer la navigation Google Maps vers l'adresse de livraison
-                                            try {
-                                                val coords = order.coordonneesLivraison
-                                                if (coords != null) {
-                                                    val destination = "${coords.latitude},${coords.longitude}"
-                                                    val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse("google.navigation:q=$destination&mode=d"))
-                                                    intent.setPackage("com.google.android.apps.maps")
-                                                    context.startActivity(intent)
-                                                } else {
-                                                    Toast.makeText(context, "Coordonnees de livraison manquantes", Toast.LENGTH_SHORT).show()
-                                                }
-                                            } catch (e: Exception) {
-                                                Toast.makeText(context, "Google Maps non disponible", Toast.LENGTH_SHORT).show()
-                                            }
                                         } else {
                                             timelineBanner = TimelineBanner(
                                                 message = "Impossible d'envoyer 'Colis récupéré' au serveur.",
