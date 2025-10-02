@@ -1,20 +1,56 @@
 <?php
 // API pour accepter ou refuser une commande (coursier mobile)
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST');
-header('Access-Control-Allow-Headers: Content-Type');
+
+// IMPORTANT: Capture toutes les sorties avant d'envoyer les headers
+ob_start();
+
+// Désactiver l'affichage des erreurs HTML
+ini_set('display_errors', '0');
+error_reporting(E_ALL);
+
+// Fonction pour envoyer une réponse JSON propre
+function sendJsonResponse($data, $code = 200) {
+    // Nettoyer tout ce qui a pu être affiché avant
+    if (ob_get_level()) ob_clean();
+    
+    http_response_code($code);
+    header('Content-Type: application/json');
+    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Methods: POST');
+    header('Access-Control-Allow-Headers: Content-Type');
+    
+    echo json_encode($data);
+    exit;
+}
+
+// Gestionnaire d'erreurs global
+set_error_handler(function($errno, $errstr, $errfile, $errline) {
+    sendJsonResponse([
+        'success' => false,
+        'error' => "Erreur PHP: $errstr",
+        'file' => basename($errfile),
+        'line' => $errline
+    ], 500);
+});
+
+// Gestionnaire d'exceptions global
+set_exception_handler(function($exception) {
+    sendJsonResponse([
+        'success' => false,
+        'error' => 'Exception: ' . $exception->getMessage(),
+        'file' => basename($exception->getFile()),
+        'line' => $exception->getLine()
+    ], 500);
+});
 
 // Capture toutes les erreurs pour retourner du JSON au lieu de HTML
 try {
     require_once '../config.php';
 } catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode([
+    sendJsonResponse([
         'success' => false, 
         'error' => 'Erreur de configuration: ' . $e->getMessage()
-    ]);
-    exit;
+    ], 500);
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
