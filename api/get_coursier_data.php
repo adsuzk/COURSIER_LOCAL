@@ -115,7 +115,8 @@ try {
     
     // Compter les commandes en attente (utiliser table commandes correcte)
         $commandesAttente = 0;
-        $activeStatuses = ['assignee', 'nouvelle', 'acceptee', 'en_cours', 'picked_up'];
+        // CRITIQUE: Inclure 'recuperee' = colis récupéré, en route vers livraison
+        $activeStatuses = ['assignee', 'nouvelle', 'acceptee', 'en_cours', 'picked_up', 'recuperee'];
         try {
             $placeholders = implode(',', array_fill(0, count($activeStatuses), '?'));
             $stmt = $pdo->prepare("
