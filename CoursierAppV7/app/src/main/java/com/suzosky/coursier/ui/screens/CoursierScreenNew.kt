@@ -69,13 +69,16 @@ fun CoursierScreenNew(
     var pendingOrdersCount by remember { mutableStateOf(commandes.count { it.statut == "nouvelle" || it.statut == "attente" }) }
     
     // Position du coursier (fournie par LocationForegroundService via MainActivity)
-    var courierLocation by remember { mutableStateOf<com.google.android.gms.maps.model.LatLng?>(null) }
+    val currentLocationFromService by com.suzosky.coursier.services.LocationForegroundService.currentLocation.collectAsState()
     
-    // Récupérer la position depuis le service de localisation
-    LaunchedEffect(Unit) {
-        // Simuler position Abidjan pour l'instant (sera remplacée par la vraie position du service)
-        courierLocation = com.google.android.gms.maps.model.LatLng(5.3599, -4.0083)
-        android.util.Log.d("CoursierScreenNew", "📍 Courier location initialized: $courierLocation")
+    // Convertir Location en LatLng pour Google Maps
+    val courierLocation = currentLocationFromService?.let { loc ->
+        com.google.android.gms.maps.model.LatLng(loc.latitude, loc.longitude)
+    }
+    
+    // Log de debug pour vérifier la localisation
+    LaunchedEffect(courierLocation) {
+        android.util.Log.d("CoursierScreenNew", "📍 Courier location from LocationForegroundService: $courierLocation")
     }
     
     // Service de notification sonore
