@@ -253,9 +253,91 @@ fun UnifiedCoursesScreen(
             )
         }
         
-        // OVERLAY : Bouton guidage vocal Google Maps (si en route)
-        // ⚠️ DÉSACTIVÉ : Ne pas sortir de l'application
-        // Le guidage vocal sera intégré dans l'app plus tard avec TTS Android
+        // ============ BOUTON GUIDAGE VOCAL (TTS intégré) ============
+        if (currentOrder != null && deliveryStep in listOf(
+            DeliveryStep.ACCEPTED,
+            DeliveryStep.EN_ROUTE_PICKUP,
+            DeliveryStep.PICKED_UP,
+            DeliveryStep.EN_ROUTE_DELIVERY
+        )) {
+            FloatingActionButton(
+                onClick = { 
+                    isVoiceGuidanceEnabled = !isVoiceGuidanceEnabled
+                    Toast.makeText(
+                        context, 
+                        if (isVoiceGuidanceEnabled) "🔊 Guidage vocal activé" else "🔇 Guidage vocal désactivé",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    android.util.Log.d("UnifiedCoursesScreen", "Voice guidance: $isVoiceGuidanceEnabled")
+                },
+                containerColor = if (isVoiceGuidanceEnabled) PrimaryGold else Color.Gray,
+                contentColor = PrimaryDark,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(16.dp)
+                    .offset(y = 80.dp)
+            ) {
+                Icon(
+                    if (isVoiceGuidanceEnabled) Icons.Filled.VolumeUp else Icons.Filled.VolumeOff,
+                    contentDescription = "Guidage vocal"
+                )
+            }
+        }
+        
+        // ============ ANNONCES VOCALES (TTS) ============
+        LaunchedEffect(courierLocation, currentDestination, isVoiceGuidanceEnabled) {
+            if (isVoiceGuidanceEnabled && courierLocation != null && currentDestination != null) {
+                while (isActive) {
+                    val distance = calculateDistance(
+                        courierLocation.latitude,
+                        courierLocation.longitude,
+                        currentDestination.latitude,
+                        currentDestination.longitude
+                    )
+                    
+                    val bearing = calculateBearing(
+                        courierLocation.latitude,
+                        courierLocation.longitude,
+                        currentDestination.latitude,
+                        currentDestination.longitude
+                    )
+                    val direction = bearingToDirection(bearing)
+                    
+                    val message = when {
+                        distance > 1000 -> {
+                            val km = (distance / 1000).toInt()
+                            "Vous êtes à $km kilomètres de la destination, continuez $direction"
+                        }
+                        distance > 500 -> {
+                            val m = distance.toInt()
+                            "Vous êtes à $m mètres de la destination, continuez $direction"
+                        }
+                        distance > 100 -> {
+                            val m = distance.toInt()
+                            "Vous approchez, encore $m mètres, allez $direction"
+                        }
+                        distance > 20 -> {
+                            "Vous êtes presque arrivé, encore quelques mètres"
+                        }
+                        else -> {
+                            "Vous êtes arrivé à destination"
+                        }
+                    }
+                    
+                    android.util.Log.d("UnifiedCoursesScreen", "🔊 TTS: $message (distance=${distance.toInt()}m, bearing=$bearing°)")
+                    tts?.speak(message, TextToSpeech.QUEUE_FLUSH, null, "tts_guidance")
+                    
+                    // Intervalle dynamique selon distance
+                    val interval = when {
+                        distance > 1000 -> 30000L  // 30s
+                        distance > 500 -> 20000L   // 20s
+                        distance > 100 -> 10000L   // 10s
+                        else -> 5000L               // 5s
+                    }
+                    delay(interval)
+                }
+            }
+        }
         
         // OVERLAY : Panneau d'actions en bas
         if (currentOrder != null) {
