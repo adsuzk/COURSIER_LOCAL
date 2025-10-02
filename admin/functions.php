@@ -1400,6 +1400,9 @@ function renderHeader() {
                     <a href="admin.php?section=finances_audit" class="menu-item <?php echo ($_GET['section'] ?? '') === 'finances_audit' ? 'active' : ''; ?>">
                         <i class="fas fa-search-dollar"></i><span>Audit livraisons</span>
                     </a>
+                    <a href="admin.php?section=comptabilite" class="menu-item <?php echo ($_GET['section'] ?? '') === 'comptabilite' ? 'active' : ''; ?>">
+                        <i class="fas fa-file-invoice-dollar"></i><span>Comptabilité</span>
+                    </a>
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">Communications</div>
@@ -1450,6 +1453,8 @@ function renderHeader() {
                                 'chat' => 'comments',
                                 'clients' => 'address-book',
                                 'finances' => 'coins',
+                                'finances_audit' => 'search-dollar',
+                                'comptabilite' => 'file-invoice-dollar',
                                 'recrutement' => 'briefcase'
                             ];
                             echo $icons[$_GET['section'] ?? 'dashboard'] ?? 'cog';
@@ -1462,6 +1467,8 @@ function renderHeader() {
                             'chat' => 'Support Chat',
                             'clients' => 'Gestion des clients',
                             'finances' => 'Gestion financière',
+                            'finances_audit' => 'Audit des livraisons',
+                            'comptabilite' => 'Comptabilité',
                             'recrutement' => 'Emploi & Recrutement'
                         ];
                         echo $titles[$_GET['section'] ?? 'dashboard'] ?? 'Administration';

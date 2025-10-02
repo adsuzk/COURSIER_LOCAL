@@ -170,6 +170,13 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && (($_GET['section'] ?? ''
     exit;
 }
 
+// Traiter les exports de comptabilité AVANT tout rendu HTML
+if (($_GET['section'] ?? '') === 'comptabilite' && isset($_GET['export'])) {
+    define('ADMIN_CONTEXT', true);
+    require_once __DIR__ . '/comptabilite.php';
+    exit;
+}
+
 renderHeader();
 $section = $_GET['section'] ?? 'dashboard';
 switch ($section) {
@@ -183,6 +190,10 @@ switch ($section) {
     case 'app_updates': include __DIR__ . '/app_updates.php'; break;
     case 'finances': include __DIR__ . '/finances.php'; break;
     case 'finances_audit': include __DIR__ . '/finances_audit.php'; break;
+    case 'comptabilite': 
+        define('ADMIN_CONTEXT', true);
+        include __DIR__ . '/comptabilite.php'; 
+        break;
     case 'notifications': include __DIR__ . '/notifications_admin.php'; break;
     case 'reseau': include __DIR__ . '/../reseau.php'; break;
     case 'dashboard': include __DIR__ . '/dashboard_suzosky_modern.php'; break;

@@ -65,8 +65,12 @@ fun CoursierScreenNew(
     var currentTab by remember { mutableStateOf(NavigationTab.COURSES) }
     // Utiliser les vraies données au lieu des valeurs mockées
     var realBalance by remember { mutableStateOf(balance) }
+    
+    // ⚠️ Liste locale mutable des commandes (pour pouvoir retirer les terminées)
+    var localCommandes by remember { mutableStateOf(commandes) }
+    
     // Compter uniquement les commandes en attente d'acceptation (nouvelles/attente)
-    var pendingOrdersCount by remember { mutableStateOf(commandes.count { it.statut == "nouvelle" || it.statut == "attente" }) }
+    var pendingOrdersCount by remember { mutableStateOf(localCommandes.count { it.statut == "nouvelle" || it.statut == "attente" }) }
     
     // Position du coursier (fournie par LocationForegroundService via MainActivity)
     val currentLocationFromService by com.suzosky.coursier.services.LocationForegroundService.currentLocation.collectAsState()
@@ -85,19 +89,57 @@ fun CoursierScreenNew(
     val notificationService = remember { NotificationSoundService(context) }
     
     // État pour tracker les nouvelles commandes et déclencher le son
-    var previousCommandesCount by remember { mutableStateOf(commandes.size) }
+    var previousCommandesCount by remember { mutableStateOf(localCommandes.size) }
     var hasNewOrder by remember { mutableStateOf(false) }
     
+    // États pour les courses - DÉCLARATION AVANT LaunchedEffect
+    // Prioriser les commandes nouvelles/attente (pour afficher la modal), NE PAS prendre les anciennes courses terminées
+    var currentOrder by remember { mutableStateOf<Commande?>(
+        localCommandes.firstOrNull { it.statut == "nouvelle" || it.statut == "attente" }
+    ) }
+    // Initialiser deliveryStep selon le statut de la commande actuelle
+    var deliveryStep by remember { mutableStateOf(
+        when (currentOrder?.statut) {
+            "acceptee" -> DeliveryStep.ACCEPTED
+            "en_cours", "recuperee" -> DeliveryStep.PICKED_UP
+            else -> DeliveryStep.PENDING
+        }
+    ) }
+    
+    // Synchroniser localCommandes avec commandes (quand de nouvelles arrivent)
+    LaunchedEffect(commandes) {
+        // Ajouter uniquement les nouvelles commandes (ne pas écraser les suppressions locales)
+        val newCommands = commandes.filter { cmd -> 
+            localCommandes.none { it.id == cmd.id }
+        }
+        if (newCommands.isNotEmpty()) {
+            localCommandes = localCommandes + newCommands
+            android.util.Log.d("CoursierScreenNew", "📥 ${newCommands.size} nouvelles commandes ajoutées")
+        }
+        
+        // ⚠️ FIX CRITIQUE: Synchroniser currentOrder avec la version mise à jour dans localCommandes
+        // Si currentOrder existe, la mettre à jour avec la version actuelle de la liste
+        currentOrder?.let { current ->
+            val updatedOrder = localCommandes.find { it.id == current.id }
+            if (updatedOrder != null && updatedOrder !== current) {
+                // La commande existe toujours mais a été mise à jour (changement de statut)
+                currentOrder = updatedOrder
+                android.util.Log.d("CoursierScreenNew", "🔄 currentOrder synchronized: ${updatedOrder.id} (statut: ${updatedOrder.statut})")
+            }
+        }
+        
+        pendingOrdersCount = localCommandes.count { it.statut == "nouvelle" || it.statut == "attente" }
+    }
+    
     // Détection de nouvelles commandes et déclenchement du son
-    LaunchedEffect(commandes.size) {
+    LaunchedEffect(localCommandes.size) {
         // Si le nombre de commandes augmente, il y a une nouvelle commande
-        if (commandes.size > previousCommandesCount && previousCommandesCount > 0) {
+        if (localCommandes.size > previousCommandesCount && previousCommandesCount > 0) {
             println("🔊 Nouvelle commande détectée! Démarrage du son")
             hasNewOrder = true
             notificationService.startNotificationSound()
         }
-        previousCommandesCount = commandes.size
-    pendingOrdersCount = commandes.count { it.statut == "nouvelle" || it.statut == "attente" }
+        previousCommandesCount = localCommandes.size
     }
     
     // Nettoyer le service de notification quand le composant est détruit
@@ -111,36 +153,29 @@ fun CoursierScreenNew(
     LaunchedEffect(balance) {
         realBalance = balance
     }
-    LaunchedEffect(commandes) {
-        pendingOrdersCount = commandes.count { it.statut == "nouvelle" || it.statut == "attente" }
-    }
-    
-    // États pour les courses
-    // Prioriser les commandes nouvelles/attente (pour afficher la modal), sinon prendre les actives
-    var currentOrder by remember { mutableStateOf<Commande?>(
-        commandes.firstOrNull { it.statut == "nouvelle" || it.statut == "attente" }
-            ?: commandes.firstOrNull { it.statut == "en_cours" || it.statut == "acceptee" }
-    ) }
-    // Initialiser deliveryStep selon le statut de la commande actuelle
-    var deliveryStep by remember { mutableStateOf(
-        when (currentOrder?.statut) {
-            "acceptee" -> DeliveryStep.ACCEPTED
-            "en_cours", "recuperee" -> DeliveryStep.PICKED_UP
-            else -> DeliveryStep.PENDING
-        }
-    ) }
     
     // Synchroniser deliveryStep avec le statut de la commande actuelle
+    // ⚠️ FIX: Ne synchroniser que si le statut serveur est plus avancé que l'état local
     LaunchedEffect(currentOrder?.statut) {
         currentOrder?.let { order ->
-            deliveryStep = when (order.statut) {
+            val newStep = when (order.statut) {
                 "acceptee" -> DeliveryStep.ACCEPTED
                 "en_cours" -> DeliveryStep.PICKED_UP
                 "recuperee" -> DeliveryStep.PICKED_UP
                 "nouvelle", "attente" -> DeliveryStep.PENDING
                 else -> deliveryStep
             }
-            android.util.Log.d("CoursierScreenNew", "🔄 Synced deliveryStep to $deliveryStep for order ${order.id} (statut: ${order.statut})")
+            
+            // Ne mettre à jour QUE si on progresse (pas de retour en arrière)
+            val currentStepOrder = deliveryStep.ordinal
+            val newStepOrder = newStep.ordinal
+            
+            if (newStepOrder >= currentStepOrder) {
+                deliveryStep = newStep
+                android.util.Log.d("CoursierScreenNew", "🔄 Synced deliveryStep to $deliveryStep for order ${order.id} (statut: ${order.statut})")
+            } else {
+                android.util.Log.d("CoursierScreenNew", "⚠️ Prevented backward step sync: server=${order.statut} (step=$newStep) < local=$deliveryStep")
+            }
         }
     }
     
@@ -183,10 +218,15 @@ fun CoursierScreenNew(
             if (coursierId > 0) {
                 ApiService.setActiveOrder(coursierId, order.id, active = false) { _ -> }
             }
+            // ⚠️ RETIRER LA COMMANDE TERMINÉE DE LA LISTE LOCALE
+            localCommandes = localCommandes.filter { it.id != order.id }
+            android.util.Log.d("CoursierScreenNew", "✅ Commande ${order.id} retirée de la liste locale")
         }
         // Passer à la prochaine commande en attente
         deliveryStep = DeliveryStep.PENDING
-        currentOrder = commandes.firstOrNull { it.statut == "nouvelle" || it.statut == "attente" }
+        currentOrder = localCommandes.firstOrNull { it.statut == "nouvelle" || it.statut == "attente" }
+        pendingOrdersCount = localCommandes.count { it.statut == "nouvelle" || it.statut == "attente" }
+        android.util.Log.d("CoursierScreenNew", "📋 Prochaine commande: ${currentOrder?.id ?: "AUCUNE"}, pending: $pendingOrdersCount")
     }
     // paymentUrl déjà déclaré plus haut
 
@@ -255,6 +295,73 @@ fun CoursierScreenNew(
                                                 bannerVersion++
                                                 ApiService.updateOrderStatus(order.id, serverStatus) { ok2 ->
                                                     if (ok2) timelineBanner = null
+                                                }
+                                            }
+                                        )
+                                        Toast.makeText(context, "Erreur synchronisation serveur", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }
+                        },
+                        onMarkDelivered = {
+                            // Marquer comme livrée (recuperee → livree)
+                            currentOrder?.let { order ->
+                                if (order.methodePaiement.equals("especes", ignoreCase = true)) {
+                                    // Si paiement espèces, on passe par DELIVERED puis on affiche le dialogue cash
+                                    deliveryStep = DeliveryStep.DELIVERED
+                                    showCashDialog = true
+                                } else {
+                                    // Sinon, on marque directement comme livrée
+                                    deliveryStep = DeliveryStep.CASH_CONFIRMED
+                                    val serverStatus = DeliveryStatusMapper.mapStepToServerStatus(DeliveryStep.DELIVERED)
+                                    ApiService.updateOrderStatus(order.id, serverStatus) { success ->
+                                        if (success) {
+                                            timelineBanner = null
+                                            Toast.makeText(context, "✅ Livraison terminée avec succès !", Toast.LENGTH_SHORT).show()
+                                            resetToNextOrder()
+                                        } else {
+                                            timelineBanner = TimelineBanner(
+                                                message = "Statut 'Livrée' non synchronisé.",
+                                                severity = BannerSeverity.ERROR,
+                                                actionLabel = "Réessayer",
+                                                onAction = {
+                                                    bannerVersion++
+                                                    ApiService.updateOrderStatus(order.id, serverStatus) { ok2 ->
+                                                        if (ok2) {
+                                                            timelineBanner = null
+                                                            resetToNextOrder()
+                                                        }
+                                                    }
+                                                }
+                                            )
+                                            Toast.makeText(context, "Erreur synchronisation serveur", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        onConfirmCash = {
+                            // Confirmation du paiement espèces après dialogue
+                            currentOrder?.let { order ->
+                                deliveryStep = DeliveryStep.CASH_CONFIRMED
+                                val serverStatus = DeliveryStatusMapper.mapStepToServerStatus(DeliveryStep.DELIVERED)
+                                ApiService.updateOrderStatus(order.id, serverStatus) { success ->
+                                    if (success) {
+                                        timelineBanner = null
+                                        Toast.makeText(context, "✅ Paiement espèces confirmé !", Toast.LENGTH_SHORT).show()
+                                        resetToNextOrder()
+                                    } else {
+                                        timelineBanner = TimelineBanner(
+                                            message = "Statut 'Livrée' non synchronisé.",
+                                            severity = BannerSeverity.ERROR,
+                                            actionLabel = "Réessayer",
+                                            onAction = {
+                                                bannerVersion++
+                                                ApiService.updateOrderStatus(order.id, serverStatus) { ok2 ->
+                                                    if (ok2) {
+                                                        timelineBanner = null
+                                                        resetToNextOrder()
+                                                    }
                                                 }
                                             }
                                         )

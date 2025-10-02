@@ -2,6 +2,7 @@ package com.suzosky.coursier.ui.screens
 
 import android.content.Context
 import android.location.Location
+import android.speech.tts.TextToSpeech
 import android.widget.Toast
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
@@ -28,6 +29,75 @@ import com.google.android.gms.maps.model.*
 import com.google.maps.android.compose.*
 import com.suzosky.coursier.data.models.Commande
 import com.suzosky.coursier.ui.theme.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import java.util.Locale
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+
+/**
+ * Crée un bitmap avec un emoji pour les marqueurs de carte
+ */
+fun createEmojiMarker(emoji: String, size: Int = 100): Bitmap {
+    val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+    val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        textSize = size * 0.7f
+        textAlign = Paint.Align.CENTER
+    }
+    val x = size / 2f
+    val y = size / 2f - (paint.descent() + paint.ascent()) / 2f
+    canvas.drawText(emoji, x, y, paint)
+    return bitmap
+}
+
+/**
+ * Calcule la distance entre deux points GPS (en mètres)
+ */
+fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+    val earthRadius = 6371000.0 // Rayon de la Terre en mètres
+    val dLat = Math.toRadians(lat2 - lat1)
+    val dLon = Math.toRadians(lon2 - lon1)
+    val a = sin(dLat / 2) * sin(dLat / 2) +
+            cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) *
+            sin(dLon / 2) * sin(dLon / 2)
+    val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+    return earthRadius * c
+}
+
+/**
+ * Calcule le bearing (direction) entre deux points GPS (en degrés)
+ */
+fun calculateBearing(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+    val dLon = Math.toRadians(lon2 - lon1)
+    val y = sin(dLon) * cos(Math.toRadians(lat2))
+    val x = cos(Math.toRadians(lat1)) * sin(Math.toRadians(lat2)) -
+            sin(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) * cos(dLon)
+    val bearing = Math.toDegrees(atan2(y, x))
+    return (bearing + 360) % 360
+}
+
+/**
+ * Convertit un bearing en direction textuelle
+ */
+fun bearingToDirection(bearing: Double): String {
+    return when {
+        bearing < 22.5 || bearing >= 337.5 -> "tout droit"
+        bearing < 67.5 -> "à droite"
+        bearing < 112.5 -> "complètement à droite"
+        bearing < 157.5 -> "faites demi-tour à droite"
+        bearing < 202.5 -> "faites demi-tour"
+        bearing < 247.5 -> "faites demi-tour à gauche"
+        bearing < 292.5 -> "complètement à gauche"
+        bearing < 337.5 -> "à gauche"
+        else -> "tout droit"
+    }
+}
 
 /**
  * Écran Mes Courses UNIFIÉ - Navigation + Actions + Infos
@@ -53,6 +123,29 @@ fun UnifiedCoursesScreen(
     val context = LocalContext.current
     val cameraPositionState = rememberCameraPositionState()
     var isVoiceGuidanceEnabled by remember { mutableStateOf(false) }
+    
+    // ============ TTS (Text-to-Speech) pour guidage vocal ============
+    val tts = remember {
+        var textToSpeech: TextToSpeech? = null
+        textToSpeech = TextToSpeech(context) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                textToSpeech?.language = Locale.FRENCH
+                android.util.Log.d("UnifiedCoursesScreen", "✅ TTS initialisé en français")
+            } else {
+                android.util.Log.e("UnifiedCoursesScreen", "❌ Erreur TTS init: $status")
+            }
+        }
+        textToSpeech
+    }
+    
+    // Nettoyage TTS à la destruction
+    DisposableEffect(Unit) {
+        onDispose {
+            android.util.Log.d("UnifiedCoursesScreen", "🛑 TTS shutdown")
+            tts?.stop()
+            tts?.shutdown()
+        }
+    }
     
     // Conversion des coordonnées
     val pickupLatLng = currentOrder?.coordonneesEnlevement?.let {
@@ -121,33 +214,33 @@ fun UnifiedCoursesScreen(
                     compassEnabled = true
                 )
             ) {
-                // 🚴 Marqueur coursier (VOUS) - Bleu cyan
+                // 🚴 Marqueur coursier (VOUS) - Emoji visible
                 courierLocation?.let {
                     Marker(
                         state = MarkerState(position = it),
-                        title = "🚴 Vous (Livreur)",
+                        title = "Vous (Livreur)",
                         snippet = "Position actuelle",
-                        icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)
+                        icon = BitmapDescriptorFactory.fromBitmap(createEmojiMarker("🚴", 120))
                     )
                 }
                 
-                // 📦 Marqueur pickup (ENLÈVEMENT) - Orange
+                // 📦 Marqueur pickup (ENLÈVEMENT) - Emoji visible
                 pickupLatLng?.let {
                     Marker(
                         state = MarkerState(position = it),
-                        title = "📦 Point d'enlèvement",
+                        title = "Point d'enlèvement",
                         snippet = currentOrder.adresseEnlevement,
-                        icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)
+                        icon = BitmapDescriptorFactory.fromBitmap(createEmojiMarker("📦", 120))
                     )
                 }
                 
-                // 🎯 Marqueur delivery (LIVRAISON) - Vert
-                deliveryLatLng?.let {
+                // 🎯 Marqueur delivery (LIVRAISON) - Emoji visible
+                if (deliveryLatLng != null && currentOrder != null) {
                     Marker(
-                        state = MarkerState(position = it),
-                        title = "🎯 Point de livraison",
+                        state = MarkerState(position = deliveryLatLng),
+                        title = "Point de livraison",
                         snippet = currentOrder.adresseLivraison,
-                        icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
+                        icon = BitmapDescriptorFactory.fromBitmap(createEmojiMarker("🎯", 120))
                     )
                 }
                 
@@ -181,45 +274,89 @@ fun UnifiedCoursesScreen(
             )
         }
         
-        // OVERLAY : Bouton guidage vocal Google Maps (si en route)
+        // ============ BOUTON GUIDAGE VOCAL (TTS intégré) ============
         if (currentOrder != null && deliveryStep in listOf(
             DeliveryStep.ACCEPTED,
             DeliveryStep.EN_ROUTE_PICKUP,
             DeliveryStep.PICKED_UP,
             DeliveryStep.EN_ROUTE_DELIVERY
         )) {
-            val context = LocalContext.current
-            
             FloatingActionButton(
-                onClick = {
-                    // Ouvrir Google Maps avec navigation vocale
-                    val destination = currentDestination
-                    if (destination != null) {
-                        try {
-                            // Intent Google Maps avec mode navigation
-                            val gmmIntentUri = android.net.Uri.parse(
-                                "google.navigation:q=${destination.latitude},${destination.longitude}&mode=d"
-                            )
-                            val mapIntent = android.content.Intent(android.content.Intent.ACTION_VIEW, gmmIntentUri)
-                            mapIntent.setPackage("com.google.android.apps.maps")
-                            context.startActivity(mapIntent)
-                            Toast.makeText(context, "🗣️ Guidage vocal Google Maps activé", Toast.LENGTH_SHORT).show()
-                        } catch (e: Exception) {
-                            Toast.makeText(context, "Google Maps non disponible", Toast.LENGTH_SHORT).show()
-                        }
-                    }
+                onClick = { 
+                    isVoiceGuidanceEnabled = !isVoiceGuidanceEnabled
+                    Toast.makeText(
+                        context, 
+                        if (isVoiceGuidanceEnabled) "🔊 Guidage vocal activé" else "🔇 Guidage vocal désactivé",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    android.util.Log.d("UnifiedCoursesScreen", "Voice guidance: $isVoiceGuidanceEnabled")
                 },
-                containerColor = PrimaryGold,
+                containerColor = if (isVoiceGuidanceEnabled) PrimaryGold else Color.Gray,
+                contentColor = PrimaryDark,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(16.dp)
-                    .offset(y = 200.dp)
+                    .offset(y = 80.dp)
             ) {
                 Icon(
-                    Icons.Filled.VolumeUp,
-                    contentDescription = "Guidage vocal",
-                    tint = PrimaryDark
+                    if (isVoiceGuidanceEnabled) Icons.Filled.VolumeUp else Icons.Filled.VolumeOff,
+                    contentDescription = "Guidage vocal"
                 )
+            }
+        }
+        
+        // ============ ANNONCES VOCALES (TTS) ============
+        LaunchedEffect(courierLocation, currentDestination, isVoiceGuidanceEnabled) {
+            if (isVoiceGuidanceEnabled && courierLocation != null && currentDestination != null) {
+                while (isActive) {
+                    val distance = calculateDistance(
+                        courierLocation.latitude,
+                        courierLocation.longitude,
+                        currentDestination.latitude,
+                        currentDestination.longitude
+                    )
+                    
+                    val bearing = calculateBearing(
+                        courierLocation.latitude,
+                        courierLocation.longitude,
+                        currentDestination.latitude,
+                        currentDestination.longitude
+                    )
+                    val direction = bearingToDirection(bearing)
+                    
+                    val message = when {
+                        distance > 1000 -> {
+                            val km = (distance / 1000).toInt()
+                            "Vous êtes à $km kilomètres de la destination, continuez $direction"
+                        }
+                        distance > 500 -> {
+                            val m = distance.toInt()
+                            "Vous êtes à $m mètres de la destination, continuez $direction"
+                        }
+                        distance > 100 -> {
+                            val m = distance.toInt()
+                            "Vous approchez, encore $m mètres, allez $direction"
+                        }
+                        distance > 20 -> {
+                            "Vous êtes presque arrivé, encore quelques mètres"
+                        }
+                        else -> {
+                            "Vous êtes arrivé à destination"
+                        }
+                    }
+                    
+                    android.util.Log.d("UnifiedCoursesScreen", "🔊 TTS: $message (distance=${distance.toInt()}m, bearing=$bearing°)")
+                    tts?.speak(message, TextToSpeech.QUEUE_FLUSH, null, "tts_guidance")
+                    
+                    // Intervalle dynamique selon distance
+                    val interval = when {
+                        distance > 1000 -> 30000L  // 30s
+                        distance > 500 -> 20000L   // 20s
+                        distance > 100 -> 10000L   // 10s
+                        else -> 5000L               // 5s
+                    }
+                    delay(interval)
+                }
             }
         }
         

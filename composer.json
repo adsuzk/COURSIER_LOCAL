@@ -4,7 +4,9 @@
         "react/event-loop": "^1.2",
         "react/socket": "^1.6",
         "cinetpay/cinetpay-php": "^1.0",
-        "phpmailer/phpmailer": "^6.10"
+        "phpmailer/phpmailer": "^6.10",
+        "phpoffice/phpspreadsheet": "^1.29",
+        "tecnickcom/tcpdf": "^6.6"
     },
     "autoload": {
         "psr-4": {
