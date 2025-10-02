@@ -869,8 +869,7 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                 
                 // 🔥 SET pour tracker les IDs déjà vus
                 val commandesVues = mutableSetOf<String>()
-                // Initialiser avec les commandes actuelles
-                commandesReelles.forEach { cmd -> commandesVues.add(cmd.id) }
+                var premiereFois = true // Flag pour initialisation
                 
                 while (isLoggedIn && coursierId > 0) {
                     kotlinx.coroutines.delay(1000) // CHAQUE SECONDE !
@@ -887,6 +886,20 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                             
                             // 🩺 Mettre à jour le timestamp de dernière sync réussie
                             activity?.lastSyncTimestamp = System.currentTimeMillis()
+                            
+                            // 🔥 PREMIÈRE FOIS : Initialiser le Set avec toutes les commandes existantes (pas de notification)
+                            if (premiereFois) {
+                                commandesData.forEach { cmdMap ->
+                                    val cmdId = cmdMap["id"]?.toString() ?: ""
+                                    if (cmdId.isNotEmpty()) {
+                                        commandesVues.add(cmdId)
+                                    }
+                                }
+                                Log.d("MainActivity", "🎯 Initialisation: ${commandesVues.size} commandes enregistrées (pas de notification)")
+                                premiereFois = false
+                                refreshTrigger++
+                                return@getCoursierData
+                            }
                             
                             // 🔥 NOUVELLE DÉTECTION : Chercher les IDs nouvelles
                             Log.d("MainActivity", "🔍 CommandesVues (${commandesVues.size}): ${commandesVues.joinToString(",")}")
