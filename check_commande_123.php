@@ -1,18 +1,13 @@
 <?php
 require_once 'config.php';
 
-$conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-
-if ($conn->connect_error) {
-    die("Erreur de connexion: " . $conn->connect_error);
-}
+$conn = getDBConnection();
 
 $stmt = $conn->prepare('SELECT id, coursier_id, statut, cash_recupere, mode_paiement FROM commandes WHERE id = ?');
 $id = 123;
-$stmt->bind_param('i', $id);
+$stmt->bindValue(1, $id, PDO::PARAM_INT);
 $stmt->execute();
-$result = $stmt->get_result()->fetch_assoc();
+$result = $stmt->fetch(PDO::FETCH_ASSOC);
 
 echo json_encode($result, JSON_PRETTY_PRINT);
 
-$conn->close();
