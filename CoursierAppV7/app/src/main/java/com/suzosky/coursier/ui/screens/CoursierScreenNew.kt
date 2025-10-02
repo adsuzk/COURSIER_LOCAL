@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -103,8 +104,13 @@ fun CoursierScreenNew(
         }
     ) }
     // Initialiser deliveryStep selon le statut de la commande actuelle
-    // Utiliser rememberSaveable pour survivre aux rotations d'écran
-    var deliveryStep by rememberSaveable { mutableStateOf(
+    // Utiliser rememberSaveable avec Saver personnalisé pour survivre aux rotations d'écran
+    var deliveryStep by rememberSaveable(
+        stateSaver = Saver(
+            save = { it.ordinal }, // Sauvegarder l'ordinal (Int)
+            restore = { DeliveryStep.values()[it] } // Restaurer depuis l'ordinal
+        )
+    ) { mutableStateOf(
         when (currentOrder?.statut) {
             "acceptee" -> DeliveryStep.ACCEPTED
             "en_cours", "recuperee" -> DeliveryStep.PICKED_UP
