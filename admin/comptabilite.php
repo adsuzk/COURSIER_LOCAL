@@ -835,8 +835,7 @@ $margeNetteSuzosky = $comptaData['ca_total'] > 0 ? ($comptaData['revenus_nets_su
 
     <!-- Barre de filtres -->
     <form method="GET" action="admin.php" class="filter-bar">
-        <input type="hidden" name="section" value="finances">
-        <input type="hidden" name="tab" value="comptabilite">
+        <input type="hidden" name="section" value="comptabilite">
         
         <div class="filter-group">
             <label for="date_debut">📅 Date de début</label>
