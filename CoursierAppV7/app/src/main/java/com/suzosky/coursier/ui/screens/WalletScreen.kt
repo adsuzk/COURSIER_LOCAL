@@ -948,51 +948,280 @@ private fun HistoryStatItem(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CourseHistoryDialog(
     commandes: List<WalletHistoryItem>,
     onDismiss: () -> Unit
 ) {
+    var selectedFilter by remember { mutableStateOf<String?>(null) }
+    
+    // Filtrer les commandes selon le statut sélectionné
+    val filteredCommandes = if (selectedFilter == null) {
+        commandes
+    } else {
+        commandes.filter { it.statut == selectedFilter }
+    }
+    
+    // Compter les commandes par statut pour afficher dans les chips
+    val statusCounts = commandes.groupBy { it.statut }
+        .mapValues { it.value.size }
+    
     Dialog(onDismissRequest = onDismiss) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.8f)
-                .padding(16.dp),
-            shape = RoundedCornerShape(16.dp),
+                .fillMaxHeight(0.9f)
+                .padding(8.dp),
+            shape = RoundedCornerShape(20.dp),
             colors = CardDefaults.cardColors(containerColor = PrimaryDark)
         ) {
             Column(
                 modifier = Modifier.padding(20.dp)
             ) {
+                // En-tête
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = "Historique des courses",
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = PrimaryGold
-                    )
+                    Column {
+                        Text(
+                            text = "Historique Complet",
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = PrimaryGold
+                        )
+                        Text(
+                            text = "${filteredCommandes.size} course${if(filteredCommandes.size > 1) "s" else ""}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.White.copy(alpha = 0.7f)
+                        )
+                    }
                     
                     IconButton(onClick = onDismiss) {
                         Icon(
                             Icons.Default.Close,
                             contentDescription = "Fermer",
-                            tint = PrimaryGold
+                            tint = PrimaryGold,
+                            modifier = Modifier.size(28.dp)
                         )
                     }
                 }
                 
                 Spacer(modifier = Modifier.height(16.dp))
                 
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                // Filtres par statut avec compteurs
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(commandes) { commande ->
-                        CourseHistoryItem(commande = commande)
+                    // Bouton "Tout"
+                    FilterChip(
+                        selected = selectedFilter == null,
+                        onClick = { selectedFilter = null },
+                        label = { 
+                            Text("Tout (${commandes.size})") 
+                        },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.List,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = PrimaryGold,
+                            selectedLabelColor = PrimaryDark,
+                            selectedLeadingIconColor = PrimaryDark
+                        )
+                    )
+                    
+                    // Filtre "Livrées"
+                    if (statusCounts.containsKey("livree")) {
+                        FilterChip(
+                            selected = selectedFilter == "livree",
+                            onClick = { selectedFilter = if (selectedFilter == "livree") null else "livree" },
+                            label = { 
+                                Text("Livrées (${statusCounts["livree"] ?: 0})") 
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    Icons.Default.CheckCircle,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = SuccessGreen,
+                                selectedLabelColor = Color.White,
+                                selectedLeadingIconColor = Color.White
+                            )
+                        )
+                    }
+                    
+                    // Filtre "En cours / Récupérée"
+                    val enCoursCount = (statusCounts["en_cours"] ?: 0) + (statusCounts["recuperee"] ?: 0)
+                    if (enCoursCount > 0) {
+                        FilterChip(
+                            selected = selectedFilter == "en_cours" || selectedFilter == "recuperee",
+                            onClick = { 
+                                selectedFilter = when (selectedFilter) {
+                                    "en_cours", "recuperee" -> null
+                                    else -> "en_cours"
+                                }
+                            },
+                            label = { 
+                                Text("En cours ($enCoursCount)") 
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    Icons.Default.LocalShipping,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = SecondaryBlue,
+                                selectedLabelColor = Color.White,
+                                selectedLeadingIconColor = Color.White
+                            )
+                        )
+                    }
+                    
+                    // Filtre "Acceptées"
+                    if (statusCounts.containsKey("acceptee")) {
+                        FilterChip(
+                            selected = selectedFilter == "acceptee",
+                            onClick = { selectedFilter = if (selectedFilter == "acceptee") null else "acceptee" },
+                            label = { 
+                                Text("Acceptées (${statusCounts["acceptee"] ?: 0})") 
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    Icons.Default.ThumbUp,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = PrimaryGold,
+                                selectedLabelColor = PrimaryDark,
+                                selectedLeadingIconColor = PrimaryDark
+                            )
+                        )
+                    }
+                    
+                    // Filtre "Annulées"
+                    if (statusCounts.containsKey("annulee")) {
+                        FilterChip(
+                            selected = selectedFilter == "annulee",
+                            onClick = { selectedFilter = if (selectedFilter == "annulee") null else "annulee" },
+                            label = { 
+                                Text("Annulées (${statusCounts["annulee"] ?: 0})") 
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    Icons.Default.Cancel,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = AccentRed,
+                                selectedLabelColor = Color.White,
+                                selectedLeadingIconColor = Color.White
+                            )
+                        )
+                    }
+                    
+                    // Filtre "Refusées"
+                    if (statusCounts.containsKey("refusee")) {
+                        FilterChip(
+                            selected = selectedFilter == "refusee",
+                            onClick = { selectedFilter = if (selectedFilter == "refusee") null else "refusee" },
+                            label = { 
+                                Text("Refusées (${statusCounts["refusee"] ?: 0})") 
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    Icons.Default.Block,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = Color.Red.copy(alpha = 0.8f),
+                                selectedLabelColor = Color.White,
+                                selectedLeadingIconColor = Color.White
+                            )
+                        )
+                    }
+                    
+                    // Filtre "Terminées"
+                    if (statusCounts.containsKey("terminee")) {
+                        FilterChip(
+                            selected = selectedFilter == "terminee",
+                            onClick = { selectedFilter = if (selectedFilter == "terminee") null else "terminee" },
+                            label = { 
+                                Text("Terminées (${statusCounts["terminee"] ?: 0})") 
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    Icons.Default.Done,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = SuccessGreen.copy(alpha = 0.7f),
+                                selectedLabelColor = Color.White,
+                                selectedLeadingIconColor = Color.White
+                            )
+                        )
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                // Liste des commandes filtrées
+                if (filteredCommandes.isEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(
+                                Icons.Default.SearchOff,
+                                contentDescription = null,
+                                tint = Color.White.copy(alpha = 0.3f),
+                                modifier = Modifier.size(64.dp)
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                text = "Aucune course",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = Color.White.copy(alpha = 0.5f)
+                            )
+                            Text(
+                                text = "dans cette catégorie",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.White.copy(alpha = 0.3f)
+                            )
+                        }
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        items(filteredCommandes) { commande ->
+                            CourseHistoryItemDetailed(commande = commande)
+                        }
                     }
                 }
             }
