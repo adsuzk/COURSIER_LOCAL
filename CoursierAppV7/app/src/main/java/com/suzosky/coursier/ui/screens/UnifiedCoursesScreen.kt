@@ -103,6 +103,29 @@ fun UnifiedCoursesScreen(
     val cameraPositionState = rememberCameraPositionState()
     var isVoiceGuidanceEnabled by remember { mutableStateOf(false) }
     
+    // ============ TTS (Text-to-Speech) pour guidage vocal ============
+    val tts = remember {
+        var textToSpeech: TextToSpeech? = null
+        textToSpeech = TextToSpeech(context) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                textToSpeech?.language = Locale.FRENCH
+                android.util.Log.d("UnifiedCoursesScreen", "✅ TTS initialisé en français")
+            } else {
+                android.util.Log.e("UnifiedCoursesScreen", "❌ Erreur TTS init: $status")
+            }
+        }
+        textToSpeech
+    }
+    
+    // Nettoyage TTS à la destruction
+    DisposableEffect(Unit) {
+        onDispose {
+            android.util.Log.d("UnifiedCoursesScreen", "🛑 TTS shutdown")
+            tts?.stop()
+            tts?.shutdown()
+        }
+    }
+    
     // Conversion des coordonnées
     val pickupLatLng = currentOrder?.coordonneesEnlevement?.let {
         android.util.Log.d("UnifiedCoursesScreen", "📍 Pickup coords: lat=${it.latitude}, lng=${it.longitude}")
