@@ -1,11 +1,7 @@
 <?php
 // get_coursier_data.php - Récupérer les vraies données du coursier (racine)
 session_start();
-require_once __D                      COALESCE(client_telephone, telephone_expediteur) as client_telephone,
-                      COALESCE(adresse_depart, adresse_retrait) as adresse_enlevement,
-                      COALESCE(adresse_arrivee, adresse_livraison) as adresse_livraison,
-                      CASE WHEN COALESCE(prix_total, 0) > 0 THEN prix_total ELSE COALESCE(prix_estime, 0) END as prix_livraison,
-                      statut,. '/config.php';
+require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/api/schema_utils.php';
 
 // Vérification de la session admin pour les détails complets
@@ -124,7 +120,7 @@ try {
                     COALESCE(client_telephone, telephone_expediteur) as client_telephone,
                     COALESCE(adresse_depart, adresse_retrait) as adresse_enlevement,
                     COALESCE(adresse_arrivee, adresse_livraison) as adresse_livraison,
-                    CASE WHEN COALESCE(prix_total, 0) > 0 THEN prix_total ELSE COALESCE(prix_estime, 0) END as prix_livraison,
+                    COALESCE(prix_total, prix_estime, 0) as prix_livraison,
                     statut,
                     COALESCE(created_at, date_creation) as date_commande,
                     COALESCE(description_colis, description, '') as description,
