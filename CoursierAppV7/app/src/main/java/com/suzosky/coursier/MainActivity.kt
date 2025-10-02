@@ -472,7 +472,7 @@ class MainActivity : ComponentActivity() {
         Log.d("MainActivity", "✅ BroadcastReceiver configuré pour ACTION_REFRESH_DATA")
     }
 
-    /*
+    
     override fun onDestroy() {
         super.onDestroy()
         // Désinscrire le BroadcastReceiver
@@ -487,7 +487,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-    */
 }
 
 // TODO: Replace with Compose-native UpdateDialog
