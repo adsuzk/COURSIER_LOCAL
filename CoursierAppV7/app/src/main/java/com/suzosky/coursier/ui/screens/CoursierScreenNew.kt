@@ -72,6 +72,15 @@ fun CoursierScreenNew(
     val mapViewModel: MapViewModel = hiltViewModel()
     val mapUi by mapViewModel.uiState.collectAsState()
     
+    // Log de debug pour vérifier la localisation
+    LaunchedEffect(mapUi.currentLocation) {
+        android.util.Log.d("CoursierScreenNew", "📍 mapUi.currentLocation = ${mapUi.currentLocation}")
+        if (mapUi.currentLocation == null) {
+            android.util.Log.w("CoursierScreenNew", "⚠️ Location is NULL - retrying...")
+            mapViewModel.getCurrentLocation()
+        }
+    }
+    
     // Service de notification sonore
     val notificationService = remember { NotificationSoundService(context) }
     
