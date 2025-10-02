@@ -5,7 +5,17 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
-require_once '../config.php';
+// Capture toutes les erreurs pour retourner du JSON au lieu de HTML
+try {
+    require_once '../config.php';
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode([
+        'success' => false, 
+        'error' => 'Erreur de configuration: ' . $e->getMessage()
+    ]);
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
