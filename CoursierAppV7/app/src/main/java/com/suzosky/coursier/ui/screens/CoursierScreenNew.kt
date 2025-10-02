@@ -92,6 +92,20 @@ fun CoursierScreenNew(
     var previousCommandesCount by remember { mutableStateOf(localCommandes.size) }
     var hasNewOrder by remember { mutableStateOf(false) }
     
+    // États pour les courses - DÉCLARATION AVANT LaunchedEffect
+    // Prioriser les commandes nouvelles/attente (pour afficher la modal), NE PAS prendre les anciennes courses terminées
+    var currentOrder by remember { mutableStateOf<Commande?>(
+        localCommandes.firstOrNull { it.statut == "nouvelle" || it.statut == "attente" }
+    ) }
+    // Initialiser deliveryStep selon le statut de la commande actuelle
+    var deliveryStep by remember { mutableStateOf(
+        when (currentOrder?.statut) {
+            "acceptee" -> DeliveryStep.ACCEPTED
+            "en_cours", "recuperee" -> DeliveryStep.PICKED_UP
+            else -> DeliveryStep.PENDING
+        }
+    ) }
+    
     // Synchroniser localCommandes avec commandes (quand de nouvelles arrivent)
     LaunchedEffect(commandes) {
         // Ajouter uniquement les nouvelles commandes (ne pas écraser les suppressions locales)
