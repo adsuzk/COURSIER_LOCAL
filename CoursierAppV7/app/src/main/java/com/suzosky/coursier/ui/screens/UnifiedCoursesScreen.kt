@@ -29,6 +29,8 @@ import com.google.android.gms.maps.model.*
 import com.google.maps.android.compose.*
 import com.suzosky.coursier.data.models.Commande
 import com.suzosky.coursier.ui.theme.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import java.util.Locale
 import kotlin.math.atan2
 import kotlin.math.cos
