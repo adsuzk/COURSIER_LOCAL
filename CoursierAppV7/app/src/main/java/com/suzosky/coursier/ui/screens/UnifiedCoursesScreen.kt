@@ -214,34 +214,35 @@ fun UnifiedCoursesScreen(
                     compassEnabled = true
                 )
             ) {
-                // 🚴 Marqueur coursier (VOUS) - Bleu cyan
+                // 🚴 Marqueur coursier (VOUS) - Emoji visible
                 courierLocation?.let {
                     Marker(
                         state = MarkerState(position = it),
-                        title = "🚴 Vous (Livreur)",
+                        title = "Vous (Livreur)",
                         snippet = "Position actuelle",
-                        icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)
+                        icon = BitmapDescriptorFactory.fromBitmap(createEmojiMarker("🚴", 120))
                     )
                 }
                 
-                // 📦 Marqueur pickup (ENLÈVEMENT) - Orange
+                // 📦 Marqueur pickup (ENLÈVEMENT) - Emoji visible
                 pickupLatLng?.let {
                     Marker(
                         state = MarkerState(position = it),
-                        title = "📦 Point d'enlèvement",
+                        title = "Point d'enlèvement",
                         snippet = currentOrder.adresseEnlevement,
-                        icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)
+                        icon = BitmapDescriptorFactory.fromBitmap(createEmojiMarker("📦", 120))
                     )
                 }
                 
-                // 🎯 Marqueur delivery (LIVRAISON) - Vert
+                // 🎯 Marqueur delivery (LIVRAISON) - Emoji visible
                 deliveryLatLng?.let {
                     Marker(
                         state = MarkerState(position = it),
-                        title = "🎯 Point de livraison",
+                        title = "Point de livraison",
                         snippet = currentOrder.adresseLivraison,
-                        icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
+                        icon = BitmapDescriptorFactory.fromBitmap(createEmojiMarker("🎯", 120))
                     )
+                }
                 }
                 
                 // Ligne vers destination
