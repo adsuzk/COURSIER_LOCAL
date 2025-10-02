@@ -928,14 +928,24 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                 // 🔔 NOTIFICATION SONORE + VIBRATION pour CHAQUE nouvelle commande
                                 nouvellesCommandes.forEach { newCommande ->
                                     try {
-                                        // Vibration
+                                        // 🔥 VIBRATION PUISSANTE - Pattern : 0ms, 500ms ON, 200ms OFF, 500ms ON, 200ms OFF, 500ms ON
                                         val vibrator = activity?.getSystemService(Context.VIBRATOR_SERVICE) as? android.os.Vibrator
                                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                                            vibrator?.vibrate(android.os.VibrationEffect.createWaveform(longArrayOf(0, 200, 100, 200), -1))
+                                            val vibrationPattern = longArrayOf(
+                                                0,      // Délai initial
+                                                500,    // Vibration 1 (forte)
+                                                200,    // Pause
+                                                500,    // Vibration 2 (forte)
+                                                200,    // Pause
+                                                500     // Vibration 3 (forte)
+                                            )
+                                            vibrator?.vibrate(android.os.VibrationEffect.createWaveform(vibrationPattern, -1))
                                         } else {
                                             @Suppress("DEPRECATION")
-                                            vibrator?.vibrate(500)
+                                            vibrator?.vibrate(1500) // 1.5 secondes continue
                                         }
+                                        
+                                        Log.d("MainActivity", "📳 Vibration déclenchée pour commande ${newCommande["id"]}")
                                         
                                         // Son de notification
                                         val notification = android.media.RingtoneManager.getDefaultUri(android.media.RingtoneManager.TYPE_NOTIFICATION)
