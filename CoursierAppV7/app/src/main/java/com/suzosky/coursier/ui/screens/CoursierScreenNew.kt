@@ -97,7 +97,7 @@ fun CoursierScreenNew(
     var currentOrder by remember { mutableStateOf<Commande?>(
         localCommandes.firstOrNull { 
             val statut = it.statut.lowercase()
-            // Chercher toute commande ACTIVE (pas terminÈe)
+            // Chercher toute commande ACTIVE (pas terminÔøΩe)
             statut == "nouvelle" || statut == "attente" || statut == "acceptee" || statut == "en_cours" || statut == "recuperee"
         }
     ) }
@@ -230,7 +230,7 @@ fun CoursierScreenNew(
         deliveryStep = DeliveryStep.PENDING
         currentOrder = localCommandes.firstOrNull { 
             val statut = it.statut.lowercase()
-            // Chercher toute commande ACTIVE (pas terminÈe)
+            // Chercher toute commande ACTIVE (pas terminÔøΩe)
             statut == "nouvelle" || statut == "attente" || statut == "acceptee" || statut == "en_cours" || statut == "recuperee"
         }
         pendingOrdersCount = localCommandes.count { it.statut == "nouvelle" || it.statut == "attente" }
@@ -467,8 +467,18 @@ fun CoursierScreenNew(
                                     ApiService.updateOrderStatus(order.id, serverStatus) { success ->
                                         if (success) {
                                             timelineBanner = null
-                                            Toast.makeText(context, DeliveryStatusMapper.getSuccessMessage(DeliveryStep.PICKED_UP, order.methodePaiement), Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, "Colis recupere ! Direction livraison", Toast.LENGTH_SHORT).show()
                                             deliveryStep = DeliveryStep.EN_ROUTE_DELIVERY
+                                            
+                                            // Lancer la navigation Google Maps vers l'adresse de livraison
+                                            try {
+                                                val destination = "${order.latitudeLivraison},${order.longitudeLivraison}"
+                                                val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse("google.navigation:q=$destination&mode=d"))
+                                                intent.setPackage("com.google.android.apps.maps")
+                                                context.startActivity(intent)
+                                            } catch (e: Exception) {
+                                                Toast.makeText(context, "Google Maps non disponible", Toast.LENGTH_SHORT).show()
+                                            }
                                         } else {
                                             timelineBanner = TimelineBanner(
                                                 message = "Impossible d'envoyer 'Colis r√©cup√©r√©' au serveur.",

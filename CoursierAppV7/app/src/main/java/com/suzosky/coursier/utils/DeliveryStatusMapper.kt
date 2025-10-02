@@ -60,25 +60,25 @@ object DeliveryStatusMapper {
     }
     
     /**
-     * Obtient le message utilisateur approprié pour chaque étape
+     * Obtient le message utilisateur approprie pour chaque etape
      */
     fun getSuccessMessage(step: DeliveryStep, paymentMethod: String): String {
         return when (step) {
-            DeliveryStep.ACCEPTED -> "Commande acceptée !"
-            DeliveryStep.EN_ROUTE_PICKUP -> "En route vers récupération"
-            DeliveryStep.PICKUP_ARRIVED -> "Arrivé au point de récupération"
-            DeliveryStep.PICKED_UP -> "Colis récupéré ! Direction client"
+            DeliveryStep.ACCEPTED -> "Commande acceptee !"
+            DeliveryStep.EN_ROUTE_PICKUP -> "En route vers recuperation"
+            DeliveryStep.PICKUP_ARRIVED -> "Arrive au point de recuperation"
+            DeliveryStep.PICKED_UP -> "Colis recupere ! Direction client"
             DeliveryStep.EN_ROUTE_DELIVERY -> "En route vers livraison"
-            DeliveryStep.DELIVERY_ARRIVED -> "Arrivé chez le client"
+            DeliveryStep.DELIVERY_ARRIVED -> "Arrive chez le client"
             DeliveryStep.DELIVERED -> {
                 if (paymentMethod.equals("especes", ignoreCase = true)) {
-                    "Colis livré ! Confirmez le cash"
+                    "Colis livre ! Confirmez le cash"
                 } else {
-                    "Livraison terminée !"
+                    "Livraison terminee !"
                 }
             }
-            DeliveryStep.CASH_CONFIRMED -> "Paiement confirmé ! Livraison terminée"
-            else -> "Étape mise à jour"
+            DeliveryStep.CASH_CONFIRMED -> "Paiement confirme ! Livraison terminee"
+            else -> "Etape mise a jour"
         }
     }
     
