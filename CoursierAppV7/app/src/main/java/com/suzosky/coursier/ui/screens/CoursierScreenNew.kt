@@ -68,6 +68,10 @@ fun CoursierScreenNew(
     // Compter uniquement les commandes en attente d'acceptation (nouvelles/attente)
     var pendingOrdersCount by remember { mutableStateOf(commandes.count { it.statut == "nouvelle" || it.statut == "attente" }) }
     
+    // ViewModel pour la localisation
+    val mapViewModel: MapViewModel = hiltViewModel()
+    val mapUi by mapViewModel.uiState.collectAsState()
+    
     // Service de notification sonore
     val notificationService = remember { NotificationSoundService(context) }
     
