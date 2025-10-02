@@ -131,7 +131,7 @@ function getComptabiliteData($pdo, $dateDebut, $dateFin) {
         SELECT 
             c.coursier_id,
             a.nom as coursier_nom,
-            a.prenom as coursier_prenom,
+            a.prenoms as coursier_prenom,
             COUNT(*) as nb_livraisons,
             SUM(c.prix_total) as ca_coursier,
             AVG(c.prix_total) as prix_moyen
