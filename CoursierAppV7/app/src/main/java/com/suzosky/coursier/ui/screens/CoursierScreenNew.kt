@@ -20,12 +20,9 @@ import com.suzosky.coursier.ui.components.CashConfirmationDialog
 import com.suzosky.coursier.ui.components.NoActiveOrderScreen
 import com.suzosky.coursier.ui.components.TimelineBanner
 import com.suzosky.coursier.ui.components.BannerSeverity
-import com.suzosky.coursier.ui.screens.CoursesScreen
 import com.suzosky.coursier.ui.screens.UnifiedCoursesScreen
-import com.suzosky.coursier.ui.screens.ChatScreen
 import com.suzosky.coursier.ui.screens.ModernChatScreen
 import com.suzosky.coursier.ui.screens.ModernWalletScreen
-import com.suzosky.coursier.ui.screens.ProfileScreen
 import com.suzosky.coursier.ui.screens.ModernProfileScreen
 import com.suzosky.coursier.ui.screens.DeliveryStep
 import com.suzosky.coursier.ui.screens.ChatMessage
