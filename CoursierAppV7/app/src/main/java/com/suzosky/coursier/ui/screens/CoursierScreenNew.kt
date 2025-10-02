@@ -97,8 +97,11 @@ fun CoursierScreenNew(
     // ⚠️ UTILISER rememberSaveable pour survivre à la rotation d'écran
     
     // Sauvegarder l'ID de la commande active (String est Parcelable)
+    // ✅ FIX: Chercher TOUTES les commandes actives (nouvelle, attente, acceptee, en_cours, recuperee, en_livraison)
     var currentOrderId by rememberSaveable { mutableStateOf<String?>(
-        localCommandes.firstOrNull { it.statut == "nouvelle" || it.statut == "attente" }?.id
+        localCommandes.firstOrNull { 
+            it.statut in listOf("nouvelle", "attente", "acceptee", "en_cours", "recuperee", "en_livraison")
+        }?.id
     ) }
     
     // Sauvegarder le deliveryStep (enum ordinal est sauvegardable)
