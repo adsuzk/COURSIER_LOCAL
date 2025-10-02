@@ -95,7 +95,11 @@ fun CoursierScreenNew(
     // États pour les courses - DÉCLARATION AVANT LaunchedEffect
     // Prioriser les commandes nouvelles/attente (pour afficher la modal), NE PAS prendre les anciennes courses terminées
     var currentOrder by remember { mutableStateOf<Commande?>(
-        localCommandes.firstOrNull { it.statut == "nouvelle" || it.statut == "attente" }
+        localCommandes.firstOrNull { 
+            val statut = it.statut.lowercase()
+            // Chercher toute commande ACTIVE (pas termin�e)
+            statut == "nouvelle" || statut == "attente" || statut == "acceptee" || statut == "en_cours" || statut == "recuperee"
+        }
     ) }
     // Initialiser deliveryStep selon le statut de la commande actuelle
     var deliveryStep by remember { mutableStateOf(
@@ -224,7 +228,11 @@ fun CoursierScreenNew(
         }
         // Passer à la prochaine commande en attente
         deliveryStep = DeliveryStep.PENDING
-        currentOrder = localCommandes.firstOrNull { it.statut == "nouvelle" || it.statut == "attente" }
+        currentOrder = localCommandes.firstOrNull { 
+            val statut = it.statut.lowercase()
+            // Chercher toute commande ACTIVE (pas termin�e)
+            statut == "nouvelle" || statut == "attente" || statut == "acceptee" || statut == "en_cours" || statut == "recuperee"
+        }
         pendingOrdersCount = localCommandes.count { it.statut == "nouvelle" || it.statut == "attente" }
         android.util.Log.d("CoursierScreenNew", "📋 Prochaine commande: ${currentOrder?.id ?: "AUCUNE"}, pending: $pendingOrdersCount")
     }
