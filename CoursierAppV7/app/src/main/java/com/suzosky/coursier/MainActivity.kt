@@ -1068,18 +1068,27 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                 }
                             },
                             onConfirmCash = { commandeId ->
+                                Log.d("MainActivity", "🔴🔴🔴 onConfirmCash CALLBACK REÇU! commandeId=$commandeId")
                                 val commande = commandesReelles.find { it.id == commandeId }
+                                Log.d("MainActivity", "🔍 Commande trouvée: ${commande?.id}, prix: ${commande?.prixTotal}")
                                 
                                 // 🔊 Annonce vocale
                                 if (commande != null) {
                                     activity?.voiceGuidance?.announceCashReceived(commande.prixTotal)
                                 }
                                 
-                                ApiService.confirmCashReceived(commandeId.toIntOrNull() ?: 0, coursierId) { success, message ->
+                                val commandeIdInt = commandeId.toIntOrNull() ?: 0
+                                Log.d("MainActivity", "📡 APPEL API confirmCashReceived - commandeId=$commandeIdInt, coursierId=$coursierId")
+                                
+                                ApiService.confirmCashReceived(commandeIdInt, coursierId) { success, message ->
+                                    Log.d("MainActivity", "📥 RÉPONSE API confirmCashReceived - success=$success, message=$message")
                                     if (success) {
-                                        Log.d("MainActivity", "✅ Cash confirmé - Refresh IMMEDIAT des commandes")
+                                        Log.d("MainActivity", "✅ Cash confirmé - Refresh IMMEDIAT des commandes (refreshTrigger avant: $refreshTrigger)")
                                         // REFRESH IMMEDIAT après cash confirmé
                                         refreshTrigger++
+                                        Log.d("MainActivity", "✅ refreshTrigger INCRÉMENTÉ à: $refreshTrigger")
+                                    } else {
+                                        Log.e("MainActivity", "❌ ERREUR confirmCashReceived: $message")
                                     }
                                 }
                             },
