@@ -388,16 +388,8 @@ fun MapNavigationCard(
     }
 }
 
-fun launchTurnByTurn(context: Context, dest: LatLng, label: String? = null) {
-    val uri = Uri.parse("google.navigation:q=${dest.latitude},${dest.longitude}&mode=d")
-    val intent = Intent(Intent.ACTION_VIEW, uri).apply { setPackage("com.google.android.apps.maps") }
-    try {
-        context.startActivity(intent)
-    } catch (e: ActivityNotFoundException) {
-        val gmmIntentUri = Uri.parse("geo:0,0?q=${dest.latitude},${dest.longitude}(${label ?: "Destination"})")
-        context.startActivity(Intent(Intent.ACTION_VIEW, gmmIntentUri))
-    }
-}
+// FONCTION SUPPRIMÉE - La navigation reste dans l'application
+// Plus de redirection vers Google Maps externe
 
 private fun hasLocationPermission(context: Context): Boolean {
     val fineGranted = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED

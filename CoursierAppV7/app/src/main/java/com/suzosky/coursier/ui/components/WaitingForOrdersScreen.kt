@@ -144,11 +144,15 @@ fun WaitingForOrdersScreen(
                 
                 Spacer(modifier = Modifier.height(8.dp))
                 
-                val timeSinceSync = (System.currentTimeMillis() - systemHealth.lastSyncTimestamp) / 1000
+                val timeSinceSync = if (systemHealth.lastSyncTimestamp > 0) {
+                    (System.currentTimeMillis() - systemHealth.lastSyncTimestamp) / 1000
+                } else {
+                    0L
+                }
                 Text(
-                    text = "Dernière sync: il y a ${timeSinceSync}s",
+                    text = if (timeSinceSync > 0) "Dernière sync: il y a ${timeSinceSync}s" else "Synchronisation en cours...",
                     fontSize = 14.sp,
-                    color = if (timeSinceSync < 10) Color(0xFF4CAF50) else Color(0xFFFF9800)
+                    color = if (timeSinceSync < 10) PrimaryGreen else Color(0xFFFF9800)
                 )
             }
         }
