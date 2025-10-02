@@ -889,9 +889,16 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                             activity?.lastSyncTimestamp = System.currentTimeMillis()
                             
                             // 🔥 NOUVELLE DÉTECTION : Chercher les IDs nouvelles
+                            Log.d("MainActivity", "🔍 CommandesVues (${commandesVues.size}): ${commandesVues.joinToString(",")}")
+                            Log.d("MainActivity", "🔍 CommandesRecues (${commandesData.size}): ${commandesData.map { it["id"]?.toString() ?: "?" }.joinToString(",")}")
+                            
                             val nouvellesCommandes = commandesData.filter { cmdMap ->
                                 val cmdId = cmdMap["id"]?.toString() ?: ""
-                                cmdId.isNotEmpty() && !commandesVues.contains(cmdId)
+                                val isNew = cmdId.isNotEmpty() && !commandesVues.contains(cmdId)
+                                if (isNew) {
+                                    Log.d("MainActivity", "🆕 NOUVELLE COMMANDE TROUVÉE: ID=$cmdId")
+                                }
+                                isNew
                             }
                             
                             if (nouvellesCommandes.isNotEmpty()) {
