@@ -54,11 +54,16 @@ fun UnifiedCoursesScreen(
     
     // Conversion des coordonnées
     val pickupLatLng = currentOrder?.coordonneesEnlevement?.let {
+        android.util.Log.d("UnifiedCoursesScreen", "📍 Pickup coords: lat=${it.latitude}, lng=${it.longitude}")
         LatLng(it.latitude, it.longitude)
     }
     val deliveryLatLng = currentOrder?.coordonneesLivraison?.let {
+        android.util.Log.d("UnifiedCoursesScreen", "🎯 Delivery coords: lat=${it.latitude}, lng=${it.longitude}")
         LatLng(it.latitude, it.longitude)
     }
+    
+    android.util.Log.d("UnifiedCoursesScreen", "Order: ${currentOrder?.id}, Step: $deliveryStep")
+    android.util.Log.d("UnifiedCoursesScreen", "Pickup: $pickupLatLng, Delivery: $deliveryLatLng")
     
     // Destination actuelle selon l'étape
     val currentDestination = when (deliveryStep) {
