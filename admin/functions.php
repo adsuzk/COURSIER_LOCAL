@@ -1453,6 +1453,8 @@ function renderHeader() {
                                 'chat' => 'comments',
                                 'clients' => 'address-book',
                                 'finances' => 'coins',
+                                'finances_audit' => 'search-dollar',
+                                'comptabilite' => 'file-invoice-dollar',
                                 'recrutement' => 'briefcase'
                             ];
                             echo $icons[$_GET['section'] ?? 'dashboard'] ?? 'cog';
@@ -1465,6 +1467,8 @@ function renderHeader() {
                             'chat' => 'Support Chat',
                             'clients' => 'Gestion des clients',
                             'finances' => 'Gestion financière',
+                            'finances_audit' => 'Audit des livraisons',
+                            'comptabilite' => 'Comptabilité',
                             'recrutement' => 'Emploi & Recrutement'
                         ];
                         echo $titles[$_GET['section'] ?? 'dashboard'] ?? 'Administration';
