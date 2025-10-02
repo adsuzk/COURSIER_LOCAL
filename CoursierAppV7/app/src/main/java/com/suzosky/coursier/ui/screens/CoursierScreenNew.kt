@@ -69,9 +69,14 @@ fun CoursierScreenNew(
     
     // ⚠️ Liste locale mutable des commandes (pour pouvoir retirer les terminées)
     var localCommandes by remember { mutableStateOf(commandes) }
-    
+
+    // Jeux de statuts pour faciliter les vérifications (always lowercase)
+    val activeStatuses = remember { setOf("nouvelle", "attente", "acceptee", "en_cours", "recuperee", "en_livraison") }
+    val pendingStatuses = remember { setOf("nouvelle", "attente") }
+    val terminalStatuses = remember { setOf("livree", "terminee", "cash_recu", "cash_confirme", "cash_confirmee", "annulee", "refusee", "cancelled", "canceled") }
+
     // Compter uniquement les commandes en attente d'acceptation (nouvelles/attente)
-    var pendingOrdersCount by remember { mutableStateOf(localCommandes.count { it.statut == "nouvelle" || it.statut == "attente" }) }
+    var pendingOrdersCount by remember { mutableStateOf(localCommandes.count { it.statut.lowercase() in pendingStatuses }) }
     
     // Position du coursier (fournie par LocationForegroundService via MainActivity)
     val currentLocationFromService by com.suzosky.coursier.services.LocationForegroundService.currentLocation.collectAsState()
@@ -97,11 +102,8 @@ fun CoursierScreenNew(
     // ⚠️ UTILISER rememberSaveable pour survivre à la rotation d'écran
     
     // Sauvegarder l'ID de la commande active (String est Parcelable)
-    // ✅ FIX: Chercher TOUTES les commandes actives (nouvelle, attente, acceptee, en_cours, recuperee, en_livraison)
     var currentOrderId by rememberSaveable { mutableStateOf<String?>(
-        localCommandes.firstOrNull { 
-            it.statut in listOf("nouvelle", "attente", "acceptee", "en_cours", "recuperee", "en_livraison")
-        }?.id
+        localCommandes.firstOrNull { it.statut.lowercase() in activeStatuses }?.id
     ) }
     
     // Sauvegarder le deliveryStep (enum ordinal est sauvegardable)
@@ -120,45 +122,53 @@ fun CoursierScreenNew(
     
     // Synchroniser localCommandes avec commandes (quand de nouvelles arrivent)
     LaunchedEffect(commandes) {
-        // ⚠️ IMPORTANT: Ne jamais retirer currentOrder de localCommandes
-        // même si elle n'est plus dans la liste du serveur (elle a changé de statut)
-        
-        // 1. Garder currentOrder si elle existe
+        val previousList = localCommandes
+        val sanitizedApiCommands = commandes.filterNot { cmd ->
+            cmd.statut.lowercase() in terminalStatuses
+        }.toMutableList()
+
         val currentCmd = currentOrder
-        
-        // 2. Mettre à jour ou ajouter les commandes de l'API
-        val updatedCommands = commandes.toMutableList()
-        
-        // 3. Si currentOrder existe mais n'est PAS dans la nouvelle liste, la garder !
-        if (currentCmd != null && updatedCommands.none { it.id == currentCmd.id }) {
-            // La commande active n'est plus retournée par l'API (changement de statut)
-            // On la garde dans localCommandes pour ne pas perdre le contexte
-            updatedCommands.add(currentCmd)
-            android.util.Log.d("CoursierScreenNew", "⚠️ Commande active ${currentCmd.id} conservée (pas dans API response)")
-        }
-        
-        // 4. Ajouter les nouvelles commandes qui ne sont pas déjà dans localCommandes
-        val newCommands = updatedCommands.filter { cmd -> 
-            localCommandes.none { it.id == cmd.id }
-        }
-        
-        if (newCommands.isNotEmpty()) {
-            localCommandes = localCommandes + newCommands
-            android.util.Log.d("CoursierScreenNew", "📥 ${newCommands.size} nouvelles commandes ajoutées")
-        }
-        
-        // 5. Synchroniser currentOrder avec la version mise à jour dans localCommandes
-        currentOrder?.let { current ->
-            val updatedOrder = localCommandes.find { it.id == current.id }
-            if (updatedOrder != null && updatedOrder !== current) {
-                // La commande existe toujours mais a été mise à jour (changement de statut)
-                currentOrder = updatedOrder
-                currentOrderId = updatedOrder.id  // ⚠️ Sauvegarder l'ID pour la rotation
-                android.util.Log.d("CoursierScreenNew", "🔄 currentOrder synchronized: ${updatedOrder.id} (statut: ${updatedOrder.statut})")
+        if (currentCmd != null) {
+            val currentStatus = currentCmd.statut.lowercase()
+            when {
+                currentStatus in terminalStatuses -> {
+                    android.util.Log.d("CoursierScreenNew", "✅ Commande ${currentCmd.id} confirmée terminée (statut: ${currentCmd.statut}) - purge locale")
+                    currentOrder = null
+                    currentOrderId = null
+                    deliveryStep = DeliveryStep.PENDING
+                }
+                sanitizedApiCommands.none { it.id == currentCmd.id } -> {
+                    sanitizedApiCommands.add(currentCmd)
+                    android.util.Log.d("CoursierScreenNew", "⚠️ Commande active ${currentCmd.id} conservée (non retournée par l'API)")
+                }
             }
         }
-        
-        pendingOrdersCount = localCommandes.count { it.statut == "nouvelle" || it.statut == "attente" }
+
+        val mergedCommands = sanitizedApiCommands.distinctBy { it.id }
+
+        val newlyAdded = mergedCommands.filter { newCmd -> previousList.none { it.id == newCmd.id } }
+        if (newlyAdded.isNotEmpty()) {
+            android.util.Log.d("CoursierScreenNew", "📥 ${newlyAdded.size} nouvelles commandes ajoutées")
+            hasNewOrder = true
+        }
+
+        localCommandes = mergedCommands
+
+        if (currentOrder == null) {
+            val nextOrder = mergedCommands.firstOrNull { it.statut.lowercase() in activeStatuses }
+            if (nextOrder != null) {
+                currentOrder = nextOrder
+                currentOrderId = nextOrder.id
+                android.util.Log.d("CoursierScreenNew", "🎯 Attribution automatique commande ${nextOrder.id} (statut: ${nextOrder.statut})")
+                if (coursierId > 0) {
+                    ApiService.setActiveOrder(coursierId, nextOrder.id, active = true) { ok ->
+                        android.util.Log.d("CoursierScreenNew", "setActiveOrder(${nextOrder.id}) -> $ok")
+                    }
+                }
+            }
+        }
+
+        pendingOrdersCount = mergedCommands.count { it.statut.lowercase() in pendingStatuses }
     }
     
     // Détection de nouvelles commandes et déclenchement du son
