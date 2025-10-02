@@ -230,7 +230,7 @@ class MainActivity : ComponentActivity() {
             }
             
             // Configuration du BroadcastReceiver pour les nouvelles commandes
-            // setupCommandeReceiver() // TEMPORAIREMENT DÉSACTIVÉ
+            setupCommandeReceiver()
             
             // Démarrer le service de mise à jour automatique avec protection Android 14
             val canStartService = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
@@ -428,8 +428,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    /*
-    // Configuration du BroadcastReceiver pour les nouvelles commandes - TEMPORAIREMENT DÉSACTIVÉ
+    // Configuration du BroadcastReceiver pour les nouvelles commandes
     private fun setupCommandeReceiver() {
         commandeReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
@@ -472,7 +471,6 @@ class MainActivity : ComponentActivity() {
         println("✅ BroadcastReceiver configuré pour ACTION_REFRESH_DATA")
         Log.d("MainActivity", "✅ BroadcastReceiver configuré pour ACTION_REFRESH_DATA")
     }
-    */
 
     /*
     override fun onDestroy() {
