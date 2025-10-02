@@ -143,16 +143,27 @@ fun CoursierScreenNew(
     ) }
     
     // Synchroniser deliveryStep avec le statut de la commande actuelle
+    // ⚠️ FIX: Ne synchroniser que si le statut serveur est plus avancé que l'état local
     LaunchedEffect(currentOrder?.statut) {
         currentOrder?.let { order ->
-            deliveryStep = when (order.statut) {
+            val newStep = when (order.statut) {
                 "acceptee" -> DeliveryStep.ACCEPTED
                 "en_cours" -> DeliveryStep.PICKED_UP
                 "recuperee" -> DeliveryStep.PICKED_UP
                 "nouvelle", "attente" -> DeliveryStep.PENDING
                 else -> deliveryStep
             }
-            android.util.Log.d("CoursierScreenNew", "🔄 Synced deliveryStep to $deliveryStep for order ${order.id} (statut: ${order.statut})")
+            
+            // Ne mettre à jour QUE si on progresse (pas de retour en arrière)
+            val currentStepOrder = deliveryStep.ordinal
+            val newStepOrder = newStep.ordinal
+            
+            if (newStepOrder >= currentStepOrder) {
+                deliveryStep = newStep
+                android.util.Log.d("CoursierScreenNew", "🔄 Synced deliveryStep to $deliveryStep for order ${order.id} (statut: ${order.statut})")
+            } else {
+                android.util.Log.d("CoursierScreenNew", "⚠️ Prevented backward step sync: server=${order.statut} (step=$newStep) < local=$deliveryStep")
+            }
         }
     }
     
