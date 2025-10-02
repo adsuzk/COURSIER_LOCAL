@@ -15,7 +15,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.suzosky.coursier.data.models.Commande
 import com.suzosky.coursier.ui.components.SimpleMapView
 import com.suzosky.coursier.ui.components.MapNavigationCard
-import com.suzosky.coursier.ui.components.launchTurnByTurn
+// Import launchTurnByTurn SUPPRIMÉ - Navigation reste dans l'app
 import com.suzosky.coursier.ui.components.DeliveryTimeline
 import com.suzosky.coursier.ui.components.TimelineBanner
 import com.suzosky.coursier.ui.theme.*
@@ -372,15 +372,8 @@ fun CoursesScreen(
                                     android.util.Log.d("CoursesScreen", "coordonneesEnlevement: ${currentOrder?.coordonneesEnlevement}")
                                     
                                     currentOrder?.coordonneesEnlevement?.let { pickup ->
-                                        android.util.Log.d("CoursesScreen", "Lancement navigation vers: (${pickup.latitude}, ${pickup.longitude})")
-                                        val pickupLatLng = LatLng(pickup.latitude, pickup.longitude)
-                                        try {
-                                            launchTurnByTurn(context, pickupLatLng)
-                                            android.util.Log.d("CoursesScreen", "Navigation lancée avec succès")
-                                        } catch (e: Exception) {
-                                            android.util.Log.e("CoursesScreen", "Erreur lancement navigation: ${e.message}")
-                                            android.widget.Toast.makeText(context, "Erreur: ${e.message}", android.widget.Toast.LENGTH_LONG).show()
-                                        }
+                                        android.util.Log.d("CoursesScreen", "Navigation gérée par NavigationScreen dans l'app")
+                                        // La navigation est automatiquement affichée par NavigationScreen - pas de redirection externe
                                     } ?: run {
                                         android.util.Log.w("CoursesScreen", "Pas de coordonnées d'enlèvement!")
                                         android.widget.Toast.makeText(context, "Coordonnées d'enlèvement manquantes", android.widget.Toast.LENGTH_SHORT).show()
@@ -414,8 +407,8 @@ fun CoursesScreen(
                             Button(
                                 onClick = {
                                     currentOrder?.coordonneesLivraison?.let { delivery ->
-                                        val deliveryLatLng = LatLng(delivery.latitude, delivery.longitude)
-                                        launchTurnByTurn(context, deliveryLatLng)
+                                        android.util.Log.d("CoursesScreen", "Navigation gérée par NavigationScreen dans l'app")
+                                        // La navigation est automatiquement affichée par NavigationScreen - pas de redirection externe
                                     }
                                 },
                                 modifier = Modifier.fillMaxWidth(),

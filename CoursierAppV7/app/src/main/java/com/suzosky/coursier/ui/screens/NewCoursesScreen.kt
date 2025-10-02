@@ -519,13 +519,7 @@ private fun CurrentStepCard(
             // Étape actuelle
             val (title, description, actionText, nextStep) = when (step) {
                 CourseStep.GOING_TO_PICKUP -> {
-                    val destination = order.coordonneesEnlevement?.let { LatLng(it.latitude, it.longitude) }
-                    LaunchedEffect(Unit) {
-                        destination?.let { dest ->
-                            launchTurnByTurn(context, dest, "Récupération")
-                            onNavigationLaunched()
-                        }
-                    }
+                    // La navigation est gérée par NavigationScreen dans l'app - pas de redirection externe
                     Quadruple(
                         "Direction récupération",
                         "Rendez-vous à l'adresse de récupération",
@@ -540,13 +534,7 @@ private fun CurrentStepCard(
                     CourseStep.GOING_TO_DELIVERY
                 )
                 CourseStep.GOING_TO_DELIVERY -> {
-                    val destination = order.coordonneesLivraison?.let { LatLng(it.latitude, it.longitude) }
-                    LaunchedEffect(Unit) {
-                        destination?.let { dest ->
-                            launchTurnByTurn(context, dest, "Livraison")
-                            onNavigationLaunched()
-                        }
-                    }
+                    // La navigation est gérée par NavigationScreen dans l'app - pas de redirection externe
                     Quadruple(
                         "Direction livraison",
                         "Rendez-vous chez le client pour la livraison",
