@@ -124,7 +124,7 @@ try {
                     COALESCE(client_telephone, telephone_expediteur) as client_telephone,
                     COALESCE(adresse_depart, adresse_retrait) as adresse_enlevement,
                     COALESCE(adresse_arrivee, adresse_livraison) as adresse_livraison,
-                    COALESCE(prix_total, prix_estime, 0) as prix_livraison,
+                    CASE WHEN COALESCE(prix_total, 0) > 0 THEN prix_total ELSE COALESCE(prix_estime, 0) END as prix_livraison,
                     statut,
                     COALESCE(created_at, date_creation) as date_commande,
                     COALESCE(description_colis, description, '') as description,
