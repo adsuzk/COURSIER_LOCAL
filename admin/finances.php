@@ -824,10 +824,6 @@ $tarification = array_merge([
             <i class="fas fa-tachometer-alt"></i>
             <span>Tableau de bord</span>
         </a>
-        <a href="admin.php?section=finances&tab=comptabilite" class="tab-btn <?php echo $tab === 'comptabilite' ? 'active' : ''; ?>">
-            <i class="fas fa-file-invoice-dollar"></i>
-            <span>📊 Comptabilité</span>
-        </a>
         <a href="admin.php?section=finances&tab=coursiers" class="tab-btn <?php echo $tab === 'coursiers' ? 'active' : ''; ?>">
             <i class="fas fa-motorcycle"></i>
             <span>Comptes coursiers</span>
