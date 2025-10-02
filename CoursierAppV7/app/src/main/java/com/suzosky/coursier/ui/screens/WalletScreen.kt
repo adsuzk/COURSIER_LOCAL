@@ -444,7 +444,11 @@ fun WalletScreen(
                 }
 
                 Button(
-                    onClick = { showHistoryDialog = true },
+                    onClick = { 
+                        android.util.Log.d("WalletScreen", "🔵 CLICK sur bouton historique - commandes: ${historiqueCommandes.size}")
+                        showHistoryDialog = true
+                        android.util.Log.d("WalletScreen", "🔵 showHistoryDialog = $showHistoryDialog")
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = PrimaryGold.copy(alpha = 0.1f),
