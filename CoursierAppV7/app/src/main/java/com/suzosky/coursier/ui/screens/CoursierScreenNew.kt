@@ -172,7 +172,7 @@ fun CoursierScreenNew(
                     id = "1",
                     message = "Bonjour ! Comment puis-je vous aider aujourd'hui ?",
                     isFromCoursier = false,
-                    timestamp = Date(),
+                    timestamp = Date().time,
                     senderName = "Support Suzosky"
                 )
             )
