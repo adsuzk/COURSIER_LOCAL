@@ -36,6 +36,25 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+
+/**
+ * Crée un bitmap avec un emoji pour les marqueurs de carte
+ */
+fun createEmojiMarker(emoji: String, size: Int = 100): Bitmap {
+    val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+    val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        textSize = size * 0.7f
+        textAlign = Paint.Align.CENTER
+    }
+    val x = size / 2f
+    val y = size / 2f - (paint.descent() + paint.ascent()) / 2f
+    canvas.drawText(emoji, x, y, paint)
+    return bitmap
+}
 
 /**
  * Calcule la distance entre deux points GPS (en mètres)
