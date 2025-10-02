@@ -444,32 +444,6 @@ fun CoursierScreenNew(
                                     deliveryStep = DeliveryStep.ACCEPTED
                                     pendingOrdersCount = maxOf(0, pendingOrdersCount - 1)
                                     android.util.Log.d("CoursierScreenNew", "✅ Commande ${order.id} acceptée, deliveryStep=$deliveryStep")
-                                    
-                                    // ⚠️ NE PAS appeler onCommandeAccept() immédiatement !
-                                    // Attendre que setActiveOrder soit terminé pour éviter le race condition
-                                    // onCommandeAccept(order.id) sera appelé APRÈS setActiveOrder
-                                            onAction = {
-                                                bannerVersion++
-                                                // Retry accept
-                                                ApiService.respondToOrder(order.id, coursierId.toString(), "accept") { ok2, message2 ->
-                                                    if (!ok2) {
-                                                        timelineBanner = TimelineBanner(message2 ?: "Erreur d'acceptation", BannerSeverity.ERROR, "Réessayer") {
-                                                            bannerVersion++; /* re-click */
-                                                        }
-                                                    } else {
-                                                        timelineBanner = null
-                                                        deliveryStep = DeliveryStep.ACCEPTED
-                                                        pendingOrdersCount = maxOf(0, pendingOrdersCount - 1)
-                                                        onCommandeAccept(order.id)
-                                                    }
-                                                }
-                                            }
-                                        )
-                                        Toast.makeText(context, message ?: "Erreur d'acceptation", Toast.LENGTH_LONG).show()
-                                        return@respondToOrder
-                                    }
-                                    deliveryStep = DeliveryStep.ACCEPTED
-                                    pendingOrdersCount = maxOf(0, pendingOrdersCount - 1)
                                     onCommandeAccept(order.id)
                                     ApiService.setActiveOrder(coursierId, order.id, active = true) { activeOk ->
                                         if (!activeOk) {
