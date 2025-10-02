@@ -3,8 +3,16 @@ package com.suzosky.coursier.ui.screens
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.foundation.layou            listOf(
+                ChatMessage(
+                    id = "1",
+                    message = "Bonjour ! Comment puis-je vous aider aujourd'hui ?",
+                    isFromCoursier = false,
+                    timestamp = Date().time,
+                    senderName = "Support Suzosky"
+                )
+            )
+        )t androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -447,7 +455,7 @@ fun CoursierScreenNew(
                                 id = UUID.randomUUID().toString(),
                                 message = message,
                                 isFromCoursier = true,
-                                timestamp = Date(),
+                                timestamp = Date().time,
                                 senderName = coursierNom
                             )
                             chatMessages = chatMessages + newMessage
@@ -460,7 +468,7 @@ fun CoursierScreenNew(
                                     id = UUID.randomUUID().toString(),
                                     message = "Je suis là pour vous aider ! Que puis-je faire pour vous ?",
                                     isFromCoursier = false,
-                                    timestamp = Date(),
+                                    timestamp = Date().time,
                                     senderName = "Support Suzosky"
                                 )
                                 chatMessages = chatMessages + autoReply
