@@ -170,6 +170,13 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && (($_GET['section'] ?? ''
     exit;
 }
 
+// Traiter les exports de comptabilité AVANT tout rendu HTML
+if (($_GET['section'] ?? '') === 'comptabilite' && isset($_GET['export'])) {
+    define('ADMIN_CONTEXT', true);
+    require_once __DIR__ . '/comptabilite.php';
+    exit;
+}
+
 renderHeader();
 $section = $_GET['section'] ?? 'dashboard';
 switch ($section) {
