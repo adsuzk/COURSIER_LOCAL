@@ -23,6 +23,9 @@ import com.suzosky.coursier.MainActivity
 import com.suzosky.coursier.R
 import com.suzosky.coursier.network.ApiService
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import org.json.JSONObject
 import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.math.max
@@ -35,6 +38,7 @@ import kotlin.math.max
  *  - Queue + retry with exponential backoff for failed network posts
  *  - Simple batching of positions when offline or under poor network
  *  - Battery-aware frequency reduction
+ *  - StateFlow pour exposer la position en temps réel à l'UI
  */
 class LocationForegroundService : Service() {
     private val TAG = "LocationFGService"
@@ -43,6 +47,12 @@ class LocationForegroundService : Service() {
     private lateinit var locationRequest: LocationRequest
     private var locationCallback: LocationCallback? = null
     private var coursierId: Int = -1
+    
+    companion object {
+        // StateFlow pour exposer la position actuelle à l'UI
+        private val _currentLocation = MutableStateFlow<Location?>(null)
+        val currentLocation: StateFlow<Location?> = _currentLocation.asStateFlow()
+    }
 
     // Local in-memory queue for positions; persisted queue is left as future improvement
     private val sendQueue = ConcurrentLinkedQueue<JSONObject>()
@@ -108,7 +118,11 @@ class LocationForegroundService : Service() {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
                 val loc = result.lastLocation ?: return
-                Log.d(TAG, "Location update: ${'$'}{loc.latitude}, ${'$'}{loc.longitude} acc=${'$'}{loc.accuracy}")
+                Log.d(TAG, "📍 Location update: lat=${loc.latitude}, lng=${loc.longitude}, acc=${loc.accuracy}m")
+                
+                // ✅ Exposer la position via StateFlow pour l'UI
+                _currentLocation.value = loc
+                
                 if (coursierId > 0) {
                     enqueuePosition(coursierId, loc)
                 } else {
