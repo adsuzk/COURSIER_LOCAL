@@ -963,6 +963,8 @@ private fun CourseHistoryDialog(
     commandes: List<WalletHistoryItem>,
     onDismiss: () -> Unit
 ) {
+    android.util.Log.d("WalletScreen", "🟡 CourseHistoryDialog COMPOSE - commandes: ${commandes.size}")
+    
     var selectedFilter by remember { mutableStateOf<String?>(null) }
     
     // Filtrer les commandes selon le statut sélectionné
@@ -975,6 +977,8 @@ private fun CourseHistoryDialog(
     // Compter les commandes par statut pour afficher dans les chips
     val statusCounts = commandes.groupBy { it.statut }
         .mapValues { it.value.size }
+    
+    android.util.Log.d("WalletScreen", "🟡 Commandes filtrées: ${filteredCommandes.size}, statusCounts: $statusCounts")
     
     Dialog(onDismissRequest = onDismiss) {
         Card(
