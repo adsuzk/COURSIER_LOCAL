@@ -9,6 +9,13 @@ ini_set('display_errors', 1);
 
 require_once __DIR__ . '/config.php';
 
+// La variable PDO peut être $pdo ou $conn selon config.php
+if (isset($pdo)) {
+    $conn = $pdo;
+} elseif (!isset($conn)) {
+    die("❌ Erreur: Aucune connexion PDO disponible\n");
+}
+
 echo "🧪 TEST DU MODULE COMPTABILITÉ SUZOSKY\n";
 echo str_repeat("=", 60) . "\n\n";
 
