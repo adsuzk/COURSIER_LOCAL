@@ -1400,6 +1400,9 @@ function renderHeader() {
                     <a href="admin.php?section=finances_audit" class="menu-item <?php echo ($_GET['section'] ?? '') === 'finances_audit' ? 'active' : ''; ?>">
                         <i class="fas fa-search-dollar"></i><span>Audit livraisons</span>
                     </a>
+                    <a href="admin.php?section=comptabilite" class="menu-item <?php echo ($_GET['section'] ?? '') === 'comptabilite' ? 'active' : ''; ?>">
+                        <i class="fas fa-file-invoice-dollar"></i><span>Comptabilité</span>
+                    </a>
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">Communications</div>
