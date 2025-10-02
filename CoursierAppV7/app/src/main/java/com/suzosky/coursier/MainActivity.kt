@@ -879,8 +879,13 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                             
                             Log.d("MainActivity", "📊 Polling: ${nbCommandesRecues} commandes (avant: ${nbCommandesActuelles})")
                             
-                            // 🩺 Mettre à jour le timestamp de dernière sync réussie
-                            activity?.lastSyncTimestamp = System.currentTimeMillis()
+                            // 🩺 Mettre à jour le timestamp de dernière sync réussie - FIX: accès direct
+                            if (activity != null) {
+                                activity.lastSyncTimestamp = System.currentTimeMillis()
+                                Log.d("MainActivity", "✅ Sync timestamp mis à jour")
+                            } else {
+                                Log.w("MainActivity", "⚠️ activity NULL - impossible de mettre à jour lastSyncTimestamp")
+                            }
                             
                             // Si le nombre de commandes a changé, déclencher un refresh complet
                             if (nbCommandesRecues > nbCommandesActuelles) {
