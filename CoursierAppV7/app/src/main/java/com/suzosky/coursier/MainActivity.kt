@@ -85,8 +85,8 @@ class MainActivity : ComponentActivity() {
     // BroadcastReceiver pour les nouvelles commandes
     // private var commandeReceiver: BroadcastReceiver? = null // TEMPORAIREMENT DÉSACTIVÉ
     
-    // 🩺 Variables de monitoring système - initialisées correctement
-    internal var lastSyncTimestamp = System.currentTimeMillis() // ✅ Initialisé à MAINTENANT au lieu de 1970
+    // 🩺 Variables de monitoring système - initialisées à 0 pour forcer la première sync
+    internal var lastSyncTimestamp = 0L
     internal var lastDatabaseCheck = false
     internal var lastFcmTokenCheck = false
     internal var lastSyncCheck = false
@@ -876,17 +876,12 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                             val commandesData = data["commandes"] as? List<Map<String, Any>> ?: emptyList()
                             val nbCommandesRecues = commandesData.size
                             val nbCommandesActuelles = commandesReelles.size
-
+                            
                             Log.d("MainActivity", "📊 Polling: ${nbCommandesRecues} commandes (avant: ${nbCommandesActuelles})")
-
+                            
                             // 🩺 Mettre à jour le timestamp de dernière sync réussie
                             activity?.lastSyncTimestamp = System.currentTimeMillis()
-                            if (activity != null) {
-                                Log.d("MainActivity", "🩺 lastSyncTimestamp mis à jour: ${activity.lastSyncTimestamp}")
-                            } else {
-                                Log.w("MainActivity", "⚠️ activity est NULL - lastSyncTimestamp NON mis à jour!")
-                            }
-
+                            
                             // Si le nombre de commandes a changé, déclencher un refresh complet
                             if (nbCommandesRecues > nbCommandesActuelles) {
                                 Log.d("MainActivity", "🆕 NOUVELLE COMMANDE DÉTECTÉE ! Refresh automatique...")
