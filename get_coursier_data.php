@@ -139,6 +139,9 @@ try {
             $stmt->execute($params);
             $commandes = $stmt->fetchAll(PDO::FETCH_ASSOC);
             error_log("DEBUG get_coursier_data: Found " . count($commandes) . " commandes for coursier_id=$coursierId");
+            if (count($commandes) > 0) {
+                error_log("DEBUG get_coursier_data: First commande prix_livraison = " . ($commandes[0]['prix_livraison'] ?? 'NULL'));
+            }
         } catch (Throwable $e) {
             error_log("ERROR get_coursier_data commandes: " . $e->getMessage());
             $commandes = [];
