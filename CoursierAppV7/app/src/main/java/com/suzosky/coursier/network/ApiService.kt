@@ -1142,7 +1142,7 @@ object ApiService {
     fun startDelivery(commandeId: Int, coursierId: Int, callback: (Boolean, String?) -> Unit) {
         executeWithFallback(
             buildRequest = { base ->
-                val url = buildApi(base, "mobile_sync_api.php") +
+                val url = "$base/mobile_sync_api.php" +
                         "?action=start_delivery&coursier_id=$coursierId&commande_id=$commandeId"
                 Request.Builder().url(url).post("".toRequestBody()).build()
             },
@@ -1173,7 +1173,7 @@ object ApiService {
     fun pickupPackage(commandeId: Int, coursierId: Int, callback: (Boolean, String?) -> Unit) {
         executeWithFallback(
             buildRequest = { base ->
-                val url = buildApi(base, "mobile_sync_api.php") +
+                val url = "$base/mobile_sync_api.php" +
                         "?action=pickup_package&coursier_id=$coursierId&commande_id=$commandeId"
                 Request.Builder().url(url).post("".toRequestBody()).build()
             },
@@ -1204,7 +1204,7 @@ object ApiService {
     fun markDelivered(commandeId: Int, coursierId: Int, callback: (Boolean, String?) -> Unit) {
         executeWithFallback(
             buildRequest = { base ->
-                val url = buildApi(base, "mobile_sync_api.php") +
+                val url = "$base/mobile_sync_api.php" +
                         "?action=mark_delivered&coursier_id=$coursierId&commande_id=$commandeId"
                 Request.Builder().url(url).post("".toRequestBody()).build()
             },
@@ -1235,7 +1235,7 @@ object ApiService {
     fun confirmCashReceived(commandeId: Int, coursierId: Int, callback: (Boolean, String?) -> Unit) {
         executeWithFallback(
             buildRequest = { base ->
-                val url = buildApi(base, "mobile_sync_api.php") +
+                val url = "$base/mobile_sync_api.php" +
                         "?action=confirm_cash_received&coursier_id=$coursierId&commande_id=$commandeId"
                 Request.Builder().url(url).post("".toRequestBody()).build()
             },
