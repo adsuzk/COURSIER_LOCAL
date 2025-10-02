@@ -15,6 +15,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.suzosky.coursier.data.models.HealthStatus
 import com.suzosky.coursier.data.models.SystemHealth
+import com.suzosky.coursier.ui.theme.PrimaryGreen
+import com.suzosky.coursier.ui.theme.WarningYellow
+import com.suzosky.coursier.ui.theme.ErrorRed
 
 @Composable
 fun WaitingForOrdersScreen(
@@ -36,9 +39,9 @@ fun WaitingForOrdersScreen(
     
     // Couleur du voyant selon statut
     val (voyantColor, statusText, statusIcon) = when (systemHealth.status) {
-        HealthStatus.HEALTHY -> Triple(Color(0xFF4CAF50), "Système opérationnel", "✅")
-        HealthStatus.WARNING -> Triple(Color(0xFFFF9800), "Attention requise", "⚠️")
-        HealthStatus.CRITICAL -> Triple(Color(0xFFF44336), "Problème détecté", "❌")
+        HealthStatus.HEALTHY -> Triple(PrimaryGreen, "Système opérationnel", "✅")
+        HealthStatus.WARNING -> Triple(WarningYellow, "Attention requise", "⚠️")
+        HealthStatus.CRITICAL -> Triple(ErrorRed, "Problème détecté", "❌")
     }
     
     Column(
@@ -194,7 +197,7 @@ private fun HealthRow(label: String, isOk: Boolean) {
             modifier = Modifier
                 .size(16.dp)
                 .background(
-                    color = if (isOk) Color(0xFF4CAF50) else Color(0xFFF44336),
+                    color = if (isOk) PrimaryGreen else ErrorRed,
                     shape = CircleShape
                 )
         )
