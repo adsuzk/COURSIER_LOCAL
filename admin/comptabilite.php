@@ -52,7 +52,7 @@ function getComptabiliteData($pdo, $dateDebut, $dateFin) {
             AVG(prix) as prix_moyen
         FROM commandes 
         WHERE statut = 'livree' 
-        AND date_creation BETWEEN ? AND ?
+        AND created_at BETWEEN ? AND ?
     ");
     $stmt->execute([$dateDebut . ' 00:00:00', $dateFin . ' 23:59:59']);
     $caData = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -67,28 +67,28 @@ function getComptabiliteData($pdo, $dateDebut, $dateFin) {
         SELECT 
             c.id,
             c.prix,
-            c.date_creation,
+            c.created_at,
             c.coursier_id,
             c.adresse_enlevement,
             c.adresse_livraison,
             
             -- Récupérer les taux applicables au moment de la commande
             (SELECT taux_commission FROM config_tarification 
-             WHERE date_application <= c.date_creation 
+             WHERE date_application <= c.created_at 
              ORDER BY date_application DESC LIMIT 1) as taux_commission_suzosky,
             
             (SELECT frais_plateforme FROM config_tarification 
-             WHERE date_application <= c.date_creation 
+             WHERE date_application <= c.created_at 
              ORDER BY date_application DESC LIMIT 1) as frais_plateforme,
             
             (SELECT frais_publicitaires FROM config_tarification 
-             WHERE date_application <= c.date_creation 
+             WHERE date_application <= c.created_at 
              ORDER BY date_application DESC LIMIT 1) as frais_publicitaires
             
         FROM commandes c
         WHERE c.statut = 'livree'
-        AND c.date_creation BETWEEN ? AND ?
-        ORDER BY c.date_creation DESC
+        AND c.created_at BETWEEN ? AND ?
+        ORDER BY c.created_at DESC
     ");
     $stmt->execute([$dateDebut . ' 00:00:00', $dateFin . ' 23:59:59']);
     $commandes = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -138,7 +138,7 @@ function getComptabiliteData($pdo, $dateDebut, $dateFin) {
         FROM commandes c
         JOIN agents_suzosky a ON a.id = c.coursier_id
         WHERE c.statut = 'livree'
-        AND c.date_creation BETWEEN ? AND ?
+        AND c.created_at BETWEEN ? AND ?
         GROUP BY c.coursier_id
         ORDER BY ca_coursier DESC
     ");
@@ -148,13 +148,13 @@ function getComptabiliteData($pdo, $dateDebut, $dateFin) {
     // 6. ÉVOLUTION TEMPORELLE (par jour)
     $stmt = $pdo->prepare("
         SELECT 
-            DATE(date_creation) as date,
+            DATE(created_at) as date,
             COUNT(*) as nb_livraisons,
             SUM(prix) as ca_journalier
         FROM commandes
         WHERE statut = 'livree'
-        AND date_creation BETWEEN ? AND ?
-        GROUP BY DATE(date_creation)
+        AND created_at BETWEEN ? AND ?
+        GROUP BY DATE(created_at)
         ORDER BY date ASC
     ");
     $stmt->execute([$dateDebut . ' 00:00:00', $dateFin . ' 23:59:59']);
