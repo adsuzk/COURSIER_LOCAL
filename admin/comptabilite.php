@@ -69,7 +69,7 @@ function getComptabiliteData($pdo, $dateDebut, $dateFin) {
             c.prix_total,
             c.created_at,
             c.coursier_id,
-            c.adresse_enlevement,
+            c.adresse_retrait,
             c.adresse_livraison,
             
             -- Récupérer les taux applicables au moment de la commande
