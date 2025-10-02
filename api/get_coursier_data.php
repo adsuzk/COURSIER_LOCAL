@@ -2,9 +2,13 @@
 // api/get_coursier_data.php - Récupérer les vraies données du coursier
 require_once __DIR__ . '/../config.php';
 
-header('Content-Type: application/json; charset=utf-8');
-
-try {
+header('Content-Type: application/json; charset=utf-8');                      COALESCE(longitude_depart, longitude_retrait) as longitude_enlevement,
+                      COALESCE(latitude_arrivee, latitude_livraison) as latitude_livraison,
+                      COALESCE(longitude_arrivee, longitude_livraison) as longitude_livraison,
+                      CASE WHEN COALESCE(prix_total, 0) > 0 THEN prix_total ELSE COALESCE(prix_estime, 0) END as prix_livraison,
+                      COALESCE(mode_paiement, 'especes') as mode_paiement,
+                      statut,
+                      created_at as date_commande,{
     // Gestion des données POST JSON et form-data
     $coursierId = 0;
     
