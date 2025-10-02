@@ -988,6 +988,7 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                             coursierTelephone = coursierTelephone,
                             coursierEmail = coursierEmail,
                             dateInscription = dateInscription,
+                            coursierMatricule = coursierMatricule,
                             commandes = commandesReelles, // VRAIES commandes de l'API
                             balance = soldeReel.toInt(), // VRAI solde de l'API
                             gainsDuJour = gainsDuJour.toInt(), // VRAIS gains de l'API
@@ -1017,6 +1018,80 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                 }
                             },
                             onCommandeAttente = { /* TODO: Waiting logic */ },
+                            onStartDelivery = { commandeId ->
+                                val commande = commandesReelles.find { it.id == commandeId }
+                                
+                                // 🔊 Annonce vocale
+                                if (commande != null) {
+                                    activity?.voiceGuidance?.announceDeliveryStarted(commande.adresseLivraison)
+                                }
+                                
+                                ApiService.startDelivery(commandeId.toIntOrNull() ?: 0, coursierId) { success, message ->
+                                    if (success) {
+                                        // 🗺️ Lancer Google Maps vers destination
+                                        if (commande != null) {
+                                            val depart = commande.adresseEnlevement
+                                            val arrivee = commande.adresseLivraison
+                                            if (depart.isNotBlank() && arrivee.isNotBlank()) {
+                                                activity?.launchGoogleMaps(depart, arrivee)
+                                            }
+                                        }
+                                        // Déclencher un rechargement des commandes
+                                        shouldRefreshCommandes = true
+                                    }
+                                }
+                            },
+                            onPickupPackage = { commandeId ->
+                                val commande = commandesReelles.find { it.id == commandeId }
+                                
+                                // 🔊 Annonce vocale
+                                if (commande != null) {
+                                    activity?.voiceGuidance?.announcePackagePickedUp(commande.adresseLivraison)
+                                }
+                                
+                                ApiService.pickupPackage(commandeId.toIntOrNull() ?: 0, coursierId) { success, message ->
+                                    if (success) {
+                                        // Déclencher un rechargement des commandes
+                                        shouldRefreshCommandes = true
+                                    }
+                                }
+                            },
+                            onMarkDelivered = { commandeId ->
+                                // 🔊 Annonce vocale
+                                activity?.voiceGuidance?.announceDeliveryCompleted()
+                                
+                                ApiService.markDelivered(commandeId.toIntOrNull() ?: 0, coursierId) { success, message ->
+                                    if (success) {
+                                        // Déclencher un rechargement des commandes
+                                        shouldRefreshCommandes = true
+                                    }
+                                }
+                            },
+                            onConfirmCash = { commandeId ->
+                                Log.d("MainActivity", "🔴🔴🔴 onConfirmCash CALLBACK REÇU! commandeId=$commandeId")
+                                val commande = commandesReelles.find { it.id == commandeId }
+                                Log.d("MainActivity", "🔍 Commande trouvée: ${commande?.id}, prix: ${commande?.prixTotal}")
+                                
+                                // 🔊 Annonce vocale
+                                if (commande != null) {
+                                    activity?.voiceGuidance?.announceCashReceived(commande.prixTotal)
+                                }
+                                
+                                val commandeIdInt = commandeId.toIntOrNull() ?: 0
+                                Log.d("MainActivity", "📡 APPEL API confirmCashReceived - commandeId=$commandeIdInt, coursierId=$coursierId")
+                                
+                                ApiService.confirmCashReceived(commandeIdInt, coursierId) { success, message ->
+                                    Log.d("MainActivity", "📥 RÉPONSE API confirmCashReceived - success=$success, message=$message")
+                                    if (success) {
+                                        Log.d("MainActivity", "✅ Cash confirmé - Refresh IMMEDIAT des commandes (refreshTrigger avant: $refreshTrigger)")
+                                        // REFRESH IMMEDIAT après cash confirmé
+                                        refreshTrigger++
+                                        Log.d("MainActivity", "✅ refreshTrigger INCRÉMENTÉ à: $refreshTrigger")
+                                    } else {
+                                        Log.e("MainActivity", "❌ ERREUR confirmCashReceived: $message")
+                                    }
+                                }
+                            },
                             onNavigateToProfile = { /* TODO: Navigation */ },
                             onNavigateToHistorique = { /* TODO: Navigation */ },
                             onNavigateToGains = { /* TODO: Navigation */ },
@@ -1043,6 +1118,12 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                 } else {
                                     // TODO: Show Compose snackbar for invalid amount
                                 }
+                            },
+                            // Paramètres pour le rafraîchissement automatique des commandes
+                            shouldRefreshCommandes = shouldRefreshCommandes,
+                            onCommandesRefreshed = {
+                                shouldRefreshCommandes = false
+                                newOrderId = null
                             }
                         )
                         if (isInitiatingPayment) {

@@ -1,60 +1,16 @@
 <?php
 // API pour accepter ou refuser une commande (coursier mobile)
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST');
+header('Access-Control-Allow-Headers: Content-Type');
 
-// IMPORTANT: Capture toutes les sorties avant d'envoyer les headers
-ob_start();
-
-// Désactiver l'affichage des erreurs HTML
-ini_set('display_errors', '0');
-error_reporting(E_ALL);
-
-// Fonction pour envoyer une réponse JSON propre
-function sendJsonResponse($data, $code = 200) {
-    // Nettoyer tout ce qui a pu être affiché avant
-    if (ob_get_level()) ob_clean();
-    
-    http_response_code($code);
-    header('Content-Type: application/json');
-    header('Access-Control-Allow-Origin: *');
-    header('Access-Control-Allow-Methods: POST');
-    header('Access-Control-Allow-Headers: Content-Type');
-    
-    echo json_encode($data);
-    exit;
-}
-
-// Gestionnaire d'erreurs global
-set_error_handler(function($errno, $errstr, $errfile, $errline) {
-    sendJsonResponse([
-        'success' => false,
-        'error' => "Erreur PHP: $errstr",
-        'file' => basename($errfile),
-        'line' => $errline
-    ], 500);
-});
-
-// Gestionnaire d'exceptions global
-set_exception_handler(function($exception) {
-    sendJsonResponse([
-        'success' => false,
-        'error' => 'Exception: ' . $exception->getMessage(),
-        'file' => basename($exception->getFile()),
-        'line' => $exception->getLine()
-    ], 500);
-});
-
-// Capture toutes les erreurs pour retourner du JSON au lieu de HTML
-try {
-    require_once '../config.php';
-} catch (Exception $e) {
-    sendJsonResponse([
-        'success' => false, 
-        'error' => 'Erreur de configuration: ' . $e->getMessage()
-    ], 500);
-}
+require_once '../config.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    sendJsonResponse(['success' => false, 'error' => 'Méthode non autorisée'], 405);
+    http_response_code(405);
+    echo json_encode(['success' => false, 'error' => 'Méthode non autorisée']);
+    exit;
 }
 
 $input = json_decode(file_get_contents('php://input'), true);
@@ -65,30 +21,25 @@ $coursier_id = $input['coursier_id'] ?? null;
 $action = $input['action'] ?? null; // 'accept' ou 'refuse'
 
 if (!$order_id || !$coursier_id || !$action) {
-    sendJsonResponse([
+    http_response_code(400);
+    echo json_encode([
         'success' => false, 
         'error' => 'Paramètres manquants: order_id, coursier_id, action requis'
-    ], 400);
+    ]);
+    exit;
 }
 
 if (!in_array($action, ['accept', 'refuse'])) {
-    sendJsonResponse([
+    http_response_code(400);
+    echo json_encode([
         'success' => false, 
         'error' => 'Action invalide. Utilisez "accept" ou "refuse"'
-    ], 400);
+    ]);
+    exit;
 }
 
 try {
-    // Tenter de se connecter à la base de données
-    try {
-        $pdo = getDBConnection();
-    } catch (Exception $dbException) {
-        sendJsonResponse([
-            'success' => false, 
-            'error' => 'Erreur de connexion à la base de données',
-            'details' => $dbException->getMessage()
-        ], 503);
-    }
+    $pdo = getDBConnection();
     
     // Vérifier que la commande existe et est bien assignée au coursier
     $stmt = $pdo->prepare('SELECT * FROM commandes WHERE id = ? AND coursier_id = ?');
@@ -96,10 +47,12 @@ try {
     $commande = $stmt->fetch(PDO::FETCH_ASSOC);
     
     if (!$commande) {
-        sendJsonResponse([
+        http_response_code(404);
+        echo json_encode([
             'success' => false, 
             'error' => 'Commande non trouvée ou non assignée à ce coursier'
-        ], 404);
+        ]);
+        exit;
     }
     
     if ($action === 'accept') {
@@ -137,12 +90,13 @@ try {
     // Logger l'action
     error_log("Coursier $coursier_id a " . ($action === 'accept' ? 'accepté' : 'refusé') . " la commande $order_id");
     
-    sendJsonResponse($response, 200);
+    echo json_encode($response);
     
 } catch (Exception $e) {
-    sendJsonResponse([
+    http_response_code(500);
+    echo json_encode([
         'success' => false,
         'error' => 'Erreur serveur: ' . $e->getMessage()
-    ], 500);
+    ]);
 }
 ?>

@@ -44,29 +44,23 @@ class LocationService @Inject constructor(
      * Obtient la position actuelle du coursier
      */
     suspend fun getCurrentLocation(): Location? {
-        android.util.Log.d("LocationService", "📍 getCurrentLocation called")
         if (ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            android.util.Log.w("LocationService", "⚠️ Location permission not granted")
             return null
         }
         return try {
-            android.util.Log.d("LocationService", "🔍 Requesting high-accuracy location...")
             // One-shot high-accuracy location request
             val cts = com.google.android.gms.tasks.CancellationTokenSource()
-            val location = Tasks.await(
+            Tasks.await(
                 fusedLocationClient.getCurrentLocation(
                     Priority.PRIORITY_HIGH_ACCURACY,
                     cts.token
                 )
             )
-            android.util.Log.d("LocationService", "✅ Location obtained: $location")
-            location
         } catch (e: Exception) {
-            android.util.Log.e("LocationService", "❌ Error getting location: ${e.message}", e)
             null
         }
     }
