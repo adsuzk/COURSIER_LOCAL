@@ -138,7 +138,9 @@ try {
             $params = array_merge([$coursierId], $activeStatuses);
             $stmt->execute($params);
             $commandes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            error_log("DEBUG get_coursier_data: Found " . count($commandes) . " commandes for coursier_id=$coursierId");
         } catch (Throwable $e) {
+            error_log("ERROR get_coursier_data commandes: " . $e->getMessage());
             $commandes = [];
         }
     
