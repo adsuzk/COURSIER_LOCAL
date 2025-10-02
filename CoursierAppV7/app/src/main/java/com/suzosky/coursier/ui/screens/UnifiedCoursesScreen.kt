@@ -2,6 +2,7 @@ package com.suzosky.coursier.ui.screens
 
 import android.content.Context
 import android.location.Location
+import android.speech.tts.TextToSpeech
 import android.widget.Toast
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
@@ -28,6 +29,11 @@ import com.google.android.gms.maps.model.*
 import com.google.maps.android.compose.*
 import com.suzosky.coursier.data.models.Commande
 import com.suzosky.coursier.ui.theme.*
+import java.util.Locale
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 /**
  * Écran Mes Courses UNIFIÉ - Navigation + Actions + Infos
