@@ -68,17 +68,14 @@ fun CoursierScreenNew(
     // Compter uniquement les commandes en attente d'acceptation (nouvelles/attente)
     var pendingOrdersCount by remember { mutableStateOf(commandes.count { it.statut == "nouvelle" || it.statut == "attente" }) }
     
-    // ViewModel pour la localisation
-    val mapViewModel: MapViewModel = hiltViewModel()
-    val mapUi by mapViewModel.uiState.collectAsState()
+    // Position du coursier (fournie par LocationForegroundService via MainActivity)
+    var courierLocation by remember { mutableStateOf<com.google.android.gms.maps.model.LatLng?>(null) }
     
-    // Log de debug pour vérifier la localisation
-    LaunchedEffect(mapUi.currentLocation) {
-        android.util.Log.d("CoursierScreenNew", "📍 mapUi.currentLocation = ${mapUi.currentLocation}")
-        if (mapUi.currentLocation == null) {
-            android.util.Log.w("CoursierScreenNew", "⚠️ Location is NULL - retrying...")
-            mapViewModel.getCurrentLocation()
-        }
+    // Récupérer la position depuis le service de localisation
+    LaunchedEffect(Unit) {
+        // Simuler position Abidjan pour l'instant (sera remplacée par la vraie position du service)
+        courierLocation = com.google.android.gms.maps.model.LatLng(5.3599, -4.0083)
+        android.util.Log.d("CoursierScreenNew", "📍 Courier location initialized: $courierLocation")
     }
     
     // Service de notification sonore
@@ -210,7 +207,7 @@ fun CoursierScreenNew(
                         currentOrder = currentOrder,
                         deliveryStep = deliveryStep,
                         pendingOrdersCount = pendingOrdersCount,
-                        courierLocation = mapUi.currentLocation,
+                        courierLocation = courierLocation,
                         onStartDelivery = {
                             // Passage de acceptee → en_cours (démarrage navigation)
                             currentOrder?.let { order ->

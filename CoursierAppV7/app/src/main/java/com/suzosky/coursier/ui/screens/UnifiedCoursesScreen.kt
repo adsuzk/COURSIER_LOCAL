@@ -117,30 +117,31 @@ fun UnifiedCoursesScreen(
                     compassEnabled = true
                 )
             ) {
-                // Marqueur coursier
+                // 🚴 Marqueur coursier (VOUS) - Bleu cyan
                 courierLocation?.let {
                     Marker(
                         state = MarkerState(position = it),
-                        title = "Vous êtes ici",
-                        icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)
+                        title = "🚴 Vous (Livreur)",
+                        snippet = "Position actuelle",
+                        icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)
                     )
                 }
                 
-                // Marqueur pickup
+                // 📦 Marqueur pickup (ENLÈVEMENT) - Orange
                 pickupLatLng?.let {
                     Marker(
                         state = MarkerState(position = it),
-                        title = "📦 Récupération",
+                        title = "📦 Point d'enlèvement",
                         snippet = currentOrder.adresseEnlevement,
-                        icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
+                        icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)
                     )
                 }
                 
-                // Marqueur delivery
+                // 🎯 Marqueur delivery (LIVRAISON) - Vert
                 deliveryLatLng?.let {
                     Marker(
                         state = MarkerState(position = it),
-                        title = "🎯 Livraison",
+                        title = "🎯 Point de livraison",
                         snippet = currentOrder.adresseLivraison,
                         icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
                     )
