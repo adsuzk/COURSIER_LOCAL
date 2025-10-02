@@ -188,24 +188,19 @@ fun CoursierScreenNew(
                                     notificationService.playActionSound()
                                     hasNewOrder = false
                                 }
-                                // Empêcher les doubles acceptations
-                                val cmdId = order.id.toIntOrNull() ?: 0
-                                if (cmdId <= 0 || coursierId <= 0) {
-                                    Toast.makeText(context, "Commande/coursier invalide", Toast.LENGTH_SHORT).show()
-                                    return@let
-                                }
-                                ApiService.assignWithLock(cmdId, coursierId, action = "accept", ttlSeconds = 60) { ok, err ->
+                                // Accepter la commande via API
+                                ApiService.respondToOrder(order.id, coursierId.toString(), "accept") { ok, message ->
                                     if (!ok) {
                                         timelineBanner = TimelineBanner(
-                                            message = err ?: "Commande déjà acceptée",
+                                            message = message ?: "Erreur lors de l'acceptation",
                                             severity = BannerSeverity.ERROR,
                                             actionLabel = "Réessayer",
                                             onAction = {
                                                 bannerVersion++
-                                                // Retry accept lock
-                                                ApiService.assignWithLock(cmdId, coursierId, action = "accept", ttlSeconds = 60) { ok2, err2 ->
+                                                // Retry accept
+                                                ApiService.respondToOrder(order.id, coursierId.toString(), "accept") { ok2, message2 ->
                                                     if (!ok2) {
-                                                        timelineBanner = TimelineBanner(err2 ?: "Commande déjà acceptée", BannerSeverity.ERROR, "Réessayer") {
+                                                        timelineBanner = TimelineBanner(message2 ?: "Erreur d'acceptation", BannerSeverity.ERROR, "Réessayer") {
                                                             bannerVersion++; /* re-click */
                                                         }
                                                     } else {
@@ -217,8 +212,8 @@ fun CoursierScreenNew(
                                                 }
                                             }
                                         )
-                                        Toast.makeText(context, err ?: "Commande déjà acceptée", Toast.LENGTH_LONG).show()
-                                        return@assignWithLock
+                                        Toast.makeText(context, message ?: "Erreur d'acceptation", Toast.LENGTH_LONG).show()
+                                        return@respondToOrder
                                     }
                                     deliveryStep = DeliveryStep.ACCEPTED
                                     pendingOrdersCount = maxOf(0, pendingOrdersCount - 1)
