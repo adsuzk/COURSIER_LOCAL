@@ -988,7 +988,6 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                             coursierTelephone = coursierTelephone,
                             coursierEmail = coursierEmail,
                             dateInscription = dateInscription,
-                            coursierMatricule = coursierMatricule,
                             commandes = commandesReelles, // VRAIES commandes de l'API
                             balance = soldeReel.toInt(), // VRAI solde de l'API
                             gainsDuJour = gainsDuJour.toInt(), // VRAIS gains de l'API
