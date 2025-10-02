@@ -263,6 +263,73 @@ fun CoursierScreenNew(
                                 }
                             }
                         },
+                        onMarkDelivered = {
+                            // Marquer comme livrée (recuperee → livree)
+                            currentOrder?.let { order ->
+                                if (order.methodePaiement.equals("especes", ignoreCase = true)) {
+                                    // Si paiement espèces, on passe par DELIVERED puis on affiche le dialogue cash
+                                    deliveryStep = DeliveryStep.DELIVERED
+                                    showCashDialog = true
+                                } else {
+                                    // Sinon, on marque directement comme livrée
+                                    deliveryStep = DeliveryStep.CASH_CONFIRMED
+                                    val serverStatus = DeliveryStatusMapper.mapStepToServerStatus(DeliveryStep.DELIVERED)
+                                    ApiService.updateOrderStatus(order.id, serverStatus) { success ->
+                                        if (success) {
+                                            timelineBanner = null
+                                            Toast.makeText(context, "✅ Livraison terminée avec succès !", Toast.LENGTH_SHORT).show()
+                                            resetToNextOrder()
+                                        } else {
+                                            timelineBanner = TimelineBanner(
+                                                message = "Statut 'Livrée' non synchronisé.",
+                                                severity = BannerSeverity.ERROR,
+                                                actionLabel = "Réessayer",
+                                                onAction = {
+                                                    bannerVersion++
+                                                    ApiService.updateOrderStatus(order.id, serverStatus) { ok2 ->
+                                                        if (ok2) {
+                                                            timelineBanner = null
+                                                            resetToNextOrder()
+                                                        }
+                                                    }
+                                                }
+                                            )
+                                            Toast.makeText(context, "Erreur synchronisation serveur", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        onConfirmCash = {
+                            // Confirmation du paiement espèces après dialogue
+                            currentOrder?.let { order ->
+                                deliveryStep = DeliveryStep.CASH_CONFIRMED
+                                val serverStatus = DeliveryStatusMapper.mapStepToServerStatus(DeliveryStep.DELIVERED)
+                                ApiService.updateOrderStatus(order.id, serverStatus) { success ->
+                                    if (success) {
+                                        timelineBanner = null
+                                        Toast.makeText(context, "✅ Paiement espèces confirmé !", Toast.LENGTH_SHORT).show()
+                                        resetToNextOrder()
+                                    } else {
+                                        timelineBanner = TimelineBanner(
+                                            message = "Statut 'Livrée' non synchronisé.",
+                                            severity = BannerSeverity.ERROR,
+                                            actionLabel = "Réessayer",
+                                            onAction = {
+                                                bannerVersion++
+                                                ApiService.updateOrderStatus(order.id, serverStatus) { ok2 ->
+                                                    if (ok2) {
+                                                        timelineBanner = null
+                                                        resetToNextOrder()
+                                                    }
+                                                }
+                                            }
+                                        )
+                                        Toast.makeText(context, "Erreur synchronisation serveur", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }
+                        },
                         onAcceptOrder = {
                             currentOrder?.let { order ->
                                 if (hasNewOrder) {
