@@ -83,7 +83,7 @@ class MainActivity : ComponentActivity() {
     internal var voiceGuidance: VoiceGuidanceService? = null
     
     // BroadcastReceiver pour les nouvelles commandes
-    // private var commandeReceiver: BroadcastReceiver? = null // TEMPORAIREMENT DÉSACTIVÉ
+    private var commandeReceiver: BroadcastReceiver? = null
     
     // 🩺 Variables de monitoring système - initialisées à 0 pour forcer la première sync
     internal var lastSyncTimestamp = 0L
