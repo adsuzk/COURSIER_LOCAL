@@ -133,6 +133,7 @@ fun CoursierScreenNew(
             if (updatedOrder != null && updatedOrder !== current) {
                 // La commande existe toujours mais a été mise à jour (changement de statut)
                 currentOrder = updatedOrder
+                currentOrderId = updatedOrder.id  // ⚠️ Sauvegarder l'ID pour la rotation
                 android.util.Log.d("CoursierScreenNew", "🔄 currentOrder synchronized: ${updatedOrder.id} (statut: ${updatedOrder.statut})")
             }
         }
@@ -233,7 +234,9 @@ fun CoursierScreenNew(
         }
         // Passer à la prochaine commande en attente
         deliveryStep = DeliveryStep.PENDING
-        currentOrder = localCommandes.firstOrNull { it.statut == "nouvelle" || it.statut == "attente" }
+        val nextOrder = localCommandes.firstOrNull { it.statut == "nouvelle" || it.statut == "attente" }
+        currentOrder = nextOrder
+        currentOrderId = nextOrder?.id  // ⚠️ Sauvegarder l'ID pour la rotation
         pendingOrdersCount = localCommandes.count { it.statut == "nouvelle" || it.statut == "attente" }
         android.util.Log.d("CoursierScreenNew", "📋 Prochaine commande: ${currentOrder?.id ?: "AUCUNE"}, pending: $pendingOrdersCount")
     }
