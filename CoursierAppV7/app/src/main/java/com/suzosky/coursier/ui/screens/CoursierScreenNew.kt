@@ -406,6 +406,11 @@ fun CoursierScreenNew(
                                     notificationService.playActionSound()
                                     hasNewOrder = false
                                 }
+                                
+                                // ⚠️ IMPORTANT: Mettre à jour le statut LOCAL AVANT l'appel API
+                                // pour éviter que le refresh n'efface currentOrder
+                                android.util.Log.d("CoursierScreenNew", "🔵 AVANT ACCEPT: currentOrder=${currentOrder?.id}, deliveryStep=$deliveryStep")
+                                
                                 // Accepter la commande via API
                                 ApiService.respondToOrder(order.id, coursierId.toString(), "accept") { ok, message ->
                                     if (!ok) {
@@ -413,6 +418,36 @@ fun CoursierScreenNew(
                                             message = message ?: "Erreur lors de l'acceptation",
                                             severity = BannerSeverity.ERROR,
                                             actionLabel = "Réessayer",
+                                            onAction = {
+                                                bannerVersion++
+                                                // Retry accept
+                                                ApiService.respondToOrder(order.id, coursierId.toString(), "accept") { ok2, message2 ->
+                                                    if (!ok2) {
+                                                        timelineBanner = TimelineBanner(message2 ?: "Erreur d'acceptation", BannerSeverity.ERROR, "Réessayer") {
+                                                            bannerVersion++; /* re-click */
+                                                        }
+                                                    } else {
+                                                        timelineBanner = null
+                                                        deliveryStep = DeliveryStep.ACCEPTED
+                                                        pendingOrdersCount = maxOf(0, pendingOrdersCount - 1)
+                                                        android.util.Log.d("CoursierScreenNew", "✅ Commande ${order.id} acceptée (retry)")
+                                                        onCommandeAccept(order.id)
+                                                    }
+                                                }
+                                            }
+                                        )
+                                        Toast.makeText(context, message ?: "Erreur d'acceptation", Toast.LENGTH_LONG).show()
+                                        return@respondToOrder
+                                    }
+                                    
+                                    // ✅ Mettre à jour l'état LOCAL et empêcher le reset
+                                    deliveryStep = DeliveryStep.ACCEPTED
+                                    pendingOrdersCount = maxOf(0, pendingOrdersCount - 1)
+                                    android.util.Log.d("CoursierScreenNew", "✅ Commande ${order.id} acceptée, deliveryStep=$deliveryStep")
+                                    
+                                    // ⚠️ NE PAS appeler onCommandeAccept() immédiatement !
+                                    // Attendre que setActiveOrder soit terminé pour éviter le race condition
+                                    // onCommandeAccept(order.id) sera appelé APRÈS setActiveOrder
                                             onAction = {
                                                 bannerVersion++
                                                 // Retry accept
@@ -445,12 +480,23 @@ fun CoursierScreenNew(
                                                 onAction = {
                                                     bannerVersion++
                                                     ApiService.setActiveOrder(coursierId, order.id, active = true) { ok2 ->
-                                                        if (ok2) timelineBanner = null
+                                                        if (ok2) {
+                                                            timelineBanner = null
+                                                            android.util.Log.d("CoursierScreenNew", "✅ Suivi live activé (retry)")
+                                                        }
                                                     }
                                                 }
                                             )
                                             Toast.makeText(context, "Impossible d'activer le suivi live maintenant", Toast.LENGTH_SHORT).show()
+                                        } else {
+                                            android.util.Log.d("CoursierScreenNew", "✅ Suivi live activé pour commande ${order.id}")
                                         }
+                                        
+                                        // ⚠️ Appeler onCommandeAccept() MAINTENANT, après setActiveOrder
+                                        // Cela déclenche le refresh, mais currentOrder est déjà mis à jour
+                                        android.util.Log.d("CoursierScreenNew", "🔵 AVANT REFRESH: currentOrder=${currentOrder?.id}, deliveryStep=$deliveryStep")
+                                        onCommandeAccept(order.id)
+                                        android.util.Log.d("CoursierScreenNew", "🔵 APRÈS REFRESH TRIGGER: currentOrder=${currentOrder?.id}, deliveryStep=$deliveryStep")
                                     }
                                     if (DeliveryStatusMapper.requiresApiCall(DeliveryStep.ACCEPTED)) {
                                         val serverStatus = DeliveryStatusMapper.mapStepToServerStatus(DeliveryStep.ACCEPTED)
