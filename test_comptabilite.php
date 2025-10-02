@@ -47,9 +47,9 @@ if ($config) {
 // Test 3: Vérification des commandes livrées
 echo "✅ Test 3: Commandes livrées...\n";
 $stmt = $conn->query("SELECT COUNT(*) as nb, 
-    MIN(date_creation) as premiere_livraison,
-    MAX(date_creation) as derniere_livraison,
-    SUM(montant_course) as ca_total
+    MIN(created_at) as premiere_livraison,
+    MAX(created_at) as derniere_livraison,
+    SUM(prix_total) as ca_total
     FROM commandes WHERE statut = 'livree'");
 $stats = $stmt->fetch(PDO::FETCH_ASSOC);
 echo "   ✓ {$stats['nb']} commandes livrées\n";
