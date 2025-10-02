@@ -235,9 +235,9 @@ fun UnifiedCoursesScreen(
                 }
                 
                 // 🎯 Marqueur delivery (LIVRAISON) - Emoji visible
-                deliveryLatLng?.let {
+                if (deliveryLatLng != null && currentOrder != null) {
                     Marker(
-                        state = MarkerState(position = it),
+                        state = MarkerState(position = deliveryLatLng),
                         title = "Point de livraison",
                         snippet = currentOrder.adresseLivraison,
                         icon = BitmapDescriptorFactory.fromBitmap(createEmojiMarker("🎯", 120))
