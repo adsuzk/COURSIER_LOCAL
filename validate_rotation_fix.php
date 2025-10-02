@@ -103,17 +103,20 @@ echo "\n";
 echo "═══ TEST 3: Création d'une commande de test ═══\n";
 
 // Insérer une nouvelle commande en espèces pour tester
-$code_commande = 'TEST' . time();
+$timestamp = time();
+$code_commande = 'TEST' . $timestamp;
+$order_number = 'ORD' . $timestamp;
 $stmt = $pdo->prepare("
     INSERT INTO commandes (
         code_commande,
+        order_number,
         client_nom, client_telephone, 
         adresse_depart, adresse_arrivee,
         coursier_id, statut, mode_paiement,
         prix_total, distance_estimee,
         created_at
     ) VALUES (
-        ?,
+        ?, ?,
         'Client Test Rotation', '0102030405',
         'Test Départ', 'Test Arrivée',
         ?, 'en_cours', 'especes',
@@ -122,7 +125,7 @@ $stmt = $pdo->prepare("
     )
 ");
 
-if ($stmt->execute([$code_commande, $coursier_id])) {
+if ($stmt->execute([$code_commande, $order_number, $coursier_id])) {
     $test_commande_id = $pdo->lastInsertId();
     echo "✅ Commande de test créée: ID $test_commande_id\n";
     echo "   - Statut: en_cours\n";
@@ -221,4 +224,5 @@ echo "      - Accepter une commande\n";
 echo "      - Confirmer le cash\n";
 echo "      - Tourner l'écran → vérifier qu'elle ne réapparaît pas\n";
 echo "\n";
-echo "🎉 VALIDATION TERMINÉE !\n
+echo "🎉 VALIDATION TERMINÉE !\n";
+echo "\n";
