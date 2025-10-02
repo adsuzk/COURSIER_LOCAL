@@ -33,6 +33,7 @@ class MapViewModel @Inject constructor(
     val uiState: StateFlow<MapUiState> = _uiState.asStateFlow()
 
     init {
+        android.util.Log.d("MapViewModel", "🗺️ MapViewModel initialized - requesting location...")
         getCurrentLocation()
     }
 
@@ -40,28 +41,40 @@ class MapViewModel @Inject constructor(
      * Obtient la position actuelle du coursier
      */
     fun getCurrentLocation() {
-        viewModelScope.launch {
+        android.util.Log.d("MapViewModel", "📍 getCurrentLocation called")
+        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
             _uiState.value = _uiState.value.copy(isLocationLoading = true)
             
             try {
+                android.util.Log.d("MapViewModel", "🔍 Calling locationService.getCurrentLocation()...")
                 val location = locationService.getCurrentLocation()
+                android.util.Log.d("MapViewModel", "📍 Location result: $location")
                 location?.let {
-                    _uiState.value = _uiState.value.copy(
-                        currentLocation = LatLng(it.latitude, it.longitude),
-                        isLocationLoading = false,
-                        errorMessage = null
-                    )
+                    android.util.Log.d("MapViewModel", "✅ Location found: lat=${it.latitude}, lng=${it.longitude}")
+                    kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                        _uiState.value = _uiState.value.copy(
+                            currentLocation = LatLng(it.latitude, it.longitude),
+                            isLocationLoading = false,
+                            errorMessage = null
+                        )
+                    }
                 } ?: run {
-                    _uiState.value = _uiState.value.copy(
-                        isLocationLoading = false,
-                        errorMessage = "Impossible d'obtenir la position"
-                    )
+                    android.util.Log.w("MapViewModel", "⚠️ Location is null")
+                    kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                        _uiState.value = _uiState.value.copy(
+                            isLocationLoading = false,
+                            errorMessage = "Impossible d'obtenir la position"
+                        )
+                    }
                 }
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    isLocationLoading = false,
-                    errorMessage = "Erreur de géolocalisation: ${e.message}"
-                )
+                android.util.Log.e("MapViewModel", "❌ Error getting location: ${e.message}", e)
+                kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                    _uiState.value = _uiState.value.copy(
+                        isLocationLoading = false,
+                        errorMessage = "Erreur de géolocalisation: ${e.message}"
+                    )
+                }
             }
         }
     }

@@ -24,6 +24,7 @@ import com.suzosky.coursier.ui.screens.UnifiedCoursesScreen
 import com.suzosky.coursier.ui.screens.ModernChatScreen
 import com.suzosky.coursier.ui.screens.ModernWalletScreen
 import com.suzosky.coursier.ui.screens.ModernProfileScreen
+import com.suzosky.coursier.ui.screens.CoursierStats
 import com.suzosky.coursier.ui.screens.DeliveryStep
 import com.suzosky.coursier.data.models.ChatMessage
 import com.suzosky.coursier.services.NotificationSoundService
@@ -47,7 +48,6 @@ fun CoursierScreenNew(
     coursierTelephone: String = "",
     coursierEmail: String = "",
     dateInscription: String = "",
-    coursierMatricule: String = "",
     commandes: List<Commande> = emptyList(),
     balance: Int = 0,
     gainsDuJour: Int = 0,
@@ -55,18 +55,11 @@ fun CoursierScreenNew(
     onCommandeAccept: (String) -> Unit = {},
     onCommandeReject: (String) -> Unit = {},
     onCommandeAttente: (String) -> Unit = {},
-    onStartDelivery: (String) -> Unit = {},
-    onPickupPackage: (String) -> Unit = {},
-    onMarkDelivered: (String) -> Unit = {},
-    onConfirmCash: (String) -> Unit = {},
     onNavigateToProfile: () -> Unit = {},
     onNavigateToHistorique: () -> Unit = {},
     onNavigateToGains: () -> Unit = {},
     onLogout: () -> Unit = {},
-    onRecharge: (Int) -> Unit = {},
-    // Nouveaux paramètres pour le rafraîchissement automatique
-    shouldRefreshCommandes: Boolean = false,
-    onCommandesRefreshed: () -> Unit = {}
+    onRecharge: (Int) -> Unit = {}
 ) {
     val context = LocalContext.current
     var currentTab by remember { mutableStateOf(NavigationTab.COURSES) }
@@ -75,20 +68,21 @@ fun CoursierScreenNew(
     // Compter uniquement les commandes en attente d'acceptation (nouvelles/attente)
     var pendingOrdersCount by remember { mutableStateOf(commandes.count { it.statut == "nouvelle" || it.statut == "attente" }) }
     
-    // Service de notification sonore
-    val notificationService = remember { NotificationSoundService(context) }
+    // Position du coursier (fournie par LocationForegroundService via MainActivity)
+    val currentLocationFromService by com.suzosky.coursier.services.LocationForegroundService.currentLocation.collectAsState()
     
-    // ViewModel pour la localisation en temps réel
-    val mapViewModel: MapViewModel = hiltViewModel()
-    val mapUi by mapViewModel.uiState.collectAsState()
-    
-    // Démarrer le suivi de localisation
-    LaunchedEffect(Unit) {
-        mapViewModel.startLocationTracking()
+    // Convertir Location en LatLng pour Google Maps
+    val courierLocation = currentLocationFromService?.let { loc ->
+        com.google.android.gms.maps.model.LatLng(loc.latitude, loc.longitude)
     }
     
-    // Extraire la position du coursier
-    val courierLocation = mapUi.currentLocation
+    // Log de debug pour vérifier la localisation
+    LaunchedEffect(courierLocation) {
+        android.util.Log.d("CoursierScreenNew", "📍 Courier location from LocationForegroundService: $courierLocation")
+    }
+    
+    // Service de notification sonore
+    val notificationService = remember { NotificationSoundService(context) }
     
     // État pour tracker les nouvelles commandes et déclencher le son
     var previousCommandesCount by remember { mutableStateOf(commandes.size) }
@@ -121,48 +115,34 @@ fun CoursierScreenNew(
         pendingOrdersCount = commandes.count { it.statut == "nouvelle" || it.statut == "attente" }
     }
     
-    // Rafraîchissement automatique des commandes quand une nouvelle arrive
-    LaunchedEffect(shouldRefreshCommandes) {
-        if (shouldRefreshCommandes) {
-            println("🔄 Rafraîchissement automatique des commandes déclenché")
-            
-            // Démarrer la sonnerie pour nouvelle commande
-            hasNewOrder = true
-            notificationService.startNotificationSound()
-            
-            // Forcer le passage à l'onglet Courses
-            currentTab = NavigationTab.COURSES
-            
-            // Signaler que le rafraîchissement a été traité
-            onCommandesRefreshed()
-        }
-    }
-    
     // États pour les courses
-    // Sélectionner d'abord une commande réellement active (en_cours/acceptee), sinon prendre une nouvelle/attente
+    // Prioriser les commandes nouvelles/attente (pour afficher la modal), sinon prendre les actives
     var currentOrder by remember { mutableStateOf<Commande?>(
-        commandes.firstOrNull { it.statut == "en_cours" || it.statut == "acceptee" }
-            ?: commandes.firstOrNull { it.statut == "nouvelle" || it.statut == "attente" }
+        commandes.firstOrNull { it.statut == "nouvelle" || it.statut == "attente" }
+            ?: commandes.firstOrNull { it.statut == "en_cours" || it.statut == "acceptee" }
     ) }
-    
-    // Initialiser deliveryStep en fonction du statut de la commande actuelle
+    // Initialiser deliveryStep selon le statut de la commande actuelle
     var deliveryStep by remember { mutableStateOf(
         when (currentOrder?.statut) {
-            "nouvelle", "attente" -> DeliveryStep.PENDING
             "acceptee" -> DeliveryStep.ACCEPTED
-            "en_cours" -> DeliveryStep.EN_ROUTE_PICKUP  // En route vers récupération
-            "recuperee" -> DeliveryStep.PICKED_UP  // Colis récupéré
-            "livree" -> {
-                // Si paiement espèces, attendre confirmation cash
-                if (currentOrder?.methodePaiement?.lowercase() == "especes") {
-                    DeliveryStep.DELIVERED
-                } else {
-                    DeliveryStep.CASH_CONFIRMED
-                }
-            }
+            "en_cours", "recuperee" -> DeliveryStep.PICKED_UP
             else -> DeliveryStep.PENDING
         }
     ) }
+    
+    // Synchroniser deliveryStep avec le statut de la commande actuelle
+    LaunchedEffect(currentOrder?.statut) {
+        currentOrder?.let { order ->
+            deliveryStep = when (order.statut) {
+                "acceptee" -> DeliveryStep.ACCEPTED
+                "en_cours" -> DeliveryStep.PICKED_UP
+                "recuperee" -> DeliveryStep.PICKED_UP
+                "nouvelle", "attente" -> DeliveryStep.PENDING
+                else -> deliveryStep
+            }
+            android.util.Log.d("CoursierScreenNew", "🔄 Synced deliveryStep to $deliveryStep for order ${order.id} (statut: ${order.statut})")
+        }
+    }
     
     // États pour le chat
     var chatMessages by remember { 
@@ -172,7 +152,7 @@ fun CoursierScreenNew(
                     id = "1",
                     message = "Bonjour ! Comment puis-je vous aider aujourd'hui ?",
                     isFromCoursier = false,
-                    timestamp = Date(),
+                    timestamp = Date().time,
                     senderName = "Support Suzosky"
                 )
             )
@@ -204,34 +184,9 @@ fun CoursierScreenNew(
                 ApiService.setActiveOrder(coursierId, order.id, active = false) { _ -> }
             }
         }
-        // Passer à la prochaine commande active (inclut TOUTES les étapes de livraison)
-        currentOrder = commandes.firstOrNull { 
-            it.statut == "nouvelle" || 
-            it.statut == "attente" || 
-            it.statut == "acceptee" ||
-            it.statut == "en_cours" ||
-            it.statut == "recuperee" ||
-            it.statut == "livree"
-        }
-        android.util.Log.d("CoursierScreenNew", "📋 currentOrder sélectionnée: ${currentOrder?.id} (statut: ${currentOrder?.statut})")
-        android.util.Log.d("CoursierScreenNew", "📊 Commandes disponibles: ${commandes.map { "ID=${it.id} statut=${it.statut}" }}")
-        // Mapper le statut de la commande au deliveryStep approprié
-        deliveryStep = when (currentOrder?.statut) {
-            "nouvelle", "attente" -> DeliveryStep.PENDING
-            "acceptee" -> DeliveryStep.ACCEPTED
-            "en_cours" -> DeliveryStep.EN_ROUTE_PICKUP  // En route vers récupération
-            "recuperee" -> DeliveryStep.PICKED_UP  // Colis récupéré, en route vers livraison
-            "livree" -> {
-                // Si paiement espèces ET cash pas encore confirmé, montrer DELIVERED
-                // Sinon montrer CASH_CONFIRMED
-                if (currentOrder?.methodePaiement?.lowercase() == "especes") {
-                    DeliveryStep.DELIVERED  // Attendre confirmation cash
-                } else {
-                    DeliveryStep.CASH_CONFIRMED  // Pas d'espèces, terminé
-                }
-            }
-            else -> DeliveryStep.PENDING
-        }
+        // Passer à la prochaine commande en attente
+        deliveryStep = DeliveryStep.PENDING
+        currentOrder = commandes.firstOrNull { it.statut == "nouvelle" || it.statut == "attente" }
     }
     // paymentUrl déjà déclaré plus haut
 
@@ -251,12 +206,63 @@ fun CoursierScreenNew(
         ) {
             when (currentTab) {
                 NavigationTab.COURSES -> {
-                    // Utiliser le nouvel écran unifié sans modal
                     UnifiedCoursesScreen(
                         currentOrder = currentOrder,
                         deliveryStep = deliveryStep,
                         pendingOrdersCount = pendingOrdersCount,
                         courierLocation = courierLocation,
+                        onStartDelivery = {
+                            // Passage de acceptee → en_cours (démarrage navigation)
+                            currentOrder?.let { order ->
+                                deliveryStep = DeliveryStep.EN_ROUTE_PICKUP
+                                val serverStatus = DeliveryStatusMapper.mapStepToServerStatus(DeliveryStep.EN_ROUTE_PICKUP)
+                                ApiService.updateOrderStatus(order.id, serverStatus) { success ->
+                                    if (success) {
+                                        timelineBanner = null
+                                        Toast.makeText(context, "Navigation démarrée vers le point d'enlèvement", Toast.LENGTH_SHORT).show()
+                                    } else {
+                                        timelineBanner = TimelineBanner(
+                                            message = "Statut 'En route' non synchronisé.",
+                                            severity = BannerSeverity.ERROR,
+                                            actionLabel = "Réessayer",
+                                            onAction = {
+                                                bannerVersion++
+                                                ApiService.updateOrderStatus(order.id, serverStatus) { ok2 ->
+                                                    if (ok2) timelineBanner = null
+                                                }
+                                            }
+                                        )
+                                        Toast.makeText(context, "Erreur synchronisation serveur", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }
+                        },
+                        onPickupPackage = {
+                            // Passage de en_cours → recuperee (colis récupéré)
+                            currentOrder?.let { order ->
+                                deliveryStep = DeliveryStep.PICKED_UP
+                                val serverStatus = DeliveryStatusMapper.mapStepToServerStatus(DeliveryStep.PICKED_UP)
+                                ApiService.updateOrderStatus(order.id, serverStatus) { success ->
+                                    if (success) {
+                                        timelineBanner = null
+                                        Toast.makeText(context, "Colis récupéré ! Direction point de livraison", Toast.LENGTH_SHORT).show()
+                                    } else {
+                                        timelineBanner = TimelineBanner(
+                                            message = "Statut 'Récupéré' non synchronisé.",
+                                            severity = BannerSeverity.ERROR,
+                                            actionLabel = "Réessayer",
+                                            onAction = {
+                                                bannerVersion++
+                                                ApiService.updateOrderStatus(order.id, serverStatus) { ok2 ->
+                                                    if (ok2) timelineBanner = null
+                                                }
+                                            }
+                                        )
+                                        Toast.makeText(context, "Erreur synchronisation serveur", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }
+                        },
                         onAcceptOrder = {
                             currentOrder?.let { order ->
                                 if (hasNewOrder) {
@@ -264,95 +270,79 @@ fun CoursierScreenNew(
                                     notificationService.playActionSound()
                                     hasNewOrder = false
                                 }
-                                
-                                Log.d("CoursierScreenNew", "Acceptation de la commande ${order.id} par coursier $coursierId")
-                                Toast.makeText(context, "Acceptation en cours...", Toast.LENGTH_SHORT).show()
-                                
-                                // Appeler la nouvelle API order_response.php
-                                ApiService.respondToOrder(order.id, coursierId.toString(), "accept") { success, message ->
-                                    if (success) {
-                                        Log.d("CoursierScreenNew", "Commande acceptée: $message")
-                                        Toast.makeText(context, "Commande acceptée !", Toast.LENGTH_SHORT).show()
-                                        
-                                        deliveryStep = DeliveryStep.ACCEPTED
-                                        pendingOrdersCount = maxOf(0, pendingOrdersCount - 1)
-                                        onCommandeAccept(order.id)
-                                        
-                                        // Activer le suivi en temps réel pour le client
-                                        ApiService.setActiveOrder(coursierId, order.id, active = true) { activeOk ->
-                                            if (!activeOk) {
-                                                Log.w("CoursierScreenNew", "Impossible d'activer le suivi en direct")
-                                            }
-                                        }
-                                    } else {
-                                        Log.e("CoursierScreenNew", "Échec acceptation: $message")
+                                // Accepter la commande via API
+                                ApiService.respondToOrder(order.id, coursierId.toString(), "accept") { ok, message ->
+                                    if (!ok) {
                                         timelineBanner = TimelineBanner(
                                             message = message ?: "Erreur lors de l'acceptation",
                                             severity = BannerSeverity.ERROR,
                                             actionLabel = "Réessayer",
-                                            onAction = { bannerVersion++ }
+                                            onAction = {
+                                                bannerVersion++
+                                                // Retry accept
+                                                ApiService.respondToOrder(order.id, coursierId.toString(), "accept") { ok2, message2 ->
+                                                    if (!ok2) {
+                                                        timelineBanner = TimelineBanner(message2 ?: "Erreur d'acceptation", BannerSeverity.ERROR, "Réessayer") {
+                                                            bannerVersion++; /* re-click */
+                                                        }
+                                                    } else {
+                                                        timelineBanner = null
+                                                        deliveryStep = DeliveryStep.ACCEPTED
+                                                        pendingOrdersCount = maxOf(0, pendingOrdersCount - 1)
+                                                        onCommandeAccept(order.id)
+                                                    }
+                                                }
+                                            }
                                         )
-                                        Toast.makeText(context, message ?: "Erreur", Toast.LENGTH_LONG).show()
+                                        Toast.makeText(context, message ?: "Erreur d'acceptation", Toast.LENGTH_LONG).show()
+                                        return@respondToOrder
+                                    }
+                                    deliveryStep = DeliveryStep.ACCEPTED
+                                    pendingOrdersCount = maxOf(0, pendingOrdersCount - 1)
+                                    onCommandeAccept(order.id)
+                                    ApiService.setActiveOrder(coursierId, order.id, active = true) { activeOk ->
+                                        if (!activeOk) {
+                                            timelineBanner = TimelineBanner(
+                                                message = "Impossible d'activer le suivi en direct pour le client maintenant.",
+                                                severity = BannerSeverity.WARNING,
+                                                actionLabel = "Réessayer",
+                                                onAction = {
+                                                    bannerVersion++
+                                                    ApiService.setActiveOrder(coursierId, order.id, active = true) { ok2 ->
+                                                        if (ok2) timelineBanner = null
+                                                    }
+                                                }
+                                            )
+                                            Toast.makeText(context, "Impossible d'activer le suivi live maintenant", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                    if (DeliveryStatusMapper.requiresApiCall(DeliveryStep.ACCEPTED)) {
+                                        val serverStatus = DeliveryStatusMapper.mapStepToServerStatus(DeliveryStep.ACCEPTED)
+                                        ApiService.updateOrderStatus(order.id, serverStatus) { success ->
+                                            if (success) {
+                                                timelineBanner = null
+                                                Toast.makeText(context, DeliveryStatusMapper.getSuccessMessage(DeliveryStep.ACCEPTED, order.methodePaiement), Toast.LENGTH_SHORT).show()
+                                            } else {
+                                                timelineBanner = TimelineBanner(
+                                                    message = "Statut 'Acceptée' non synchronisé avec le serveur.",
+                                                    severity = BannerSeverity.ERROR,
+                                                    actionLabel = "Réessayer",
+                                                    onAction = {
+                                                        bannerVersion++
+                                                        ApiService.updateOrderStatus(order.id, serverStatus) { ok2 ->
+                                                            if (ok2) timelineBanner = null
+                                                        }
+                                                    }
+                                                )
+                                                Toast.makeText(context, "Erreur synchronisation serveur", Toast.LENGTH_SHORT).show()
+                                            }
+                                        }
                                     }
                                 }
                             }
                         },
                         onRejectOrder = {
-                            currentOrder?.let { order ->
-                                if (hasNewOrder) {
-                                    notificationService.stopNotificationSound()
-                                    hasNewOrder = false
-                                }
-                                
-                                Log.d("CoursierScreenNew", "Refus de la commande ${order.id} par coursier $coursierId")
-                                Toast.makeText(context, "Refus en cours...", Toast.LENGTH_SHORT).show()
-                                
-                                // Appeler l'API pour refuser
-                                ApiService.respondToOrder(order.id, coursierId.toString(), "refuse") { success, message ->
-                                    if (success) {
-                                        Log.d("CoursierScreenNew", "Commande refusée: $message")
-                                        Toast.makeText(context, "Commande refusée", Toast.LENGTH_SHORT).show()
-                                        pendingOrdersCount = maxOf(0, pendingOrdersCount - 1)
-                                        onCommandeReject(order.id)
-                                    } else {
-                                        Log.e("CoursierScreenNew", "Échec refus: $message")
-                                        Toast.makeText(context, "Erreur: ${message ?: "Impossible de refuser"}", Toast.LENGTH_LONG).show()
-                                    }
-                                }
-                            }
-                        },
-                        onStartDelivery = {
-                            currentOrder?.let { order ->
-                                Toast.makeText(context, "Démarrage de la livraison...", Toast.LENGTH_SHORT).show()
-                                onStartDelivery(order.id)
-                                deliveryStep = DeliveryStep.EN_ROUTE_PICKUP
-                            }
-                        },
-                        onPickupPackage = {
-                            currentOrder?.let { order ->
-                                Toast.makeText(context, "Colis récupéré!", Toast.LENGTH_SHORT).show()
-                                onPickupPackage(order.id)
-                                deliveryStep = DeliveryStep.PICKED_UP
-                            }
-                        },
-                        onMarkDelivered = {
-                            currentOrder?.let { order ->
-                                Toast.makeText(context, "Commande livrée!", Toast.LENGTH_SHORT).show()
-                                onMarkDelivered(order.id)
-                                deliveryStep = DeliveryStep.DELIVERED
-                            }
-                        },
-                        onConfirmCash = {
-                            android.util.Log.d("CoursierScreenNew", "🔴 BOUTON CASH CLIQUÉ! currentOrder=${currentOrder?.id}, deliveryStep=$deliveryStep")
-                            currentOrder?.let { order ->
-                                android.util.Log.d("CoursierScreenNew", "✅ currentOrder EXISTS - Appel onConfirmCash avec ID=${order.id}")
-                                Toast.makeText(context, "Cash récupéré confirmé!", Toast.LENGTH_SHORT).show()
-                                onConfirmCash(order.id)
-                                deliveryStep = DeliveryStep.CASH_CONFIRMED
-                            } ?: run {
-                                android.util.Log.e("CoursierScreenNew", "❌ currentOrder EST NULL - impossible d'appeler onConfirmCash!")
-                                Toast.makeText(context, "ERREUR: Aucune commande active", Toast.LENGTH_LONG).show()
-                            }
+                            Toast.makeText(context, "Commande refusée", Toast.LENGTH_SHORT).show()
                         },
                         onPickupValidation = {
                             currentOrder?.let { order ->
@@ -423,17 +413,13 @@ fun CoursierScreenNew(
                 }
                 
                 NavigationTab.WALLET -> {
-                    android.util.Log.d("CoursierScreenNew", "📱 Affichage ModernWalletScreen")
                     ModernWalletScreen(
                         coursierId = coursierId,
                         balance = balance,
-                        gainsDuJour = gainsDuJour,
+                        gainsDuJour = 0,
                         gainsHebdo = 0,
                         gainsMensuel = 0,
-                        onRecharge = onRecharge,
-                        onRetrait = {},
-                        onHistorique = {},
-                        modifier = Modifier.fillMaxSize()
+                        onRecharge = onRecharge
                     )
                 }
                 
@@ -447,7 +433,7 @@ fun CoursierScreenNew(
                                 id = UUID.randomUUID().toString(),
                                 message = message,
                                 isFromCoursier = true,
-                                timestamp = Date(),
+                                timestamp = Date().time,
                                 senderName = coursierNom
                             )
                             chatMessages = chatMessages + newMessage
@@ -460,7 +446,7 @@ fun CoursierScreenNew(
                                     id = UUID.randomUUID().toString(),
                                     message = "Je suis là pour vous aider ! Que puis-je faire pour vous ?",
                                     isFromCoursier = false,
-                                    timestamp = Date(),
+                                    timestamp = Date().time,
                                     senderName = "Support Suzosky"
                                 )
                                 chatMessages = chatMessages + autoReply
@@ -473,19 +459,13 @@ fun CoursierScreenNew(
                     ModernProfileScreen(
                         coursierNom = coursierNom,
                         coursierTelephone = coursierTelephone.ifBlank { "+225" },
-                        coursierMatricule = coursierMatricule.ifBlank { "C$coursierId" },
+                        coursierMatricule = "",
                         stats = CoursierStats(
                             totalCourses = totalCommandes,
-                            completedToday = commandes.count { it.statut == "livree" },
                             rating = noteGlobale.toFloat(),
-                            totalEarnings = balance,
-                            level = (totalCommandes / 20) + 1, // 20 courses = 1 niveau
-                            experiencePercent = ((totalCommandes % 20) / 20f),
                             memberSince = if (dateInscription.isNotBlank()) dateInscription else "2025"
                         ),
-                        onLogout = onLogout,
-                        onEditProfile = { Toast.makeText(context, "Édition du profil - À venir", Toast.LENGTH_SHORT).show() },
-                        onSettings = { Toast.makeText(context, "Paramètres - À venir", Toast.LENGTH_SHORT).show() }
+                        onLogout = onLogout
                     )
                 }
             } // end when
