@@ -48,7 +48,7 @@ function getComptabiliteData($pdo, $dateDebut, $dateFin) {
     $stmt = $pdo->prepare("
         SELECT 
             COUNT(*) as nb_livraisons,
-            SUM(prix) as ca_total,
+            SUM(prix_total) as ca_total,
             AVG(prix) as prix_moyen
         FROM commandes 
         WHERE statut = 'livree' 
@@ -66,7 +66,7 @@ function getComptabiliteData($pdo, $dateDebut, $dateFin) {
     $stmt = $pdo->prepare("
         SELECT 
             c.id,
-            c.prix,
+            c.prix_total,
             c.created_at,
             c.coursier_id,
             c.adresse_enlevement,
@@ -133,8 +133,8 @@ function getComptabiliteData($pdo, $dateDebut, $dateFin) {
             a.nom as coursier_nom,
             a.prenom as coursier_prenom,
             COUNT(*) as nb_livraisons,
-            SUM(c.prix) as ca_coursier,
-            AVG(c.prix) as prix_moyen
+            SUM(c.prix_total) as ca_coursier,
+            AVG(c.prix_total) as prix_moyen
         FROM commandes c
         JOIN agents_suzosky a ON a.id = c.coursier_id
         WHERE c.statut = 'livree'
@@ -150,7 +150,7 @@ function getComptabiliteData($pdo, $dateDebut, $dateFin) {
         SELECT 
             DATE(created_at) as date,
             COUNT(*) as nb_livraisons,
-            SUM(prix) as ca_journalier
+            SUM(prix_total) as ca_journalier
         FROM commandes
         WHERE statut = 'livree'
         AND created_at BETWEEN ? AND ?
