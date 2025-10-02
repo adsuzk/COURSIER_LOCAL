@@ -1,6 +1,7 @@
 package com.suzosky.coursier.ui.screens
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -19,13 +20,16 @@ import com.suzosky.coursier.ui.components.CashConfirmationDialog
 import com.suzosky.coursier.ui.components.NoActiveOrderScreen
 import com.suzosky.coursier.ui.components.TimelineBanner
 import com.suzosky.coursier.ui.components.BannerSeverity
-import com.suzosky.coursier.ui.screens.CoursesScreen
-import com.suzosky.coursier.ui.screens.ChatScreen
-import com.suzosky.coursier.ui.screens.WalletScreen
-import com.suzosky.coursier.ui.screens.ProfileScreen
+import com.suzosky.coursier.ui.screens.UnifiedCoursesScreen
+import com.suzosky.coursier.ui.screens.ModernChatScreen
+import com.suzosky.coursier.ui.screens.ModernWalletScreen
+import com.suzosky.coursier.ui.screens.ModernProfileScreen
 import com.suzosky.coursier.ui.screens.DeliveryStep
-import com.suzosky.coursier.ui.screens.ChatMessage
+import com.suzosky.coursier.data.models.ChatMessage
 import com.suzosky.coursier.services.NotificationSoundService
+import com.suzosky.coursier.viewmodel.MapViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.android.gms.maps.model.LatLng
 import java.util.*
 
 /**
