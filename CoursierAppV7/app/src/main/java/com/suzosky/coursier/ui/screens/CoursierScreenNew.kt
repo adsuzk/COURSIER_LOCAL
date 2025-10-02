@@ -196,13 +196,13 @@ fun CoursierScreenNew(
                 ApiService.setActiveOrder(coursierId, order.id, active = false) { _ -> }
             }
             // ⚠️ RETIRER LA COMMANDE TERMINÉE DE LA LISTE LOCALE
-            commandes = commandes.filter { it.id != order.id }
+            localCommandes = localCommandes.filter { it.id != order.id }
             android.util.Log.d("CoursierScreenNew", "✅ Commande ${order.id} retirée de la liste locale")
         }
         // Passer à la prochaine commande en attente
         deliveryStep = DeliveryStep.PENDING
-        currentOrder = commandes.firstOrNull { it.statut == "nouvelle" || it.statut == "attente" }
-        pendingOrdersCount = commandes.count { it.statut == "nouvelle" || it.statut == "attente" }
+        currentOrder = localCommandes.firstOrNull { it.statut == "nouvelle" || it.statut == "attente" }
+        pendingOrdersCount = localCommandes.count { it.statut == "nouvelle" || it.statut == "attente" }
         android.util.Log.d("CoursierScreenNew", "📋 Prochaine commande: ${currentOrder?.id ?: "AUCUNE"}, pending: $pendingOrdersCount")
     }
     // paymentUrl déjà déclaré plus haut
