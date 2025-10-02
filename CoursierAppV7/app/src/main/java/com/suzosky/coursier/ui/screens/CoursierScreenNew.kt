@@ -237,6 +237,32 @@ fun CoursierScreenNew(
                                 }
                             }
                         },
+                        onPickupPackage = {
+                            // Passage de en_cours → recuperee (colis récupéré)
+                            currentOrder?.let { order ->
+                                deliveryStep = DeliveryStep.PICKED_UP
+                                val serverStatus = DeliveryStatusMapper.mapStepToServerStatus(DeliveryStep.PICKED_UP)
+                                ApiService.updateOrderStatus(order.id, serverStatus) { success ->
+                                    if (success) {
+                                        timelineBanner = null
+                                        Toast.makeText(context, "Colis récupéré ! Direction point de livraison", Toast.LENGTH_SHORT).show()
+                                    } else {
+                                        timelineBanner = TimelineBanner(
+                                            message = "Statut 'Récupéré' non synchronisé.",
+                                            severity = BannerSeverity.ERROR,
+                                            actionLabel = "Réessayer",
+                                            onAction = {
+                                                bannerVersion++
+                                                ApiService.updateOrderStatus(order.id, serverStatus) { ok2 ->
+                                                    if (ok2) timelineBanner = null
+                                                }
+                                            }
+                                        )
+                                        Toast.makeText(context, "Erreur synchronisation serveur", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }
+                        },
                         onAcceptOrder = {
                             currentOrder?.let { order ->
                                 if (hasNewOrder) {
