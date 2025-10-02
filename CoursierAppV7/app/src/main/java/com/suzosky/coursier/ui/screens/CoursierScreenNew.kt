@@ -75,6 +75,8 @@ fun CoursierScreenNew(
     val pendingStatuses = remember { setOf("nouvelle", "attente") }
     val terminalStatuses = remember { setOf("livree", "terminee", "cash_recu", "cash_confirme", "cash_confirmee", "annulee", "refusee", "cancelled", "canceled") }
 
+    var locallyCompletedOrders by rememberSaveable { mutableStateOf(emptyList<String>()) }
+
     // Compter uniquement les commandes en attente d'acceptation (nouvelles/attente)
     var pendingOrdersCount by remember { mutableStateOf(localCommandes.count { it.statut.lowercase() in pendingStatuses }) }
     
@@ -124,7 +126,8 @@ fun CoursierScreenNew(
     LaunchedEffect(commandes) {
         val previousList = localCommandes
         val sanitizedApiCommands = commandes.filterNot { cmd ->
-            cmd.statut.lowercase() in terminalStatuses
+            val statusLower = cmd.statut.lowercase()
+            statusLower in terminalStatuses || locallyCompletedOrders.contains(cmd.id)
         }.toMutableList()
 
         val currentCmd = currentOrder
@@ -155,10 +158,14 @@ fun CoursierScreenNew(
         localCommandes = mergedCommands
 
         if (currentOrder == null) {
-            val nextOrder = mergedCommands.firstOrNull { it.statut.lowercase() in activeStatuses }
+            val nextOrder = mergedCommands.firstOrNull { 
+                val statusLower = it.statut.lowercase()
+                statusLower in activeStatuses && !locallyCompletedOrders.contains(it.id)
+            }
             if (nextOrder != null) {
                 currentOrder = nextOrder
                 currentOrderId = nextOrder.id
+                locallyCompletedOrders = locallyCompletedOrders.filterNot { it == nextOrder.id }
                 android.util.Log.d("CoursierScreenNew", "🎯 Attribution automatique commande ${nextOrder.id} (statut: ${nextOrder.statut})")
                 if (coursierId > 0) {
                     ApiService.setActiveOrder(coursierId, nextOrder.id, active = true) { ok ->
@@ -264,16 +271,23 @@ fun CoursierScreenNew(
             val filtered = localCommandes.filter { it.id != previousOrder.id }
             localCommandes = filtered
             android.util.Log.d("CoursierScreenNew", "✅ Commande ${previousOrder.id} retirée de la liste locale")
+            if (!locallyCompletedOrders.contains(previousOrder.id)) {
+                locallyCompletedOrders = locallyCompletedOrders + previousOrder.id
+            }
         }
 
         // Passer à la prochaine commande active disponible
         deliveryStep = DeliveryStep.PENDING
-        val nextOrder = localCommandes.firstOrNull { it.statut.lowercase() in activeStatuses }
+        val nextOrder = localCommandes.firstOrNull { 
+            val statusLower = it.statut.lowercase()
+            statusLower in activeStatuses && !locallyCompletedOrders.contains(it.id)
+        }
         currentOrder = nextOrder
         currentOrderId = nextOrder?.id  // ⚠️ Sauvegarder l'ID pour la rotation
         pendingOrdersCount = localCommandes.count { it.statut.lowercase() in pendingStatuses }
 
         if (nextOrder != null) {
+            locallyCompletedOrders = locallyCompletedOrders.filterNot { it == nextOrder.id }
             android.util.Log.d("CoursierScreenNew", "📋 Prochaine commande attribuée: ${nextOrder.id} (statut: ${nextOrder.statut})")
             if (coursierId > 0) {
                 ApiService.setActiveOrder(coursierId, nextOrder.id, active = true) { ok ->
