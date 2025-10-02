@@ -116,10 +116,9 @@ fun CoursierScreenNew(
     }
     
     // États pour les courses
-    // Prioriser les commandes nouvelles/attente (pour afficher la modal), sinon prendre les actives
+    // Prioriser les commandes nouvelles/attente (pour afficher la modal), NE PAS prendre les anciennes courses terminées
     var currentOrder by remember { mutableStateOf<Commande?>(
         commandes.firstOrNull { it.statut == "nouvelle" || it.statut == "attente" }
-            ?: commandes.firstOrNull { it.statut == "en_cours" || it.statut == "acceptee" }
     ) }
     // Initialiser deliveryStep selon le statut de la commande actuelle
     var deliveryStep by remember { mutableStateOf(
