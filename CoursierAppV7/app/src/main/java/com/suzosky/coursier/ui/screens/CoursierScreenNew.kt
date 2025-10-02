@@ -171,7 +171,7 @@ fun CoursierScreenNew(
         ) {
             when (currentTab) {
                 NavigationTab.COURSES -> {
-                    CoursesScreen(
+                    UnifiedCoursesScreen(
                         currentOrder = currentOrder,
                         deliveryStep = deliveryStep,
                         banner = timelineBanner,
@@ -431,7 +431,7 @@ fun CoursierScreenNew(
                 }
                 
                 NavigationTab.WALLET -> {
-                    WalletScreen(
+                    ModernWalletScreen(
                         coursierId = coursierId,
                         balance = balance,
                         onRecharge = onRecharge
@@ -439,7 +439,7 @@ fun CoursierScreenNew(
                 }
                 
                 NavigationTab.CHAT -> {
-                    ChatScreen(
+                    ModernChatScreen(
                         coursierNom = coursierNom,
                         messages = chatMessages,
                         onSendMessage = { message ->
@@ -471,7 +471,7 @@ fun CoursierScreenNew(
                 }
                 
                 NavigationTab.PROFILE -> {
-                    ProfileScreen(
+                    ModernProfileScreen(
                         coursierNom = coursierNom,
                         coursierStatut = coursierStatut,
                         totalCommandes = totalCommandes,
