@@ -154,20 +154,6 @@ fun CoursierScreenNew(
         realBalance = balance
     }
     
-    // États pour les courses
-    // Prioriser les commandes nouvelles/attente (pour afficher la modal), NE PAS prendre les anciennes courses terminées
-    var currentOrder by remember { mutableStateOf<Commande?>(
-        localCommandes.firstOrNull { it.statut == "nouvelle" || it.statut == "attente" }
-    ) }
-    // Initialiser deliveryStep selon le statut de la commande actuelle
-    var deliveryStep by remember { mutableStateOf(
-        when (currentOrder?.statut) {
-            "acceptee" -> DeliveryStep.ACCEPTED
-            "en_cours", "recuperee" -> DeliveryStep.PICKED_UP
-            else -> DeliveryStep.PENDING
-        }
-    ) }
-    
     // Synchroniser deliveryStep avec le statut de la commande actuelle
     // ⚠️ FIX: Ne synchroniser que si le statut serveur est plus avancé que l'état local
     LaunchedEffect(currentOrder?.statut) {
