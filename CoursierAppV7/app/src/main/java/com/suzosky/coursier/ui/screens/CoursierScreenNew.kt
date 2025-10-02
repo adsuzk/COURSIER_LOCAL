@@ -181,6 +181,32 @@ fun CoursierScreenNew(
                         deliveryStep = deliveryStep,
                         pendingOrdersCount = pendingOrdersCount,
                         courierLocation = mapUi.currentLocation,
+                        onStartDelivery = {
+                            // Passage de acceptee → en_cours (démarrage navigation)
+                            currentOrder?.let { order ->
+                                deliveryStep = DeliveryStep.EN_ROUTE_PICKUP
+                                val serverStatus = DeliveryStatusMapper.mapStepToServerStatus(DeliveryStep.EN_ROUTE_PICKUP)
+                                ApiService.updateOrderStatus(order.id, serverStatus) { success ->
+                                    if (success) {
+                                        timelineBanner = null
+                                        Toast.makeText(context, "Navigation démarrée vers le point d'enlèvement", Toast.LENGTH_SHORT).show()
+                                    } else {
+                                        timelineBanner = TimelineBanner(
+                                            message = "Statut 'En route' non synchronisé.",
+                                            severity = BannerSeverity.ERROR,
+                                            actionLabel = "Réessayer",
+                                            onAction = {
+                                                bannerVersion++
+                                                ApiService.updateOrderStatus(order.id, serverStatus) { ok2 ->
+                                                    if (ok2) timelineBanner = null
+                                                }
+                                            }
+                                        )
+                                        Toast.makeText(context, "Erreur synchronisation serveur", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }
+                        },
                         onAcceptOrder = {
                             currentOrder?.let { order ->
                                 if (hasNewOrder) {
