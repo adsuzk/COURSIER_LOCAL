@@ -1,5 +1,6 @@
 package com.suzosky.coursier.ui.screens
 
+import android.content.Context
 import android.location.Location
 import android.widget.Toast
 import androidx.compose.animation.*
