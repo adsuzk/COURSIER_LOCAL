@@ -17,7 +17,9 @@ val AccentBlue = Color(0xFF0F3460)
 val AccentRed = Color(0xFFE94560)
 val SuccessGreen = Color(0xFF27AE60) // Match --success-color from coursier.php
 val SuccessGreenAlt = Color(0xFF28a745) // Alternative success color from coursier.php
+val PrimaryGreen = SuccessGreen // Alias pour cohérence dans l'app
 val WarningYellow = Color(0xFFFFC107) // Match --warning-color from coursier.php
+val ErrorRed = Color(0xFFF44336) // Couleur d'erreur standard Material Design
 
 // Glass / Transparency
 val GlassBg = Color(0x14FFFFFF) // ~8% white
