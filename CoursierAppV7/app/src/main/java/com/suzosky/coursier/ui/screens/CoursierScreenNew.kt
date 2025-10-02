@@ -102,6 +102,18 @@ fun CoursierScreenNew(
             localCommandes = localCommandes + newCommands
             android.util.Log.d("CoursierScreenNew", "📥 ${newCommands.size} nouvelles commandes ajoutées")
         }
+        
+        // ⚠️ FIX CRITIQUE: Synchroniser currentOrder avec la version mise à jour dans localCommandes
+        // Si currentOrder existe, la mettre à jour avec la version actuelle de la liste
+        currentOrder?.let { current ->
+            val updatedOrder = localCommandes.find { it.id == current.id }
+            if (updatedOrder != null && updatedOrder !== current) {
+                // La commande existe toujours mais a été mise à jour (changement de statut)
+                currentOrder = updatedOrder
+                android.util.Log.d("CoursierScreenNew", "🔄 currentOrder synchronized: ${updatedOrder.id} (statut: ${updatedOrder.statut})")
+            }
+        }
+        
         pendingOrdersCount = localCommandes.count { it.statut == "nouvelle" || it.statut == "attente" }
     }
     
