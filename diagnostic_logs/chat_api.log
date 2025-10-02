@@ -9901,3 +9901,12 @@
 [2025-10-02 09:37:10] {"endpoint":"get_messages","error":"SQLSTATE[42S02]: Base table or view not found: 1146 Table 'coursier_local.chat_messages' doesn't exist","conversation_id":18}
 [2025-10-02 09:37:29] {"endpoint":"get_messages","error":"SQLSTATE[42S02]: Base table or view not found: 1146 Table 'coursier_local.chat_messages' doesn't exist","conversation_id":18}
 [2025-10-02 09:38:30] {"endpoint":"get_messages","error":"SQLSTATE[42S02]: Base table or view not found: 1146 Table 'coursier_local.chat_messages' doesn't exist","conversation_id":18}
+[2025-10-02 10:11:04] {"endpoint":"get_messages","conversation_id":18,"count":0}
+[2025-10-02 10:11:08] {"endpoint":"get_messages","conversation_id":18,"count":0}
+[2025-10-02 10:11:12] {"endpoint":"get_messages","conversation_id":18,"count":0}
+[2025-10-02 10:11:16] {"endpoint":"get_messages","conversation_id":18,"count":0}
+[2025-10-02 10:11:20] {"endpoint":"get_messages","conversation_id":18,"count":0}
+[2025-10-02 10:11:23] {"endpoint":"get_messages","conversation_id":18,"count":0}
+[2025-10-02 10:11:27] {"endpoint":"get_messages","conversation_id":18,"count":0}
+[2025-10-02 10:11:31] {"endpoint":"get_messages","conversation_id":18,"count":0}
+[2025-10-02 10:11:35] {"endpoint":"get_messages","conversation_id":18,"count":0}
