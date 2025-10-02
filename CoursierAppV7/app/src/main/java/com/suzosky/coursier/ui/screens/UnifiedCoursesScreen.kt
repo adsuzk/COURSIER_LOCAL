@@ -1,6 +1,7 @@
 package com.suzosky.coursier.ui.screens
 
 import android.location.Location
+import android.widget.Toast
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
