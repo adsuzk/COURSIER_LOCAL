@@ -110,13 +110,7 @@ fun CoursierScreenNew(
             save = { it.ordinal }, // Sauvegarder l'ordinal (Int)
             restore = { DeliveryStep.values()[it] } // Restaurer depuis l'ordinal
         )
-    ) { mutableStateOf(
-        when (currentOrder?.statut) {
-            "acceptee" -> DeliveryStep.ACCEPTED
-            "en_cours", "recuperee" -> DeliveryStep.PICKED_UP
-            else -> DeliveryStep.PENDING
-        }
-    ) }
+    ) { mutableStateOf(DeliveryStep.PENDING) } // Toujours démarrer à PENDING, la synchro se fera après
     
     // Synchroniser localCommandes avec commandes (quand de nouvelles arrivent)
     LaunchedEffect(commandes) {
@@ -168,6 +162,7 @@ fun CoursierScreenNew(
     
     // Synchroniser deliveryStep avec le statut de la commande actuelle
     // ⚠️ FIX: Ne synchroniser que si le statut serveur est plus avancé que l'état local
+    // ET seulement si deliveryStep est à PENDING (pas restauré par Saver)
     LaunchedEffect(currentOrder?.statut) {
         currentOrder?.let { order ->
             val newStep = when (order.statut) {
@@ -178,11 +173,13 @@ fun CoursierScreenNew(
                 else -> deliveryStep
             }
             
-            // Ne mettre à jour QUE si on progresse (pas de retour en arrière)
+            // Ne mettre à jour QUE si:
+            // 1. On progresse (pas de retour en arrière) OU
+            // 2. deliveryStep est encore à PENDING (première initialisation)
             val currentStepOrder = deliveryStep.ordinal
             val newStepOrder = newStep.ordinal
             
-            if (newStepOrder >= currentStepOrder) {
+            if (deliveryStep == DeliveryStep.PENDING || newStepOrder > currentStepOrder) {
                 deliveryStep = newStep
                 android.util.Log.d("CoursierScreenNew", "🔄 Synced deliveryStep to $deliveryStep for order ${order.id} (statut: ${order.statut})")
             } else {
