@@ -224,26 +224,46 @@ fun UnifiedCoursesScreen(
             )
         }
         
-        // OVERLAY : Bouton guidage vocal (si en route)
-        // Note: Le guidage vocal est géré AUTOMATIQUEMENT par le NavigationScreen
-        // Ce bouton sert juste à activer/désactiver la fonctionnalité
+        // OVERLAY : Bouton guidage vocal Google Maps (si en route)
         if (currentOrder != null && deliveryStep in listOf(
             DeliveryStep.ACCEPTED,
             DeliveryStep.EN_ROUTE_PICKUP,
+            DeliveryStep.PICKED_UP,
             DeliveryStep.EN_ROUTE_DELIVERY
         )) {
-            VoiceGuidanceButton(
-                isEnabled = isVoiceGuidanceEnabled,
-                onToggle = { enabled ->
-                    isVoiceGuidanceEnabled = enabled
-                    // Le guidage vocal est maintenant géré par NavigationScreen
-                    // qui utilise l'API Text-to-Speech Android pour les instructions vocales
+            val context = LocalContext.current
+            
+            FloatingActionButton(
+                onClick = {
+                    // Ouvrir Google Maps avec navigation vocale
+                    val destination = currentDestination
+                    if (destination != null) {
+                        try {
+                            // Intent Google Maps avec mode navigation
+                            val gmmIntentUri = android.net.Uri.parse(
+                                "google.navigation:q=${destination.latitude},${destination.longitude}&mode=d"
+                            )
+                            val mapIntent = android.content.Intent(android.content.Intent.ACTION_VIEW, gmmIntentUri)
+                            mapIntent.setPackage("com.google.android.apps.maps")
+                            context.startActivity(mapIntent)
+                            Toast.makeText(context, "🗣️ Guidage vocal Google Maps activé", Toast.LENGTH_SHORT).show()
+                        } catch (e: Exception) {
+                            Toast.makeText(context, "Google Maps non disponible", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 },
+                containerColor = PrimaryGold,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(16.dp)
                     .offset(y = 200.dp)
-            )
+            ) {
+                Icon(
+                    Icons.Filled.VolumeUp,
+                    contentDescription = "Guidage vocal",
+                    tint = PrimaryDark
+                )
+            }
         }
         
         // OVERLAY : Panneau d'actions en bas
