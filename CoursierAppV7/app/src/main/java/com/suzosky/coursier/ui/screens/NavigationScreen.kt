@@ -67,8 +67,10 @@ fun NavigationScreen(
     
     // Centrer la caméra sur la position actuelle
     LaunchedEffect(courierLocation, currentDestination) {
+        android.util.Log.d("NavigationScreen", "📍 LaunchedEffect MAPS - courierLocation=$courierLocation, currentDestination=$currentDestination")
         courierLocation?.let { courier ->
             currentDestination?.let { dest ->
+                android.util.Log.d("NavigationScreen", "✅ Positions valides - Création bounds")
                 // Créer un bounds qui inclut les deux points
                 val boundsBuilder = LatLngBounds.builder()
                 boundsBuilder.include(courier)
@@ -77,21 +79,26 @@ fun NavigationScreen(
                 try {
                     val bounds = boundsBuilder.build()
                     val padding = 150 // pixels
+                    android.util.Log.d("NavigationScreen", "🗺️ Animate bounds: SW=${bounds.southwest}, NE=${bounds.northeast}")
                     cameraPositionState.animate(
                         CameraUpdateFactory.newLatLngBounds(bounds, padding)
                     )
                 } catch (e: Exception) {
+                    android.util.Log.e("NavigationScreen", "❌ Erreur bounds: ${e.message}")
                     // Fallback : centrer sur la destination
                     cameraPositionState.animate(
                         CameraUpdateFactory.newLatLngZoom(dest, 14f)
                     )
                 }
             } ?: run {
+                android.util.Log.w("NavigationScreen", "⚠️ Pas de destination - Centrer sur coursier")
                 // Pas de destination : centrer sur le coursier
                 cameraPositionState.animate(
                     CameraUpdateFactory.newLatLngZoom(courier, 15f)
                 )
             }
+        } ?: run {
+            android.util.Log.w("NavigationScreen", "❌ Pas de courierLocation")
         }
     }
     
