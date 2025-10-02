@@ -850,10 +850,10 @@ $margeNetteSuzosky = $comptaData['ca_total'] > 0 ? ($comptaData['revenus_nets_su
         
         <div class="filter-actions">
             <button type="submit" class="btn-filter">🔍 Filtrer</button>
-            <a href="admin.php?section=finances&tab=comptabilite&export=excel&date_debut=<?php echo urlencode($dateDebut); ?>&date_fin=<?php echo urlencode($dateFin); ?>" class="btn-export">
+            <a href="admin.php?section=comptabilite&export=excel&date_debut=<?php echo urlencode($dateDebut); ?>&date_fin=<?php echo urlencode($dateFin); ?>" class="btn-export">
                 📥 Excel
             </a>
-            <a href="admin.php?section=finances&tab=comptabilite&export=pdf&date_debut=<?php echo urlencode($dateDebut); ?>&date_fin=<?php echo urlencode($dateFin); ?>" class="btn-export">
+            <a href="admin.php?section=comptabilite&export=pdf&date_debut=<?php echo urlencode($dateDebut); ?>&date_fin=<?php echo urlencode($dateFin); ?>" class="btn-export">
                 📄 PDF
             </a>
         </div>
