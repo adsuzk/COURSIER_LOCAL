@@ -83,13 +83,11 @@ try {
     try {
         $pdo = getDBConnection();
     } catch (Exception $dbException) {
-        http_response_code(503);
-        echo json_encode([
+        sendJsonResponse([
             'success' => false, 
             'error' => 'Erreur de connexion à la base de données',
             'details' => $dbException->getMessage()
-        ]);
-        exit;
+        ], 503);
     }
     
     // Vérifier que la commande existe et est bien assignée au coursier
@@ -98,12 +96,10 @@ try {
     $commande = $stmt->fetch(PDO::FETCH_ASSOC);
     
     if (!$commande) {
-        http_response_code(404);
-        echo json_encode([
+        sendJsonResponse([
             'success' => false, 
             'error' => 'Commande non trouvée ou non assignée à ce coursier'
-        ]);
-        exit;
+        ], 404);
     }
     
     if ($action === 'accept') {
