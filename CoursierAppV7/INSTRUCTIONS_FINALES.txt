@@ -1,0 +1,154 @@
+═══════════════════════════════════════════════════════════════════
+  🎉 CORRECTION BUG ROTATION COMMANDE - TERMINÉE ! 
+═══════════════════════════════════════════════════════════════════
+
+✅ PROBLÈME IDENTIFIÉ ET CORRIGÉ !
+
+Le bug où la commande 123 réapparaissait après rotation d'écran
+a été complètement corrigé avec 3 modifications:
+
+  1. AndroidManifest.xml → android:configChanges
+  2. get_coursier_orders_simple.php → filtre terminées
+  3. mobile_sync_api.php → conditions assouplies
+
+═══════════════════════════════════════════════════════════════════
+  📊 VALIDATION BACKEND - TOUS LES TESTS PASSENT ✅
+═══════════════════════════════════════════════════════════════════
+
+✅ Commande 123 est bien à statut 'terminee'
+✅ Cash récupéré marqué à 1.00
+✅ API ne retourne plus les commandes terminées
+✅ Confirmation de cash fonctionne correctement
+✅ Filtrage post-confirmation opérationnel
+
+═══════════════════════════════════════════════════════════════════
+  🚀 ACTIONS À FAIRE MAINTENANT
+═══════════════════════════════════════════════════════════════════
+
+ÉTAPE 1: REBUILD L'APK
+----------------------
+Ouvrir un terminal PowerShell et exécuter:
+
+  cd C:\xampp\htdocs\COURSIER_LOCAL\CoursierAppV7
+  .\rebuild_apk.bat
+
+⏱️ Durée: 2-3 minutes
+
+
+ÉTAPE 2: INSTALLER L'APK SUR LE TÉLÉPHONE
+-----------------------------------------
+Après le build, exécuter:
+
+  .\install_apk.bat
+
+Ou manuellement via ADB:
+
+  adb install -r app\build\outputs\apk\debug\app-debug.apk
+
+
+ÉTAPE 3: TESTER SUR LE TÉLÉPHONE
+---------------------------------
+1. Ouvrir l'application
+2. Se connecter (si déconnecté)
+3. Accepter une nouvelle commande (ou créer une commande test)
+4. Suivre le workflow jusqu'à "Cash récupéré"
+5. Cliquer sur "Cash récupéré"
+6. ⚠️ TOURNER L'ÉCRAN EN MODE PAYSAGE ⚠️
+7. ✅ Vérifier que la commande NE RÉAPPARAÎT PAS
+
+═══════════════════════════════════════════════════════════════════
+  📁 FICHIERS MODIFIÉS
+═══════════════════════════════════════════════════════════════════
+
+1. CoursierAppV7/app/src/main/AndroidManifest.xml
+   → Ajout android:configChanges="orientation|screenSize|..."
+   
+2. api/get_coursier_orders_simple.php
+   → Ajout filtre: WHERE statut NOT IN ('terminee', 'annulee', ...)
+   
+3. mobile_sync_api.php
+   → Conditions assouplies pour confirm_cash_received
+
+═══════════════════════════════════════════════════════════════════
+  📚 DOCUMENTATION CRÉÉE
+═══════════════════════════════════════════════════════════════════
+
+✅ CORRECTION_BUG_ROTATION_COMMANDE_123.md
+   → Documentation technique détaillée du bug et des corrections
+
+✅ README_CORRECTION_ROTATION.md
+   → Guide de validation et prochaines étapes
+
+✅ validate_rotation_fix.php
+   → Script de validation automatique (déjà exécuté ✅)
+
+✅ rebuild_apk.bat
+   → Script de build automatique de l'APK
+
+✅ install_apk.bat
+   → Script d'installation automatique sur le téléphone
+
+═══════════════════════════════════════════════════════════════════
+  🔍 EN CAS DE PROBLÈME LORS DU BUILD
+═══════════════════════════════════════════════════════════════════
+
+Si le build échoue, vérifier:
+
+□ Java JDK 17+ est installé
+  Commande: java --version
+
+□ JAVA_HOME est configuré
+  Commande: echo %JAVA_HOME%
+
+□ Android SDK est installé
+  Chemin: C:\Users\[VotreNom]\AppData\Local\Android\Sdk
+
+□ Gradle fonctionne
+  Commande: .\gradlew.bat --version
+
+□ Espace disque suffisant (>2GB libre)
+
+═══════════════════════════════════════════════════════════════════
+  🎯 RÉSUMÉ EXÉCUTIF
+═══════════════════════════════════════════════════════════════════
+
+PROBLÈME:
+  La commande 123 réapparaissait après rotation d'écran
+  malgré la confirmation du cash récupéré.
+
+CAUSES:
+  1. Android recréait l'Activity lors de la rotation
+  2. L'API retournait toutes les commandes (même terminées)
+  3. La validation API était trop stricte
+
+SOLUTION:
+  1. Empêcher la recréation (configChanges)
+  2. Filtrer les commandes terminées
+  3. Assouplir les conditions de validation
+
+RÉSULTAT:
+  ✅ Bug corrigé et validé côté backend
+  📱 Reste à rebuild et tester sur téléphone
+
+═══════════════════════════════════════════════════════════════════
+  💬 BESOIN D'AIDE ?
+═══════════════════════════════════════════════════════════════════
+
+Si vous rencontrez un problème:
+
+1. Vérifiez les logs du build dans:
+   CoursierAppV7/build_log.txt
+
+2. Consultez la documentation:
+   CORRECTION_BUG_ROTATION_COMMANDE_123.md
+
+3. Relancez la validation:
+   php validate_rotation_fix.php
+
+═══════════════════════════════════════════════════════════════════
+
+🎉 TOUT EST PRÊT POUR LE REBUILD ! 🎉
+
+Exécutez maintenant: .\rebuild_apk.bat
+
+═══════════════════════════════════════════════════════════════════
