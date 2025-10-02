@@ -24,6 +24,7 @@ import com.suzosky.coursier.ui.screens.UnifiedCoursesScreen
 import com.suzosky.coursier.ui.screens.ModernChatScreen
 import com.suzosky.coursier.ui.screens.ModernWalletScreen
 import com.suzosky.coursier.ui.screens.ModernProfileScreen
+import com.suzosky.coursier.ui.screens.CoursierStats
 import com.suzosky.coursier.ui.screens.DeliveryStep
 import com.suzosky.coursier.data.models.ChatMessage
 import com.suzosky.coursier.services.NotificationSoundService
