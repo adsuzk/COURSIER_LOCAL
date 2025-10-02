@@ -115,8 +115,9 @@ try {
     
     // Compter les commandes en attente (utiliser table commandes correcte)
         $commandesAttente = 0;
-        // CRITIQUE: Inclure 'recuperee' = colis récupéré, en route vers livraison
-        $activeStatuses = ['assignee', 'nouvelle', 'acceptee', 'en_cours', 'picked_up', 'recuperee'];
+        // CRITIQUE: Inclure TOUS les statuts actifs (avant livraison finale)
+        // 🔥 FIX: Ajout de 'en_livraison' pour que la commande reste visible pendant tout le workflow
+        $activeStatuses = ['assignee', 'nouvelle', 'acceptee', 'en_cours', 'picked_up', 'recuperee', 'en_livraison'];
         try {
             $placeholders = implode(',', array_fill(0, count($activeStatuses), '?'));
             $stmt = $pdo->prepare("
@@ -167,6 +168,7 @@ try {
         LIMIT 10
     ");
         // Récupérer les commandes actives depuis la table commandes
+        // 🔥 FIX: Inclure TOUTES les commandes actives pour que l'app ne perde jamais la commande en cours
         $commandes = [];
         try {
             $placeholders = implode(',', array_fill(0, count($activeStatuses), '?'));
@@ -191,8 +193,19 @@ try {
                 FROM commandes 
                 WHERE coursier_id = ? 
                 AND statut IN ($placeholders)
-                ORDER BY created_at DESC
-                LIMIT 10
+                ORDER BY 
+                    CASE statut
+                        WHEN 'en_livraison' THEN 1
+                        WHEN 'recuperee' THEN 2
+                        WHEN 'picked_up' THEN 3
+                        WHEN 'en_cours' THEN 4
+                        WHEN 'acceptee' THEN 5
+                        WHEN 'assignee' THEN 6
+                        WHEN 'nouvelle' THEN 7
+                        ELSE 99
+                    END,
+                    created_at DESC
+                LIMIT 20
             ");
             $params = array_merge([$coursierId], $activeStatuses);
             $stmt->execute($params);
