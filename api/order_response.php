@@ -49,7 +49,18 @@ if (!in_array($action, ['accept', 'refuse'])) {
 }
 
 try {
-    $pdo = getDBConnection();
+    // Tenter de se connecter à la base de données
+    try {
+        $pdo = getDBConnection();
+    } catch (Exception $dbException) {
+        http_response_code(503);
+        echo json_encode([
+            'success' => false, 
+            'error' => 'Erreur de connexion à la base de données',
+            'details' => $dbException->getMessage()
+        ]);
+        exit;
+    }
     
     // Vérifier que la commande existe et est bien assignée au coursier
     $stmt = $pdo->prepare('SELECT * FROM commandes WHERE id = ? AND coursier_id = ?');
