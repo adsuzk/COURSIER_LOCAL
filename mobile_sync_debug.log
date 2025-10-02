@@ -865,3 +865,4 @@
 {"timestamp":"2025-10-02 22:25:55","action":"mark_delivered","data":{"commande_id":110},"response":{"success":true,"message":"Commande livr\u00e9e et termin\u00e9e avec succ\u00e8s","commande_id":110,"nouveau_statut":"terminee"},"ip":"::1"}
 {"timestamp":"2025-10-02 22:25:55","action":"mark_delivered","data":{"action":"mark_delivered","coursier_id":"5","commande_id":"110"},"response":{"success":true,"message":"Commande livr\u00e9e et termin\u00e9e avec succ\u00e8s","commande_id":110,"nouveau_statut":"terminee"},"ip":"::1"}
 {"timestamp":"2025-10-02 22:26:00","action":"get_commandes","data":{"action":"get_commandes","coursier_id":"5"},"response":{"success":true,"commandes":[],"count":0},"ip":"::1"}
+{"timestamp":"2025-10-02 22:44:58","action":"mark_delivered","data":{"action":"mark_delivered","coursier_id":"5","commande_id":"123"},"response":{"success":false,"message":"Colis pas encore r\u00e9cup\u00e9r\u00e9"},"ip":"::1"}
