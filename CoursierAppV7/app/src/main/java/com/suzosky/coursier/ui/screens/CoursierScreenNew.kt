@@ -65,8 +65,12 @@ fun CoursierScreenNew(
     var currentTab by remember { mutableStateOf(NavigationTab.COURSES) }
     // Utiliser les vraies données au lieu des valeurs mockées
     var realBalance by remember { mutableStateOf(balance) }
+    
+    // ⚠️ Liste locale mutable des commandes (pour pouvoir retirer les terminées)
+    var localCommandes by remember { mutableStateOf(commandes) }
+    
     // Compter uniquement les commandes en attente d'acceptation (nouvelles/attente)
-    var pendingOrdersCount by remember { mutableStateOf(commandes.count { it.statut == "nouvelle" || it.statut == "attente" }) }
+    var pendingOrdersCount by remember { mutableStateOf(localCommandes.count { it.statut == "nouvelle" || it.statut == "attente" }) }
     
     // Position du coursier (fournie par LocationForegroundService via MainActivity)
     val currentLocationFromService by com.suzosky.coursier.services.LocationForegroundService.currentLocation.collectAsState()
