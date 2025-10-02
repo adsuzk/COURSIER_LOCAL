@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.suzosky.coursier.ui.theme.*
 import com.suzosky.coursier.network.ApiService
 import kotlinx.coroutines.launch
