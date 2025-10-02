@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.suzosky.coursier.data.models.ChatMessage
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
