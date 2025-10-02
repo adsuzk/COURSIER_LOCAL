@@ -63,13 +63,13 @@ if ($stats['nb'] > 0) {
 // Test 4: Test de la requête historique des taux
 echo "✅ Test 4: Requête historique des taux...\n";
 try {
-    $query = "SELECT c.id, c.date_creation, c.montant_course,
+    $query = "SELECT c.id, c.created_at, c.prix_total,
         (SELECT taux_commission FROM config_tarification 
-         WHERE date_application <= c.date_creation 
+         WHERE date_application <= c.created_at 
          ORDER BY date_application DESC LIMIT 1) as taux_historique
         FROM commandes c 
         WHERE c.statut = 'livree' 
-        ORDER BY c.date_creation DESC 
+        ORDER BY c.created_at DESC 
         LIMIT 5";
     
     $stmt = $conn->query($query);
@@ -79,7 +79,7 @@ try {
         echo "   ✓ Requête exécutée avec succès\n";
         echo "   ✓ Exemple des 5 dernières commandes:\n";
         foreach ($results as $row) {
-            echo "     - ID {$row['id']}: {$row['montant_course']} FCFA (taux: {$row['taux_historique']}%)\n";
+            echo "     - ID {$row['id']}: {$row['prix_total']} FCFA (taux: {$row['taux_historique']}%)\n";
         }
     } else {
         echo "   ⚠ Aucune donnée à afficher\n";
