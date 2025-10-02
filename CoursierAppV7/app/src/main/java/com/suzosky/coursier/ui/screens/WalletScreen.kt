@@ -1363,6 +1363,259 @@ private fun CourseHistoryItem(commande: WalletHistoryItem) {
     }
 }
 
+// Version détaillée pour le modal d'historique complet
+@Composable
+private fun CourseHistoryItemDetailed(commande: WalletHistoryItem) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = when (commande.statut) {
+                "livree" -> SuccessGreen.copy(alpha = 0.08f)
+                "terminee" -> SuccessGreen.copy(alpha = 0.05f)
+                "recuperee" -> SecondaryBlue.copy(alpha = 0.08f)
+                "en_cours" -> SecondaryBlue.copy(alpha = 0.08f)
+                "acceptee" -> PrimaryGold.copy(alpha = 0.08f)
+                "annulee" -> AccentRed.copy(alpha = 0.08f)
+                "refusee" -> Color.Red.copy(alpha = 0.08f)
+                else -> GlassBg
+            }
+        ),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(18.dp)
+        ) {
+            // Ligne 1 : ID + Statut
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        when (commande.statut) {
+                            "livree", "terminee" -> Icons.Default.CheckCircle
+                            "recuperee", "en_cours" -> Icons.Default.LocalShipping
+                            "acceptee" -> Icons.Default.ThumbUp
+                            "annulee" -> Icons.Default.Cancel
+                            "refusee" -> Icons.Default.Block
+                            else -> Icons.Default.Info
+                        },
+                        contentDescription = null,
+                        tint = when (commande.statut) {
+                            "livree", "terminee" -> SuccessGreen
+                            "recuperee", "en_cours" -> SecondaryBlue
+                            "acceptee" -> PrimaryGold
+                            "annulee", "refusee" -> AccentRed
+                            else -> Color.White.copy(alpha = 0.6f)
+                        },
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Course #${commande.id}",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = PrimaryGold
+                    )
+                }
+                
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = when (commande.statut) {
+                            "livree", "terminee" -> SuccessGreen
+                            "recuperee", "en_cours" -> SecondaryBlue
+                            "acceptee" -> PrimaryGold
+                            "annulee", "refusee" -> AccentRed
+                            else -> Color.Gray
+                        }
+                    ),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text(
+                        text = when (commande.statut) {
+                            "livree" -> "✓ Livrée"
+                            "terminee" -> "✓ Terminée"
+                            "recuperee" -> "📦 Récupérée"
+                            "en_cours" -> "🚚 En cours"
+                            "acceptee" -> "👍 Acceptée"
+                            "annulee" -> "✗ Annulée"
+                            "refusee" -> "🚫 Refusée"
+                            else -> commande.statut
+                        },
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(12.dp))
+            
+            // Ligne 2 : Client + Prix
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Client",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.White.copy(alpha = 0.5f)
+                    )
+                    Text(
+                        text = commande.clientNom.ifBlank { "Client anonyme" },
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White
+                    )
+                }
+                
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(
+                        text = "Montant",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.White.copy(alpha = 0.5f)
+                    )
+                    Text(
+                        text = formatFcfa(commande.prix.toInt()),
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = when (commande.statut) {
+                            "livree", "terminee" -> SuccessGreen
+                            "annulee", "refusee" -> AccentRed
+                            else -> PrimaryGold
+                        }
+                    )
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(12.dp))
+            
+            // Ligne 3 : Date et heure
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    Icons.Default.CalendarToday,
+                    contentDescription = null,
+                    tint = Color.White.copy(alpha = 0.5f),
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "${commande.dateCommande} à ${commande.heureCommande}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.White.copy(alpha = 0.7f)
+                )
+            }
+            
+            Spacer(modifier = Modifier.height(12.dp))
+            
+            // Ligne 4 : Trajet
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White.copy(alpha = 0.05f)
+                ),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(12.dp)
+                ) {
+                    // Départ
+                    Row(verticalAlignment = Alignment.Top) {
+                        Icon(
+                            Icons.Default.LocationOn,
+                            contentDescription = null,
+                            tint = PrimaryGold,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Column {
+                            Text(
+                                text = "Départ",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = Color.White.copy(alpha = 0.5f)
+                            )
+                            Text(
+                                text = commande.adresseEnlevement.ifBlank { "Non spécifié" },
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color.White,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                    }
+                    
+                    Spacer(modifier = Modifier.height(8.dp))
+                    
+                    // Ligne de séparation
+                    Box(
+                        modifier = Modifier
+                            .padding(start = 10.dp)
+                            .width(2.dp)
+                            .height(20.dp)
+                            .background(Color.White.copy(alpha = 0.2f))
+                    )
+                    
+                    Spacer(modifier = Modifier.height(8.dp))
+                    
+                    // Arrivée
+                    Row(verticalAlignment = Alignment.Top) {
+                        Icon(
+                            Icons.Default.Place,
+                            contentDescription = null,
+                            tint = SecondaryBlue,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Column {
+                            Text(
+                                text = "Arrivée",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = Color.White.copy(alpha = 0.5f)
+                            )
+                            Text(
+                                text = commande.adresseLivraison.ifBlank { "Non spécifié" },
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color.White,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                    }
+                }
+            }
+            
+            // Ligne 5 : Distance
+            if (commande.distanceKm > 0) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        Icons.Default.DirectionsRun,
+                        contentDescription = null,
+                        tint = Color.White.copy(alpha = 0.5f),
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "${String.format("%.1f", commande.distanceKm)} km",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.White.copy(alpha = 0.7f),
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
+        }
+    }
+}
+
 private fun formatFcfa(amount: Int): String {
     val nf = java.text.NumberFormat.getInstance(Locale.FRANCE)
     return nf.format(amount.coerceAtLeast(0)) + " FCFA"
