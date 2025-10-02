@@ -472,10 +472,15 @@ fun CoursierScreenNew(
                                             
                                             // Lancer la navigation Google Maps vers l'adresse de livraison
                                             try {
-                                                val destination = "${order.latitudeLivraison},${order.longitudeLivraison}"
-                                                val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse("google.navigation:q=$destination&mode=d"))
-                                                intent.setPackage("com.google.android.apps.maps")
-                                                context.startActivity(intent)
+                                                val coords = order.coordonneesLivraison
+                                                if (coords != null) {
+                                                    val destination = "${coords.latitude},${coords.longitude}"
+                                                    val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse("google.navigation:q=$destination&mode=d"))
+                                                    intent.setPackage("com.google.android.apps.maps")
+                                                    context.startActivity(intent)
+                                                } else {
+                                                    Toast.makeText(context, "Coordonnees de livraison manquantes", Toast.LENGTH_SHORT).show()
+                                                }
                                             } catch (e: Exception) {
                                                 Toast.makeText(context, "Google Maps non disponible", Toast.LENGTH_SHORT).show()
                                             }
