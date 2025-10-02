@@ -33,6 +33,7 @@ class MapViewModel @Inject constructor(
     val uiState: StateFlow<MapUiState> = _uiState.asStateFlow()
 
     init {
+        android.util.Log.d("MapViewModel", "🗺️ MapViewModel initialized - requesting location...")
         getCurrentLocation()
     }
 
@@ -40,24 +41,30 @@ class MapViewModel @Inject constructor(
      * Obtient la position actuelle du coursier
      */
     fun getCurrentLocation() {
+        android.util.Log.d("MapViewModel", "📍 getCurrentLocation called")
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLocationLoading = true)
             
             try {
+                android.util.Log.d("MapViewModel", "🔍 Calling locationService.getCurrentLocation()...")
                 val location = locationService.getCurrentLocation()
+                android.util.Log.d("MapViewModel", "📍 Location result: $location")
                 location?.let {
+                    android.util.Log.d("MapViewModel", "✅ Location found: lat=${it.latitude}, lng=${it.longitude}")
                     _uiState.value = _uiState.value.copy(
                         currentLocation = LatLng(it.latitude, it.longitude),
                         isLocationLoading = false,
                         errorMessage = null
                     )
                 } ?: run {
+                    android.util.Log.w("MapViewModel", "⚠️ Location is null")
                     _uiState.value = _uiState.value.copy(
                         isLocationLoading = false,
                         errorMessage = "Impossible d'obtenir la position"
                     )
                 }
             } catch (e: Exception) {
+                android.util.Log.e("MapViewModel", "❌ Error getting location: ${e.message}", e)
                 _uiState.value = _uiState.value.copy(
                     isLocationLoading = false,
                     errorMessage = "Erreur de géolocalisation: ${e.message}"
