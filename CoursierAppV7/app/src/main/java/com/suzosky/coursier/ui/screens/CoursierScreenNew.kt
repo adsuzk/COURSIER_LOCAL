@@ -106,6 +106,20 @@ fun CoursierScreenNew(
         pendingOrdersCount = commandes.count { it.statut == "nouvelle" || it.statut == "attente" }
     }
     
+    // Synchroniser deliveryStep avec le statut de la commande actuelle
+    LaunchedEffect(currentOrder?.statut) {
+        currentOrder?.let { order ->
+            deliveryStep = when (order.statut) {
+                "acceptee" -> DeliveryStep.ACCEPTED
+                "en_cours" -> DeliveryStep.PICKED_UP
+                "recuperee" -> DeliveryStep.PICKED_UP
+                "nouvelle", "attente" -> DeliveryStep.PENDING
+                else -> deliveryStep
+            }
+            android.util.Log.d("CoursierScreenNew", "🔄 Synced deliveryStep to $deliveryStep for order ${order.id} (statut: ${order.statut})")
+        }
+    }
+    
     // États pour les courses
     // Sélectionner d'abord une commande réellement active (en_cours/acceptee), sinon prendre une nouvelle/attente
     var currentOrder by remember { mutableStateOf<Commande?>(
