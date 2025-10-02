@@ -1,0 +1,1637 @@
+﻿STRUCTURE DETAILLEE DE LA BASE: coursier_local
+Date: 02/10/2025 08:14:31
+================================================================================
+
+
+
+========== TABLE: account_history ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+coursier_id	int(11)	NO	MUL	NULL	
+amount	decimal(10,2)	NO		NULL	
+type	enum('credit','debit')	NO		NULL	
+description	text	YES		NULL	
+created_at	timestamp	YES		current_timestamp()	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+account_history	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+account_history	1	coursier_id	1	coursier_id	A	0	NULL	NULL		BTREE		
+
+========== TABLE: admin_actions ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+admin_id	varchar(50)	NO	MUL	NULL	
+action_type	varchar(50)	NO	MUL	NULL	
+target_id	varchar(50)	YES		NULL	
+description	text	YES		NULL	
+ip_address	varchar(45)	YES		NULL	
+date_creation	timestamp	YES	MUL	current_timestamp()	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+admin_actions	0	PRIMARY	1	id	A	2	NULL	NULL		BTREE		
+admin_actions	1	idx_admin	1	admin_id	A	2	NULL	NULL		BTREE		
+admin_actions	1	idx_action	1	action_type	A	2	NULL	NULL		BTREE		
+admin_actions	1	idx_date	1	date_creation	A	2	NULL	NULL	YES	BTREE		
+
+========== TABLE: admin_audit_unified ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+timestamp	timestamp(6)	YES	MUL	current_timestamp(6)	
+admin_id	int(11)	YES	MUL	NULL	
+admin_username	varchar(50)	YES		NULL	
+action_type	enum('create','read','update','delete','login','logout')	NO	MUL	NULL	
+target_table	varchar(50)	YES		NULL	
+target_id	int(11)	YES		NULL	
+changes_json	longtext	YES		NULL	
+interface_source	enum('admin','business','coursier','concierge','recrutement')	NO	MUL	NULL	
+ip_address	varchar(45)	YES		NULL	
+user_agent	text	YES		NULL	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+admin_audit_unified	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+admin_audit_unified	1	idx_timestamp	1	timestamp	A	0	NULL	NULL	YES	BTREE		
+admin_audit_unified	1	idx_admin	1	admin_id	A	0	NULL	NULL	YES	BTREE		
+admin_audit_unified	1	idx_action	1	action_type	A	0	NULL	NULL		BTREE		
+admin_audit_unified	1	idx_interface	1	interface_source	A	0	NULL	NULL		BTREE		
+
+========== TABLE: admin_chat_status ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	1	
+is_online	tinyint(1)	YES		0	
+last_seen	timestamp	YES		current_timestamp()	on update current_timestamp()
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+admin_chat_status	0	PRIMARY	1	id	A	1	NULL	NULL		BTREE		
+
+========== TABLE: admins ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+username	varchar(50)	NO	UNI	NULL	
+email	varchar(100)	NO	UNI	NULL	
+password	varchar(255)	NO		NULL	
+created_at	timestamp	YES		current_timestamp()	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+admins	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+admins	0	username	1	username	A	0	NULL	NULL		BTREE		
+admins	0	email	1	email	A	0	NULL	NULL		BTREE		
+
+========== TABLE: agent_chats ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+chat_id	varchar(255)	NO	UNI	NULL	
+agent_matricule	varchar(50)	YES		NULL	
+agent_name	varchar(255)	YES		NULL	
+agent_phone	varchar(50)	YES		NULL	
+agent_type	varchar(100)	YES		NULL	
+device_info	longtext	YES		NULL	
+is_blocked	tinyint(1)	YES		0	
+created_at	timestamp	YES		current_timestamp()	
+last_activity	timestamp	YES	MUL	current_timestamp()	on update current_timestamp()
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+agent_chats	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+agent_chats	0	chat_id	1	chat_id	A	0	NULL	NULL		BTREE		
+agent_chats	1	idx_agent_chats_activity	1	last_activity	A	0	NULL	NULL	YES	BTREE		
+
+========== TABLE: agent_messages ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+chat_id	varchar(255)	NO	MUL	NULL	
+message	text	NO		NULL	
+sender_type	enum('agent','admin')	NO		NULL	
+is_read	tinyint(1)	YES	MUL	0	
+created_at	timestamp	YES		current_timestamp()	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+agent_messages	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+agent_messages	1	chat_id	1	chat_id	A	0	NULL	NULL		BTREE		
+agent_messages	1	idx_agent_messages_read	1	is_read	A	0	NULL	NULL	YES	BTREE		
+agent_messages	1	idx_agent_messages_read	2	sender_type	A	0	NULL	NULL		BTREE		
+
+========== TABLE: agents ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+nom	varchar(100)	NO		NULL	
+telephone	varchar(20)	NO	UNI	NULL	
+email	varchar(100)	NO	UNI	NULL	
+role	enum('agent','superviseur','admin')	YES		agent	
+specialite	enum('support_client','support_business','technique','commercial')	YES		support_client	
+statut	enum('actif','inactif')	YES	MUL	actif	
+en_ligne	tinyint(1)	YES	MUL	0	
+password_hash	varchar(255)	NO		NULL	
+derniere_connexion	timestamp	YES		NULL	
+created_at	timestamp	YES		current_timestamp()	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+agents	0	PRIMARY	1	id	A	2	NULL	NULL		BTREE		
+agents	0	telephone	1	telephone	A	2	NULL	NULL		BTREE		
+agents	0	email	1	email	A	2	NULL	NULL		BTREE		
+agents	1	idx_email	1	email	A	2	NULL	NULL		BTREE		
+agents	1	idx_statut	1	statut	A	2	NULL	NULL	YES	BTREE		
+agents	1	idx_en_ligne	1	en_ligne	A	2	NULL	NULL	YES	BTREE		
+
+========== TABLE: agents_suzosky ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+matricule	varchar(20)	NO	UNI	NULL	
+nom	varchar(100)	NO		NULL	
+prenoms	varchar(100)	NO		NULL	
+date_naissance	date	NO		NULL	
+lieu_naissance	varchar(100)	NO		NULL	
+type_poste	enum('chauffeur','coursier_moto','coursier_cargo','agent_conciergerie')	NO		NULL	
+telephone	varchar(20)	NO	UNI	NULL	
+email	varchar(100)	NO		NULL	
+piece_identite	enum('cni','passeport')	NO		NULL	
+numero_piece	varchar(50)	NO		NULL	
+contact_urgence_nom	varchar(100)	NO		NULL	
+contact_urgence_tel	varchar(20)	NO		NULL	
+contact_urgence_residence	varchar(200)	NO		NULL	
+status	enum('actif','inactif','suspendu')	YES		actif	
+shipday_id	varchar(50)	YES		NULL	
+created_at	timestamp	YES		current_timestamp()	
+password	varchar(255)	YES		NULL	
+password_plain	varchar(50)	YES		NULL	
+first_login_done	tinyint(1)	YES		0	
+password_changed_at	timestamp	YES		NULL	
+updated_at	timestamp	YES		current_timestamp()	on update current_timestamp()
+plain_password	varchar(5)	NO			
+nationalite	varchar(100)	YES		NULL	
+lieu_residence	varchar(150)	YES		NULL	
+cni	varchar(100)	YES		NULL	
+permis	varchar(100)	YES		NULL	
+urgence_nom	varchar(100)	YES		NULL	
+urgence_prenoms	varchar(100)	YES		NULL	
+urgence_lien	varchar(100)	YES		NULL	
+urgence_lieu_residence	varchar(150)	YES		NULL	
+urgence_telephone	varchar(30)	YES		NULL	
+current_session_token	varchar(100)	YES		NULL	
+last_login_at	datetime	YES		NULL	
+last_login_ip	varchar(64)	YES		NULL	
+last_login_user_agent	varchar(255)	YES		NULL	
+solde_wallet	decimal(10,2)	YES		0.00	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+agents_suzosky	0	PRIMARY	1	id	A	3	NULL	NULL		BTREE		
+agents_suzosky	0	matricule	1	matricule	A	3	NULL	NULL		BTREE		
+agents_suzosky	0	uniq_telephone	1	telephone	A	3	NULL	NULL		BTREE		
+
+========== TABLE: agents_unified ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+matricule	varchar(20)	NO	UNI	NULL	
+nom	varchar(100)	NO		NULL	
+prenoms	varchar(100)	NO		NULL	
+telephone	varchar(20)	NO	MUL	NULL	
+email	varchar(150)	YES		NULL	
+type_poste	enum('coursier','chauffeur','agent_call_center','superviseur','livreur')	NO	MUL	NULL	
+statut	enum('actif','inactif','suspendu','en_attente')	YES		en_attente	
+password_hash	varchar(255)	NO		NULL	
+password_plain	varchar(10)	NO		NULL	
+adresse	text	YES		NULL	
+ville	varchar(50)	YES		Abidjan	
+zone_travail	varchar(100)	YES		NULL	
+date_embauche	date	NO		NULL	
+date_creation	timestamp	YES		current_timestamp()	
+date_modification	timestamp	YES		current_timestamp()	on update current_timestamp()
+created_by	varchar(50)	YES		system	
+notes_admin	text	YES		NULL	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+agents_unified	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+agents_unified	0	matricule	1	matricule	A	0	NULL	NULL		BTREE		
+agents_unified	1	idx_matricule	1	matricule	A	0	NULL	NULL		BTREE		
+agents_unified	1	idx_type_statut	1	type_poste	A	0	NULL	NULL		BTREE		
+agents_unified	1	idx_type_statut	2	statut	A	0	NULL	NULL	YES	BTREE		
+agents_unified	1	idx_telephone	1	telephone	A	0	NULL	NULL		BTREE		
+
+========== TABLE: app_crashes ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11) unsigned	NO	PRI	NULL	auto_increment
+device_id	varchar(128)	NO	MUL	NULL	
+crash_hash	varchar(64)	NO	MUL	NULL	
+app_version_code	int(11)	NO	MUL	NULL	
+android_version	varchar(20)	YES		NULL	
+device_model	varchar(100)	YES		NULL	
+crash_type	varchar(50)	NO	MUL	NULL	
+exception_class	varchar(255)	YES		NULL	
+exception_message	text	YES		NULL	
+stack_trace	longtext	YES		NULL	
+screen_name	varchar(100)	YES		NULL	
+user_action	varchar(255)	YES		NULL	
+memory_usage	int(11)	YES		NULL	
+battery_level	int(3)	YES		NULL	
+network_type	varchar(20)	YES		NULL	
+is_resolved	tinyint(1)	NO	MUL	0	
+occurrence_count	int(11) unsigned	NO		1	
+first_occurred	datetime	NO		current_timestamp()	
+last_occurred	datetime	NO		current_timestamp()	on update current_timestamp()
+created_at	datetime	NO		current_timestamp()	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+app_crashes	0	PRIMARY	1	id	A	2	NULL	NULL		BTREE		
+app_crashes	1	idx_device	1	device_id	A	2	NULL	NULL		BTREE		
+app_crashes	1	idx_crash_hash	1	crash_hash	A	2	NULL	NULL		BTREE		
+app_crashes	1	idx_version	1	app_version_code	A	2	NULL	NULL		BTREE		
+app_crashes	1	idx_type	1	crash_type	A	2	NULL	NULL		BTREE		
+app_crashes	1	idx_resolved	1	is_resolved	A	2	NULL	NULL		BTREE		
+
+========== TABLE: app_devices ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11) unsigned	NO	PRI	NULL	auto_increment
+device_id	varchar(128)	NO	UNI	NULL	
+courier_id	int(11) unsigned	YES	MUL	NULL	
+device_model	varchar(100)	YES		NULL	
+device_brand	varchar(50)	YES		NULL	
+android_version	varchar(20)	YES		NULL	
+app_version_code	int(11)	NO	MUL	1	
+app_version_name	varchar(20)	NO		1.0	
+first_install	datetime	NO		current_timestamp()	
+last_seen	datetime	NO	MUL	current_timestamp()	on update current_timestamp()
+total_sessions	int(11) unsigned	NO		0	
+is_active	tinyint(1)	NO		1	
+created_at	datetime	NO		current_timestamp()	
+updated_at	datetime	NO		current_timestamp()	on update current_timestamp()
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+app_devices	0	PRIMARY	1	id	A	5	NULL	NULL		BTREE		
+app_devices	0	unique_device	1	device_id	A	5	NULL	NULL		BTREE		
+app_devices	1	idx_courier	1	courier_id	A	2	NULL	NULL	YES	BTREE		
+app_devices	1	idx_version	1	app_version_code	A	2	NULL	NULL		BTREE		
+app_devices	1	idx_last_seen	1	last_seen	A	5	NULL	NULL		BTREE		
+
+========== TABLE: app_events ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11) unsigned	NO	PRI	NULL	auto_increment
+device_id	varchar(128)	NO	MUL	NULL	
+event_type	varchar(50)	NO	MUL	NULL	
+event_name	varchar(100)	NO		NULL	
+screen_name	varchar(100)	YES		NULL	
+event_data	longtext	YES		NULL	
+session_id	varchar(64)	YES		NULL	
+occurred_at	datetime	NO	MUL	current_timestamp()	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+app_events	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+app_events	1	idx_device	1	device_id	A	0	NULL	NULL		BTREE		
+app_events	1	idx_event_type	1	event_type	A	0	NULL	NULL		BTREE		
+app_events	1	idx_occurred	1	occurred_at	A	0	NULL	NULL		BTREE		
+
+========== TABLE: app_notifications ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11) unsigned	NO	PRI	NULL	auto_increment
+device_id	varchar(128)	YES	MUL	NULL	
+notification_type	varchar(50)	NO	MUL	NULL	
+title	varchar(255)	NO		NULL	
+message	text	NO		NULL	
+action_url	varchar(500)	YES		NULL	
+priority	enum('LOW','NORMAL','HIGH','URGENT')	NO		NORMAL	
+sent_at	datetime	YES	MUL	NULL	
+delivered_at	datetime	YES		NULL	
+clicked_at	datetime	YES		NULL	
+expires_at	datetime	YES		NULL	
+created_at	datetime	NO		current_timestamp()	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+app_notifications	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+app_notifications	1	idx_device	1	device_id	A	0	NULL	NULL	YES	BTREE		
+app_notifications	1	idx_type	1	notification_type	A	0	NULL	NULL		BTREE		
+app_notifications	1	idx_sent	1	sent_at	A	0	NULL	NULL	YES	BTREE		
+
+========== TABLE: app_sessions ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11) unsigned	NO	PRI	NULL	auto_increment
+device_id	varchar(128)	NO	MUL	NULL	
+session_id	varchar(64)	NO	UNI	NULL	
+started_at	datetime	NO	MUL	current_timestamp()	
+ended_at	datetime	YES		NULL	
+duration_seconds	int(11) unsigned	YES		NULL	
+screens_visited	int(11) unsigned	NO		0	
+actions_performed	int(11) unsigned	NO		0	
+crashed	tinyint(1)	NO		0	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+app_sessions	0	PRIMARY	1	id	A	39	NULL	NULL		BTREE		
+app_sessions	0	unique_session	1	session_id	A	39	NULL	NULL		BTREE		
+app_sessions	1	idx_device	1	device_id	A	13	NULL	NULL		BTREE		
+app_sessions	1	idx_started	1	started_at	A	39	NULL	NULL		BTREE		
+
+========== TABLE: app_versions ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11) unsigned	NO	PRI	NULL	auto_increment
+version_code	int(11)	NO	UNI	NULL	
+version_name	varchar(20)	NO	MUL	NULL	
+apk_filename	varchar(255)	NO		NULL	
+apk_size	bigint(20) unsigned	NO		NULL	
+min_android_version	int(11)	NO		24	
+release_notes	text	YES		NULL	
+is_mandatory	tinyint(1)	NO		0	
+is_active	tinyint(1)	NO	MUL	1	
+uploaded_at	datetime	NO		current_timestamp()	
+created_at	datetime	NO		current_timestamp()	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+app_versions	0	PRIMARY	1	id	A	15	NULL	NULL		BTREE		
+app_versions	0	unique_version_code	1	version_code	A	15	NULL	NULL		BTREE		
+app_versions	1	idx_version_name	1	version_name	A	15	NULL	NULL		BTREE		
+app_versions	1	idx_active	1	is_active	A	5	NULL	NULL		BTREE		
+
+========== TABLE: bonus_penalites ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+coursier_id	int(11)	NO	MUL	NULL	
+montant	decimal(8,2)	NO		NULL	
+type	enum('bonus','penalite')	NO	MUL	NULL	
+categorie	enum('performance','rapidite','satisfaction','volume','retard','annulation','note_faible','manuel')	NO		NULL	
+description	text	YES		NULL	
+commande_id	int(11)	YES	MUL	NULL	
+periode_reference	varchar(20)	YES	MUL	NULL	
+applique	tinyint(1)	YES	MUL	0	
+approuve_par	int(11)	YES	MUL	NULL	
+created_at	timestamp	YES		current_timestamp()	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+bonus_penalites	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+bonus_penalites	1	idx_coursier	1	coursier_id	A	0	NULL	NULL		BTREE		
+bonus_penalites	1	idx_type	1	type	A	0	NULL	NULL		BTREE		
+bonus_penalites	1	idx_periode	1	periode_reference	A	0	NULL	NULL	YES	BTREE		
+bonus_penalites	1	idx_applique	1	applique	A	0	NULL	NULL	YES	BTREE		
+bonus_penalites	1	commande_id	1	commande_id	A	0	NULL	NULL	YES	BTREE		
+bonus_penalites	1	approuve_par	1	approuve_par	A	0	NULL	NULL	YES	BTREE		
+
+========== TABLE: business_clients ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+id_business	int(11)	YES	UNI	NULL	
+nom_entreprise	varchar(200)	NO	MUL	NULL	
+contact_nom	varchar(100)	NO		NULL	
+contact_email	varchar(150)	NO	MUL	NULL	
+contact_telephone	varchar(20)	YES		NULL	
+secteur_activite	varchar(100)	YES		NULL	
+adresse	text	YES		NULL	
+date_creation	timestamp	YES	MUL	current_timestamp()	
+date_upload	timestamp	YES		NULL	
+statut	enum('actif','inactif','en_attente')	YES		actif	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+business_clients	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+business_clients	0	id_business	1	id_business	A	0	NULL	NULL	YES	BTREE		
+business_clients	1	idx_nom_entreprise	1	nom_entreprise	A	0	NULL	NULL		BTREE		
+business_clients	1	idx_email	1	contact_email	A	0	NULL	NULL		BTREE		
+business_clients	1	idx_date_creation	1	date_creation	A	0	NULL	NULL	YES	BTREE		
+
+========== TABLE: candidatures ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+poste_id	int(11)	YES		NULL	
+offre_id	int(11)	NO	MUL	NULL	
+nom	varchar(100)	NO		NULL	
+prenom	varchar(100)	NO		NULL	
+telephone	varchar(20)	NO	MUL	NULL	
+email	varchar(100)	YES		NULL	
+cv_url	varchar(255)	YES		NULL	
+lettre_motivation	text	YES		NULL	
+statut	enum('nouvelle','en_cours','acceptee','refusee','archivee')	YES	MUL	nouvelle	
+notes_rh	text	YES		NULL	
+created_at	timestamp	YES		current_timestamp()	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+candidatures	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+candidatures	1	idx_offre	1	offre_id	A	0	NULL	NULL		BTREE		
+candidatures	1	idx_statut	1	statut	A	0	NULL	NULL	YES	BTREE		
+candidatures	1	idx_telephone	1	telephone	A	0	NULL	NULL		BTREE		
+
+========== TABLE: candidatures_suzosky ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+nom	varchar(100)	NO		NULL	
+prenoms	varchar(100)	NO		NULL	
+telephone	varchar(20)	NO		NULL	
+email	varchar(100)	NO		NULL	
+poste_souhaite	enum('chauffeur','coursier_moto','coursier_cargo','agent_conciergerie')	NO		NULL	
+experience	text	YES		NULL	
+cv_path	varchar(255)	YES		NULL	
+status	enum('en_attente','accepte','refuse')	YES		en_attente	
+date_candidature	timestamp	YES		current_timestamp()	
+date_traitement	timestamp	YES		NULL	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+candidatures_suzosky	0	PRIMARY	1	id	A	3	NULL	NULL		BTREE		
+
+========== TABLE: chat_admins ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+admin_id	int(11)	NO	UNI	NULL	
+display_name	varchar(100)	NO		NULL	
+status	enum('online','offline','busy','away')	YES		offline	
+max_concurrent_chats	int(11)	YES		5	
+current_active_chats	int(11)	YES		0	
+auto_assign	tinyint(1)	YES		1	
+last_activity	timestamp	YES		current_timestamp()	
+created_at	timestamp	YES		current_timestamp()	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+chat_admins	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+chat_admins	0	unique_admin	1	admin_id	A	0	NULL	NULL		BTREE		
+
+========== TABLE: chat_blocked_devices ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+device_identifier	varchar(100)	NO	MUL	NULL	
+ip_address	varchar(45)	YES	MUL	NULL	
+blocked_reason	text	NO		NULL	
+blocked_by	int(11)	NO		NULL	
+blocked_at	timestamp	YES		current_timestamp()	
+is_permanent	tinyint(1)	YES		0	
+unblocked_at	timestamp	YES		NULL	
+unblocked_by	int(11)	YES		NULL	
+notes	text	YES		NULL	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+chat_blocked_devices	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+chat_blocked_devices	1	idx_device	1	device_identifier	A	0	NULL	NULL		BTREE		
+chat_blocked_devices	1	idx_ip	1	ip_address	A	0	NULL	NULL	YES	BTREE		
+
+========== TABLE: chat_conversations ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+type	varchar(20)	NO	MUL	particulier	
+client_id	int(11)	NO	MUL	NULL	
+last_message	text	YES		''	
+last_timestamp	datetime	YES	MUL	current_timestamp()	
+unread_count	int(11)	YES		0	
+created_at	datetime	YES		current_timestamp()	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+chat_conversations	0	PRIMARY	1	id	A	36	NULL	NULL		BTREE		
+chat_conversations	1	idx_type	1	type	A	2	NULL	NULL		BTREE		
+chat_conversations	1	idx_client_id	1	client_id	A	36	NULL	NULL		BTREE		
+chat_conversations	1	idx_last_timestamp	1	last_timestamp	A	36	NULL	NULL	YES	BTREE		
+
+========== TABLE: chat_messages ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+conversation_id	int(11)	NO	MUL	NULL	
+sender_type	varchar(20)	NO	MUL	client	
+sender_id	int(11)	NO		NULL	
+message	text	NO		NULL	
+timestamp	datetime	YES	MUL	current_timestamp()	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+chat_messages	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+chat_messages	1	idx_conversation_id	1	conversation_id	A	0	NULL	NULL		BTREE		
+chat_messages	1	idx_timestamp	1	timestamp	A	0	NULL	NULL	YES	BTREE		
+chat_messages	1	idx_sender	1	sender_type	A	0	NULL	NULL		BTREE		
+chat_messages	1	idx_sender	2	sender_id	A	0	NULL	NULL		BTREE		
+
+========== TABLE: chat_messages_suzosky ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+session_id	varchar(100)	NO	MUL	NULL	
+message	text	NO		NULL	
+sender	enum('client','admin')	NO		NULL	
+is_read	tinyint(1)	YES		0	
+created_at	timestamp	YES	MUL	current_timestamp()	
+user_type	enum('client','admin')	YES		client	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+chat_messages_suzosky	0	PRIMARY	1	id	A	19	NULL	NULL		BTREE		
+chat_messages_suzosky	1	idx_session	1	session_id	A	19	NULL	NULL		BTREE		
+chat_messages_suzosky	1	idx_created	1	created_at	A	19	NULL	NULL	YES	BTREE		
+
+========== TABLE: chat_notifications ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+session_id	varchar(100)	NO	UNI	NULL	
+message_preview	varchar(100)	NO		NULL	
+is_read	tinyint(1)	YES	MUL	0	
+created_at	timestamp	YES		current_timestamp()	
+updated_at	timestamp	YES		current_timestamp()	on update current_timestamp()
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+chat_notifications	0	PRIMARY	1	id	A	8	NULL	NULL		BTREE		
+chat_notifications	0	session_id	1	session_id	A	8	NULL	NULL		BTREE		
+chat_notifications	1	idx_session	1	session_id	A	8	NULL	NULL		BTREE		
+chat_notifications	1	idx_read	1	is_read	A	2	NULL	NULL	YES	BTREE		
+
+========== TABLE: chat_quick_replies ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+title	varchar(100)	NO		NULL	
+message	text	NO		NULL	
+category	enum('greeting','closing','info','escalation','custom')	YES		custom	
+is_active	tinyint(1)	YES		1	
+usage_count	int(11)	YES		0	
+created_by	int(11)	NO		NULL	
+created_at	timestamp	YES		current_timestamp()	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+chat_quick_replies	0	PRIMARY	1	id	A	186	NULL	NULL		BTREE		
+
+========== TABLE: chat_sessions ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+session_id	varchar(50)	NO	UNI	NULL	
+client_name	varchar(100)	YES		NULL	
+client_email	varchar(150)	YES		NULL	
+client_phone	varchar(20)	YES		NULL	
+client_ip	varchar(45)	NO		NULL	
+client_location	longtext	YES		NULL	
+device_identifier	varchar(100)	NO	UNI	NULL	
+assigned_admin	int(11)	YES		NULL	
+status	enum('waiting','active','closed','blocked')	YES	MUL	waiting	
+priority	enum('low','normal','high','urgent')	YES	MUL	normal	
+created_at	timestamp	YES	MUL	current_timestamp()	
+updated_at	timestamp	YES		current_timestamp()	on update current_timestamp()
+last_message_at	timestamp	YES		current_timestamp()	
+is_blocked	tinyint(1)	YES		0	
+blocked_reason	text	YES		NULL	
+blocked_by	int(11)	YES		NULL	
+blocked_at	timestamp	YES		NULL	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+chat_sessions	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+chat_sessions	0	session_id	1	session_id	A	0	NULL	NULL		BTREE		
+chat_sessions	0	device_identifier	1	device_identifier	A	0	NULL	NULL		BTREE		
+chat_sessions	1	idx_status	1	status	A	0	NULL	NULL	YES	BTREE		
+chat_sessions	1	idx_device	1	device_identifier	A	0	NULL	NULL		BTREE		
+chat_sessions	1	idx_created	1	created_at	A	0	NULL	NULL	YES	BTREE		
+chat_sessions	1	idx_priority	1	priority	A	0	NULL	NULL	YES	BTREE		
+
+========== TABLE: chat_unified ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+chat_id	varchar(50)	NO	MUL	NULL	
+type_chat	enum('client_admin','coursier_admin','agent_admin','business_admin')	NO	MUL	NULL	
+sender_type	enum('admin','client','coursier','agent','business')	NO		NULL	
+sender_id	int(11)	YES		NULL	
+sender_name	varchar(100)	NO		NULL	
+message	text	NO		NULL	
+message_type	enum('text','file','image','system')	YES		text	
+is_read	tinyint(1)	YES	MUL	0	
+timestamp	timestamp	YES	MUL	current_timestamp()	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+chat_unified	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+chat_unified	1	idx_chat	1	chat_id	A	0	NULL	NULL		BTREE		
+chat_unified	1	idx_type	1	type_chat	A	0	NULL	NULL		BTREE		
+chat_unified	1	idx_unread	1	is_read	A	0	NULL	NULL	YES	BTREE		
+chat_unified	1	idx_timestamp	1	timestamp	A	0	NULL	NULL	YES	BTREE		
+
+========== TABLE: clients ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+nom	varchar(100)	NO		NULL	
+telephone	varchar(20)	NO	UNI	NULL	
+email	varchar(100)	YES		NULL	
+adresse	text	YES		NULL	
+password_hash	varchar(255)	YES		NULL	
+created_at	timestamp	YES		current_timestamp()	
+updated_at	timestamp	YES		current_timestamp()	on update current_timestamp()
+balance	decimal(10,2)	YES		0.00	
+type_client	enum('client','coursier','admin')	YES		client	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+clients	0	PRIMARY	1	id	A	10	NULL	NULL		BTREE		
+clients	0	telephone	1	telephone	A	10	NULL	NULL		BTREE		
+clients	1	idx_telephone	1	telephone	A	10	NULL	NULL		BTREE		
+
+========== TABLE: clients_business ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+nom_entreprise	varchar(150)	NO		NULL	
+contact_nom	varchar(100)	NO		NULL	
+telephone	varchar(20)	NO	UNI	NULL	
+email	varchar(100)	NO	UNI	NULL	
+adresse	text	YES		NULL	
+type_compte	enum('standard','premium','enterprise')	YES		standard	
+credit_limite	decimal(10,2)	YES		0.00	
+credit_utilise	decimal(10,2)	YES		0.00	
+password_hash	varchar(255)	NO		NULL	
+statut	enum('actif','suspendu','inactif')	YES	MUL	actif	
+date_inscription	timestamp	YES		current_timestamp()	
+derniere_connexion	timestamp	YES		NULL	
+created_at	timestamp	YES		current_timestamp()	
+updated_at	timestamp	YES		current_timestamp()	on update current_timestamp()
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+clients_business	0	PRIMARY	1	id	A	2	NULL	NULL		BTREE		
+clients_business	0	telephone	1	telephone	A	2	NULL	NULL		BTREE		
+clients_business	0	email	1	email	A	2	NULL	NULL		BTREE		
+clients_business	1	idx_email	1	email	A	2	NULL	NULL		BTREE		
+clients_business	1	idx_telephone	1	telephone	A	2	NULL	NULL		BTREE		
+clients_business	1	idx_statut	1	statut	A	2	NULL	NULL	YES	BTREE		
+
+========== TABLE: clients_business_unified ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+nom_entreprise	varchar(200)	NO		NULL	
+contact_nom	varchar(100)	NO		NULL	
+contact_telephone	varchar(20)	NO	MUL	NULL	
+contact_email	varchar(150)	YES		NULL	
+adresse_complete	text	NO		NULL	
+ville	varchar(50)	YES	MUL	Abidjan	
+secteur_activite	varchar(100)	YES		NULL	
+type_client	enum('particulier','entreprise','partenaire')	YES		entreprise	
+statut	enum('actif','inactif','suspendu')	YES	MUL	actif	
+date_inscription	timestamp	YES		current_timestamp()	
+derniere_commande	timestamp	YES		NULL	
+total_commandes	int(11)	YES		0	
+ca_total	decimal(12,2)	YES		0.00	
+notes_admin	text	YES		NULL	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+clients_business_unified	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+clients_business_unified	1	idx_telephone	1	contact_telephone	A	0	NULL	NULL		BTREE		
+clients_business_unified	1	idx_statut	1	statut	A	0	NULL	NULL	YES	BTREE		
+clients_business_unified	1	idx_ville	1	ville	A	0	NULL	NULL	YES	BTREE		
+
+========== TABLE: clients_particuliers ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+nom	varchar(100)	NO		NULL	
+prenoms	varchar(100)	NO		NULL	
+telephone	varchar(20)	NO	UNI	NULL	
+email	varchar(150)	YES	MUL	NULL	
+password	varchar(255)	YES		NULL	
+current_session_token	varchar(100)	YES		NULL	
+last_login_at	datetime	YES		NULL	
+last_login_ip	varchar(64)	YES		NULL	
+last_login_user_agent	varchar(255)	YES		NULL	
+date_creation	timestamp	YES	MUL	current_timestamp()	
+date_derniere_commande	timestamp	YES		NULL	
+statut	enum('actif','inactif')	YES	MUL	actif	
+reset_token	varchar(255)	YES		NULL	
+reset_expires_at	datetime	YES		NULL	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+clients_particuliers	0	PRIMARY	1	id	A	10	NULL	NULL		BTREE		
+clients_particuliers	0	telephone	1	telephone	A	10	NULL	NULL		BTREE		
+clients_particuliers	1	idx_telephone	1	telephone	A	10	NULL	NULL		BTREE		
+clients_particuliers	1	idx_date_creation	1	date_creation	A	10	NULL	NULL	YES	BTREE		
+clients_particuliers	1	idx_statut	1	statut	A	2	NULL	NULL	YES	BTREE		
+clients_particuliers	1	idx_email	1	email	A	10	NULL	NULL	YES	BTREE		
+
+========== TABLE: clients_unified ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+code_client	varchar(20)	YES	UNI	NULL	
+nom_complet	varchar(200)	NO		NULL	
+telephone	varchar(20)	NO	MUL	NULL	
+email	varchar(150)	YES		NULL	
+adresse_complete	text	YES		NULL	
+ville	varchar(50)	YES		Abidjan	
+type_client	enum('particulier','entreprise','business','concierge_client')	YES	MUL	particulier	
+statut	enum('actif','inactif','suspendu')	YES	MUL	actif	
+concierge_id	int(11)	YES	MUL	NULL	
+date_inscription	timestamp	YES		current_timestamp()	
+derniere_commande	timestamp	YES		NULL	
+total_commandes	int(11)	YES		0	
+ca_total	decimal(12,2)	YES		0.00	
+interface_creation	enum('admin','business','coursier','concierge')	NO		NULL	
+notes_admin	text	YES		NULL	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+clients_unified	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+clients_unified	0	code_client	1	code_client	A	0	NULL	NULL	YES	BTREE		
+clients_unified	1	idx_telephone	1	telephone	A	0	NULL	NULL		BTREE		
+clients_unified	1	idx_statut	1	statut	A	0	NULL	NULL	YES	BTREE		
+clients_unified	1	idx_type	1	type_client	A	0	NULL	NULL	YES	BTREE		
+clients_unified	1	idx_concierge	1	concierge_id	A	0	NULL	NULL	YES	BTREE		
+
+========== TABLE: commandes ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+order_number	varchar(50)	NO	UNI	NULL	
+code_commande	varchar(20)	NO	UNI	NULL	
+client_type	enum('particulier','business')	NO		NULL	
+client_id	int(11)	YES	MUL	NULL	
+client_business_id	int(11)	YES	MUL	NULL	
+client_nom	varchar(100)	YES		NULL	
+client_telephone	varchar(20)	NO	MUL	NULL	
+adresse_retrait	text	NO		NULL	
+latitude_retrait	decimal(10,8)	YES		NULL	
+longitude_retrait	decimal(11,8)	YES		NULL	
+adresse_livraison	text	NO		NULL	
+latitude_livraison	decimal(10,8)	YES		NULL	
+longitude_livraison	decimal(11,8)	YES		NULL	
+description_colis	text	YES		NULL	
+poids_estime	decimal(5,2)	YES		NULL	
+dimensions	varchar(50)	YES		NULL	
+valeur_declaree	decimal(10,2)	YES		NULL	
+fragile	tinyint(1)	YES		0	
+coursier_id	int(11)	YES	MUL	NULL	
+statut	varchar(32)	YES	MUL	nouvelle	
+priorite	enum('normale','urgente','express')	YES	MUL	normale	
+heure_souhaitee_retrait	timestamp	YES		NULL	
+heure_souhaitee_livraison	timestamp	YES		NULL	
+heure_acceptation	timestamp	YES		NULL	
+heure_retrait	timestamp	YES		NULL	
+heure_livraison	timestamp	YES		NULL	
+prix_base	decimal(8,2)	NO		NULL	
+frais_supplementaires	decimal(8,2)	YES		0.00	
+prix_total	decimal(8,2)	NO		NULL	
+mode_paiement	enum('especes','mobile_money','carte_bancaire','wave','credit_business')	YES		especes	
+prix_estime	decimal(10,2)	NO		0.00	
+statut_paiement	enum('attente','paye','echec')	YES		attente	
+note_coursier	decimal(3,2)	YES		NULL	
+commentaire_client	text	YES		NULL	
+note_service	decimal(3,2)	YES		NULL	
+annule_par	enum('client','coursier','admin')	YES		NULL	
+raison_annulation	text	YES		NULL	
+distance_estimee	decimal(5,2)	YES		NULL	
+zone_retrait	varchar(50)	YES	MUL	NULL	
+zone_livraison	varchar(50)	YES		NULL	
+created_at	timestamp	YES	MUL	current_timestamp()	
+updated_at	timestamp	YES		current_timestamp()	on update current_timestamp()
+expediteur_id	int(11)	YES		NULL	
+destinataire_id	int(11)	YES		NULL	
+adresse_depart	varchar(255)	NO		NULL	
+latitude_depart	decimal(10,7)	YES		NULL	
+longitude_depart	decimal(10,7)	YES		NULL	
+adresse_arrivee	varchar(255)	NO		NULL	
+latitude_arrivee	decimal(10,7)	YES		NULL	
+longitude_arrivee	decimal(10,7)	YES		NULL	
+telephone_expediteur	varchar(20)	YES		NULL	
+telephone_destinataire	varchar(20)	YES		NULL	
+cash_recupere	decimal(10,2)	YES		0.00	
+frais_service	decimal(10,2)	YES		0.00	
+commission_suzosky	decimal(10,2)	YES		0.00	
+gain_coursier	decimal(10,2)	YES		0.00	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+commandes	0	PRIMARY	1	id	A	76	NULL	NULL		BTREE		
+commandes	0	code_commande	1	code_commande	A	76	NULL	NULL		BTREE		
+commandes	0	order_number	1	order_number	A	76	NULL	NULL		BTREE		
+commandes	1	idx_code	1	code_commande	A	76	NULL	NULL		BTREE		
+commandes	1	idx_statut	1	statut	A	4	NULL	NULL	YES	BTREE		
+commandes	1	idx_client_telephone	1	client_telephone	A	6	NULL	NULL		BTREE		
+commandes	1	idx_coursier	1	coursier_id	A	2	NULL	NULL	YES	BTREE		
+commandes	1	idx_client_business	1	client_business_id	A	2	NULL	NULL	YES	BTREE		
+commandes	1	idx_date	1	created_at	A	76	NULL	NULL	YES	BTREE		
+commandes	1	idx_zone_retrait	1	zone_retrait	A	2	NULL	NULL	YES	BTREE		
+commandes	1	idx_priorite	1	priorite	A	4	NULL	NULL	YES	BTREE		
+commandes	1	client_id	1	client_id	A	6	NULL	NULL	YES	BTREE		
+commandes	1	idx_commandes_date_statut	1	created_at	A	76	NULL	NULL	YES	BTREE		
+commandes	1	idx_commandes_date_statut	2	statut	A	76	NULL	NULL	YES	BTREE		
+commandes	1	idx_commandes_coursier_date	1	coursier_id	A	2	NULL	NULL	YES	BTREE		
+commandes	1	idx_commandes_coursier_date	2	created_at	A	76	NULL	NULL	YES	BTREE		
+
+========== TABLE: commandes_classiques ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+coursier_id	int(11)	YES	MUL	NULL	
+statut	varchar(32)	YES		nouvelle	
+mode_paiement	varchar(32)	YES		NULL	
+prix_estime	decimal(10,2)	YES		NULL	
+pickup_time	datetime	YES		NULL	
+delivered_time	datetime	YES		NULL	
+cash_collected	tinyint(1)	YES		0	
+cash_amount	decimal(10,2)	YES		NULL	
+date_acceptation	datetime	YES		NULL	
+date_creation	datetime	YES		current_timestamp()	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+commandes_classiques	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+commandes_classiques	1	idx_coursier	1	coursier_id	A	0	NULL	NULL	YES	BTREE		
+
+========== TABLE: commandes_coursier ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+coursier_id	int(11)	NO	MUL	NULL	
+client_nom	varchar(100)	NO		NULL	
+client_telephone	varchar(20)	NO		NULL	
+adresse_enlevement	text	NO		NULL	
+adresse_livraison	text	NO		NULL	
+distance	decimal(10,2)	YES		0.00	
+prix_livraison	decimal(10,2)	NO		NULL	
+description	text	YES		NULL	
+statut	enum('nouvelle','acceptee','en_cours','livree','annulee')	YES	MUL	nouvelle	
+date_commande	datetime	YES	MUL	current_timestamp()	
+date_acceptation	datetime	YES		NULL	
+date_livraison	datetime	YES		NULL	
+type_commande	varchar(50)	YES		Standard	
+created_at	timestamp	YES		current_timestamp()	
+updated_at	timestamp	YES		current_timestamp()	on update current_timestamp()
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+commandes_coursier	0	PRIMARY	1	id	A	3	NULL	NULL		BTREE		
+commandes_coursier	1	idx_coursier_id	1	coursier_id	A	3	NULL	NULL		BTREE		
+commandes_coursier	1	idx_statut	1	statut	A	3	NULL	NULL	YES	BTREE		
+commandes_coursier	1	idx_date_commande	1	date_commande	A	3	NULL	NULL	YES	BTREE		
+
+========== TABLE: commandes_coursiers ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+commande_id	int(11)	NO	MUL	NULL	
+coursier_id	int(11)	NO	MUL	NULL	
+statut	varchar(32)	YES		assignee	
+active	tinyint(1)	YES		0	
+date_attribution	datetime	YES		current_timestamp()	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+commandes_coursiers	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+commandes_coursiers	0	uniq_pair	1	commande_id	A	0	NULL	NULL		BTREE		
+commandes_coursiers	0	uniq_pair	2	coursier_id	A	0	NULL	NULL		BTREE		
+commandes_coursiers	1	idx_coursier	1	coursier_id	A	0	NULL	NULL		BTREE		
+
+========== TABLE: commandes_suzosky ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+numero_commande	varchar(50)	NO	UNI	NULL	
+expediteur_nom	varchar(100)	YES		NULL	
+expediteur_tel	varchar(20)	YES		NULL	
+destinataire_nom	varchar(100)	YES		NULL	
+destinataire_tel	varchar(20)	YES		NULL	
+adresse_depart	text	YES		NULL	
+adresse_arrivee	text	YES		NULL	
+prix	decimal(10,2)	YES		NULL	
+status	enum('en_attente','assignee','en_cours','livree','annulee')	YES		en_attente	
+coursier_id	int(11)	YES	MUL	NULL	
+shipday_order_id	varchar(50)	YES		NULL	
+created_at	timestamp	YES		current_timestamp()	
+livree_at	timestamp	YES		NULL	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+commandes_suzosky	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+commandes_suzosky	0	numero_commande	1	numero_commande	A	0	NULL	NULL		BTREE		
+commandes_suzosky	1	coursier_id	1	coursier_id	A	0	NULL	NULL	YES	BTREE		
+
+========== TABLE: commandes_unified ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+numero_commande	varchar(20)	NO	UNI	NULL	
+client_id	int(11)	YES	MUL	NULL	
+client_nom	varchar(100)	NO		NULL	
+client_telephone	varchar(20)	NO		NULL	
+agent_id	int(11)	YES	MUL	NULL	
+type_commande	enum('livraison','course','transport')	NO		NULL	
+adresse_depart	text	NO		NULL	
+adresse_arrivee	text	NO		NULL	
+description_colis	text	YES		NULL	
+prix	decimal(10,2)	NO		NULL	
+statut	enum('en_attente','assignee','en_cours','livree','annulee')	YES	MUL	en_attente	
+date_commande	timestamp	YES	MUL	current_timestamp()	
+date_assignation	timestamp	YES		NULL	
+date_livraison	timestamp	YES		NULL	
+interface_source	enum('admin','business','coursier','agent','concierge','mobile')	NO		NULL	
+notes	text	YES		NULL	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+commandes_unified	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+commandes_unified	0	numero_commande	1	numero_commande	A	0	NULL	NULL		BTREE		
+commandes_unified	1	client_id	1	client_id	A	0	NULL	NULL	YES	BTREE		
+commandes_unified	1	idx_numero	1	numero_commande	A	0	NULL	NULL		BTREE		
+commandes_unified	1	idx_statut	1	statut	A	0	NULL	NULL	YES	BTREE		
+commandes_unified	1	idx_date	1	date_commande	A	0	NULL	NULL	YES	BTREE		
+commandes_unified	1	idx_agent	1	agent_id	A	0	NULL	NULL	YES	BTREE		
+
+========== TABLE: comptes_clients_business ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+client_id	int(11)	NO	UNI	NULL	
+nom_entreprise	varchar(150)	NO		NULL	
+nom_contact	varchar(100)	NO		NULL	
+prenom_contact	varchar(100)	NO		NULL	
+email	varchar(150)	NO		NULL	
+telephone	varchar(20)	YES		NULL	
+secteur_activite	varchar(100)	YES		NULL	
+adresse	text	YES		NULL	
+solde	decimal(10,2)	YES		0.00	
+statut	enum('actif','inactif','suspendu')	YES		actif	
+date_creation	datetime	YES		current_timestamp()	
+date_modification	datetime	YES		current_timestamp()	on update current_timestamp()
+admin_createur	int(11)	YES		NULL	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+comptes_clients_business	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+comptes_clients_business	0	client_id	1	client_id	A	0	NULL	NULL		BTREE		
+
+========== TABLE: comptes_clients_particuliers ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+client_id	int(11)	NO	UNI	NULL	
+nom	varchar(100)	NO		NULL	
+prenom	varchar(100)	NO		NULL	
+email	varchar(150)	NO		NULL	
+telephone	varchar(20)	YES		NULL	
+solde	decimal(10,2)	YES		0.00	
+statut	enum('actif','inactif','suspendu')	YES		actif	
+date_inscription	datetime	YES		current_timestamp()	
+date_modification	datetime	YES		current_timestamp()	on update current_timestamp()
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+comptes_clients_particuliers	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+comptes_clients_particuliers	0	client_id	1	client_id	A	0	NULL	NULL		BTREE		
+
+========== TABLE: comptes_coursiers ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+coursier_id	int(11)	NO	UNI	NULL	
+solde	decimal(10,2)	YES		0.00	
+statut	enum('actif','inactif','suspendu')	YES		actif	
+date_creation	datetime	YES		current_timestamp()	
+date_modification	datetime	YES		current_timestamp()	on update current_timestamp()
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+comptes_coursiers	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+comptes_coursiers	0	coursier_id	1	coursier_id	A	0	NULL	NULL		BTREE		
+
+========== TABLE: configuration ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+cle	varchar(100)	NO	UNI	NULL	
+valeur	text	YES		NULL	
+description	text	YES		NULL	
+type	enum('string','integer','decimal','boolean','json')	YES		string	
+updated_at	timestamp	YES		current_timestamp()	on update current_timestamp()
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+configuration	0	PRIMARY	1	id	A	15	NULL	NULL		BTREE		
+configuration	0	cle	1	cle	A	15	NULL	NULL		BTREE		
+configuration	1	idx_cle	1	cle	A	15	NULL	NULL		BTREE		
+
+========== TABLE: conversations ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+type	enum('client_agent','business_agent','interne','client_coursier')	NO		NULL	
+participant1_type	enum('client','business','coursier','agent')	NO	MUL	NULL	
+participant1_id	int(11)	NO		NULL	
+participant2_type	enum('client','business','coursier','agent')	NO		NULL	
+participant2_id	int(11)	NO		NULL	
+commande_id	int(11)	YES	MUL	NULL	
+statut	enum('active','fermee','archivee')	YES	MUL	active	
+derniere_activite	timestamp	YES		current_timestamp()	
+created_at	timestamp	YES		current_timestamp()	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+conversations	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+conversations	1	idx_participants	1	participant1_type	A	0	NULL	NULL		BTREE		
+conversations	1	idx_participants	2	participant1_id	A	0	NULL	NULL		BTREE		
+conversations	1	idx_participants	3	participant2_type	A	0	NULL	NULL		BTREE		
+conversations	1	idx_participants	4	participant2_id	A	0	NULL	NULL		BTREE		
+conversations	1	idx_commande	1	commande_id	A	0	NULL	NULL	YES	BTREE		
+conversations	1	idx_statut	1	statut	A	0	NULL	NULL	YES	BTREE		
+
+========== TABLE: coursier_chats ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+chat_id	varchar(255)	YES		NULL	
+coursier_matricule	varchar(50)	YES		NULL	
+coursier_name	varchar(255)	YES		NULL	
+coursier_phone	varchar(50)	YES		NULL	
+device_info	longtext	YES		NULL	
+is_blocked	tinyint(1)	YES		0	
+created_at	timestamp	YES		current_timestamp()	
+last_activity	timestamp	YES	MUL	current_timestamp()	on update current_timestamp()
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+coursier_chats	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+coursier_chats	1	idx_coursier_chats_activity	1	last_activity	A	0	NULL	NULL	YES	BTREE		
+
+========== TABLE: coursier_messages ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+chat_id	int(11)	NO	MUL	NULL	
+message	text	NO		NULL	
+sender_type	enum('coursier','admin')	NO		NULL	
+is_read	tinyint(1)	YES	MUL	0	
+created_at	timestamp	YES		current_timestamp()	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+coursier_messages	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+coursier_messages	1	idx_coursier_messages_read	1	is_read	A	0	NULL	NULL	YES	BTREE		
+coursier_messages	1	idx_coursier_messages_read	2	sender_type	A	0	NULL	NULL		BTREE		
+coursier_messages	1	fk_coursier_messages_chat	1	chat_id	A	0	NULL	NULL		BTREE		
+
+========== TABLE: coursier_wallet_history ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+coursier_id	varchar(20)	NO	MUL	NULL	
+type	enum('credit','debit')	NO	MUL	NULL	
+montant	decimal(10,2)	NO		NULL	
+description	text	YES		NULL	
+transaction_id	varchar(100)	YES		NULL	
+date_creation	timestamp	YES	MUL	current_timestamp()	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+coursier_wallet_history	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+coursier_wallet_history	1	idx_coursier	1	coursier_id	A	0	NULL	NULL		BTREE		
+coursier_wallet_history	1	idx_type	1	type	A	0	NULL	NULL		BTREE		
+coursier_wallet_history	1	idx_date	1	date_creation	A	0	NULL	NULL	YES	BTREE		
+
+========== TABLE: coursiers ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+nom	varchar(100)	NO		NULL	
+telephone	varchar(20)	NO	UNI	NULL	
+email	varchar(100)	YES		NULL	
+adresse	text	YES		NULL	
+type_coursier	enum('interne','business','partenaire')	YES		interne	
+zones_couvertes	text	YES	MUL	NULL	
+statut	enum('actif','inactif','suspendu','en_attente')	YES	MUL	en_attente	
+disponible	tinyint(1)	YES	MUL	1	
+note_moyenne	decimal(3,2)	YES		0.00	
+total_commandes	int(11)	YES		0	
+vehicule_type	enum('moto','voiture','velo','pied')	YES		moto	
+numero_permis	varchar(50)	YES		NULL	
+cni	varchar(50)	YES		NULL	
+photo_profil	varchar(255)	YES		NULL	
+documents_valides	tinyint(1)	YES		0	
+password_hash	varchar(255)	YES		NULL	
+derniere_connexion	timestamp	YES		NULL	
+created_at	timestamp	YES		current_timestamp()	
+updated_at	timestamp	YES		current_timestamp()	on update current_timestamp()
+solde_wallet	decimal(10,2)	YES		0.00	
+delivery_earnings	decimal(10,2)	YES		0.00	
+credit_balance	decimal(10,2)	YES		0.00	
+password_plain	varchar(255)	YES		NULL	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+coursiers	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+coursiers	0	telephone	1	telephone	A	0	NULL	NULL		BTREE		
+coursiers	1	idx_telephone	1	telephone	A	0	NULL	NULL		BTREE		
+coursiers	1	idx_statut	1	statut	A	0	NULL	NULL	YES	BTREE		
+coursiers	1	idx_disponible	1	disponible	A	0	NULL	NULL	YES	BTREE		
+coursiers	1	idx_zones	1	zones_couvertes	A	0	100	NULL	YES	BTREE		
+
+========== TABLE: coursiers_stats ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+agent_id	int(11)	NO	MUL	NULL	
+commandes_total	int(11)	YES		0	
+commandes_livrees	int(11)	YES		0	
+commandes_annulees	int(11)	YES		0	
+temps_moyen_livraison	decimal(5,2)	YES		0.00	
+note_satisfaction	decimal(3,2)	YES		0.00	
+temps_en_ligne_minutes	int(11)	YES		0	
+temps_service_minutes	int(11)	YES		0	
+dernier_update	timestamp	YES		current_timestamp()	on update current_timestamp()
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+coursiers_stats	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+coursiers_stats	1	agent_id	1	agent_id	A	0	NULL	NULL		BTREE		
+
+========== TABLE: coursiers_stats_suzosky ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+agent_id	int(11)	NO	MUL	NULL	
+commandes_total	int(11)	YES		0	
+commandes_livrees	int(11)	YES		0	
+commandes_annulees	int(11)	YES		0	
+temps_moyen_livraison	decimal(5,2)	YES		0.00	
+note_satisfaction	decimal(3,2)	YES		0.00	
+temps_en_ligne_minutes	int(11)	YES		0	
+temps_service_minutes	int(11)	YES		0	
+dernier_update	timestamp	YES		current_timestamp()	on update current_timestamp()
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+coursiers_stats_suzosky	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+coursiers_stats_suzosky	1	agent_id	1	agent_id	A	0	NULL	NULL		BTREE		
+
+========== TABLE: delivery_otps ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+commande_id	int(11)	NO	UNI	NULL	
+otp_code	varchar(10)	NO		NULL	
+attempts	int(11)	YES		0	
+max_attempts	int(11)	YES		5	
+expires_at	datetime	NO	MUL	NULL	
+generated_at	datetime	YES		current_timestamp()	
+validated_at	datetime	YES		NULL	
+validated_by	int(11)	YES		NULL	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+delivery_otps	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+delivery_otps	0	commande_id	1	commande_id	A	0	NULL	NULL		BTREE		
+delivery_otps	1	idx_expires	1	expires_at	A	0	NULL	NULL		BTREE		
+
+========== TABLE: delivery_proofs ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+commande_id	int(11)	NO	MUL	NULL	
+type	enum('photo','signature')	NO	MUL	NULL	
+file_path	varchar(255)	NO		NULL	
+mime_type	varchar(100)	YES		NULL	
+size_bytes	int(11)	YES		NULL	
+uploaded_by	int(11)	YES	MUL	NULL	
+uploaded_at	datetime	YES		current_timestamp()	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+delivery_proofs	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+delivery_proofs	1	idx_commande	1	commande_id	A	0	NULL	NULL		BTREE		
+delivery_proofs	1	idx_type	1	type	A	0	NULL	NULL		BTREE		
+delivery_proofs	1	idx_uploaded_by	1	uploaded_by	A	0	NULL	NULL	YES	BTREE		
+
+========== TABLE: device_tokens ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+coursier_id	int(11)	NO	MUL	NULL	
+token	varchar(255)	NO	UNI	NULL	
+platform	varchar(20)	YES		android	
+app_version	varchar(50)	YES		NULL	
+created_at	timestamp	YES		current_timestamp()	
+updated_at	timestamp	YES		current_timestamp()	on update current_timestamp()
+last_used	timestamp	YES		NULL	
+is_active	tinyint(1)	YES	MUL	1	
+token_hash	char(64)	NO	UNI	NULL	
+last_ping	datetime	YES		NULL	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+device_tokens	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+device_tokens	0	unique_token	1	token	A	0	NULL	NULL		BTREE		
+device_tokens	0	uniq_token_hash	1	token_hash	A	0	NULL	NULL		BTREE		
+device_tokens	1	idx_coursier	1	coursier_id	A	0	NULL	NULL		BTREE		
+device_tokens	1	idx_active	1	is_active	A	0	NULL	NULL	YES	BTREE		
+
+========== TABLE: dispatch_locks ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+commande_id	int(11)	NO	UNI	NULL	
+locked_by	int(11)	YES	MUL	NULL	
+status	enum('locked','released','expired')	YES		locked	
+ttl_seconds	int(11)	YES		60	
+created_at	datetime	YES		current_timestamp()	
+updated_at	datetime	YES		current_timestamp()	on update current_timestamp()
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+dispatch_locks	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+dispatch_locks	0	commande_id	1	commande_id	A	0	NULL	NULL		BTREE		
+dispatch_locks	1	idx_locked_by	1	locked_by	A	0	NULL	NULL	YES	BTREE		
+
+========== TABLE: logs_activites ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+type_activite	varchar(100)	NO	MUL	NULL	
+description	text	NO		NULL	
+user_id	int(11)	YES		NULL	
+date_activite	timestamp	YES	MUL	current_timestamp()	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+logs_activites	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+logs_activites	1	idx_type	1	type_activite	A	0	NULL	NULL		BTREE		
+logs_activites	1	idx_date	1	date_activite	A	0	NULL	NULL	YES	BTREE		
+
+========== TABLE: messages ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+conversation_id	int(11)	NO	MUL	NULL	
+sender_type	enum('client','business','coursier','agent')	NO	MUL	NULL	
+sender_id	int(11)	NO		NULL	
+message	text	NO		NULL	
+type_message	enum('text','image','file','location','system')	YES		text	
+fichier_url	varchar(255)	YES		NULL	
+lu	tinyint(1)	YES	MUL	0	
+created_at	timestamp	YES	MUL	current_timestamp()	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+messages	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+messages	1	idx_conversation	1	conversation_id	A	0	NULL	NULL		BTREE		
+messages	1	idx_sender	1	sender_type	A	0	NULL	NULL		BTREE		
+messages	1	idx_sender	2	sender_id	A	0	NULL	NULL		BTREE		
+messages	1	idx_date	1	created_at	A	0	NULL	NULL	YES	BTREE		
+messages	1	idx_lu	1	lu	A	0	NULL	NULL	YES	BTREE		
+messages	1	idx_messages_conversation_date	1	conversation_id	A	0	NULL	NULL		BTREE		
+messages	1	idx_messages_conversation_date	2	created_at	A	0	NULL	NULL	YES	BTREE		
+
+========== TABLE: notifications_log ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+commande_id	int(11)	YES	MUL	NULL	
+destinataire_type	enum('client','business','coursier','agent')	NO	MUL	NULL	
+destinataire_id	int(11)	NO		NULL	
+destinataire_telephone	varchar(20)	YES		NULL	
+type_notification	enum('nouvelle_commande','commande_acceptee','coursier_en_route','livraison_terminee','bonus','penalite','rappel_paiement','autre')	NO	MUL	NULL	
+canal	enum('sms','email','push','whatsapp')	NO		NULL	
+contenu	text	NO		NULL	
+statut	enum('envoye','echec','en_attente')	YES	MUL	en_attente	
+reference_externe	varchar(100)	YES		NULL	
+cout	decimal(6,4)	YES		0.0000	
+created_at	timestamp	YES	MUL	current_timestamp()	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+notifications_log	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+notifications_log	1	idx_commande	1	commande_id	A	0	NULL	NULL	YES	BTREE		
+notifications_log	1	idx_destinataire	1	destinataire_type	A	0	NULL	NULL		BTREE		
+notifications_log	1	idx_destinataire	2	destinataire_id	A	0	NULL	NULL		BTREE		
+notifications_log	1	idx_type	1	type_notification	A	0	NULL	NULL		BTREE		
+notifications_log	1	idx_statut	1	statut	A	0	NULL	NULL	YES	BTREE		
+notifications_log	1	idx_date	1	created_at	A	0	NULL	NULL	YES	BTREE		
+
+========== TABLE: offres_emploi ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+intitule	varchar(150)	NO		NULL	
+fiche_poste	text	NO		NULL	
+competences_requises	text	YES		NULL	
+type_contrat	enum('cdi','cdd','stage','freelance')	NO		NULL	
+localisation	varchar(100)	YES		NULL	
+salaire_min	decimal(10,2)	YES		NULL	
+salaire_max	decimal(10,2)	YES		NULL	
+date_expiration	date	NO	MUL	NULL	
+statut	enum('active','expiree','pourvue','suspendue')	YES	MUL	active	
+nombre_candidatures	int(11)	YES		0	
+created_by	int(11)	NO	MUL	NULL	
+created_at	timestamp	YES		current_timestamp()	
+updated_at	timestamp	YES		current_timestamp()	on update current_timestamp()
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+offres_emploi	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+offres_emploi	1	idx_statut	1	statut	A	0	NULL	NULL	YES	BTREE		
+offres_emploi	1	idx_expiration	1	date_expiration	A	0	NULL	NULL		BTREE		
+offres_emploi	1	idx_created_by	1	created_by	A	0	NULL	NULL		BTREE		
+
+========== TABLE: order_payments ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+transaction_id	varchar(120)	NO	UNI	NULL	
+order_number	varchar(60)	NO	MUL	NULL	
+amount	decimal(10,2)	NO		NULL	
+status	enum('pending','completed','failed','cancelled')	YES		pending	
+created_at	timestamp	YES		current_timestamp()	
+updated_at	timestamp	YES		current_timestamp()	on update current_timestamp()
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+order_payments	0	PRIMARY	1	id	A	73	NULL	NULL		BTREE		
+order_payments	0	transaction_id	1	transaction_id	A	73	NULL	NULL		BTREE		
+order_payments	1	idx_order_number	1	order_number	A	73	NULL	NULL		BTREE		
+
+========== TABLE: order_status_history ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+commande_id	int(11)	NO	MUL	NULL	
+old_status	varchar(50)	YES		NULL	
+new_status	varchar(50)	NO	MUL	NULL	
+changed_by	varchar(50)	YES		NULL	
+coursier_id	int(11)	YES	MUL	NULL	
+note	text	YES		NULL	
+created_at	datetime	YES		current_timestamp()	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+order_status_history	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+order_status_history	1	idx_commande	1	commande_id	A	0	NULL	NULL		BTREE		
+order_status_history	1	idx_new_status	1	new_status	A	0	NULL	NULL		BTREE		
+order_status_history	1	idx_coursier	1	coursier_id	A	0	NULL	NULL	YES	BTREE		
+
+========== TABLE: parametres_tarification ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+parametre	varchar(50)	NO	UNI	NULL	
+valeur	decimal(10,4)	NO		NULL	
+date_modification	datetime	YES		current_timestamp()	on update current_timestamp()
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+parametres_tarification	0	PRIMARY	1	id	A	6	NULL	NULL		BTREE		
+parametres_tarification	0	parametre	1	parametre	A	6	NULL	NULL		BTREE		
+
+========== TABLE: payment_transactions ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+transaction_id	varchar(100)	NO	UNI	NULL	
+coursier_id	varchar(20)	NO	MUL	NULL	
+montant	decimal(10,2)	NO		NULL	
+statut	enum('pending','success','failed','error','cancelled')	YES	MUL	pending	
+cinetpay_transaction_id	varchar(100)	YES		NULL	
+payment_method	varchar(50)	YES		NULL	
+date_creation	timestamp	YES	MUL	current_timestamp()	
+date_completion	timestamp	YES		NULL	
+metadata	longtext	YES		NULL	
+error_message	text	YES		NULL	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+payment_transactions	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+payment_transactions	0	transaction_id	1	transaction_id	A	0	NULL	NULL		BTREE		
+payment_transactions	1	idx_coursier	1	coursier_id	A	0	NULL	NULL		BTREE		
+payment_transactions	1	idx_transaction	1	transaction_id	A	0	NULL	NULL		BTREE		
+payment_transactions	1	idx_statut	1	statut	A	0	NULL	NULL	YES	BTREE		
+payment_transactions	1	idx_date	1	date_creation	A	0	NULL	NULL	YES	BTREE		
+
+========== TABLE: payouts_minimal ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+coursier_id	int(11)	NO	MUL	NULL	
+period_label	varchar(20)	NO		NULL	
+total_livraisons	int(11)	YES		0	
+montant_total	decimal(10,2)	YES		0.00	
+statut	enum('en_attente','pret','paye')	YES	MUL	en_attente	
+generated_at	datetime	YES		current_timestamp()	
+paid_at	datetime	YES		NULL	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+payouts_minimal	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+payouts_minimal	0	uniq_coursier_period	1	coursier_id	A	0	NULL	NULL		BTREE		
+payouts_minimal	0	uniq_coursier_period	2	period_label	A	0	NULL	NULL		BTREE		
+payouts_minimal	1	idx_statut	1	statut	A	0	NULL	NULL	YES	BTREE		
+
+========== TABLE: postes ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+titre	varchar(255)	NO		NULL	
+description_courte	text	YES		NULL	
+description_complete	text	YES		NULL	
+qualites_requises	text	YES		NULL	
+experience_requise	text	YES		NULL	
+date_expiration	date	NO		NULL	
+statut	enum('actif','inactif')	YES		actif	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+postes	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+
+========== TABLE: recharges ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+coursier_id	int(11)	NO	MUL	NULL	
+montant	decimal(10,2)	NO		NULL	
+currency	varchar(10)	YES		XOF	
+cinetpay_transaction_id	varchar(255)	YES	UNI	NULL	
+status	enum('pending','success','failed')	YES	MUL	pending	
+created_at	timestamp	YES		current_timestamp()	
+updated_at	timestamp	YES		current_timestamp()	on update current_timestamp()
+details	longtext	YES		NULL	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+recharges	0	PRIMARY	1	id	A	6	NULL	NULL		BTREE		
+recharges	0	cinetpay_transaction_id	1	cinetpay_transaction_id	A	2	NULL	NULL	YES	BTREE		
+recharges	1	idx_coursier	1	coursier_id	A	2	NULL	NULL		BTREE		
+recharges	1	idx_status	1	status	A	2	NULL	NULL	YES	BTREE		
+
+========== TABLE: recharges_coursiers ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+coursier_id	int(11)	NO	MUL	NULL	
+montant	decimal(10,2)	NO		NULL	
+reference_paiement	varchar(100)	YES		NULL	
+statut	enum('en_attente','validee','refusee')	YES		en_attente	
+date_demande	datetime	YES		current_timestamp()	
+date_validation	datetime	YES		NULL	
+commentaire_admin	text	YES		NULL	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+recharges_coursiers	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+recharges_coursiers	1	coursier_id	1	coursier_id	A	0	NULL	NULL		BTREE		
+
+========== TABLE: sessions_unified ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+session_id	varchar(128)	NO	UNI	NULL	
+user_type	enum('admin','agent','client','business')	NO	MUL	NULL	
+user_id	int(11)	YES		NULL	
+user_identifier	varchar(100)	NO		NULL	
+ip_address	varchar(45)	NO		NULL	
+user_agent	text	YES		NULL	
+interface_source	enum('admin','business','coursier','agent','concierge')	NO		NULL	
+login_time	timestamp	YES		current_timestamp()	
+last_activity	timestamp	YES	MUL	current_timestamp()	on update current_timestamp()
+is_active	tinyint(1)	YES	MUL	1	
+logout_time	timestamp	YES		NULL	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+sessions_unified	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+sessions_unified	0	session_id	1	session_id	A	0	NULL	NULL		BTREE		
+sessions_unified	1	idx_session	1	session_id	A	0	NULL	NULL		BTREE		
+sessions_unified	1	idx_user	1	user_type	A	0	NULL	NULL		BTREE		
+sessions_unified	1	idx_user	2	user_id	A	0	NULL	NULL	YES	BTREE		
+sessions_unified	1	idx_activity	1	last_activity	A	0	NULL	NULL	YES	BTREE		
+sessions_unified	1	idx_active	1	is_active	A	0	NULL	NULL	YES	BTREE		
+
+========== TABLE: support_chats ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+chat_id	varchar(255)	YES		NULL	
+user_type	enum('client','business')	YES		client	
+username	varchar(255)	YES		NULL	
+email	varchar(255)	YES		NULL	
+phone	varchar(50)	YES		NULL	
+country	varchar(100)	YES		NULL	
+city	varchar(100)	YES		NULL	
+commune	varchar(100)	YES		NULL	
+ip_address	varchar(45)	YES		NULL	
+user_agent	text	YES		NULL	
+device_info	longtext	YES		NULL	
+is_blocked	tinyint(1)	YES		0	
+created_at	timestamp	YES		current_timestamp()	
+last_activity	timestamp	YES	MUL	current_timestamp()	on update current_timestamp()
+client_name	varchar(255)	YES		NULL	
+client_email	varchar(255)	YES		NULL	
+status	enum('active','closed')	YES		active	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+support_chats	0	PRIMARY	1	id	A	11	NULL	NULL		BTREE		
+support_chats	1	idx_support_chats_activity	1	last_activity	A	11	NULL	NULL	YES	BTREE		
+
+========== TABLE: support_messages ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+chat_id	varchar(255)	NO	MUL	NULL	
+message	text	NO		NULL	
+sender_type	enum('user','admin')	NO		NULL	
+is_read	tinyint(1)	YES	MUL	0	
+created_at	timestamp	YES		current_timestamp()	
+sender_name	varchar(255)	YES		Utilisateur	
+ip_address	varchar(45)	YES		NULL	
+sent_at	timestamp	YES		current_timestamp()	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+support_messages	0	PRIMARY	1	id	A	4	NULL	NULL		BTREE		
+support_messages	1	idx_support_messages_read	1	is_read	A	2	NULL	NULL	YES	BTREE		
+support_messages	1	idx_support_messages_read	2	sender_type	A	4	NULL	NULL		BTREE		
+support_messages	1	fk_support_messages_chat	1	chat_id	A	4	NULL	NULL		BTREE		
+
+========== TABLE: system_sync_heartbeats ==========
+Field	Type	Null	Key	Default	Extra
+component	varchar(80)	NO	PRI	NULL	
+status	varchar(32)	NO		ok	
+metrics_json	longtext	YES		NULL	
+last_seen_at	datetime	NO		NULL	
+created_at	datetime	NO		current_timestamp()	
+updated_at	datetime	NO		current_timestamp()	on update current_timestamp()
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+system_sync_heartbeats	0	PRIMARY	1	component	A	2	NULL	NULL		BTREE		
+
+========== TABLE: tarifs ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+zone	varchar(100)	NO		NULL	
+distance_min	decimal(5,2)	NO		NULL	
+distance_max	decimal(5,2)	NO		NULL	
+prix_base	decimal(10,2)	NO		NULL	
+prix_par_km	decimal(10,2)	NO		NULL	
+actif	tinyint(1)	YES		1	
+created_at	timestamp	YES		current_timestamp()	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+tarifs	0	PRIMARY	1	id	A	3	NULL	NULL		BTREE		
+
+========== TABLE: tracking_coursiers ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+coursier_id	int(11)	NO	MUL	NULL	
+latitude	decimal(10,8)	YES		NULL	
+longitude	decimal(11,8)	YES		NULL	
+accuracy	decimal(6,2)	YES		NULL	
+timestamp	datetime	YES		NULL	
+created_at	timestamp	YES		current_timestamp()	
+updated_at	timestamp	YES		current_timestamp()	on update current_timestamp()
+lat	double	YES		NULL	
+lng	double	YES		NULL	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+tracking_coursiers	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+tracking_coursiers	1	idx_coursier_created	1	coursier_id	A	0	NULL	NULL		BTREE		
+tracking_coursiers	1	idx_coursier_created	2	created_at	A	0	NULL	NULL	YES	BTREE		
+tracking_coursiers	1	idx_coursier_updated	1	coursier_id	A	0	NULL	NULL		BTREE		
+tracking_coursiers	1	idx_coursier_updated	2	updated_at	A	0	NULL	NULL	YES	BTREE		
+
+========== TABLE: transactions ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+commande_id	int(11)	NO	MUL	NULL	
+reference_transaction	varchar(100)	NO	UNI	NULL	
+montant	decimal(10,2)	NO		NULL	
+type_transaction	enum('paiement','remboursement','commission')	NO		NULL	
+methode_paiement	enum('especes','orange_money','moov_money','mtn_money','wave','carte_visa','carte_mastercard')	NO	MUL	NULL	
+statut	enum('pending','success','failed','cancelled')	YES	MUL	pending	
+reference_externe	varchar(100)	YES		NULL	
+frais_transaction	decimal(8,2)	YES		0.00	
+details_reponse	longtext	YES		NULL	
+created_at	timestamp	YES	MUL	current_timestamp()	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+transactions	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+transactions	0	reference_transaction	1	reference_transaction	A	0	NULL	NULL		BTREE		
+transactions	1	idx_commande	1	commande_id	A	0	NULL	NULL		BTREE		
+transactions	1	idx_reference	1	reference_transaction	A	0	NULL	NULL		BTREE		
+transactions	1	idx_statut	1	statut	A	0	NULL	NULL	YES	BTREE		
+transactions	1	idx_methode	1	methode_paiement	A	0	NULL	NULL		BTREE		
+transactions	1	idx_transactions_date	1	created_at	A	0	NULL	NULL	YES	BTREE		
+
+========== TABLE: transactions_financieres ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	auto_increment
+type	enum('credit','debit')	NO		NULL	
+montant	decimal(10,2)	NO		NULL	
+compte_type	enum('coursier','client')	NO		NULL	
+compte_id	int(11)	NO		NULL	
+reference	varchar(100)	NO		NULL	
+description	text	YES		NULL	
+statut	enum('en_attente','reussi','echoue')	YES		reussi	
+date_creation	datetime	YES		current_timestamp()	
+
+INDEX:
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+transactions_financieres	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE		
+
+========== TABLE: view_device_stats ==========
+Field	Type	Null	Key	Default	Extra
+device_id	varchar(128)	NO		NULL	
+device_model	varchar(100)	YES		NULL	
+device_brand	varchar(50)	YES		NULL	
+android_version	varchar(20)	YES		NULL	
+app_version_code	int(11)	NO		1	
+app_version_name	varchar(20)	NO		1.0	
+last_seen	datetime	NO		current_timestamp()	
+total_sessions	int(11) unsigned	NO		0	
+crash_count	bigint(21)	YES		NULL	
+activity_status	varchar(8)	YES		NULL	
+update_status	varchar(13)	YES		NULL	
+
+INDEX:
+
+========== TABLE: vue_commandes_aujourd_hui ==========
+Field	Type	Null	Key	Default	Extra
+total_commandes	bigint(21)	NO		0	
+commandes_livrees	bigint(21)	NO		0	
+commandes_annulees	bigint(21)	NO		0	
+revenus_jour	decimal(30,2)	YES		NULL	
+temps_moyen_livraison	decimal(24,4)	YES		NULL	
+
+INDEX:
+
+========== TABLE: vue_performance_coursiers ==========
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO		0	
+nom	varchar(100)	NO		NULL	
+telephone	varchar(20)	NO		NULL	
+note_moyenne	decimal(3,2)	YES		0.00	
+total_commandes	int(11)	YES		0	
+commandes_ce_mois	bigint(21)	NO		0	
+livrees_ce_mois	bigint(21)	NO		0	
+taux_reussite	decimal(26,2)	YES		NULL	
+revenus_generes	decimal(30,2)	YES		NULL	
+
+INDEX:
