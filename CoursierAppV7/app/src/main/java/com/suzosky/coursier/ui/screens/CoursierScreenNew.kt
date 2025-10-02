@@ -89,19 +89,31 @@ fun CoursierScreenNew(
     val notificationService = remember { NotificationSoundService(context) }
     
     // État pour tracker les nouvelles commandes et déclencher le son
-    var previousCommandesCount by remember { mutableStateOf(commandes.size) }
+    var previousCommandesCount by remember { mutableStateOf(localCommandes.size) }
     var hasNewOrder by remember { mutableStateOf(false) }
     
+    // Synchroniser localCommandes avec commandes (quand de nouvelles arrivent)
+    LaunchedEffect(commandes) {
+        // Ajouter uniquement les nouvelles commandes (ne pas écraser les suppressions locales)
+        val newCommands = commandes.filter { cmd -> 
+            localCommandes.none { it.id == cmd.id }
+        }
+        if (newCommands.isNotEmpty()) {
+            localCommandes = localCommandes + newCommands
+            android.util.Log.d("CoursierScreenNew", "📥 ${newCommands.size} nouvelles commandes ajoutées")
+        }
+        pendingOrdersCount = localCommandes.count { it.statut == "nouvelle" || it.statut == "attente" }
+    }
+    
     // Détection de nouvelles commandes et déclenchement du son
-    LaunchedEffect(commandes.size) {
+    LaunchedEffect(localCommandes.size) {
         // Si le nombre de commandes augmente, il y a une nouvelle commande
-        if (commandes.size > previousCommandesCount && previousCommandesCount > 0) {
+        if (localCommandes.size > previousCommandesCount && previousCommandesCount > 0) {
             println("🔊 Nouvelle commande détectée! Démarrage du son")
             hasNewOrder = true
             notificationService.startNotificationSound()
         }
-        previousCommandesCount = commandes.size
-    pendingOrdersCount = commandes.count { it.statut == "nouvelle" || it.statut == "attente" }
+        previousCommandesCount = localCommandes.size
     }
     
     // Nettoyer le service de notification quand le composant est détruit
