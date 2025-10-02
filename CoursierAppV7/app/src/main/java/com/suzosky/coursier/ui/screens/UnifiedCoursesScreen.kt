@@ -33,46 +33,6 @@ import com.suzosky.coursier.ui.theme.*
  * Écran Mes Courses UNIFIÉ - Navigation + Actions + Infos
  * Tout intégré dans un seul écran, pas de modal
  */
-/**
- * Crée un BitmapDescriptor avec un emoji
- */
-fun Context.createEmojiMarker(emoji: String, backgroundColor: Int): BitmapDescriptor {
-    val paint = android.graphics.Paint().apply {
-        textSize = 100f
-        color = android.graphics.Color.BLACK
-        textAlign = android.graphics.Paint.Align.CENTER
-        isAntiAlias = true
-    }
-    
-    val bitmap = android.graphics.Bitmap.createBitmap(150, 150, android.graphics.Bitmap.Config.ARGB_8888)
-    val canvas = android.graphics.Canvas(bitmap)
-    
-    // Fond circulaire coloré
-    val bgPaint = android.graphics.Paint().apply {
-        color = backgroundColor
-        isAntiAlias = true
-        style = android.graphics.Paint.Style.FILL
-    }
-    canvas.drawCircle(75f, 75f, 70f, bgPaint)
-    
-    // Bordure blanche
-    val borderPaint = android.graphics.Paint().apply {
-        color = android.graphics.Color.WHITE
-        isAntiAlias = true
-        style = android.graphics.Paint.Style.STROKE
-        strokeWidth = 8f
-    }
-    canvas.drawCircle(75f, 75f, 70f, borderPaint)
-    
-    // Emoji au centre
-    val bounds = android.graphics.Rect()
-    paint.getTextBounds(emoji, 0, emoji.length, bounds)
-    val y = 75f - (paint.descent() + paint.ascent()) / 2
-    canvas.drawText(emoji, 75f, y, paint)
-    
-    return BitmapDescriptorFactory.fromBitmap(bitmap)
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UnifiedCoursesScreen(
