@@ -117,7 +117,7 @@ fun CoursierScreenNew(
                     id = "1",
                     message = "Bonjour ! Comment puis-je vous aider aujourd'hui ?",
                     isFromCoursier = false,
-                    timestamp = Date(),
+                    timestamp = Date().time,
                     senderName = "Support Suzosky"
                 )
             )
@@ -448,7 +448,7 @@ fun CoursierScreenNew(
                                 id = UUID.randomUUID().toString(),
                                 message = message,
                                 isFromCoursier = true,
-                                timestamp = Date(),
+                                timestamp = Date().time,
                                 senderName = coursierNom
                             )
                             chatMessages = chatMessages + newMessage
@@ -461,7 +461,7 @@ fun CoursierScreenNew(
                                     id = UUID.randomUUID().toString(),
                                     message = "Je suis là pour vous aider ! Que puis-je faire pour vous ?",
                                     isFromCoursier = false,
-                                    timestamp = Date(),
+                                    timestamp = Date().time,
                                     senderName = "Support Suzosky"
                                 )
                                 chatMessages = chatMessages + autoReply
