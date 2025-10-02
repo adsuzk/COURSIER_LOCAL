@@ -404,51 +404,18 @@ $margeNetteSuzosky = $comptaData['ca_total'] > 0 ? ($comptaData['revenus_nets_su
 ?>
 
 <style>
-/* === COMPTABILITÉ SUZOSKY - COLORIS OFFICIELS === */
-:root {
-    --suzosky-gold: #D4A853;
-    --suzosky-dark: #1A1A2E;
-    --suzosky-blue: #16213E;
-    --suzosky-accent: #0F3460;
-    --suzosky-red: #E94560;
-    --suzosky-green: #27AE60;
-    --glass-bg: rgba(255, 255, 255, 0.08);
-    --glass-border: rgba(255, 255, 255, 0.2);
-    --gradient-gold: linear-gradient(135deg, #D4A853 0%, #F4E4B8 50%, #D4A853 100%);
-    --gradient-dark: linear-gradient(135deg, #1A1A2E 0%, #16213E 100%);
-}
-
-.compta-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 2rem;
-}
-
-.compta-header {
-    background: var(--gradient-gold);
-    color: var(--suzosky-dark);
-    padding: 2rem;
-    border-radius: 12px;
-    margin-bottom: 2rem;
-    box-shadow: 0 8px 32px rgba(212, 168, 83, 0.3);
-    border: 1px solid rgba(212, 168, 83, 0.3);
-}
-
-.compta-header h1 {
-    margin: 0 0 0.5rem 0;
-    font-size: 2rem;
-    font-weight: 800;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
+/* === COMPTABILITÉ SUZOSKY - STYLE COMPLET DARK === */
 
 .filter-bar {
-    background: white;
-    padding: var(--space-5);
-    border-radius: var(--radius-md);
-    margin-bottom: var(--space-6);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
     display: flex;
-    gap: var(--space-4);
+    gap: 1rem;
     flex-wrap: wrap;
     align-items: flex-end;
 }
@@ -461,207 +428,243 @@ $margeNetteSuzosky = $comptaData['ca_total'] > 0 ? ($comptaData['revenus_nets_su
 .filter-group label {
     display: block;
     font-weight: 600;
-    margin-bottom: var(--space-2);
-    color: var(--primary-dark);
+    margin-bottom: 0.5rem;
+    color: var(--suzosky-gold);
     font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .filter-group input[type="date"] {
     width: 100%;
-    padding: var(--space-3);
-    border: 2px solid var(--border-light);
-    border-radius: var(--radius-sm);
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid var(--glass-border);
+    border-radius: 8px;
     font-size: 1rem;
-    transition: border-color 0.2s;
+    color: white;
+    transition: all 0.3s;
 }
 
 .filter-group input[type="date"]:focus {
     outline: none;
-    border-color: var(--primary-gold);
+    border-color: var(--suzosky-gold);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 20px rgba(212, 168, 83, 0.3);
 }
 
 .filter-actions {
     display: flex;
-    gap: var(--space-3);
+    gap: 1rem;
 }
 
 .btn-filter {
-    background: var(--primary-gold);
-    color: var(--primary-dark);
-    padding: var(--space-3) var(--space-5);
+    background: var(--gradient-gold);
+    color: var(--suzosky-dark);
+    padding: 0.75rem 1.5rem;
     border: none;
-    border-radius: var(--radius-sm);
-    font-weight: 600;
+    border-radius: 8px;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s;
     font-size: 1rem;
     height: 45px;
+    box-shadow: 0 4px 15px rgba(212, 168, 83, 0.3);
 }
 
 .btn-filter:hover {
-    background: var(--secondary-gold);
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(255, 184, 0, 0.3);
+    box-shadow: 0 6px 25px rgba(212, 168, 83, 0.5);
 }
 
 .btn-export {
-    background: white;
-    color: var(--primary-dark);
-    border: 2px solid var(--primary-gold);
-    padding: var(--space-3) var(--space-5);
-    border-radius: var(--radius-sm);
-    font-weight: 600;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--suzosky-gold);
+    border: 2px solid var(--suzosky-gold);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
-    gap: var(--space-2);
+    gap: 0.5rem;
     height: 45px;
+    backdrop-filter: blur(10px);
 }
 
 .btn-export:hover {
-    background: var(--primary-gold);
+    background: var(--suzosky-gold);
+    color: var(--suzosky-dark);
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(255, 184, 0, 0.3);
+    box-shadow: 0 6px 25px rgba(212, 168, 83, 0.5);
 }
 
 .metrics-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: var(--space-5);
-    margin-bottom: var(--space-6);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .metric-card {
-    background: white;
-    padding: var(--space-5);
-    border-radius: var(--radius-md);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    border-left: 4px solid var(--primary-gold);
-    transition: transform 0.2s, box-shadow 0.2s;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+    border-left: 4px solid var(--suzosky-gold);
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, rgba(212, 168, 83, 0.1) 0%, transparent 70%);
+    pointer-events: none;
 }
 
 .metric-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+    box-shadow: 0 12px 40px rgba(212, 168, 83, 0.25);
+    border-left-width: 6px;
 }
 
 .metric-card.highlight {
-    background: linear-gradient(135deg, #fff9e6, #ffffff);
-    border-left-color: var(--secondary-gold);
-    border-left-width: 6px;
+    background: linear-gradient(135deg, rgba(212, 168, 83, 0.2), rgba(255, 255, 255, 0.08));
+    border-left-color: #F4E4B8;
+    box-shadow: 0 8px 32px rgba(212, 168, 83, 0.4);
 }
 
 .metric-icon {
     width: 50px;
     height: 50px;
-    background: linear-gradient(135deg, var(--primary-gold), var(--secondary-gold));
+    background: var(--gradient-gold);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
-    margin-bottom: var(--space-3);
+    margin-bottom: 1rem;
+    color: var(--suzosky-dark);
+    box-shadow: 0 4px 15px rgba(212, 168, 83, 0.3);
 }
 
 .metric-label {
     font-size: 0.85rem;
-    color: var(--text-secondary);
+    color: rgba(255, 255, 255, 0.7);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: var(--space-2);
+    margin-bottom: 0.5rem;
 }
 
 .metric-value {
     font-size: 1.8rem;
     font-weight: 700;
-    color: var(--primary-dark);
-    margin-bottom: var(--space-2);
+    color: var(--suzosky-gold);
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 10px rgba(212, 168, 83, 0.3);
 }
 
 .metric-subtitle {
     font-size: 0.9rem;
-    color: var(--text-secondary);
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .metric-badge {
     display: inline-block;
     padding: 4px 12px;
-    background: var(--primary-gold);
-    color: var(--primary-dark);
+    background: var(--suzosky-gold);
+    color: var(--suzosky-dark);
     border-radius: 12px;
     font-size: 0.8rem;
-    font-weight: 600;
-    margin-top: var(--space-2);
+    font-weight: 700;
+    margin-top: 0.5rem;
 }
 
 .details-section {
-    background: white;
-    padding: var(--space-6);
-    border-radius: var(--radius-md);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    margin-bottom: var(--space-6);
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+    margin-bottom: 2rem;
 }
 
 .section-title {
     font-size: 1.3rem;
     font-weight: 700;
-    color: var(--primary-dark);
-    margin-bottom: var(--space-4);
-    padding-bottom: var(--space-3);
-    border-bottom: 3px solid var(--primary-gold);
+    color: var(--suzosky-gold);
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 3px solid var(--suzosky-gold);
     display: flex;
     align-items: center;
-    gap: var(--space-3);
+    gap: 1rem;
 }
 
 .section-title::before {
     content: '';
     width: 4px;
     height: 24px;
-    background: var(--primary-gold);
+    background: var(--suzosky-gold);
     border-radius: 2px;
+    box-shadow: 0 0 10px rgba(212, 168, 83, 0.5);
 }
 
 .breakdown-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: var(--space-4);
-    margin-top: var(--space-4);
+    gap: 1rem;
+    margin-top: 1rem;
 }
 
 .breakdown-item {
-    padding: var(--space-4);
-    background: var(--bg-light);
-    border-radius: var(--radius-sm);
-    border-left: 3px solid var(--primary-gold);
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border-left: 3px solid var(--suzosky-gold);
+    transition: all 0.3s;
+}
+
+.breakdown-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
 }
 
 .breakdown-label {
     font-size: 0.85rem;
-    color: var(--text-secondary);
-    margin-bottom: var(--space-2);
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 0.5rem;
     font-weight: 600;
 }
 
 .breakdown-value {
     font-size: 1.3rem;
     font-weight: 700;
-    color: var(--primary-dark);
+    color: white;
 }
 
 .breakdown-percent {
     font-size: 0.85rem;
-    color: var(--success-color);
+    color: var(--suzosky-green);
     font-weight: 600;
-    margin-top: var(--space-1);
+    margin-top: 0.25rem;
 }
 
 .data-table-responsive {
     overflow-x: auto;
-    margin-top: var(--space-4);
+    margin-top: 1rem;
 }
 
 .compta-table {
@@ -671,12 +674,12 @@ $margeNetteSuzosky = $comptaData['ca_total'] > 0 ? ($comptaData['revenus_nets_su
 }
 
 .compta-table thead {
-    background: var(--primary-gold);
-    color: var(--primary-dark);
+    background: var(--gradient-gold);
+    color: var(--suzosky-dark);
 }
 
 .compta-table th {
-    padding: var(--space-3) var(--space-4);
+    padding: 1rem;
     text-align: left;
     font-weight: 700;
     text-transform: uppercase;
@@ -685,102 +688,112 @@ $margeNetteSuzosky = $comptaData['ca_total'] > 0 ? ($comptaData['revenus_nets_su
 }
 
 .compta-table tbody tr {
-    border-bottom: 1px solid var(--border-light);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     transition: background 0.2s;
 }
 
 .compta-table tbody tr:hover {
-    background: var(--bg-light);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .compta-table td {
-    padding: var(--space-3) var(--space-4);
-    color: var(--text-primary);
+    padding: 1rem;
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .compta-table tr:nth-child(even) {
-    background: #fafafa;
+    background: rgba(255, 255, 255, 0.02);
 }
 
 .no-data {
     text-align: center;
-    padding: var(--space-8);
-    color: var(--text-secondary);
+    padding: 3rem;
+    color: rgba(255, 255, 255, 0.5);
     font-style: italic;
 }
 
 .chart-container {
-    background: white;
-    padding: var(--space-6);
-    border-radius: var(--radius-md);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    margin-bottom: var(--space-6);
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+    margin-bottom: 2rem;
 }
 
 .revenue-breakdown {
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
-    margin-top: var(--space-4);
+    gap: 1rem;
+    margin-top: 1rem;
 }
 
 .revenue-item {
     display: flex;
     align-items: center;
-    gap: var(--space-4);
+    gap: 1rem;
 }
 
 .revenue-bar-container {
     flex: 1;
-    background: var(--bg-light);
-    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
     height: 40px;
     overflow: hidden;
     position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .revenue-bar {
     height: 100%;
     display: flex;
     align-items: center;
-    padding: 0 var(--space-3);
+    padding: 0 1rem;
     color: white;
     font-weight: 700;
     transition: width 0.5s ease;
     font-size: 0.9rem;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
-.revenue-bar.ca-total { background: linear-gradient(90deg, #4CAF50, #66BB6A); }
-.revenue-bar.commission { background: linear-gradient(90deg, var(--primary-gold), var(--secondary-gold)); }
-.revenue-bar.frais { background: linear-gradient(90deg, #FF9800, #FFB74D); }
-.revenue-bar.revenus-nets { background: linear-gradient(90deg, #2196F3, #42A5F5); }
+.revenue-bar.ca-total { background: linear-gradient(90deg, #27AE60, #2ECC71); }
+.revenue-bar.commission { background: var(--gradient-gold); color: var(--suzosky-dark); }
+.revenue-bar.frais { background: linear-gradient(90deg, #E94560, #F06292); }
+.revenue-bar.revenus-nets { background: linear-gradient(90deg, #0F3460, #16213E); }
 .revenue-bar.coursiers { background: linear-gradient(90deg, #9C27B0, #BA68C8); }
 
 .revenue-label {
     min-width: 200px;
     font-weight: 600;
-    color: var(--primary-dark);
+    color: white;
 }
 
 .alert-info {
-    background: #e3f2fd;
+    background: rgba(33, 150, 243, 0.1);
+    border: 1px solid rgba(33, 150, 243, 0.3);
     border-left: 4px solid #2196F3;
-    padding: var(--space-4);
-    border-radius: var(--radius-sm);
-    margin-bottom: var(--space-4);
-    color: #1565C0;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    color: #64B5F6;
 }
 
 .alert-warning {
-    background: #fff3e0;
+    background: rgba(255, 152, 0, 0.1);
+    border: 1px solid rgba(255, 152, 0, 0.3);
     border-left: 4px solid #FF9800;
-    padding: var(--space-4);
-    border-radius: var(--radius-sm);
-    margin-bottom: var(--space-4);
-    color: #E65100;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    color: #FFB74D;
 }
 
 @media (max-width: 768px) {
+    .compta-container {
+        padding: 1rem;
+    }
+    
     .metrics-grid {
         grid-template-columns: 1fr;
     }
@@ -802,7 +815,13 @@ $margeNetteSuzosky = $comptaData['ca_total'] > 0 ? ($comptaData['revenus_nets_su
         width: 100%;
         justify-content: center;
     }
+    
+    .revenue-label {
+        min-width: 150px;
+        font-size: 0.85rem;
+    }
 }
+
 </style>
 
 <div class="compta-container">
