@@ -49,7 +49,7 @@ function getComptabiliteData($pdo, $dateDebut, $dateFin) {
         SELECT 
             COUNT(*) as nb_livraisons,
             SUM(prix_total) as ca_total,
-            AVG(prix) as prix_moyen
+            AVG(prix_total) as prix_moyen
         FROM commandes 
         WHERE statut = 'livree' 
         AND created_at BETWEEN ? AND ?
@@ -102,7 +102,7 @@ function getComptabiliteData($pdo, $dateDebut, $dateFin) {
     $totalRevenusCoursiers = 0;
     
     foreach ($commandes as $cmd) {
-        $prix = (float)$cmd['prix'];
+        $prix = (float)$cmd['prix_total'];
         $tauxCommission = (float)($cmd['taux_commission_suzosky'] ?? 15) / 100;
         $tauxPlateforme = (float)($cmd['frais_plateforme'] ?? 5) / 100;
         $tauxPublicite = (float)($cmd['frais_publicitaires'] ?? 3) / 100;
