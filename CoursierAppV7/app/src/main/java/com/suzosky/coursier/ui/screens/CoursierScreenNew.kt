@@ -117,17 +117,34 @@ fun CoursierScreenNew(
     
     // Synchroniser localCommandes avec commandes (quand de nouvelles arrivent)
     LaunchedEffect(commandes) {
-        // Ajouter uniquement les nouvelles commandes (ne pas écraser les suppressions locales)
-        val newCommands = commandes.filter { cmd -> 
+        // ⚠️ IMPORTANT: Ne jamais retirer currentOrder de localCommandes
+        // même si elle n'est plus dans la liste du serveur (elle a changé de statut)
+        
+        // 1. Garder currentOrder si elle existe
+        val currentCmd = currentOrder
+        
+        // 2. Mettre à jour ou ajouter les commandes de l'API
+        val updatedCommands = commandes.toMutableList()
+        
+        // 3. Si currentOrder existe mais n'est PAS dans la nouvelle liste, la garder !
+        if (currentCmd != null && updatedCommands.none { it.id == currentCmd.id }) {
+            // La commande active n'est plus retournée par l'API (changement de statut)
+            // On la garde dans localCommandes pour ne pas perdre le contexte
+            updatedCommands.add(currentCmd)
+            android.util.Log.d("CoursierScreenNew", "⚠️ Commande active ${currentCmd.id} conservée (pas dans API response)")
+        }
+        
+        // 4. Ajouter les nouvelles commandes qui ne sont pas déjà dans localCommandes
+        val newCommands = updatedCommands.filter { cmd -> 
             localCommandes.none { it.id == cmd.id }
         }
+        
         if (newCommands.isNotEmpty()) {
             localCommandes = localCommandes + newCommands
             android.util.Log.d("CoursierScreenNew", "📥 ${newCommands.size} nouvelles commandes ajoutées")
         }
         
-        // ⚠️ FIX CRITIQUE: Synchroniser currentOrder avec la version mise à jour dans localCommandes
-        // Si currentOrder existe, la mettre à jour avec la version actuelle de la liste
+        // 5. Synchroniser currentOrder avec la version mise à jour dans localCommandes
         currentOrder?.let { current ->
             val updatedOrder = localCommandes.find { it.id == current.id }
             if (updatedOrder != null && updatedOrder !== current) {
