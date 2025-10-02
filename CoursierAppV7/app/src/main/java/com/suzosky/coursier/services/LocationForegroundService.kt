@@ -49,6 +49,11 @@ class LocationForegroundService : Service() {
     private var coursierId: Int = -1
     
     companion object {
+        const val ACTION_START = "com.suzosky.coursier.action.START_TRACKING"
+        const val ACTION_STOP = "com.suzosky.coursier.action.STOP_TRACKING"
+        const val EXTRA_COURSIER_ID = "extra_coursier_id"
+        const val NOTIF_ID = 2244
+        
         // StateFlow pour exposer la position actuelle à l'UI
         private val _currentLocation = MutableStateFlow<Location?>(null)
         val currentLocation: StateFlow<Location?> = _currentLocation.asStateFlow()
@@ -306,11 +311,4 @@ class LocationForegroundService : Service() {
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
-
-    companion object {
-        const val ACTION_START = "com.suzosky.coursier.action.START_TRACKING"
-        const val ACTION_STOP = "com.suzosky.coursier.action.STOP_TRACKING"
-        const val EXTRA_COURSIER_ID = "extra_coursier_id"
-        const val NOTIF_ID = 2244
-    }
 }
