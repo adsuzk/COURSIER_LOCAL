@@ -547,7 +547,9 @@ fun CoursesScreen(
                         pickup = pickup,
                         dropoff = destination,
                         path = path,
-                        onStartNavigation = { dest -> launchTurnByTurn(context, dest, label = "Destination") }
+                        onStartNavigation = { dest -> 
+                            // Navigation gérée automatiquement par NavigationScreen - pas de redirection externe
+                        }
                     )
                 }
             }
