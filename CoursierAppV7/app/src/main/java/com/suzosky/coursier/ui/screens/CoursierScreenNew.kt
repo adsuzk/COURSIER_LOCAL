@@ -174,8 +174,8 @@ fun CoursierScreenNew(
                     UnifiedCoursesScreen(
                         currentOrder = currentOrder,
                         deliveryStep = deliveryStep,
-                        banner = timelineBanner,
                         pendingOrdersCount = pendingOrdersCount,
+                        courierLocation = mapUi.currentLocation,
                         onAcceptOrder = {
                             currentOrder?.let { order ->
                                 if (hasNewOrder) {
@@ -434,6 +434,9 @@ fun CoursierScreenNew(
                     ModernWalletScreen(
                         coursierId = coursierId,
                         balance = balance,
+                        gainsDuJour = 0,
+                        gainsHebdo = 0,
+                        gainsMensuel = 0,
                         onRecharge = onRecharge
                     )
                 }
@@ -473,12 +476,13 @@ fun CoursierScreenNew(
                 NavigationTab.PROFILE -> {
                     ModernProfileScreen(
                         coursierNom = coursierNom,
-                        coursierStatut = coursierStatut,
-                        totalCommandes = totalCommandes,
-                        noteGlobale = noteGlobale.toFloat(),
                         coursierTelephone = coursierTelephone.ifBlank { "+225" },
-                        coursierEmail = coursierEmail,
-                        dateInscription = if (dateInscription.isNotBlank()) dateInscription else "",
+                        coursierMatricule = "",
+                        stats = CoursierStats(
+                            totalCourses = totalCommandes,
+                            rating = noteGlobale.toFloat(),
+                            memberSince = if (dateInscription.isNotBlank()) dateInscription else "2025"
+                        ),
                         onLogout = onLogout
                     )
                 }
