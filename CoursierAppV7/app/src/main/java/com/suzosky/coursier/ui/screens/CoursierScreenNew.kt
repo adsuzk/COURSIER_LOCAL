@@ -102,7 +102,8 @@ fun CoursierScreenNew(
         }
     ) }
     // Initialiser deliveryStep selon le statut de la commande actuelle
-    var deliveryStep by remember { mutableStateOf(
+    // Utiliser rememberSaveable pour survivre aux rotations d'écran
+    var deliveryStep by rememberSaveable { mutableStateOf(
         when (currentOrder?.statut) {
             "acceptee" -> DeliveryStep.ACCEPTED
             "en_cours", "recuperee" -> DeliveryStep.PICKED_UP
@@ -203,7 +204,8 @@ fun CoursierScreenNew(
     var paymentUrl by remember { mutableStateOf<String?>(null) }
     
     // États pour la timeline et cash dialog
-    var showCashDialog by remember { mutableStateOf(false) }
+    // Utiliser rememberSaveable pour survivre aux rotations
+    var showCashDialog by rememberSaveable { mutableStateOf(false) }
     var timelineBanner by remember { mutableStateOf<TimelineBanner?>(null) }
     var bannerVersion by remember { mutableStateOf(0) }
     // Auto-dismiss des bannières après 8s
