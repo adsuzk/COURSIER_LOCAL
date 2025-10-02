@@ -137,13 +137,12 @@ try {
     // Logger l'action
     error_log("Coursier $coursier_id a " . ($action === 'accept' ? 'accepté' : 'refusé') . " la commande $order_id");
     
-    echo json_encode($response);
+    sendJsonResponse($response, 200);
     
 } catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode([
+    sendJsonResponse([
         'success' => false,
         'error' => 'Erreur serveur: ' . $e->getMessage()
-    ]);
+    ], 500);
 }
 ?>
