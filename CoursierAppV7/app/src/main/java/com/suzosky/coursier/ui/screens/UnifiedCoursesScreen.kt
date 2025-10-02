@@ -102,7 +102,10 @@ fun UnifiedCoursesScreen(
     
     Box(modifier = modifier.fillMaxSize()) {
         // FOND : Carte ou état vide
+        android.util.Log.d("UnifiedCoursesScreen", "🗺️ Rendering: currentOrder=${currentOrder?.id}, deliveryStep=$deliveryStep, condition=${currentOrder != null && deliveryStep != DeliveryStep.PENDING}")
+        
         if (currentOrder != null && deliveryStep != DeliveryStep.PENDING) {
+            android.util.Log.d("UnifiedCoursesScreen", "✅ AFFICHAGE DE LA CARTE - pickup=$pickupLatLng, delivery=$deliveryLatLng, courierLoc=$courierLocation")
             // CARTE PLEIN ÉCRAN
             GoogleMap(
                 modifier = Modifier.fillMaxSize(),
