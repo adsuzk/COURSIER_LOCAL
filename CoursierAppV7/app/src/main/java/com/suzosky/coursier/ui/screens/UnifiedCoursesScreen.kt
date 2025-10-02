@@ -243,7 +243,6 @@ fun UnifiedCoursesScreen(
                         icon = BitmapDescriptorFactory.fromBitmap(createEmojiMarker("🎯", 120))
                     )
                 }
-                }
                 
                 // Ligne vers destination
                 if (courierLocation != null && currentDestination != null) {
