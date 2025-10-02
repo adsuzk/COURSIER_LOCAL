@@ -55,6 +55,11 @@ fun ModernWalletScreen(
 ) {
     var showRechargeDialog by remember { mutableStateOf(false) }
     var selectedAmount by remember { mutableStateOf(0) }
+    var showHistoryDialog by remember { mutableStateOf(false) }
+    var allCommandes by remember { mutableStateOf<List<WalletHistoryItem>>(emptyList()) }
+    var isLoadingHistory by remember { mutableStateOf(false) }
+    
+    val coroutineScope = rememberCoroutineScope()
     
     val currencyFormat = remember {
         NumberFormat.getCurrencyInstance(Locale.FRANCE).apply {
