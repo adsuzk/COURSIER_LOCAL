@@ -186,7 +186,7 @@ header('Content-Type: application/json; charset=utf-8');                      CO
                     COALESCE(longitude_depart, longitude_retrait) as longitude_enlevement,
                     COALESCE(latitude_arrivee, latitude_livraison) as latitude_livraison,
                     COALESCE(longitude_arrivee, longitude_livraison) as longitude_livraison,
-                    COALESCE(prix_total, prix_estime, 0) as prix_livraison,
+                    CASE WHEN COALESCE(prix_total, 0) > 0 THEN prix_total ELSE COALESCE(prix_estime, 0) END as prix_livraison,
                     COALESCE(mode_paiement, 'especes') as mode_paiement,
                     statut,
                     created_at as date_commande,
