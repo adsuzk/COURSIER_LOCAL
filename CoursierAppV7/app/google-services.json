@@ -27,6 +27,29 @@
           "sender_id": "55677959036"
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:55677959036:android:aaaaaaaaaaaaaaaaaaaaaaaa",
+        "android_client_info": {
+          "package_name": "com.suzosky.coursier"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWcWWwpRx9myEaROuKrOPeL5wfbfQxCmk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        },
+        "firebase_messaging": {
+          "enabled": true,
+          "sender_id": "55677959036"
+        }
+      }
     }
   ],
   "configuration_version": "1"
