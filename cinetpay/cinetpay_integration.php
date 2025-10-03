@@ -19,7 +19,7 @@ class SuzoskyCinetPayIntegration {
     
     public function __construct() {
     // Charger la configuration CinetPay depuis config.php
-    $cfg = getCinetPayConfig();
+    $cfg = getCinetPayConfig('coursier');
     $this->apiKey    = $cfg['apikey']     ?? $this->apiKey;
     $this->siteId    = $cfg['site_id']    ?? $this->siteId;
     $this->secretKey = $cfg['secret_key'] ?? $this->secretKey;
