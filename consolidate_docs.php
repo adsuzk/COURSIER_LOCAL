@@ -16,8 +16,7 @@ define('ROOT_DIR', __DIR__);
 define('DOCS_DIR', ROOT_DIR . '/DOCUMENTATION_FINALE');
 // Fichier cible unique exigé par le besoin: un seul document complet et à jour
 define('FINAL_DOC', DOCS_DIR . '/DOCUMENTATION_SUZOSKY_COMPLETE.md');
-// Archive horodatée facultative (on conserve quelques versions)
-define('CONSOLIDATED_DOC', DOCS_DIR . '/CONSOLIDATED_DOCS_' . date('Y-m-d_H-i-s') . '.md');
+// Plus d'archives horodatées: on maintient un seul document master à jour
 
 // Créer le dossier DOCUMENTATION_FINALE s'il n'existe pas
 if (!is_dir(DOCS_DIR)) {
