@@ -146,8 +146,9 @@ object ApiService {
             android.util.Log.d("ApiService", "Base primary=$primary secondary=$secondary")
             android.util.Log.d("ApiService", "=====================")
         } catch (_: Throwable) {}
-        // In debug builds with USE_PROD_SERVER=false, stick to local only (no prod retry)
-    val allowSecondary = !forceLocalOnly()
+        // Only allow fallback to the secondary base on debug builds.
+        // In release, never fallback to local to avoid cleartext HTTP and ensure prod-only.
+        val allowSecondary = isDebug() && !forceLocalOnly()
         enqueueInternal(primary, true, secondary, allowSecondary, buildRequest, onResponseMain, onFailureMain)
     }
 
