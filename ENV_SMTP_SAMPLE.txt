@@ -1,0 +1,20 @@
+# SMTP configuration sample for local and production
+# Prefer environment variables over hardcoding in PHP.
+# On Windows PowerShell (current session only):
+#   $env:SMTP_HOST = "smtp.gmail.com"
+#   $env:SMTP_PORT = "587"
+#   $env:SMTP_ENCRYPTION = "tls"
+#   $env:SMTP_USER = "your@email"
+#   $env:SMTP_PASS = "your_app_password"
+#   $env:SMTP_FROM_EMAIL = "no-reply@your-domain.com"
+#   $env:SMTP_FROM_NAME = "Suzosky"
+#   $env:SMTP_DEBUG = "2"   # optional
+# Then reload the page admin.php?section=emails and send a test email.
+
+# For system-wide persistence on Windows, set user environment variables and restart Apache:
+# - Open System Properties > Advanced > Environment Variables
+# - Add variables above under your user or system
+# - Restart Apache (XAMPP Control Panel)
+
+# If you can't use env vars, you can temporarily hardcode config.php under $config['smtp'].
+# Do not commit secrets.

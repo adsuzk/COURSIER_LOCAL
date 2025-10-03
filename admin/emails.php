@@ -61,6 +61,18 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['action'] ?? '')
 ?>
 <div style="background:var(--glass-bg,#0f0f10);border:1px solid var(--glass-border,rgba(255,255,255,.08));border-radius:12px;padding:18px;margin:10px 0">
   <h2 style="margin:0 0 12px;color:#d4a853">📧 Emails de masse (PHPMailer)</h2>
+  <?php
+    // Alerte si SMTP non configuré (évite l'erreur "Could not instantiate mail function.")
+    $smtpCfg = $config['smtp'] ?? [];
+    $smtpHostConfigured = isset($smtpCfg['host']) && trim((string)$smtpCfg['host']) !== '';
+    if (!$smtpHostConfigured) {
+        echo '<div style="background:#6c757d;color:#fff;padding:10px 14px;border-radius:8px;margin:10px 0">'
+           . 'Avertissement: aucun serveur SMTP n\'est configuré dans config.php (section smtp). '
+           . 'Sur Windows/XAMPP, la fonction mail() échoue souvent ("Could not instantiate mail function"). '
+           . 'Configurez SMTP_HOST, SMTP_USER, SMTP_PASS, etc. dans les variables d\'environnement ou dans config.php pour garantir l\'envoi.'
+           . '</div>';
+    }
+  ?>
   <form method="post">
     <input type="hidden" name="action" value="send_mass" />
     <div style="margin:8px 0">
