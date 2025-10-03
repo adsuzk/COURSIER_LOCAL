@@ -323,15 +323,34 @@ function generateUnifiedAgentPassword(int $length = null): string {
 }
 /**
  * Get CinetPay configuration parameters
+ * Supports context separation between 'coursier' (app) and 'client' (index site).
+ * Default context is 'coursier'.
+ * @param string $context 'coursier' | 'client'
  * @return array
  */
-function getCinetPayConfig(): array {
-    // CinetPay credentials - CORRIGÉS 1er Octobre 2025
+function getCinetPayConfig(string $context = 'coursier'): array {
+    // Endpoint identique pour les deux comptes
+    $endpoint = 'https://api-checkout.cinetpay.com/v2/payment';
+
+    // Comptes séparés: coursier (application) vs client (site index)
+    if (strtolower($context) === 'client') {
+        // Client (index) — conserver l'ancien compte (distinct)
+        return [
+            'apikey'     => '8338609805877a8eaac7eb6.01734650',
+            'site_id'    => '5875732',
+            'secret_key' => '830006136690110164ddb1.29156844',
+            'endpoint'   => $endpoint,
+            'mode'       => 'live'
+        ];
+    }
+
+    // Coursier (application) — NOUVELLES CREDENTIELS FOURNIES
     return [
-        'apikey'     => '8338609805877a8eaac7eb6.01734650',
-        'site_id'    => '5875732',
-        'secret_key' => '830006136690110164ddb1.29156844',
-        'endpoint'   => 'https://api-checkout.cinetpay.com/v2/payment'
+        'apikey'     => '8338609805877a8eaac7eb6.017346508338609805877a8eaac7eb6.01734650',
+        'site_id'    => '219503',
+        'secret_key' => '17153003105e7ca6606cc157.46703056',
+        'endpoint'   => $endpoint,
+        'mode'       => 'live'
     ];
 }
 
