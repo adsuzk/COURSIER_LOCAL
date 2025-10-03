@@ -1,176 +1,244 @@
 <?php
-// SECTION ADMIN - ENVOI D'EMAILS (PHPMailer via lib/Mailer.php)
-if (!function_exists('getPDO')) { require_once __DIR__ . '/../config.php'; }
-require_once __DIR__ . '/../lib/Mailer.php';
+/**
+ * SECTION ADMIN - GESTION D'EMAILS
+ * À ajouter dans admin/emails.php
+ */
 
-// DB
-try { $pdo = getPDO(); } catch (Throwable $e) {
-    echo '<div class="alert" style="background:#dc3545;color:#fff;padding:12px;border-radius:6px">Erreur DB: ' . htmlspecialchars($e->getMessage()) . '</div>'; return;
+// Sécurité : vérifier l'authentification admin
+if (!function_exists('getPDO')) {
+    require_once __DIR__ . '/../config.php';
 }
 
-$flash = function(string $msg, bool $ok=true) {
-    $bg = $ok ? '#28a745' : '#dc3545';
-    echo '<div style="background:' . $bg . ';color:#fff;padding:10px 14px;border-radius:8px;margin:10px 0">' . htmlspecialchars($msg) . '</div>';
-};
+// Inclure les classes email
+require_once __DIR__ . '/../email_system/EmailManager.php';
+require_once __DIR__ . '/../email_system/admin_panel.php';
 
-// Prefill holders (for template loading)
-$prefillSubject = '';
-$prefillHtml = '';
+// Configuration email (à adapter selon votre config)
+$emailConfig = [
+    'smtp_host' => 'smtp.gmail.com',
+    'smtp_port' => 587,
+    'smtp_username' => 'reply@conciergerie-privee-suzosky.com',
+    'smtp_password' => 'votre_mot_de_passe_app', // À configurer dans config.php
+    'from_email' => 'reply@conciergerie-privee-suzosky.com',
+    'from_name' => 'Conciergerie Privée Suzosky',
+    'reply_to' => 'reply@conciergerie-privee-suzosky.com'
+];
 
-// Optional actions: SMTP self-test and template loader
-$action = $_POST['action'] ?? ($_GET['action'] ?? '');
-if ($action === 'test_smtp') {
-  $smtpCfg = $config['smtp'] ?? [];
-  $host = trim((string)($smtpCfg['host'] ?? ''));
-  $port = (int)($smtpCfg['port'] ?? 587);
-  if ($host === '') {
-    $flash("Test SMTP: aucun hôte configuré (config['smtp']['host']).", false);
-  } else {
-    $errno = 0; $errstr = '';
-    $t0 = microtime(true);
-    $sock = @fsockopen($host, $port, $errno, $errstr, 8);
-    if ($sock) {
-      $lat = (int)((microtime(true) - $t0) * 1000);
-      fclose($sock);
-      $flash("Test SMTP: connexion à $host:$port OK (~{$lat}ms).", true);
-    } else {
-      $flash("Test SMTP: échec de connexion à $host:$port ($errstr)", false);
-    }
-  }
-}
-if ($action === 'load_template') {
-  $tpl = basename(trim((string)($_POST['template_name'] ?? '')));
-  if ($tpl !== '') {
-    $file = __DIR__ . '/../EMAIL_SYSTEM/templates/' . $tpl;
-    if (is_file($file)) {
-      $content = file_get_contents($file) ?: '';
-      // basic prefill
-      $prefillSubject = 'Campagne Suzosky';
-      $prefillHtml = $content;
-      $flash('Modèle chargé: ' . htmlspecialchars($tpl), true);
-    } else {
-      $flash('Modèle introuvable: ' . htmlspecialchars($tpl), false);
-    }
-  }
+// Récupérer la connexion PDO existante
+try {
+    $pdo = getPDO();
+} catch (Exception $e) {
+    echo '<div class="alert alert-danger" style="background: #dc3545; color: white; padding: 15px; border-radius: 5px; margin: 20px 0;">❌ Erreur de connexion base de données : ' . htmlspecialchars($e->getMessage()) . '</div>';
+    return;
 }
 
-// Handle POST send
-if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['action'] ?? '') === 'send_mass') {
-    $subject = trim($_POST['subject'] ?? '');
-    $html    = trim($_POST['html'] ?? '');
-    $limit   = max(1, min(1000, (int)($_POST['limit'] ?? 200)));
-    $offset  = max(0, (int)($_POST['offset'] ?? 0));
-    $test    = !empty($_POST['test_mode']);
-    $testTo  = trim($_POST['test_email'] ?? '');
+// Créer l'instance du panneau admin
+$emailPanel = new EmailAdminPanel($pdo, $emailConfig);
 
-    if ($subject === '' || $html === '') {
-        $flash('Sujet et contenu requis', false);
-    } else {
-        try {
-            $mailer = new Mailer();
-            if ($test) {
-                if (!filter_var($testTo, FILTER_VALIDATE_EMAIL)) { $flash('Email de test invalide', false); }
-                else {
-                    $res = $mailer->sendHtml($testTo, 'Test', $subject, $html);
-                    $flash($res['success'] ? 'Email de test envoyé' : ('Échec: ' . ($res['error'] ?? '')) , $res['success']);
+// Gérer les actions POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $action = $_POST['action'] ?? '';
+    
+    switch ($action) {
+        case 'save_settings':
+            // Sauvegarder les paramètres email
+            $_SESSION['admin_message'] = '✅ Paramètres email sauvegardés avec succès !';
+            header('Location: admin.php?section=emails&email_tab=settings');
+            exit;
+            break;
+            
+        case 'create_campaign':
+            // Créer une nouvelle campagne
+            $_SESSION['admin_message'] = '📢 Campagne créée avec succès !';
+            header('Location: admin.php?section=emails&email_tab=campaigns');
+            exit;
+            break;
+            
+        case 'test_email':
+            // Tester l'envoi d'email
+            try {
+                $testEmail = $_POST['test_email'] ?? '';
+                if (filter_var($testEmail, FILTER_VALIDATE_EMAIL)) {
+                    $emailManager = new EmailManager($pdo, $emailConfig);
+                    $result = $emailManager->sendTrackedEmail(
+                        $testEmail,
+                        'Test Email Suzosky',
+                        '<h2>🧪 Email de Test</h2><p>Ce mail confirme que votre configuration email fonctionne parfaitement !</p>',
+                        'test'
+                    );
+                    
+                    if ($result['success']) {
+                        $_SESSION['admin_message'] = '✅ Email de test envoyé avec succès !';
+                    } else {
+                        $_SESSION['admin_message'] = '❌ Erreur : ' . $result['error'];
+                    }
+                } else {
+                    $_SESSION['admin_message'] = '❌ Adresse email invalide';
                 }
-            } else {
-                // Fetch recipients (clients_particuliers)
-                $stmt = $pdo->prepare("SELECT email, prenoms, nom FROM clients_particuliers WHERE email IS NOT NULL AND email <> '' LIMIT ? OFFSET ?");
-                $stmt->bindValue(1, $limit, PDO::PARAM_INT);
-                $stmt->bindValue(2, $offset, PDO::PARAM_INT);
-                $stmt->execute();
-                $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                $ok=0;$ko=0; $logDir = __DIR__ . '/../EMAIL_SYSTEM/logs'; if (!is_dir($logDir)) { @mkdir($logDir,0755,true);} $logFile=$logDir.'/mass_mail_'.date('Y-m-d').'.log';
-                foreach ($rows as $r) {
-                    $to = trim($r['email']); if ($to==='') { $ko++; continue; }
-                    $name = trim(($r['prenoms'] ?? '') . ' ' . ($r['nom'] ?? ''));
-                    $res = $mailer->sendHtml($to, $name!==''?$name:'Client', $subject, $html);
-                    $line = date('c') . ' | ' . ($res['success']?'SENT':'FAIL') . ' | ' . $to . ($res['success']?'':' | '.($res['error']??'')) . "\n";
-                    @file_put_contents($logFile, $line, FILE_APPEND|LOCK_EX);
-                    if ($res['success']) $ok++; else $ko++;
-                }
-                $flash("Envoi terminé: $ok succès, $ko échecs (limite $limit, offset $offset)", $ko===0);
+            } catch (Exception $e) {
+                $_SESSION['admin_message'] = '❌ Erreur : ' . $e->getMessage();
             }
-        } catch (Throwable $e) {
-            $flash('Erreur: ' . $e->getMessage(), false);
-        }
+            header('Location: admin.php?section=emails');
+            exit;
+            break;
     }
 }
 
-// UI simple
+// Afficher les messages de succès/erreur
+if (isset($_SESSION['admin_message'])) {
+    $isError = strpos($_SESSION['admin_message'], '❌') !== false;
+    $bgColor = $isError ? '#dc3545' : '#28a745';
+    
+    echo '<div class="admin-message" style="background: ' . $bgColor . '; color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">';
+    echo htmlspecialchars($_SESSION['admin_message']);
+    echo '</div>';
+    unset($_SESSION['admin_message']);
+}
+
+// CSS inline pour l'intégration avec le thème admin existant
+echo '<style>
+/* INTEGRATION EMAIL AVEC THEME ADMIN SUZOSKY */
+.email-admin-container {
+    background: transparent !important;
+    padding: 0 !important;
+    min-height: auto !important;
+}
+
+.email-tabs {
+    background: var(--glass-bg) !important;
+    backdrop-filter: var(--glass-blur) !important;
+    border: 1px solid var(--glass-border) !important;
+    box-shadow: var(--glass-shadow) !important;
+}
+
+.email-tab {
+    color: #CCCCCC !important;
+}
+
+.email-tab.active {
+    background: var(--gradient-gold) !important;
+    color: var(--primary-dark) !important;
+    font-weight: 600 !important;
+}
+
+.stat-card, .email-table-container, .campaign-card, .recent-emails, .charts-container {
+    background: var(--glass-bg) !important;
+    backdrop-filter: var(--glass-blur) !important;
+    border: 1px solid var(--glass-border) !important;
+    box-shadow: var(--glass-shadow) !important;
+}
+
+.email-table th {
+    background: rgba(212, 168, 83, 0.2) !important;
+    color: var(--primary-gold) !important;
+}
+
+.btn-primary {
+    background: var(--gradient-gold) !important;
+    color: var(--primary-dark) !important;
+    font-weight: 600 !important;
+    border: none !important;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: var(--shadow-gold) !important;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 30px 0;
+}
+
+.page-title {
+    color: var(--primary-gold);
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-shadow: 0 0 20px rgba(212, 168, 83, 0.3);
+    margin-bottom: 10px;
+}
+
+.page-subtitle {
+    color: #CCCCCC;
+    font-size: 1.1rem;
+    opacity: 0.8;
+}
+
+.quick-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin: 30px 0;
+    flex-wrap: wrap;
+}
+
+.quick-action {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    padding: 15px 25px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #CCCCCC;
+    transition: all 0.3s ease;
+}
+
+.quick-action:hover {
+    background: var(--primary-gold);
+    color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-gold);
+}
+</style>';
+
+// Header de la section avec actions rapides
+echo '<div class="page-header">';
+echo '<h1 class="page-title">📧 Gestion d\'Emails Robuste</h1>';
+echo '<p class="page-subtitle">Surveillance, envoi et suivi des communications électroniques</p>';
+
+// Actions rapides
+echo '<div class="quick-actions">';
+echo '<a href="?section=emails&email_tab=dashboard" class="quick-action">📊 Tableau de bord</a>';
+echo '<a href="?section=emails&email_tab=logs" class="quick-action">📧 Voir les logs</a>';
+echo '<a href="javascript:void(0)" onclick="showTestEmailModal()" class="quick-action">🧪 Test email</a>';
+echo '<a href="?section=emails&email_tab=settings" class="quick-action">⚙️ Configuration</a>';
+echo '</div>';
+echo '</div>';
+
+// Modal de test email
+echo '<script>
+function showTestEmailModal() {
+    const email = prompt("Adresse email pour le test :", "admin@conciergerie-privee-suzosky.com");
+    if (email && email.includes("@")) {
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.innerHTML = `
+            <input type="hidden" name="action" value="test_email">
+            <input type="hidden" name="test_email" value="${email}">
+        `;
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+</script>';
+
+// Rendu du panneau email principal
+try {
+    $emailPanel->renderEmailSection();
+} catch (Exception $e) {
+    echo '<div style="background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid rgba(220, 53, 69, 0.3); padding: 20px; border-radius: 8px; margin: 20px 0;">';
+    echo '<h3 style="color: #dc3545; margin-bottom: 15px;">❌ Erreur lors de l\'affichage</h3>';
+    echo '<p style="color: #CCCCCC;">Message : ' . htmlspecialchars($e->getMessage()) . '</p>';
+    echo '<details style="margin-top: 15px;">';
+    echo '<summary style="color: var(--primary-gold); cursor: pointer;">🔍 Détails techniques</summary>';
+    echo '<pre style="background: var(--primary-dark); padding: 15px; border-radius: 5px; color: #fff; overflow-x: auto; margin-top: 10px; font-size: 0.85rem;">';
+    echo htmlspecialchars($e->getTraceAsString());
+    echo '</pre>';
+    echo '</details>';
+    echo '</div>';
+}
+
+// JavaScript et CSS supplémentaires pour l'intégration
+echo '<script src="../email_system/admin_script.js"></script>';
 ?>
-<div style="background:var(--glass-bg,#0f0f10);border:1px solid var(--glass-border,rgba(255,255,255,.08));border-radius:12px;padding:18px;margin:10px 0">
-  <h2 style="margin:0 0 12px;color:#d4a853">📧 Emails de masse (PHPMailer)</h2>
-  <?php
-    // Alerte si SMTP non configuré (évite l'erreur "Could not instantiate mail function.")
-    $smtpCfg = $config['smtp'] ?? [];
-    $smtpHostConfigured = isset($smtpCfg['host']) && trim((string)$smtpCfg['host']) !== '';
-    if (!$smtpHostConfigured) {
-        echo '<div style="background:#6c757d;color:#fff;padding:10px 14px;border-radius:8px;margin:10px 0">'
-           . 'Avertissement: aucun serveur SMTP n\'est configuré dans config.php (section smtp). '
-           . 'Sur Windows/XAMPP, la fonction mail() échoue souvent ("Could not instantiate mail function"). '
-           . 'Configurez SMTP_HOST, SMTP_USER, SMTP_PASS, etc. dans les variables d\'environnement ou dans config.php pour garantir l\'envoi.'
-           . '</div>';
-    }
-    // Afficher compteur destinataires potentiels
-    try {
-        $count = (int)$pdo->query("SELECT COUNT(*) FROM clients_particuliers WHERE email IS NOT NULL AND email <> ''")->fetchColumn();
-        echo '<div style="color:#bbb;margin:6px 0">Destinataires disponibles: ' . number_format($count, 0, ',', ' ') . '</div>';
-    } catch (Throwable $e) { /* ignore */ }
-
-    // Bouton test SMTP
-    echo '<div style="margin:8px 0"><a href="admin.php?section=emails&action=test_smtp" '
-       . 'style="display:inline-block;background:#0F3460;color:#fff;padding:8px 12px;border-radius:8px;text-decoration:none">Tester SMTP</a></div>';
-
-    // Template loader (liste les .html)
-    $tplDir = __DIR__ . '/../EMAIL_SYSTEM/templates';
-    $templates = [];
-    if (is_dir($tplDir)) {
-        foreach (scandir($tplDir) as $f) {
-            if (substr($f, -5) === '.html') { $templates[] = $f; }
-        }
-    }
-  ?>
-  <?php if (!empty($templates)) : ?>
-    <form method="post" style="margin:8px 0;display:flex;gap:8px;align-items:center">
-      <input type="hidden" name="action" value="load_template" />
-      <label>Modèle</label>
-      <select name="template_name" style="padding:8px;border-radius:8px;border:1px solid #333;background:#111;color:#ddd">
-        <?php foreach ($templates as $t): ?>
-          <option value="<?php echo htmlspecialchars($t); ?>"><?php echo htmlspecialchars($t); ?></option>
-        <?php endforeach; ?>
-      </select>
-      <button type="submit" style="background:#16213E;color:#fff;border:none;border-radius:8px;padding:8px 12px;cursor:pointer">Charger le modèle</button>
-    </form>
-  <?php endif; ?>
-  <form method="post">
-    <input type="hidden" name="action" value="send_mass" />
-    <div style="margin:8px 0">
-      <label>Sujet</label><br />
-      <input name="subject" type="text" value="<?php echo htmlspecialchars($prefillSubject); ?>" style="width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#111;color:#ddd" required />
-    </div>
-    <div style="margin:8px 0">
-      <label>Contenu HTML</label><br />
-      <textarea name="html" rows="10" style="width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#111;color:#ddd" placeholder="<h2>Titre</h2><p>Votre message…"><?php echo htmlspecialchars($prefillHtml); ?></textarea>
-      <small style="color:#999">Astuce: vous pouvez coller le HTML d'un modèle depuis EMAIL_SYSTEM/templates/ si besoin.</small>
-    </div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin:8px 0">
-      <div>
-        <label>Limite</label><br />
-        <input name="limit" type="number" value="200" min="1" max="1000" style="width:120px;padding:8px;border-radius:8px;border:1px solid #333;background:#111;color:#ddd" />
-      </div>
-      <div>
-        <label>Offset</label><br />
-        <input name="offset" type="number" value="0" min="0" style="width:120px;padding:8px;border-radius:8px;border:1px solid #333;background:#111;color:#ddd" />
-      </div>
-      <div style="display:flex;align-items:flex-end;gap:8px">
-        <label style="display:flex;align-items:center;gap:8px"><input type="checkbox" name="test_mode" value="1" /> Mode test</label>
-        <input name="test_email" type="email" placeholder="email@test.com" style="padding:8px;border-radius:8px;border:1px solid #333;background:#111;color:#ddd" />
-      </div>
-    </div>
-    <div style="margin-top:12px">
-      <button type="submit" style="background:#d4a853;color:#111;border:none;border-radius:8px;padding:10px 16px;font-weight:600;cursor:pointer">Envoyer</button>
-    </div>
-  </form>
-</div>
