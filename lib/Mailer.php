@@ -35,6 +35,7 @@ class Mailer
         $encryption = (string)($this->smtp['encryption'] ?? 'tls');
         $fromEmail = (string)($this->smtp['from_email'] ?? 'no-reply@localhost');
         $fromName = (string)($this->smtp['from_name'] ?? 'Suzosky');
+        $smtpDebug = (int)(getenv('SMTP_DEBUG') ?: 0); // 0=off, 2=basic debug
 
         // Transport: SMTP if host provided, otherwise use mail()
         if ($host !== '') {
@@ -48,6 +49,10 @@ class Mailer
             $this->mailer->Port = $port > 0 ? $port : 587;
             if (in_array(strtolower($encryption), ['ssl', 'tls'], true)) {
                 $this->mailer->SMTPSecure = strtolower($encryption) === 'ssl' ? PHPMailer::ENCRYPTION_SMTPS : PHPMailer::ENCRYPTION_STARTTLS;
+            }
+            if ($smtpDebug > 0) {
+                $this->mailer->SMTPDebug = $smtpDebug;
+                $this->mailer->Debugoutput = 'error_log'; // log to PHP error log
             }
         } else {
             $this->mailer->isMail();
