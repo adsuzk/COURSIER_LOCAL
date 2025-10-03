@@ -19,6 +19,11 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Charger la configuration et l'accès base de données
 require_once __DIR__ . '/config.php';
+// Charger l'intégration CinetPay et instancier le client global pour les actions AJAX
+require_once __DIR__ . '/cinetpay/cinetpay_integration.php';
+if (!isset($cinetpay) || !($cinetpay instanceof SuzoskyCinetPayIntegration)) {
+    $cinetpay = new SuzoskyCinetPayIntegration();
+}
 
 // Optimisation de trajet (Google Directions API)
 function optimizeDeliveryRoute($start_lat, $start_lng, $deliveries) {
