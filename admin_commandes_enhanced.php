@@ -372,7 +372,15 @@ function renderCommandesContent(array $commandes): string
 
             <div class="commande-card">
                 <div class="commande-header">
-                    <div class="commande-number">#<?= htmlspecialchars($commande['code_commande'] ?? $commande['order_number'] ?? 'N/A', ENT_QUOTES) ?></div>
+                    <?php
+                        $displayCode = $commande['code_commande'] ?? ($commande['order_number'] ?? 'N/A');
+                        $numericId = $commande['id'] ?? null;
+                        $headerText = '#' . $displayCode;
+                        if (!empty($numericId)) {
+                            $headerText .= ' • ID: ' . (int)$numericId;
+                        }
+                    ?>
+                    <div class="commande-number"><?= htmlspecialchars($headerText, ENT_QUOTES) ?></div>
                     <span class="status-pill <?= $statusClass ?>"><?= htmlspecialchars($statut, ENT_QUOTES) ?></span>
                 </div>
 
