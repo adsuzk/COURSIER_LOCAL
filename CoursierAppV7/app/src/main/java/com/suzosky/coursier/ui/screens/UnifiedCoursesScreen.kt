@@ -222,6 +222,10 @@ fun UnifiedCoursesScreen(
                 ?: "la destination"
             // Annonce one-shot même si le guidage continu n'est pas activé
             tts?.speak("Colis récupéré. Direction $destSpeech", TextToSpeech.QUEUE_FLUSH, null, "tts_pickup_announce")
+            // Activer automatiquement le guidage vocal continu pour la phase de livraison
+            if (!isVoiceGuidanceEnabled) {
+                isVoiceGuidanceEnabled = true
+            }
         }
     }
     
