@@ -13,6 +13,47 @@ $flash = function(string $msg, bool $ok=true) {
     echo '<div style="background:' . $bg . ';color:#fff;padding:10px 14px;border-radius:8px;margin:10px 0">' . htmlspecialchars($msg) . '</div>';
 };
 
+// Prefill holders (for template loading)
+$prefillSubject = '';
+$prefillHtml = '';
+
+// Optional actions: SMTP self-test and template loader
+$action = $_POST['action'] ?? ($_GET['action'] ?? '');
+if ($action === 'test_smtp') {
+  $smtpCfg = $config['smtp'] ?? [];
+  $host = trim((string)($smtpCfg['host'] ?? ''));
+  $port = (int)($smtpCfg['port'] ?? 587);
+  if ($host === '') {
+    $flash("Test SMTP: aucun hôte configuré (config['smtp']['host']).", false);
+  } else {
+    $errno = 0; $errstr = '';
+    $t0 = microtime(true);
+    $sock = @fsockopen($host, $port, $errno, $errstr, 8);
+    if ($sock) {
+      $lat = (int)((microtime(true) - $t0) * 1000);
+      fclose($sock);
+      $flash("Test SMTP: connexion à $host:$port OK (~{$lat}ms).", true);
+    } else {
+      $flash("Test SMTP: échec de connexion à $host:$port ($errstr)", false);
+    }
+  }
+}
+if ($action === 'load_template') {
+  $tpl = basename(trim((string)($_POST['template_name'] ?? '')));
+  if ($tpl !== '') {
+    $file = __DIR__ . '/../EMAIL_SYSTEM/templates/' . $tpl;
+    if (is_file($file)) {
+      $content = file_get_contents($file) ?: '';
+      // basic prefill
+      $prefillSubject = 'Campagne Suzosky';
+      $prefillHtml = $content;
+      $flash('Modèle chargé: ' . htmlspecialchars($tpl), true);
+    } else {
+      $flash('Modèle introuvable: ' . htmlspecialchars($tpl), false);
+    }
+  }
+}
+
 // Handle POST send
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['action'] ?? '') === 'send_mass') {
     $subject = trim($_POST['subject'] ?? '');
@@ -72,16 +113,46 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['action'] ?? '')
            . 'Configurez SMTP_HOST, SMTP_USER, SMTP_PASS, etc. dans les variables d\'environnement ou dans config.php pour garantir l\'envoi.'
            . '</div>';
     }
+    // Afficher compteur destinataires potentiels
+    try {
+        $count = (int)$pdo->query("SELECT COUNT(*) FROM clients_particuliers WHERE email IS NOT NULL AND email <> ''")->fetchColumn();
+        echo '<div style="color:#bbb;margin:6px 0">Destinataires disponibles: ' . number_format($count, 0, ',', ' ') . '</div>';
+    } catch (Throwable $e) { /* ignore */ }
+
+    // Bouton test SMTP
+    echo '<div style="margin:8px 0"><a href="admin.php?section=emails&action=test_smtp" '
+       . 'style="display:inline-block;background:#0F3460;color:#fff;padding:8px 12px;border-radius:8px;text-decoration:none">Tester SMTP</a></div>';
+
+    // Template loader (liste les .html)
+    $tplDir = __DIR__ . '/../EMAIL_SYSTEM/templates';
+    $templates = [];
+    if (is_dir($tplDir)) {
+        foreach (scandir($tplDir) as $f) {
+            if (substr($f, -5) === '.html') { $templates[] = $f; }
+        }
+    }
   ?>
+  <?php if (!empty($templates)) : ?>
+    <form method="post" style="margin:8px 0;display:flex;gap:8px;align-items:center">
+      <input type="hidden" name="action" value="load_template" />
+      <label>Modèle</label>
+      <select name="template_name" style="padding:8px;border-radius:8px;border:1px solid #333;background:#111;color:#ddd">
+        <?php foreach ($templates as $t): ?>
+          <option value="<?php echo htmlspecialchars($t); ?>"><?php echo htmlspecialchars($t); ?></option>
+        <?php endforeach; ?>
+      </select>
+      <button type="submit" style="background:#16213E;color:#fff;border:none;border-radius:8px;padding:8px 12px;cursor:pointer">Charger le modèle</button>
+    </form>
+  <?php endif; ?>
   <form method="post">
     <input type="hidden" name="action" value="send_mass" />
     <div style="margin:8px 0">
       <label>Sujet</label><br />
-      <input name="subject" type="text" style="width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#111;color:#ddd" required />
+      <input name="subject" type="text" value="<?php echo htmlspecialchars($prefillSubject); ?>" style="width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#111;color:#ddd" required />
     </div>
     <div style="margin:8px 0">
       <label>Contenu HTML</label><br />
-      <textarea name="html" rows="10" style="width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#111;color:#ddd" placeholder="<h2>Titre</h2><p>Votre message…"></textarea>
+      <textarea name="html" rows="10" style="width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#111;color:#ddd" placeholder="<h2>Titre</h2><p>Votre message…"><?php echo htmlspecialchars($prefillHtml); ?></textarea>
       <small style="color:#999">Astuce: vous pouvez coller le HTML d'un modèle depuis EMAIL_SYSTEM/templates/ si besoin.</small>
     </div>
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin:8px 0">
