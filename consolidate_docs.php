@@ -14,7 +14,9 @@ ini_set('display_errors', 1);
 
 define('ROOT_DIR', __DIR__);
 define('DOCS_DIR', ROOT_DIR . '/DOCUMENTATION_FINALE');
-define('MAIN_DOC', ROOT_DIR . '/DOCUMENTATION_FINALE.md');
+// Fichier cible unique exigé par le besoin: un seul document complet et à jour
+define('FINAL_DOC', DOCS_DIR . '/DOCUMENTATION_SUZOSKY_COMPLETE.md');
+// Archive horodatée facultative (on conserve quelques versions)
 define('CONSOLIDATED_DOC', DOCS_DIR . '/CONSOLIDATED_DOCS_' . date('Y-m-d_H-i-s') . '.md');
 
 // Créer le dossier DOCUMENTATION_FINALE s'il n'existe pas
@@ -34,6 +36,16 @@ function log_message($message) {
 function scan_md_files($directory, $exclude_dirs = []) {
     $md_files = [];
     $exclude_dirs = array_merge($exclude_dirs, ['.git', 'node_modules', 'vendor', 'Tests']);
+    // Fichiers à exclure (obsolètes / archives / backups)
+    $exclude_name_patterns = [
+        '/(^|\\|\/)FICHIERS_OBSOLETE/i',
+        '/(^|\\|\/)FICHIERS_OBSOLETES/i',
+        '/(^|\\|\/)OBSOLETE/i',
+        '/(^|\\|\/)DEPRECATED/i',
+        '/(^|\\|\/)ARCHIVE/i',
+        '/(^|\\|\/)BACKUP/i',
+        '/(^|\\|\/)OLD/i'
+    ];
     
     $iterator = new RecursiveIteratorIterator(
         new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS),
@@ -52,6 +64,12 @@ function scan_md_files($directory, $exclude_dirs = []) {
                     break;
                 }
             }
+            // Exclure par motif de nom (obsolète)
+            if (!$skip) {
+                foreach ($exclude_name_patterns as $pat) {
+                    if (preg_match($pat, $relative_path)) { $skip = true; break; }
+                }
+            }
             
             if (!$skip) {
                 $md_files[] = [
@@ -65,8 +83,34 @@ function scan_md_files($directory, $exclude_dirs = []) {
         }
     }
     
-    // Trier par date de modification (plus récent d'abord)
-    usort($md_files, function($a, $b) {
+    // Trier par priorité puis par date (plus récent d'abord)
+    $priorityOrder = [
+        'DOCUMENTATION_FINALE/DOCUMENTATION_COMPLETE_SUZOSKY_COURSIER.md',
+        'DOCUMENTATION_SYSTEME_SUZOSKY_v2.md',
+        'SYSTEME_UNIFIE_COMMANDES.md',
+        'SYSTEME_TRACKING_ADMIN_DOCUMENTATION.md',
+        'DOCUMENTATION_TRACKING_TEMPS_REEL.md',
+        'DOCUMENTATION_COMPTABILITE.md',
+        'CONFIGURATION_FCM_URGENT.md',
+        'GUIDE_APK_PRODUCTION.md',
+        'GUIDE_MISES_A_JOUR_AUTOMATIQUES.md',
+        'SCRIPTS_PROTECTION_SYNC_DOCUMENTATION.md',
+        'DOCUMENTATION_FINALE/SESSIONS_ET_SECURITE.md',
+        'DOCUMENTATION_FINALE/CRON_CONSOLIDATION.md',
+    ];
+    $priorityIndex = array_flip($priorityOrder);
+    
+    usort($md_files, function($a, $b) use ($priorityIndex) {
+        $ar = $a['relative_path'];
+        $br = $b['relative_path'];
+        $ap = isset($priorityIndex[$ar]) ? $priorityIndex[$ar] : PHP_INT_MAX;
+        $bp = isset($priorityIndex[$br]) ? $priorityIndex[$br] : PHP_INT_MAX;
+        if ($ap !== $bp) return $ap - $bp;
+        // Préférer les docs déjà dans DOCUMENTATION_FINALE
+        $ain = strpos($ar, 'DOCUMENTATION_FINALE/') === 0 ? 0 : 1;
+        $bin = strpos($br, 'DOCUMENTATION_FINALE/') === 0 ? 0 : 1;
+        if ($ain !== $bin) return $ain - $bin;
+        // Ensuite par date desc
         return $b['modified'] - $a['modified'];
     });
     
@@ -82,9 +126,8 @@ function consolidate_documentation() {
     log_message("📁 " . count($md_files) . " fichiers .md trouvés");
     
     // Créer le document consolidé
-    $consolidated_content = "# 📚 DOCUMENTATION CONSOLIDÉE AUTOMATIQUE\n";
-    $consolidated_content .= "## 🕐 Générée automatiquement le " . date('d/m/Y à H:i:s') . "\n";
-    $consolidated_content .= "## 🏠 Projet: SUZOSKY COURSIER - Version Consolidée\n\n";
+    $consolidated_content = "# 📚 DOCUMENTATION SUZOSKY COMPLÈTE\n";
+    $consolidated_content .= "> Générée automatiquement le " . date('d/m/Y à H:i:s') . " — Ce document unifie toute la documentation utile et supprime l'obsolète.\n\n";
     
     $consolidated_content .= "---\n\n";
     
@@ -92,7 +135,7 @@ function consolidate_documentation() {
     $consolidated_content .= "## 📋 TABLE DES MATIÈRES\n\n";
     foreach ($md_files as $index => $file) {
         $title = basename($file['relative_path'], '.md');
-        $anchor = strtolower(str_replace([' ', '_', '-'], '', $title));
+        $anchor = strtolower(preg_replace('/[^a-z0-9]+/i', '', $title));
         $consolidated_content .= sprintf(
             "%d. [%s](#%s) - *Modifié: %s* - `%s`\n",
             $index + 1,
@@ -108,25 +151,23 @@ function consolidate_documentation() {
     // Intégrer chaque fichier
     foreach ($md_files as $index => $file) {
         $title = basename($file['relative_path'], '.md');
-        $anchor = strtolower(str_replace([' ', '_', '-'], '', $title));
+        $anchor = strtolower(preg_replace('/[^a-z0-9]+/i', '', $title));
         
         log_message("📄 Traitement: " . $file['relative_path']);
         
-        $consolidated_content .= "## 📖 " . ($index + 1) . ". " . strtoupper($title) . " {#" . $anchor . "}\n\n";
-        $consolidated_content .= "**📍 Fichier source:** `" . $file['relative_path'] . "`  \n";
-        $consolidated_content .= "**📅 Dernière modification:** " . $file['modified_date'] . "  \n";
-        $consolidated_content .= "**📏 Taille:** " . number_format($file['size'] / 1024, 2) . " KB  \n\n";
+        $consolidated_content .= "## " . ($index + 1) . ". " . $title . "\n\n";
+        $consolidated_content .= "_Source: `" . $file['relative_path'] . "` — Dernière modif: " . $file['modified_date'] . " — Taille: " . number_format($file['size'] / 1024, 2) . " KB_\n\n";
         
         // Lire et inclure le contenu
         if (is_readable($file['path'])) {
             $content = file_get_contents($file['path']);
-            
-            // Nettoyer et adapter le contenu
-            $content = preg_replace('/^# /', '### ', $content); // Réduire les niveaux de titre
-            $content = preg_replace('/^## /', '#### ', $content, 1); // Premier h2 devient h4
-            $content = preg_replace('/^## /', '##### ', $content); // Autres h2 deviennent h5
-            
-            $consolidated_content .= "```markdown\n" . $content . "\n```\n\n";
+            // Normaliser les titres: on évite plusieurs H1 en les abaissant d'un niveau
+            $content = preg_replace_callback('/^(#{1,6})\s/m', function($m) {
+                $level = strlen($m[1]);
+                $newLevel = min(6, $level + 1);
+                return str_repeat('#', $newLevel) . ' ';
+            }, $content);
+            $consolidated_content .= $content . "\n\n";
         } else {
             $consolidated_content .= "*❌ Fichier non accessible pour lecture*\n\n";
             log_message("❌ Impossible de lire: " . $file['path']);
@@ -146,21 +187,20 @@ function consolidate_documentation() {
     
     $consolidated_content .= "*Cette documentation est générée automatiquement. Pour des modifications, éditez les fichiers sources individuels.*\n";
     
-    // Écrire le fichier consolidé
-    if (file_put_contents(CONSOLIDATED_DOC, $consolidated_content)) {
-        log_message("✅ Documentation consolidée créée: " . basename(CONSOLIDATED_DOC));
-        log_message("📏 Taille du fichier consolidé: " . number_format(strlen($consolidated_content) / 1024, 2) . " KB");
-        
-        // Créer aussi une copie "latest"
+    // Écrire le fichier consolidé unique et une archive horodatée
+    $okFinal = file_put_contents(FINAL_DOC, $consolidated_content) !== false;
+    $okArchive = file_put_contents(CONSOLIDATED_DOC, $consolidated_content) !== false;
+    if ($okFinal) {
+        log_message("✅ Documentation complète écrite: " . basename(FINAL_DOC));
+        log_message("📏 Taille: " . number_format(strlen($consolidated_content) / 1024, 2) . " KB");
+        // Alias "latest" conservé pour compatibilité
         $latest_doc = DOCS_DIR . '/CONSOLIDATED_DOCS_LATEST.md';
-        copy(CONSOLIDATED_DOC, $latest_doc);
-        log_message("📋 Copie 'latest' créée: " . basename($latest_doc));
-        
+        @copy(FINAL_DOC, $latest_doc);
+        log_message("📋 Alias 'latest' mis à jour: " . basename($latest_doc));
         return true;
-    } else {
-        log_message("❌ Erreur lors de l'écriture du fichier consolidé");
-        return false;
     }
+    log_message("❌ Erreur lors de l'écriture de la documentation complète");
+    return false;
 }
 
 function cleanup_old_consolidated_docs($keep_count = 5) {
@@ -194,7 +234,7 @@ try {
         
         if (php_sapi_name() !== 'cli') {
             // Mode web - rediriger vers le fichier créé
-            $latest_url = 'DOCUMENTATION_FINALE/CONSOLIDATED_DOCS_LATEST.md';
+            $latest_url = 'DOCUMENTATION_FINALE/' . basename(FINAL_DOC);
             echo "<!DOCTYPE html><html><head><meta charset='utf-8'><title>Documentation Consolidée</title></head><body>";
             echo "<h2>✅ Documentation consolidée avec succès!</h2>";
             echo "<p><a href='$latest_url' target='_blank'>📖 Voir la documentation consolidée</a></p>";
