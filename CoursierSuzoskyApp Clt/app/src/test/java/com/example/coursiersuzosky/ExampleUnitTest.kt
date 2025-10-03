@@ -1,4 +1,4 @@
-package com.example.coursiersuzosky
+package com.suzosky.coursierclient
 
 import org.junit.Test
 
