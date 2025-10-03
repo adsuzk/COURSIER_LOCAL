@@ -15,8 +15,8 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
-// Charger le système d'emails robuste
-require_once __DIR__ . '/EMAIL_SYSTEM/RobustEmailSystem.php';
+// Charger le Mailer basé sur PHPMailer
+require_once __DIR__ . '/lib/Mailer.php';
 require_once __DIR__ . '/config.php';
 
 // Gestion erreurs pour JSON valide
@@ -61,11 +61,10 @@ if ($action === 'reset_password_request') {
     try {
         $pdo = getPasswordResetPDO();
         
-        // Initialiser le système d'emails robuste
-        $emailSystem = new RobustEmailSystem();
-        
-        // ÉTAPE 1: Vérifier que le compte existe AVANT tout traitement
-        $client = $emailSystem->verifyAccountExists($emailOrPhone, $pdo);
+    // ÉTAPE 1: Vérifier que le compte existe AVANT tout traitement
+    $stmt = $pdo->prepare("SELECT id, nom, prenoms, email, telephone FROM clients_particuliers WHERE email = ? OR telephone = ? LIMIT 1");
+    $stmt->execute([$emailOrPhone, $emailOrPhone]);
+    $client = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if (!$client) {
             jsonResponse(false, 'Aucun compte trouvé avec cet email ou téléphone');
@@ -93,12 +92,30 @@ if ($action === 'reset_password_request') {
             jsonResponse(false, 'Erreur lors de la préparation du reset');
         }
         
-        // ÉTAPE 5: ENVOI ROBUSTE avec suivi technique complet
-        $result = $emailSystem->sendPasswordResetEmail($client, $token);
-        
-        if ($result['success']) {
-            jsonResponse(true, $result['message'], [
-                'email_id' => $result['email_id'],
+        // ÉTAPE 5: ENVOI VIA PHPMailer (SMTP si configuré)
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $resetLink = "$protocol://$host/sections_index/reset_password.php?token=$token";
+
+        $subject = 'Réinitialisation de votre mot de passe - Suzosky Coursier';
+        $html = Mailer::renderTemplate('password_reset', [
+            'client_name'   => $client['prenoms'] ?? 'Client',
+            'reset_link'    => $resetLink,
+            'expire_time'   => '1 heure',
+            'company_name'  => 'Suzosky Coursier',
+            'support_email' => 'reply@conciergerie-privee-suzosky.com',
+            'unsubscribe_link' => "$protocol://$host/unsubscribe?email=" . urlencode($client['email'] ?? '')
+        ]);
+
+        try {
+            $mailer = new Mailer();
+            $sent = $mailer->sendHtml($client['email'], trim(($client['prenoms'] ?? '') . ' ' . ($client['nom'] ?? '')), $subject, $html);
+        } catch (Throwable $e) {
+            $sent = ['success' => false, 'error' => $e->getMessage()];
+        }
+
+        if (!empty($sent['success'])) {
+            jsonResponse(true, 'Email de réinitialisation envoyé avec succès', [
                 'sent_to' => $client['email'],
                 'expires_in' => '1 heure'
             ]);
@@ -106,10 +123,7 @@ if ($action === 'reset_password_request') {
             // Nettoyer le token en cas d'échec d'envoi
             $cleanup = $pdo->prepare("UPDATE clients_particuliers SET reset_token = NULL, reset_expires_at = NULL WHERE id = ?");
             $cleanup->execute([$client['id']]);
-            
-            jsonResponse(false, $result['error'], [
-                'technical_error' => $result['technical_error'] ?? null
-            ]);
+            jsonResponse(false, 'Impossible d\'envoyer l\'email: ' . ($sent['error'] ?? 'erreur inconnue'));
         }
         
     } catch (Exception $e) {
