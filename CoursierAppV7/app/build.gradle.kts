@@ -46,7 +46,7 @@ android {
             // On privilégie le serveur local en debug mais le fallback production reste possible (configurable)
             buildConfigField("boolean", "USE_PROD_SERVER", "false")
             // Optionnel: base de production disponible pour tests ciblés
-            buildConfigField("String", "PROD_BASE", "\"https://coursier.conciergerie-privee-suzosky.com/COURSIER_LOCAL\"")
+            buildConfigField("String", "PROD_BASE", "\"https://coursier.conciergerie-privee-suzosky.com\"")
             // Optional: set your PC LAN IP here via local.properties: debug.localHost=192.168.1.100
             buildConfigField("String", "DEBUG_LOCAL_HOST", "\"${debugLocalHost}\"")
             // Permettre d'imposer un fonctionnement 100% local si nécessaire
@@ -60,7 +60,7 @@ android {
             )
             // En production, utiliser toujours le serveur en ligne (LWS)
             buildConfigField("boolean", "USE_PROD_SERVER", "true")
-            buildConfigField("String", "PROD_BASE", "\"https://coursier.conciergerie-privee-suzosky.com/COURSIER_LOCAL\"")
+            buildConfigField("String", "PROD_BASE", "\"https://coursier.conciergerie-privee-suzosky.com\"")
             // Conservé pour d'éventuels diagnostics côté release (non utilisé quand USE_PROD_SERVER=true)
             buildConfigField("String", "DEBUG_LOCAL_HOST", "\"${debugLocalHost}\"")
             buildConfigField("boolean", "FORCE_LOCAL_ONLY", "false")
