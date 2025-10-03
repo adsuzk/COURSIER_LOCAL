@@ -46,7 +46,8 @@ $config = [
 // Optional environment override file (not committed). Allows setting ENV vars like DB_HOST, ENVIRONMENT, etc.
 $__envOverride = __DIR__ . '/env_override.php';
 if (file_exists($__envOverride)) {
-    // This file can call putenv('DB_HOST=...') etc. and is ignored from VCS.
+    // IMPORTANT: This file is meant for local development only.
+    // It MUST NOT affect production once FORCE_PRODUCTION_DB is present.
     @require_once $__envOverride;
 }
 
@@ -55,20 +56,20 @@ if (file_exists($__envOverride)) {
  * @return bool
  */
 function isProductionEnvironment(): bool {
-    // 0) Force local mode has absolute priority
-    if (getenv('FORCE_LOCAL')) {
-        return false;  // Force development mode
+    // Highest priority: explicit production flags or sentinel file
+    if (file_exists(__DIR__ . '/FORCE_PRODUCTION_DB')) {
+        return true;
     }
-    
-    // 1) Explicit overrides first
     if (getenv('FORCE_DB') === 'production') {
         return true;
     }
     if (getenv('ENVIRONMENT') === 'production') {
         return true;
     }
-    if (file_exists(__DIR__ . '/FORCE_PRODUCTION_DB')) {
-        return true;
+
+    // If explicitly forced local, prefer development unless a production flag above is set
+    if (getenv('FORCE_LOCAL')) {
+        return false;
     }
 
     if (isset($_SERVER['HTTP_HOST'])) {
@@ -81,7 +82,7 @@ function isProductionEnvironment(): bool {
             'lws-hosting.com',
             'lws.fr'
         ];
-        
+
         foreach ($productionDomains as $domain) {
             if (strpos($host, $domain) !== false) {
                 return true;
@@ -99,31 +100,36 @@ function isProductionEnvironment(): bool {
 function getDBConnection(): PDO {
     global $config;
     $errors = [];
+    $forceProd = file_exists(__DIR__ . '/FORCE_PRODUCTION_DB') || getenv('FORCE_DB') === 'production' || getenv('ENVIRONMENT') === 'production';
 
     // 1) ENV overrides take precedence if provided
-    $envOverride = [
-        'host' => getenv('DB_HOST') ?: null,
-        'port' => getenv('DB_PORT') ?: null,
-        'name' => getenv('DB_NAME') ?: null,
-        'user' => getenv('DB_USER') ?: null,
-        'password' => getenv('DB_PASS') ?: null,
-    ];
-    $hasOverride = array_filter($envOverride, fn($v) => !is_null($v) && $v !== '');
-    if (!empty($hasOverride)) {
-        $host = $envOverride['host'] ?: '127.0.0.1';
-        $port = $envOverride['port'] ?: '3306';
-        $name = $envOverride['name'] ?: '';
-        $user = $envOverride['user'] ?: '';
-        $password = $envOverride['password'] ?: '';
-        $dsn = "mysql:host={$host};port={$port};dbname={$name};charset=utf8mb4";
-        try {
-            return new PDO($dsn, $user, $password, [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                PDO::ATTR_EMULATE_PREPARES => false,
-            ]);
-        } catch (Throwable $e) {
-            $errors[] = 'ENV override DB connect failed: ' . $e->getMessage();
+    // BUT: in production, ignore local overrides (like env_override.php) to avoid pointing to 127.0.0.1
+    $allowEnvOverride = !$forceProd;
+    if ($allowEnvOverride) {
+        $envOverride = [
+            'host' => getenv('DB_HOST') ?: null,
+            'port' => getenv('DB_PORT') ?: null,
+            'name' => getenv('DB_NAME') ?: null,
+            'user' => getenv('DB_USER') ?: null,
+            'password' => getenv('DB_PASS') ?: null,
+        ];
+        $hasOverride = array_filter($envOverride, fn($v) => !is_null($v) && $v !== '');
+        if (!empty($hasOverride)) {
+            $host = $envOverride['host'] ?: '127.0.0.1';
+            $port = $envOverride['port'] ?: '3306';
+            $name = $envOverride['name'] ?: '';
+            $user = $envOverride['user'] ?: '';
+            $password = $envOverride['password'] ?: '';
+            $dsn = "mysql:host={$host};port={$port};dbname={$name};charset=utf8mb4";
+            try {
+                return new PDO($dsn, $user, $password, [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                    PDO::ATTR_EMULATE_PREPARES => false,
+                ]);
+            } catch (Throwable $e) {
+                $errors[] = 'ENV override DB connect failed: ' . $e->getMessage();
+            }
         }
     }
 
