@@ -346,7 +346,8 @@ function getCinetPayConfig(string $context = 'coursier'): array {
 
     // Coursier (application) — NOUVELLES CREDENTIELS FOURNIES
     return [
-        'apikey'     => '8338609805877a8eaac7eb6.017346508338609805877a8eaac7eb6.01734650',
+        // apikey reste identique; seuls Site Id et Secret Key changent pour le compte coursier
+        'apikey'     => '8338609805877a8eaac7eb6.01734650',
         'site_id'    => '219503',
         'secret_key' => '17153003105e7ca6606cc157.46703056',
         'endpoint'   => $endpoint,
