@@ -8,11 +8,11 @@ plugins {
 val localLanIp = (project.findProperty("LOCAL_LAN_IP") as String?) ?: "10.0.2.2"
 
 android {
-    namespace = "com.example.coursiersuzosky"
+    namespace = "com.suzosky.coursierclient"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.coursiersuzosky"
+        applicationId = "com.suzosky.coursierclient"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
