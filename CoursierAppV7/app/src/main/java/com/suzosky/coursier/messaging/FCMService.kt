@@ -118,6 +118,8 @@ class FCMService : FirebaseMessagingService() {
                 val broadcast = Intent(ACTION_REFRESH_DATA).apply {
                     putExtra(EXTRA_ORDER_ID, orderId)
                 }
+                // Limit broadcast delivery to this app only
+                broadcast.`package` = packageName
                 sendBroadcast(broadcast)
             } catch (e: Exception) {
                 Log.e(TAG, "Error sending refresh broadcast", e)
