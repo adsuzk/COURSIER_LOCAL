@@ -1,4 +1,4 @@
-package com.example.coursiersuzosky.net
+package com.suzosky.coursierclient.net
 
 import android.os.NetworkOnMainThreadException
 import okhttp3.FormBody
