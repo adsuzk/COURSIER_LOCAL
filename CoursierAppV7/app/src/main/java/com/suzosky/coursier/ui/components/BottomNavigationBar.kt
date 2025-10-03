@@ -34,7 +34,7 @@ private val SecondaryBlue = Color(0xFF16213E)
 private val GlassBg = Color(0x14FFFFFF)
 
 enum class NavigationTab {
-    COURSES, WALLET, CHAT, PROFILE
+    SYST, COURSES, WALLET, CHAT, PROFILE
 }
 
 data class BottomNavItem(
@@ -53,20 +53,26 @@ fun BottomNavigationBar(
 ) {
     val bottomNavItems = listOf(
         BottomNavItem(
+            tab = NavigationTab.SYST,
+            title = "Syst",
+            iconSelected = Icons.Filled.Verified,
+            iconUnselected = Icons.Outlined.Verified
+        ),
+        BottomNavItem(
             tab = NavigationTab.COURSES,
-            title = "Courses",
+            title = "Mes courses",
             iconSelected = Icons.Filled.LocalShipping,
             iconUnselected = Icons.Outlined.LocalShipping
         ),
         BottomNavItem(
             tab = NavigationTab.WALLET,
-            title = "Wallet",
+            title = "Portefeuille",
             iconSelected = Icons.Filled.AccountBalanceWallet,
             iconUnselected = Icons.Outlined.AccountBalanceWallet
         ),
         BottomNavItem(
             tab = NavigationTab.CHAT,
-            title = "Support",
+            title = "Chat",
             iconSelected = Icons.Filled.Chat,
             iconUnselected = Icons.Outlined.ChatBubbleOutline
         ),
