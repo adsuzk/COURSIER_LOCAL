@@ -125,7 +125,8 @@ try {
     }
     */
     // Appel API CinetPay (v2) - utilise les credentials centralisés
-    $cp = getCinetPayConfig();
+    // Credentials Coursier (application)
+    $cp = getCinetPayConfig('coursier');
     $url = $cp['endpoint'] ?? 'https://api-checkout.cinetpay.com/v2/payment';
     // Construire les URLs de callback basées sur l'hôte courant
     // URL de callback basée sur helpers (fonctionne en sous-dossier/local/prod)

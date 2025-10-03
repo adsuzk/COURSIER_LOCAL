@@ -31,9 +31,11 @@ try {
     
     // Configuration CinetPay
     $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'];
+    // Utiliser les credentials CLIENT pour le site index (distincts de l'app coursier)
+    $clientCfg = getClientCinetPayConfig();
     $cinetpay_config = [
-        'apikey' => CINETPAY_API_KEY,
-        'site_id' => CINETPAY_SITE_ID,
+        'apikey' => $clientCfg['apikey'],
+        'site_id' => $clientCfg['site_id'],
         'notify_url' => $baseUrl . '/COURSIER_LOCAL/api/cinetpay_callback.php',
         'return_url' => $baseUrl . '/COURSIER_LOCAL/?payment_success=1',
         'cancel_url' => $baseUrl . '/COURSIER_LOCAL/?payment_cancelled=1',
@@ -67,7 +69,7 @@ try {
     ];
     
     // Appeler l'API CinetPay
-    $ch = curl_init('https://api-checkout.cinetpay.com/v2/payment');
+    $ch = curl_init(($clientCfg['endpoint'] ?? 'https://api-checkout.cinetpay.com/v2/payment'));
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($paymentData));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
