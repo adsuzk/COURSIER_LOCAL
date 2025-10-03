@@ -14,14 +14,14 @@ import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import com.example.coursiersuzosky.net.ApiService
+import com.suzosky.coursierclient.net.ApiService
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Phone
-import com.example.coursiersuzosky.net.ApiConfig
+import com.suzosky.coursierclient.net.ApiConfig
 import com.suzosky.coursierclient.BuildConfig
 
 @OptIn(ExperimentalFoundationApi::class)
