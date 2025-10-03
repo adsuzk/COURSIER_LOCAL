@@ -103,6 +103,57 @@ try {
     }
     
     if ($action === 'accept') {
+        // Règle financière: solde strictement > 2000 FCFA pour accepter
+        try {
+            $minRequired = 2000.0; // caution minimale
+            $soldeOk = false;
+            $currentSolde = 0.0;
+
+            // 1) Source principale: agents_suzosky.solde_wallet
+            try {
+                $st = $pdo->prepare("SELECT COALESCE(solde_wallet,0) AS solde FROM agents_suzosky WHERE id = ? LIMIT 1");
+                $st->execute([$coursier_id]);
+                $row = $st->fetch(PDO::FETCH_ASSOC);
+                if ($row) { $currentSolde = (float)$row['solde']; }
+            } catch (Throwable $e) {}
+
+            // 2) Fallbacks si 0: coursier_accounts.solde_disponible ou comptes_coursiers.solde
+            if ($currentSolde <= 0) {
+                try {
+                    $st = $pdo->prepare("SELECT COALESCE(solde_disponible, solde_total) AS solde FROM coursier_accounts WHERE coursier_id = ? LIMIT 1");
+                    $st->execute([$coursier_id]);
+                    $row = $st->fetch(PDO::FETCH_ASSOC);
+                    if ($row && isset($row['solde'])) { $currentSolde = max($currentSolde, (float)$row['solde']); }
+                } catch (Throwable $e) {}
+            }
+            if ($currentSolde <= 0) {
+                try {
+                    $st = $pdo->prepare("SELECT COALESCE(solde,0) AS solde FROM comptes_coursiers WHERE coursier_id = ? LIMIT 1");
+                    $st->execute([$coursier_id]);
+                    $row = $st->fetch(PDO::FETCH_ASSOC);
+                    if ($row && isset($row['solde'])) { $currentSolde = max($currentSolde, (float)$row['solde']); }
+                } catch (Throwable $e) {}
+            }
+
+            $soldeOk = ($currentSolde > $minRequired);
+            if (!$soldeOk) {
+                sendJsonResponse([
+                    'success' => false,
+                    'error' => 'Solde insuffisant: vous devez avoir plus de 2 000 FCFA pour accepter des courses',
+                    'min_required' => $minRequired,
+                    'current_balance' => $currentSolde,
+                    'block_reason' => 'MIN_BALANCE'
+                ], 403);
+            }
+        } catch (Throwable $e) {
+            // En cas d'erreur de vérification, par prudence on bloque et on avertit
+            sendJsonResponse([
+                'success' => false,
+                'error' => 'Vérification du solde indisponible. Réessayez plus tard.',
+                'block_reason' => 'BALANCE_CHECK_ERROR'
+            ], 503);
+        }
+
         // Accepter la commande
         $stmt_update = $pdo->prepare('UPDATE commandes SET statut = "acceptee", heure_acceptation = NOW() WHERE id = ? AND coursier_id = ?');
         $stmt_update->execute([$order_id, $coursier_id]);
