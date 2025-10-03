@@ -1008,9 +1008,9 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                             Text("Erreur: $error")
                         }
                     }
-                    // 🩺 SI AUCUNE COMMANDE ACTIVE → Écran d'attente avec voyant système
-                    commandesReelles.isEmpty() -> {
-                        println("⏸️ Aucune commande active - Affichage écran d'attente")
+                    else -> {
+                        println("✅ Affichage CoursierScreenNew avec VRAIES données")
+                        // VRAIES DONNÉES de l'API
                         val systemHealth = activity?.calculateSystemHealth(prefs, hasRecentData = !loading) 
                             ?: SystemHealth(
                                 status = HealthStatus.WARNING,
@@ -1020,16 +1020,6 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                 lastSyncTimestamp = System.currentTimeMillis(),
                                 message = "Impossible de calculer l'état système"
                             )
-                        
-                        WaitingForOrdersScreen(
-                            systemHealth = systemHealth,
-                            nbCommandesEnAttente = 0,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-                    else -> {
-                        println("✅ Affichage CoursierScreenNew avec VRAIES données")
-                        // VRAIES DONNÉES de l'API
                         CoursierScreenNew(
                             modifier = Modifier.fillMaxSize(),
                             coursierId = coursierId,
@@ -1095,7 +1085,8 @@ fun SuzoskyCoursierApp(updateInfoToShow: Array<UpdateInfo?>) {
                                 } else {
                                     // TODO: Show Compose snackbar for invalid amount
                                 }
-                            }
+                            },
+                            systemHealth = systemHealth
                         )
                         if (isInitiatingPayment) {
                             PaymentStatusDialog(
