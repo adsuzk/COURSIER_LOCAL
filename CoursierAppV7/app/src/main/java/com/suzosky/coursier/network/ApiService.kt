@@ -31,7 +31,7 @@ object ApiService {
     private const val LOCAL_SEGMENT = "/COURSIER_LOCAL"
     // Local dev: emulator loopback. For physical device, we will prefer LAN host from BuildConfig.DEBUG_LOCAL_HOST if provided.
     private const val EMULATOR_LOCAL_BASE = "http://10.0.2.2$LOCAL_SEGMENT"
-    private const val DEFAULT_PROD_BASE = "https://coursier.conciergerie-privee-suzosky.com$LOCAL_SEGMENT"
+    private const val DEFAULT_PROD_BASE = "https://coursier.conciergerie-privee-suzosky.com"
 
     private fun isDebug(): Boolean = com.suzosky.coursier.BuildConfig.DEBUG
     private fun useProd(): Boolean = try { com.suzosky.coursier.BuildConfig.USE_PROD_SERVER } catch (_: Throwable) { true }

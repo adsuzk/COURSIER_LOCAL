@@ -30,9 +30,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 // Configuration et connexion
 require_once __DIR__ . '/../config.php';
 // Autoload 3rd-party libs (e.g., PHPMailer)
-require_once __DIR__ . '/../vendor/autoload.php';
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+// Try to autoload Composer dependencies if present; otherwise, continue gracefully.
+$__vendor = __DIR__ . '/../vendor/autoload.php';
+if (file_exists($__vendor)) {
+    require_once $__vendor;
+    try {
+        // If PHPMailer exists, import; otherwise, we'll avoid using it.
+        if (class_exists('PHPMailer\\PHPMailer\\PHPMailer')) {
+            class_exists('PHPMailer\\PHPMailer\\Exception');
+        }
+    } catch (Throwable $e) { /* ignore */ }
+}
+// Use statements guarded by existence checks later when needed
 
 // Utilitaires: lecture JSON brut et alias de champs pour compatibilité V7
 function readJsonBodyIntoPostIfEmpty() {
