@@ -5,7 +5,7 @@ require_once dirname(__DIR__) . '/config.php';
  * Centralisée et dérivée de getCinetPayConfig() pour éviter les valeurs codées en dur.
  */
 
-$cp = getCinetPayConfig();
+$cp = getCinetPayConfig('coursier'); // par défaut, l'app coursier
 $mode = strtolower($cp['mode'] ?? 'live');
 $useStub = ($mode === 'stub');
 
@@ -124,6 +124,13 @@ function validateCinetPayConfig() {
     }
     
     return true;
+}
+
+/**
+ * Fournit les identifiants CinetPay pour le compte client (site index)
+ */
+function getClientCinetPayConfig(): array {
+    return getCinetPayConfig('client');
 }
 
 /**
