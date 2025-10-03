@@ -1,4 +1,4 @@
-package com.example.coursiersuzosky.net
+package com.suzosky.coursierclient.net
 
 data class OrderRequest(
     val departure: String,
