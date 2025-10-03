@@ -1,4 +1,4 @@
-package com.example.coursiersuzosky
+package com.suzosky.coursierclient
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
