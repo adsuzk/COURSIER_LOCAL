@@ -24,6 +24,7 @@ require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../logger.php';
 require_once __DIR__ . '/../lib/db_maintenance.php';
 require_once __DIR__ . '/../cinetpay/cinetpay_integration.php';
+require_once __DIR__ . '/../lib/geocoding.php';
 
 if (session_status() === PHP_SESSION_NONE) {
 	session_start();
@@ -134,6 +135,9 @@ $fields = [
 	'prix_estime' => $data['prix_estime'] ?? 0,
 	'latitude_depart' => isset($data['departure_lat']) && $data['departure_lat'] !== '' ? floatval($data['departure_lat']) : null,
 	'longitude_depart' => isset($data['departure_lng']) && $data['departure_lng'] !== '' ? floatval($data['departure_lng']) : null,
+	// nouvelles colonnes d'arrivée si disponibles en schéma
+	'latitude_arrivee' => isset($data['arrival_lat']) && $data['arrival_lat'] !== '' ? floatval($data['arrival_lat']) : null,
+	'longitude_arrivee' => isset($data['arrival_lng']) && $data['arrival_lng'] !== '' ? floatval($data['arrival_lng']) : null,
 	'distance_estimee' => $data['distance_estimee'] ?? null,
 	'dimensions' => $data['dimensions'] ?? null,
 	'poids_estime' => $data['poids_estime'] ?? null,
@@ -188,30 +192,76 @@ try {
 
 
 
+// Géocodage si coordonnées manquantes (best-effort, non bloquant)
+try {
+	if (empty($fields['latitude_depart']) || empty($fields['longitude_depart'])) {
+		$gc = geocodeAddress($fields['adresse_depart']);
+		if ($gc) { $fields['latitude_depart'] = $gc['lat']; $fields['longitude_depart'] = $gc['lng']; }
+	}
+	if (empty($fields['latitude_arrivee']) || empty($fields['longitude_arrivee'])) {
+		$gc2 = geocodeAddress($fields['adresse_arrivee']);
+		if ($gc2) { $fields['latitude_arrivee'] = $gc2['lat']; $fields['longitude_arrivee'] = $gc2['lng']; }
+	}
+} catch (Throwable $e) {
+	if (function_exists('logMessage')) { logMessage('diagnostics_errors.log', 'Géocodage échoué: ' . $e->getMessage()); }
+}
+
 // Insertion réelle en base de données (table 'commandes')
 try {
-	$sql = "INSERT INTO commandes (order_number, code_commande, adresse_depart, adresse_arrivee, telephone_expediteur, telephone_destinataire, description_colis, priorite, mode_paiement, prix_estime, latitude_depart, longitude_depart, distance_estimee, dimensions, poids_estime, fragile, statut, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-	$stmt = $pdo->prepare($sql);
-	$stmt->execute([
-	$fields['order_number'],
-	$fields['code_commande'],
-	$fields['adresse_depart'],
-	$fields['adresse_arrivee'],
-	$fields['telephone_expediteur'],
-	$fields['telephone_destinataire'],
-	$fields['description_colis'],
-	$fields['priorite'],
-	$fields['mode_paiement'],
-	$fields['prix_estime'],
-	$fields['latitude_depart'],
-	$fields['longitude_depart'],
-	$fields['distance_estimee'],
-	$fields['dimensions'],
-	$fields['poids_estime'],
-	$fields['fragile'],
-	$fields['statut'],
-	$fields['created_at']
-	]);
+	// Tenter d'insérer avec colonnes d'arrivée si elles existent dans le schéma
+	$cols = $pdo->query("SHOW COLUMNS FROM commandes")->fetchAll(PDO::FETCH_COLUMN, 0);
+	$hasArriveeLat = in_array('latitude_arrivee', $cols, true);
+	$hasArriveeLng = in_array('longitude_arrivee', $cols, true);
+
+	if ($hasArriveeLat && $hasArriveeLng) {
+		$sql = "INSERT INTO commandes (order_number, code_commande, adresse_depart, adresse_arrivee, telephone_expediteur, telephone_destinataire, description_colis, priorite, mode_paiement, prix_estime, latitude_depart, longitude_depart, latitude_arrivee, longitude_arrivee, distance_estimee, dimensions, poids_estime, fragile, statut, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		$stmt = $pdo->prepare($sql);
+		$stmt->execute([
+			$fields['order_number'],
+			$fields['code_commande'],
+			$fields['adresse_depart'],
+			$fields['adresse_arrivee'],
+			$fields['telephone_expediteur'],
+			$fields['telephone_destinataire'],
+			$fields['description_colis'],
+			$fields['priorite'],
+			$fields['mode_paiement'],
+			$fields['prix_estime'],
+			$fields['latitude_depart'],
+			$fields['longitude_depart'],
+			$fields['latitude_arrivee'],
+			$fields['longitude_arrivee'],
+			$fields['distance_estimee'],
+			$fields['dimensions'],
+			$fields['poids_estime'],
+			$fields['fragile'],
+			$fields['statut'],
+			$fields['created_at']
+		]);
+	} else {
+		$sql = "INSERT INTO commandes (order_number, code_commande, adresse_depart, adresse_arrivee, telephone_expediteur, telephone_destinataire, description_colis, priorite, mode_paiement, prix_estime, latitude_depart, longitude_depart, distance_estimee, dimensions, poids_estime, fragile, statut, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		$stmt = $pdo->prepare($sql);
+		$stmt->execute([
+			$fields['order_number'],
+			$fields['code_commande'],
+			$fields['adresse_depart'],
+			$fields['adresse_arrivee'],
+			$fields['telephone_expediteur'],
+			$fields['telephone_destinataire'],
+			$fields['description_colis'],
+			$fields['priorite'],
+			$fields['mode_paiement'],
+			$fields['prix_estime'],
+			$fields['latitude_depart'],
+			$fields['longitude_depart'],
+			$fields['distance_estimee'],
+			$fields['dimensions'],
+			$fields['poids_estime'],
+			$fields['fragile'],
+			$fields['statut'],
+			$fields['created_at']
+		]);
+	}
 	$commande_id = $pdo->lastInsertId();
 	if (function_exists('logMessage')) {
 		logMessage('diagnostics_errors.log', 'Commande insérée: ' . json_encode($fields) . ' | id=' . $commande_id);
@@ -247,6 +297,7 @@ try {
 				
 				$notifData = [
 					'type' => 'new_order',
+					'tts' => '1', // Indique au client d'annoncer vocalement l'arrivée d'une commande
 					'commande_id' => (string)$commande_id,
 					'code_commande' => $fields['code_commande'],
 					'adresse_depart' => $fields['adresse_depart'],

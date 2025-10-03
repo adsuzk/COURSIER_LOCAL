@@ -91,6 +91,7 @@ class FCMService : FirebaseMessagingService() {
          val body = message.notification?.body ?: message.data["body"] ?: "Une nouvelle commande est disponible"
          val type = message.data["type"]
          val orderId = message.data["order_id"]
+         val ttsFlag = message.data["tts"] == "1"
          if (type == "new_order") {
              // Démarrer la sonnerie en boucle 2s
             try {
@@ -98,6 +99,20 @@ class FCMService : FirebaseMessagingService() {
                 OrderRingService.start(this, orderId)
             } catch (e: Exception) {
                 Log.e(TAG, "Error starting OrderRingService", e)
+            }
+            // Annonce vocale optionnelle
+            if (ttsFlag) {
+                try {
+                    val voice = com.suzosky.coursier.services.VoiceGuidanceService(this)
+                    val destination = message.data["adresse_arrivee"] ?: "destination"
+                    voice.announceNewOrder("client", destination)
+                    // Arrêt du TTS quelques secondes après l'annonce pour libérer la ressource
+                    android.os.Handler(mainLooper).postDelayed({
+                        try { voice.shutdown() } catch (_: Exception) {}
+                    }, 5000L)
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error triggering TTS announce", e)
+                }
             }
             try {
                 val broadcast = Intent(ACTION_REFRESH_DATA).apply {

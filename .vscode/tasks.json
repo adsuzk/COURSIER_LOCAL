@@ -12,6 +12,17 @@
 				"${workspaceFolder}/setup_database.php"
 			],
 			"problemMatcher": []
+		},
+		{
+			"label": "php-inline-131",
+			"type": "shell",
+			"command": "C:/xampp/php/php.exe",
+			"args": [
+				"-d",
+				"display_errors=1",
+				"-r",
+				"$pdo=new PDO('mysql:host=127.0.0.1;dbname=coursier_local;charset=utf8mb4','root','');$pdo->setAttribute(PDO::ATTR_ERRMODE,2);$st=$pdo->query(\"SELECT id,adresse_arrivee,latitude_arrivee,longitude_arrivee,latitude_livraison,longitude_livraison FROM commandes WHERE id=131\");$r=$st->fetch(PDO::FETCH_ASSOC);echo json_encode($r);"
+			]
 		}
 	]
 }

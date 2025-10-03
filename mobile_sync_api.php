@@ -509,7 +509,7 @@ try {
                 break;
             }
             
-            // Vérifier que la commande existe et appartient au coursier
+            // Vérifier que la commande est bien livrée et en espèces
             $check = $pdo->prepare("SELECT statut, mode_paiement FROM commandes WHERE id = ? AND coursier_id = ?");
             $check->execute([$commande_id, $coursier_id]);
             $commande = $check->fetch();
@@ -519,14 +519,12 @@ try {
                 break;
             }
             
-            // ⚠️ FIX: Accepter aussi 'recuperee' et 'en_cours' (pas seulement 'livree')
-            if (!in_array($commande['statut'], ['livree', 'recuperee', 'en_cours'])) {
-                $response = ['success' => false, 'message' => 'Commande pas encore récupérée (statut: ' . $commande['statut'] . ')'];
+            if ($commande['statut'] !== 'livree') {
+                $response = ['success' => false, 'message' => 'Commande pas encore livrée'];
                 break;
             }
             
-            // ⚠️ FIX: Accepter même si mode_paiement est vide (défaut = espèces)
-            if ($commande['mode_paiement'] && !in_array(strtolower($commande['mode_paiement']), ['especes', 'cash', ''])) {
+            if ($commande['mode_paiement'] !== 'especes') {
                 $response = ['success' => false, 'message' => 'Cette commande n\'est pas en espèces'];
                 break;
             }

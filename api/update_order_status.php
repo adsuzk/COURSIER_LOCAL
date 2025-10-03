@@ -137,6 +137,69 @@ try {
     $ok = $stmt->execute([$statut, $commandeId]);
 
     if ($ok && $stmt->rowCount() > 0) {
+        // Synchroniser aussi la table principale 'commandes' utilisée par l'app pour lister les commandes actives
+        try {
+            $hasCommandes = $pdo->query("SHOW TABLES LIKE 'commandes'")->rowCount() > 0;
+        } catch (Throwable $e) { $hasCommandes = false; }
+
+        if ($hasCommandes) {
+            try {
+                // Lire infos principales de la commande dans 'commandes'
+                $stInfoMain = $pdo->prepare("SELECT statut, mode_paiement, cash_recupere FROM commandes WHERE id = ? LIMIT 1");
+                $stInfoMain->execute([$commandeId]);
+                $main = $stInfoMain->fetch(PDO::FETCH_ASSOC) ?: [];
+
+                $mainCurrent = isset($main['statut']) ? trim(strtolower((string)$main['statut'])) : '';
+                $mainCashRecup = isset($main['cash_recupere']) ? (int)$main['cash_recupere'] : 0;
+                $mainModePaiement = isset($main['mode_paiement']) ? strtolower((string)$main['mode_paiement']) : null;
+
+                // Mapper les statuts côté 'commandes'
+                $newMainStatus = $statut; // par défaut même valeur
+                $setTimeline = '';
+                switch ($statut) {
+                    case 'acceptee':
+                        $newMainStatus = 'acceptee';
+                        $setTimeline = ", heure_acceptation = NOW()";
+                        break;
+                    case 'en_cours':
+                        $newMainStatus = 'en_cours';
+                        $setTimeline = ", heure_debut = NOW()";
+                        break;
+                    case 'picked_up':
+                        // Historique backend utilise souvent 'recuperee'
+                        $newMainStatus = 'recuperee';
+                        $setTimeline = ", heure_retrait = NOW()";
+                        break;
+                    case 'livree':
+                        $newMainStatus = 'livree';
+                        $setTimeline = ", heure_livraison = NOW()";
+                        break;
+                }
+
+                // Validation cash côté table principale également
+                $isCashMain = $mainModePaiement === 'cash' || $mainModePaiement === 'especes';
+                if ($newMainStatus === 'livree' && $isCashMain && !$cashCollectedFlag && !$mainCashRecup) {
+                    // Cohérent avec vérification côté commandes_classiques
+                    // Ne pas bloquer la réponse globale (déjà validée), mais ne pas forcer la livraison sans cash
+                    // On laisse la table principale inchangée dans ce cas
+                } else {
+                    $setCash = '';
+                    if ($isCashMain && $cashCollectedFlag && !$mainCashRecup) {
+                        $setCash = ', cash_recupere = 1';
+                    }
+
+                    // Idempotence: si déjà au bon statut et rien d'autre à mettre à jour
+                    $noChangeMain = ($mainCurrent === $newMainStatus) && ($setTimeline === '') && ($setCash === '');
+                    if (!$noChangeMain) {
+                        $stUp = $pdo->prepare("UPDATE commandes SET statut = ? $setTimeline $setCash, updated_at = NOW() WHERE id = ?");
+                        try { $stUp->execute([$newMainStatus, $commandeId]); } catch (Throwable $e) { /* best-effort */ }
+                    }
+                }
+            } catch (Throwable $e) {
+                // best-effort: ne pas bloquer la réponse principale
+            }
+        }
+
         // Historique de statut (best-effort)
         try {
             // Assurer l'existence de la table d'historique

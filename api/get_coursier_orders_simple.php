@@ -79,7 +79,7 @@ try {
         exit;
     }
     
-    // Query commandes simplifiée - FILTRER les commandes terminées/annulées
+    // Query commandes simplifiée
     $sql = "
         SELECT 
             c.id,
@@ -100,7 +100,6 @@ try {
         FROM commandes c
         {$clientJoin}
         WHERE c.coursier_id = ?
-          AND c.statut NOT IN ('terminee', 'annulee', 'refusee', 'cancelled')
         ORDER BY c.created_at DESC
         LIMIT ?
     ";
