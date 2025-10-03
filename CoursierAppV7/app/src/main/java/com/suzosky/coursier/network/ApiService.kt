@@ -1609,7 +1609,7 @@ object ApiService {
             .add("coursier_id", coursierId.toString())
             .add("token", finalToken)
             .add("platform", "android")
-            .add("app_version", BuildConfig.VERSION_NAME)
+            .add("app_version", com.suzosky.coursier.BuildConfig.VERSION_NAME)
             .build()
 
         executeWithFallback(
