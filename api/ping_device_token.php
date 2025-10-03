@@ -78,6 +78,22 @@ try {
         'appv' => $appVersion,
     ]);
 
+    // Trace légère en fichier pour confirmer réception côté prod
+    try {
+        $logDir = __DIR__ . '/../diagnostic_logs';
+        if (!is_dir($logDir)) @mkdir($logDir, 0775, true);
+        $logLine = sprintf(
+            "%s\tping_device_token\tcoursier_id=%d\thost=%s\tip=%s\tua=%s\tpreview=%s...\n",
+            date('c'),
+            $coursierId,
+            $_SERVER['HTTP_HOST'] ?? '-',
+            $_SERVER['REMOTE_ADDR'] ?? '-',
+            substr($_SERVER['HTTP_USER_AGENT'] ?? '-', 0, 120),
+            $token !== '' ? substr($token, 0, 20) : '(vide)'
+        );
+        @file_put_contents($logDir . '/token_ping.log', $logLine, FILE_APPEND);
+    } catch (Throwable $e) { /* non bloquant */ }
+
     // Optionnel: marquer le coursier en_ligne si table présente
     try {
         $pdo->exec("CREATE TABLE IF NOT EXISTS agents_suzosky (

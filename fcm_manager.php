@@ -5,40 +5,69 @@
  */
 
 require_once 'config.php';
+require_once __DIR__ . '/api/lib/fcm_enhanced.php';
 
 class FCMManager {
     
     private $serverKey;
     private $projectId;
+    private $serviceAccountPath;
     
     public function __construct() {
-        // Configuration Firebase - À REMPLACER par vos vraies clés
+        // Détection projet et secrets
+        $this->projectId = 'coursier-suzosky';
+        $this->serviceAccountPath = $this->detectServiceAccount();
         $this->serverKey = $this->getServerKey();
-        $this->projectId = 'coursier-suzosky'; // Votre project ID Firebase
     }
     
     public function getServerKey() {
-        // Essayer de lire depuis le fichier de config Firebase
-        $firebaseConfig = __DIR__ . '/coursier-suzosky-firebase-adminsdk-fbsvc-3605815057.json';
-        
-        if (file_exists($firebaseConfig)) {
-            $config = json_decode(file_get_contents($firebaseConfig), true);
-            if (isset($config['project_id'])) {
-                $this->projectId = $config['project_id'];
+        // Essayer de lire depuis un fichier secret si la variable d'env est absente
+        $envKey = getenv('FCM_SERVER_KEY');
+        if (!$envKey) {
+            $secretPath = __DIR__ . '/data/secret_fcm_key.txt';
+            if (is_file($secretPath)) {
+                $content = trim(@file_get_contents($secretPath));
+                if ($content !== '') {
+                    $envKey = $content;
+                    // l'injecter pour les autres bibliothèques aussi
+                    putenv('FCM_SERVER_KEY=' . $envKey);
+                }
             }
         }
-        
-        // Clé serveur FCM legacy (à remplacer par votre vraie clé depuis Firebase Console > Project Settings > Cloud Messaging)
-        // Pour le moment, utiliser une clé de fallback
-        return getenv('FCM_SERVER_KEY') ?: 'LEGACY_KEY_NOT_CONFIGURED';
+        // Confirmer le projectId si un compte de service existe
+        if ($this->serviceAccountPath && is_file($this->serviceAccountPath)) {
+            $sa = json_decode(@file_get_contents($this->serviceAccountPath), true);
+            if (!empty($sa['project_id'])) $this->projectId = $sa['project_id'];
+        }
+        return $envKey ?: 'LEGACY_KEY_NOT_CONFIGURED';
+    }
+
+    private function detectServiceAccount(): ?string {
+        // 1) variable d'environnement
+        $sa = getenv('FIREBASE_SERVICE_ACCOUNT_FILE');
+        if ($sa && is_file($sa)) return realpath($sa);
+        // 2) data/firebase_service_account.json
+        $candidate = __DIR__ . '/data/firebase_service_account.json';
+        if (is_file($candidate)) return realpath($candidate);
+        // 3) racine: coursier-suzosky-firebase-adminsdk-*.json
+        $glob = glob(__DIR__ . '/coursier-suzosky-firebase-adminsdk-*.json');
+        if (!empty($glob)) return realpath($glob[0]);
+        return null;
     }
     
     public function envoyerNotification($token, $title, $body, $data = []) {
-        // CORRECTION: Utiliser l'API moderne FCM si disponible, sinon legacy
-        $useModernApi = false; // Passer à true quand OAuth2 est configuré
-        
-        if ($useModernApi) {
-            return $this->envoyerNotificationV1($token, $title, $body, $data);
+        // Utiliser l'API moderne HTTP v1 si un compte de service est disponible
+        if ($this->serviceAccountPath && is_file($this->serviceAccountPath)) {
+            $res = fcm_v1_send([$token], $title, $body, $data, $this->serviceAccountPath);
+            $ok = $res['success'] ?? false;
+            $code = $res['code'] ?? null;
+            $result = [
+                'success' => $ok,
+                'http_code' => $code,
+                'response' => json_encode($res['result'] ?? []),
+                'message' => $ok ? 'Notification envoyée (HTTP v1)' : 'Échec FCM HTTP v1'
+            ];
+            return $result;
         }
         
         $url = 'https://fcm.googleapis.com/fcm/send';
@@ -109,14 +138,13 @@ class FCMManager {
         $error = curl_error($ch);
         curl_close($ch);
         
-        // MODE FALLBACK: Si la clé FCM n'est pas configurée, simuler un succès
+        // Si la clé n'est pas configurée, retourner une erreur explicite (ne pas simuler succès)
         if ($this->serverKey === 'LEGACY_KEY_NOT_CONFIGURED') {
             return [
-                'success' => true,
-                'message' => 'Mode développement: notification simulée (FCM non configuré)',
-                'http_code' => 200,
-                'response' => json_encode(['success' => 1, 'failure' => 0, 'simulated' => true]),
-                'fallback_mode' => true,
+                'success' => false,
+                'message' => 'FCM non configuré: aucune clé serveur et aucun compte de service',
+                'http_code' => 0,
+                'response' => null,
                 'payload' => $payload
             ];
         }
@@ -145,6 +173,31 @@ class FCMManager {
         }
         
         return $result;
+    }
+
+    // Aide: envoi d'une notification de nouvelle commande au dernier token actif du coursier
+    public function notifierNouvelleCommande(int $coursierId, int $commandeId) {
+        global $pdo;
+        if (!isset($pdo)) { $pdo = getDBConnection(); }
+        $stmt = $pdo->prepare("SELECT token FROM device_tokens WHERE (coursier_id = ? OR agent_id = ?) AND is_active = 1 ORDER BY updated_at DESC LIMIT 1");
+        $stmt->execute([$coursierId, $coursierId]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$row) {
+            return ['success' => false, 'message' => 'Aucun token FCM actif'];
+        }
+        // Récupérer quelques infos de commande si possible
+        $title = '🚚 Nouvelle Commande!';
+        $body = 'Une course vous a été attribuée';
+        try {
+            $s = $pdo->prepare("SELECT adresse_depart, adresse_arrivee, prix_total FROM commandes WHERE id = ?");
+            $s->execute([$commandeId]);
+            if ($cmd = $s->fetch(PDO::FETCH_ASSOC)) {
+                $body = "#{$commandeId} - " . ($cmd['prix_total'] ?? '') . " FCFA\n" . ($cmd['adresse_depart'] ?? '') . " → " . ($cmd['adresse_arrivee'] ?? '');
+            }
+        } catch (Throwable $e) { /* best effort */ }
+        return $this->envoyerNotification($row['token'], $title, $body, [
+            'type' => 'nouvelle_commande', 'commande_id' => (string)$commandeId
+        ]);
     }
     
     public function envoyerNotificationCommande($coursierId, $commande) {

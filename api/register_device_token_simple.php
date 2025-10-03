@@ -32,6 +32,23 @@ try {
     $platform = trim((string)($input['platform'] ?? 'android')) ?: 'android';
     $appVersion = trim((string)($input['app_version'] ?? '1.0.0')) ?: '1.0.0';
 
+    // Journalisation légère (fichier local) pour diagnostic déploiement/prod
+    try {
+        $logDir = __DIR__ . '/../diagnostic_logs';
+        if (!is_dir($logDir)) @mkdir($logDir, 0775, true);
+        $logLine = sprintf(
+            "%s\tregister_device_token_simple\tcoursier_id=%d\tagent_id=%d\thost=%s\tip=%s\tua=%s\ttoken=%s...\n",
+            date('c'),
+            $coursierId,
+            $agentId,
+            $_SERVER['HTTP_HOST'] ?? '-',
+            $_SERVER['REMOTE_ADDR'] ?? '-',
+            substr($_SERVER['HTTP_USER_AGENT'] ?? '-', 0, 120),
+            $token !== '' ? substr($token, 0, 20) : '(vide)'
+        );
+        @file_put_contents($logDir . '/token_reg.log', $logLine, FILE_APPEND);
+    } catch (Throwable $e) { /* non bloquant */ }
+
     error_log(sprintf(
         'FCM Simple Registration - Coursier: %d, Agent: %d, Token preview: %s',
         $coursierId,

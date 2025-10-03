@@ -20,6 +20,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
@@ -33,6 +34,7 @@ import kotlinx.coroutines.withContext
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
@@ -77,8 +79,8 @@ fun OrderScreen(showMessage: (String) -> Unit) {
     var senderPhone by remember { mutableStateOf("") }
     var receiverPhone by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
-    var priority by remember { mutableStateOf("normale") }
-    var payment by remember { mutableStateOf("cash") }
+    var priority by remember { mutableStateOf("normale") } // normale, urgente, express
+    var paymentMethod by remember { mutableStateOf("cash") } // cash, orange_money, mtn_money, moov_money, wave, card
 
     var estimating by remember { mutableStateOf(false) }
     var submitting by remember { mutableStateOf(false) }
@@ -162,7 +164,7 @@ fun OrderScreen(showMessage: (String) -> Unit) {
         if (forSubmit) {
             if (!phoneValid(senderPhone)) { senderPhoneError = "Format CI requis: +225 suivi de 10 chiffres"; ok = false } else senderPhoneError = null
             if (!phoneValid(receiverPhone)) { receiverPhoneError = "Format CI requis: +225 suivi de 10 chiffres"; ok = false } else receiverPhoneError = null
-            if (payment != "cash" && (totalPrice == null || (totalPrice ?: 0) <= 0)) {
+            if (paymentMethod != "cash" && (totalPrice == null || (totalPrice ?: 0) <= 0)) {
                 showMessage("Veuillez d'abord estimer le prix pour un paiement en ligne")
                 ok = false
             }
@@ -277,16 +279,6 @@ fun OrderScreen(showMessage: (String) -> Unit) {
             if (departure.isNotBlank() && !estimating) estimate()
         }
         Spacer(Modifier.height(8.dp))
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Text("Priorité:")
-            Spacer(Modifier.width(8.dp))
-            DropdownMenuBox(options = listOf("normale","urgente","express"), selected = priority) { priority = it; if (departure.isNotBlank() && destination.isNotBlank()) estimate() }
-            Spacer(Modifier.width(16.dp))
-            Text("Paiement:")
-            Spacer(Modifier.width(8.dp))
-            DropdownMenuBox(options = listOf("cash","orange_money","mtn_money","moov_money","card","wave"), selected = payment) { payment = it }
-        }
-        Spacer(Modifier.height(8.dp))
         OutlinedTextField(
             value = senderPhone,
             onValueChange = { senderPhone = it; senderPhoneError = null },
@@ -330,6 +322,25 @@ fun OrderScreen(showMessage: (String) -> Unit) {
                     scope.launch { bringIntoViewRequester.bringIntoView() }
                 } }
         )
+        
+        Spacer(Modifier.height(24.dp))
+        
+        // Priority selector
+        PrioritySelector(
+            selectedPriority = priority,
+            onPriorityChanged = { priority = it },
+            modifier = Modifier.fillMaxWidth()
+        )
+        
+        Spacer(Modifier.height(24.dp))
+        
+        // Payment method selector
+        PaymentMethodSelector(
+            selectedMethod = paymentMethod,
+            onMethodChanged = { paymentMethod = it },
+            modifier = Modifier.fillMaxWidth()
+        )
+        
         Spacer(Modifier.height(12.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Button(onClick = { estimate() }, enabled = !estimating) {
@@ -364,7 +375,7 @@ fun OrderScreen(showMessage: (String) -> Unit) {
                             receiverPhone = receiverPhone,
                             packageDescription = description.ifBlank { null },
                             priority = priority,
-                            paymentMethod = payment,
+                            paymentMethod = paymentMethod,
                             price = (totalPrice ?: 0).toDouble(),
                             distance = distanceTxt,
                             duration = durationTxt
@@ -784,3 +795,211 @@ private fun AutocompleteTextField(
         }
     }
 }
+
+// ======================== PRIORITY SELECTION ========================
+@Composable
+private fun PrioritySelector(
+    selectedPriority: String,
+    onPriorityChanged: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val priorities = listOf(
+        PriorityOption("normale", "🚶", "Normal", "1-2h", Color(0xFF10B981)),
+        PriorityOption("urgente", "⚡", "Urgent", "30min", Color(0xFFF59E0B)),
+        PriorityOption("express", "🚀", "Express", "15min", Color(0xFFEF4444))
+    )
+    
+    Column(modifier = modifier) {
+        Text(
+            text = "Priorité de livraison",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+        Spacer(Modifier.height(12.dp))
+        
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            priorities.forEach { priority ->
+                PriorityCard(
+                    priority = priority,
+                    isSelected = selectedPriority == priority.value,
+                    onClick = { onPriorityChanged(priority.value) },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun PriorityCard(
+    priority: PriorityOption,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        onClick = onClick,
+        modifier = modifier,
+        colors = CardDefaults.cardColors(
+            containerColor = if (isSelected) 
+                priority.color.copy(alpha = 0.15f) 
+            else 
+                MaterialTheme.colorScheme.surface
+        ),
+        border = androidx.compose.foundation.BorderStroke(
+            width = if (isSelected) 2.dp else 1.dp,
+            color = if (isSelected) priority.color else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+        ),
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = priority.emoji,
+                style = MaterialTheme.typography.headlineMedium
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = priority.label,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = if (isSelected) androidx.compose.ui.text.font.FontWeight.Bold else androidx.compose.ui.text.font.FontWeight.Normal,
+                color = if (isSelected) priority.color else MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                text = priority.time,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+            )
+        }
+    }
+}
+
+private data class PriorityOption(
+    val value: String,
+    val emoji: String,
+    val label: String,
+    val time: String,
+    val color: Color
+)
+
+// ======================== PAYMENT METHOD SELECTION ========================
+@Composable
+private fun PaymentMethodSelector(
+    selectedMethod: String,
+    onMethodChanged: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val paymentMethods = listOf(
+        PaymentMethodOption("cash", "💵", "Espèces", "À la livraison • Sans frais", Color(0xFF10B981)),
+        PaymentMethodOption("orange_money", "🟠", "Orange Money", "Instantané • Sans frais", Color(0xFFF97316)),
+        PaymentMethodOption("mtn_money", "🟡", "MTN Money", "Instantané • Sans frais", Color(0xFFFBBF24)),
+        PaymentMethodOption("moov_money", "🔵", "Moov Money", "Instantané • Sans frais", Color(0xFF3B82F6)),
+        PaymentMethodOption("wave", "💙", "Wave", "Instantané • Sans frais", Color(0xFF06B6D4)),
+        PaymentMethodOption("card", "💳", "Carte bancaire", "1-3 min • Frais 2.5%", Color(0xFF8B5CF6))
+    )
+    
+    Column(modifier = modifier) {
+        Text(
+            text = "💳 Mode de paiement",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+        Spacer(Modifier.height(12.dp))
+        
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            paymentMethods.forEach { method ->
+                PaymentMethodCard(
+                    method = method,
+                    isSelected = selectedMethod == method.value,
+                    onClick = { onMethodChanged(method.value) }
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun PaymentMethodCard(
+    method: PaymentMethodOption,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isSelected) 
+                method.color.copy(alpha = 0.12f) 
+            else 
+                MaterialTheme.colorScheme.surface
+        ),
+        border = androidx.compose.foundation.BorderStroke(
+            width = if (isSelected) 2.dp else 1.dp,
+            color = if (isSelected) method.color else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+        ),
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Emoji icon
+            Text(
+                text = method.emoji,
+                style = MaterialTheme.typography.headlineMedium
+            )
+            
+            // Method details
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = method.label,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = if (isSelected) androidx.compose.ui.text.font.FontWeight.Bold else androidx.compose.ui.text.font.FontWeight.SemiBold,
+                    color = if (isSelected) method.color else MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = method.info,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                )
+            }
+            
+            // Selection indicator
+            if (isSelected) {
+                androidx.compose.material.icons.Icons.Filled.CheckCircle.let { icon ->
+                    androidx.compose.material3.Icon(
+                        imageVector = icon,
+                        contentDescription = "Sélectionné",
+                        tint = method.color,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+private data class PaymentMethodOption(
+    val value: String,
+    val emoji: String,
+    val label: String,
+    val info: String,
+    val color: Color
+)

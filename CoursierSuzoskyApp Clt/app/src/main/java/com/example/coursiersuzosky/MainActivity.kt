@@ -5,30 +5,27 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import com.example.coursiersuzosky.ui.LoginScreen
-import com.example.coursiersuzosky.ui.OrderScreen
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import com.example.coursiersuzosky.ui.*
 import com.example.coursiersuzosky.ui.theme.CoursierSuzoskyTheme
+import com.example.coursiersuzosky.ui.theme.Dark
+import com.example.coursiersuzosky.ui.theme.Gold
 import com.example.coursiersuzosky.net.SessionManager
 import com.example.coursiersuzosky.net.ApiClient
 import kotlinx.coroutines.launch
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.ExperimentalMaterial3Api
 import android.content.Context
 import com.google.android.libraries.places.api.Places
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
-import androidx.compose.material.icons.filled.BugReport
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
 import android.content.pm.PackageManager
@@ -36,6 +33,20 @@ import android.os.Build
 import java.security.MessageDigest
 import java.util.Locale
 import androidx.core.content.edit
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.currentBackStackEntryAsState
+
+// Routes de navigation (simplified - 3 screens)
+sealed class Screen(val route: String, val title: String, val icon: androidx.compose.ui.graphics.vector.ImageVector) {
+    object Home : Screen("home", "Accueil", Icons.Filled.Home)
+    object Orders : Screen("orders", "Commandes", Icons.Filled.Receipt)
+    object Profile : Screen("profile", "Profil", Icons.Filled.Person)
+    
+    // Order screen accessible via navigation action
+    object Order : Screen("order", "Commander", Icons.Filled.ShoppingCart)
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
@@ -71,49 +82,29 @@ class MainActivity : ComponentActivity() {
         } catch (e: Exception) {
             Log.e("MainActivity", "Erreur initialisation Places", e)
         }
+        
         setContent {
             CoursierSuzoskyTheme {
                 val snackbarHostState = remember { SnackbarHostState() }
                 val session = remember { SessionManager(this) }
                 var isLoggedIn by remember { mutableStateOf(false) }
+                
                 LaunchedEffect(Unit) {
                     session.isLoggedIn.collect { isLoggedIn = it }
                 }
 
                 val scope = rememberCoroutineScope()
-                val showMessage: (String) -> Unit = { msg -> scope.launch { snackbarHostState.showSnackbar(msg) } }
-                var showDiagnostics by remember { mutableStateOf(false) }
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    snackbarHost = { SnackbarHost(snackbarHostState) },
-                    topBar = {
-                        if (isLoggedIn) {
-                            TopAppBar(title = { Text("") }, actions = {
-                                // Debug-only diagnostics entry point
-                                if (BuildConfig.DEBUG) {
-                                    IconButton(onClick = { showDiagnostics = true }) {
-                                        Icon(Icons.Filled.BugReport, contentDescription = "Diagnostics")
-                                    }
-                                }
-                                IconButton(onClick = {
-                                    scope.launch {
-                                        session.setLoggedIn(false)
-                                        // Clear cookies via KTX edit extension
-                                        applicationContext.getSharedPreferences("cookies", Context.MODE_PRIVATE).edit {
-                                            clear()
-                                        }
-                                        showMessage("Déconnecté")
-                                    }
-                                }) { Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = "Se déconnecter") }
-                            })
-                        }
-                    }
-                ) { innerPadding ->
-                    Box(Modifier
-                        .padding(innerPadding)
-                        .consumeWindowInsets(innerPadding)
-                    ) {
-                        if (!isLoggedIn) {
+                val showMessage: (String) -> Unit = { msg -> 
+                    scope.launch { snackbarHostState.showSnackbar(msg) } 
+                }
+                
+                if (!isLoggedIn) {
+                    // Écran de connexion
+                    Scaffold(
+                        modifier = Modifier.fillMaxSize(),
+                        snackbarHost = { SnackbarHost(snackbarHostState) }
+                    ) { innerPadding ->
+                        Box(Modifier.padding(innerPadding)) {
                             LoginScreen(
                                 onLoggedIn = {
                                     scope.launch { session.setLoggedIn(true) }
@@ -121,16 +112,164 @@ class MainActivity : ComponentActivity() {
                                 },
                                 showMessage = showMessage
                             )
-                        } else {
-                            OrderScreen(showMessage = showMessage)
-                        }
-                        if (showDiagnostics) {
-                            DiagnosticsDialog(
-                                onDismiss = { showDiagnostics = false }
-                            )
                         }
                     }
+                } else {
+                    // Navigation principale après connexion
+                    MainNavigation(
+                        snackbarHostState = snackbarHostState,
+                        onLogout = {
+                            scope.launch {
+                                session.setLoggedIn(false)
+                                applicationContext.getSharedPreferences("cookies", Context.MODE_PRIVATE).edit {
+                                    clear()
+                                }
+                                showMessage("Déconnexion réussie")
+                            }
+                        },
+                        showMessage = showMessage
+                    )
                 }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MainNavigation(
+    snackbarHostState: SnackbarHostState,
+    onLogout: () -> Unit,
+    showMessage: (String) -> Unit
+) {
+    val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+    var showDiagnostics by remember { mutableStateOf(false) }
+    
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        topBar = {
+            // Hide top bar for Home screen for immersive experience
+            if (currentRoute != Screen.Home.route) {
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = when (currentRoute) {
+                                Screen.Orders.route -> "Mes Commandes"
+                                Screen.Order.route -> "Nouvelle Commande"
+                                Screen.Profile.route -> "Mon Profil"
+                                else -> "SUZOSKY"
+                            },
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Dark.copy(alpha = 0.95f),
+                        titleContentColor = Gold
+                    ),
+                    navigationIcon = {
+                        if (currentRoute == Screen.Order.route) {
+                            IconButton(onClick = { navController.popBackStack() }) {
+                                Icon(
+                                    imageVector = Icons.Filled.ArrowBack,
+                                    contentDescription = "Retour",
+                                    tint = Gold
+                                )
+                            }
+                        }
+                    },
+                    actions = {
+                        if (BuildConfig.DEBUG) {
+                            IconButton(onClick = { showDiagnostics = true }) {
+                                Icon(
+                                    imageVector = Icons.Filled.BugReport,
+                                    contentDescription = "Diagnostics",
+                                    tint = Color.White
+                                )
+                            }
+                        }
+                    }
+                )
+            }
+        },
+        bottomBar = {
+            NavigationBar(
+                containerColor = Dark,
+                contentColor = Gold
+            ) {
+                listOf(
+                    Screen.Home,
+                    Screen.Orders,
+                    Screen.Profile
+                ).forEach { screen ->
+                    NavigationBarItem(
+                        icon = {
+                            Icon(
+                                imageVector = screen.icon,
+                                contentDescription = screen.title
+                            )
+                        },
+                        label = { Text(screen.title) },
+                        selected = currentRoute == screen.route,
+                        onClick = {
+                            if (currentRoute != screen.route) {
+                                navController.navigate(screen.route) {
+                                    popUpTo(Screen.Home.route) { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
+                        },
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = Gold,
+                            selectedTextColor = Gold,
+                            unselectedIconColor = Color.White.copy(alpha = 0.6f),
+                            unselectedTextColor = Color.White.copy(alpha = 0.6f),
+                            indicatorColor = Gold.copy(alpha = 0.2f)
+                        )
+                    )
+                }
+            }
+        }
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            NavHost(
+                navController = navController,
+                startDestination = Screen.Home.route
+            ) {
+                composable(Screen.Home.route) {
+                    HomeScreen(
+                        onNavigateToOrder = { navController.navigate(Screen.Order.route) }
+                    )
+                }
+                
+                composable(Screen.Orders.route) {
+                    OrdersScreen()
+                }
+                
+                composable(Screen.Order.route) {
+                    OrderScreen(showMessage = showMessage)
+                }
+                
+                composable(Screen.Profile.route) {
+                    ProfileScreen(
+                        onLogout = onLogout
+                    )
+                }
+            }
+            
+            if (showDiagnostics) {
+                DiagnosticsDialog(
+                    onDismiss = { showDiagnostics = false }
+                )
             }
         }
     }

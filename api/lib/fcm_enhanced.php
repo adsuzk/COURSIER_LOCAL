@@ -12,6 +12,23 @@
  * assurez-vous simplement qu'il est à la racine du projet. Le script l'utilisera automatiquement.
  */
 
+// Bootstrap minimal: si la variable d'environnement FCM_SERVER_KEY est absente,
+// tenter de la charger depuis data/secret_fcm_key.txt (clé legacy au besoin).
+// Cela n'est utilisé qu'en mode fallback (API Legacy) quand aucun compte de service n'est disponible.
+if (!getenv('FCM_SERVER_KEY')) {
+    try {
+        $secretPath = __DIR__ . '/../../data/secret_fcm_key.txt';
+        if (is_file($secretPath)) {
+            $key = trim(@file_get_contents($secretPath));
+            if ($key !== '' && str_starts_with($key, 'AAAA')) {
+                putenv('FCM_SERVER_KEY=' . $key);
+            }
+        }
+    } catch (Throwable $e) {
+        // non bloquant
+    }
+}
+
 // Envoi FCM avec journalisation. Utilise HTTP v1 si un compte de service Firebase est disponible,
 // sinon bascule sur l'API Legacy via FCM_SERVER_KEY.
 function fcm_send_with_log($tokens, $title, $body, $data = [], $coursier_id = null, $commande_id = null) {

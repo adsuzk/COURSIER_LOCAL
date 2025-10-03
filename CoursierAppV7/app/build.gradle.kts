@@ -1,4 +1,10 @@
 import java.util.Properties
+import org.gradle.api.DefaultTask
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
+import org.gradle.api.tasks.TaskAction
 
 plugins {
     id("com.android.application")
@@ -178,4 +184,38 @@ dependencies {
     androidTestImplementation(libs.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+}
+
+// Configuration-cache-safe verification task for google-services.json (release)
+abstract class VerifyGoogleServicesTask : DefaultTask() {
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.NONE)
+    abstract val googleServicesFile: RegularFileProperty
+
+    @TaskAction
+    fun verify() {
+        val f = googleServicesFile.asFile.get()
+        if (!f.exists()) return
+        val text = f.readText()
+        val hasReleasePkg = text.contains("\"package_name\": \"com.suzosky.coursier\"")
+        val hasPlaceholder = text.contains("\"mobilesdk_app_id\": \"1:55677959036:android:aaaaaaaa")
+        if (hasReleasePkg && hasPlaceholder) {
+            throw GradleException(
+                "google-services.json: release mobilesdk_app_id is a placeholder. " +
+                "Please add the release SHA-1/SHA-256 in Firebase, download the updated file containing a real app id, and replace app/google-services.json."
+            )
+        }
+    }
+}
+
+val verifyGoogleServicesRelease = tasks.register<VerifyGoogleServicesTask>("verifyGoogleServicesRelease") {
+    group = "verification"
+    description = "Verifies that google-services.json has a valid mobilesdk_app_id for release (no placeholder)."
+    // google-services.json lives at the module root
+    googleServicesFile.set(layout.projectDirectory.file("google-services.json"))
+}
+
+// Ensure release builds validate Firebase config automatically (works even if task is registered later)
+tasks.matching { it.name == "assembleRelease" }.configureEach {
+    dependsOn(verifyGoogleServicesRelease)
 }
