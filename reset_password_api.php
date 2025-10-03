@@ -128,7 +128,9 @@ if ($action === 'reset_password_request') {
         
     } catch (Exception $e) {
         // Log erreur technique détaillée
-        file_put_contents(__DIR__ . '/EMAIL_SYSTEM/logs/critical_errors.log', 
+        $logDir = __DIR__ . '/EMAIL_SYSTEM/logs';
+        if (!is_dir($logDir)) { @mkdir($logDir, 0755, true); }
+        file_put_contents($logDir . '/critical_errors.log', 
             date('Y-m-d H:i:s') . " - ERREUR CRITIQUE: " . $e->getMessage() . " | " . $e->getTraceAsString() . "\n", 
             FILE_APPEND | LOCK_EX);
         
