@@ -1,8 +1,8 @@
-package com.example.coursiersuzosky.net
+package com.suzosky.coursierclient.net
 
 object ApiConfig {
     // Base URL injectée par BuildConfig selon le type de build
-    val BASE_URL: String = com.example.coursiersuzosky.BuildConfig.BASE_URL
+    val BASE_URL: String = com.suzosky.coursierclient.BuildConfig.BASE_URL
     const val AUTH = "auth.php"
     const val AGENT_AUTH = "agent_auth.php"
     const val SUBMIT_ORDER = "submit_order.php"
