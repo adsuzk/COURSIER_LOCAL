@@ -1,6 +1,6 @@
 @file:Suppress("DEPRECATION")
 @file:OptIn(com.google.maps.android.compose.MapsComposeExperimentalApi::class)
-package com.example.coursiersuzosky.ui
+package com.suzosky.coursierclient.ui
 
 import androidx.core.net.toUri
 import androidx.browser.customtabs.CustomTabsIntent
@@ -25,7 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.example.coursiersuzosky.net.*
+import com.suzosky.coursierclient.net.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

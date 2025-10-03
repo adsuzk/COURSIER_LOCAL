@@ -1,4 +1,4 @@
-package com.example.coursiersuzosky.ui
+package com.suzosky.coursierclient.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -22,7 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Phone
 import com.example.coursiersuzosky.net.ApiConfig
-import com.example.coursiersuzosky.BuildConfig
+import com.suzosky.coursierclient.BuildConfig
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
