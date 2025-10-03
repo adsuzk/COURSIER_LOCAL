@@ -167,6 +167,19 @@ fun UnifiedCoursesScreen(
         DeliveryStep.PICKED_UP, DeliveryStep.EN_ROUTE_DELIVERY, DeliveryStep.DELIVERY_ARRIVED -> deliveryLatLng
         else -> null
     }
+
+    // Point d'origine pour l'affichage de l'itinéraire et le recadrage caméra
+    // Si la localisation temps réel n'est pas encore disponible, on tombe en repli sur le point de pickup
+    val originForNavigation = remember(courierLocation, pickupLatLng, deliveryLatLng, deliveryStep) {
+        // Après récupération, on préfère la position réelle si dispo sinon le point de pickup
+        when (deliveryStep) {
+            DeliveryStep.PICKED_UP, DeliveryStep.EN_ROUTE_DELIVERY, DeliveryStep.DELIVERY_ARRIVED ->
+                courierLocation ?: pickupLatLng
+            DeliveryStep.ACCEPTED, DeliveryStep.EN_ROUTE_PICKUP, DeliveryStep.PICKUP_ARRIVED ->
+                courierLocation
+            else -> courierLocation
+        }
+    }
     
     android.util.Log.d("UnifiedCoursesScreen", "🧭 Current destination: $currentDestination")
     
@@ -175,23 +188,40 @@ fun UnifiedCoursesScreen(
         calculateDistanceAndETA(courierLocation, currentDestination)
     }
     
-    // Centrer caméra
-    LaunchedEffect(courierLocation, currentDestination, deliveryStep) {
-        if (deliveryStep != DeliveryStep.PENDING && courierLocation != null && currentDestination != null) {
-            val boundsBuilder = LatLngBounds.builder()
-            boundsBuilder.include(courierLocation)
-            boundsBuilder.include(currentDestination)
-            
-            try {
-                val bounds = boundsBuilder.build()
-                cameraPositionState.animate(
-                    CameraUpdateFactory.newLatLngBounds(bounds, 200)
-                )
-            } catch (e: Exception) {
+    // Centrer caméra (avec repli si la localisation n'est pas encore disponible)
+    LaunchedEffect(originForNavigation, currentDestination, deliveryStep) {
+        if (deliveryStep != DeliveryStep.PENDING && currentDestination != null) {
+            val origin = originForNavigation
+            if (origin != null) {
+                val boundsBuilder = LatLngBounds.builder()
+                boundsBuilder.include(origin)
+                boundsBuilder.include(currentDestination)
+                try {
+                    val bounds = boundsBuilder.build()
+                    cameraPositionState.animate(
+                        CameraUpdateFactory.newLatLngBounds(bounds, 200)
+                    )
+                } catch (e: Exception) {
+                    cameraPositionState.animate(
+                        CameraUpdateFactory.newLatLngZoom(currentDestination, 14f)
+                    )
+                }
+            } else {
+                // Pas d'origine (GPS indisponible et pas de fallback pertinent) → centrer sur la destination
                 cameraPositionState.animate(
                     CameraUpdateFactory.newLatLngZoom(currentDestination, 14f)
                 )
             }
+        }
+    }
+
+    // Annonce vocale immédiate après récupération du colis (une fois)
+    LaunchedEffect(deliveryStep) {
+        if (deliveryStep == DeliveryStep.PICKED_UP || deliveryStep == DeliveryStep.EN_ROUTE_DELIVERY) {
+            val destSpeech = currentOrder?.adresseLivraison?.takeIf { it.isNotBlank() }
+                ?: "la destination"
+            // Annonce one-shot même si le guidage continu n'est pas activé
+            tts?.speak("Colis récupéré. Direction $destSpeech", TextToSpeech.QUEUE_FLUSH, null, "tts_pickup_announce")
         }
     }
     
@@ -244,10 +274,11 @@ fun UnifiedCoursesScreen(
                     )
                 }
                 
-                // Ligne vers destination
-                if (courierLocation != null && currentDestination != null) {
+                // Ligne vers destination (avec repli sur le point de pickup si la position GPS n'est pas encore dispo)
+                val polyOrigin = originForNavigation
+                if (polyOrigin != null && currentDestination != null) {
                     Polyline(
-                        points = listOf(courierLocation, currentDestination),
+                        points = listOf(polyOrigin, currentDestination),
                         color = PrimaryGold,
                         width = 8f,
                         pattern = listOf(Dot(), Gap(10f))
