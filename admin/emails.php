@@ -240,5 +240,6 @@ try {
 }
 
 // JavaScript et CSS supplémentaires pour l'intégration
+echo '<link rel="stylesheet" href="../EMAIL_SYSTEM/admin_styles.css">';
 echo '<script src="../EMAIL_SYSTEM/admin_script.js"></script>';
 ?>
