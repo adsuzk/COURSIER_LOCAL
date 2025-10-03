@@ -33,6 +33,9 @@ import com.suzosky.coursier.viewmodel.MapViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.maps.model.LatLng
 import java.util.*
+import com.suzosky.coursier.data.models.SystemHealth
+import com.suzosky.coursier.data.models.HealthStatus
+import com.suzosky.coursier.ui.components.WaitingForOrdersScreen
 
 /**
  * Écran principal du coursier redesigné avec navigation en bas
@@ -60,10 +63,11 @@ fun CoursierScreenNew(
     onNavigateToHistorique: () -> Unit = {},
     onNavigateToGains: () -> Unit = {},
     onLogout: () -> Unit = {},
-    onRecharge: (Int) -> Unit = {}
+    onRecharge: (Int) -> Unit = {},
+    systemHealth: SystemHealth? = null
 ) {
     val context = LocalContext.current
-    var currentTab by remember { mutableStateOf(NavigationTab.COURSES) }
+    var currentTab by remember { mutableStateOf(if (commandes.isEmpty()) NavigationTab.SYST else NavigationTab.COURSES) }
     // Utiliser les vraies données au lieu des valeurs mockées
     var realBalance by remember { mutableStateOf(balance) }
     
@@ -315,6 +319,21 @@ fun CoursierScreenNew(
                 .padding(paddingValues)
         ) {
             when (currentTab) {
+                NavigationTab.SYST -> {
+                    val health = systemHealth ?: SystemHealth(
+                        status = HealthStatus.WARNING,
+                        databaseConnected = false,
+                        fcmTokenActive = false,
+                        syncWorking = false,
+                        lastSyncTimestamp = System.currentTimeMillis(),
+                        message = "Calcul de l'état système indisponible"
+                    )
+                    WaitingForOrdersScreen(
+                        systemHealth = health,
+                        nbCommandesEnAttente = pendingOrdersCount,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
                 NavigationTab.COURSES -> {
                     UnifiedCoursesScreen(
                         currentOrder = currentOrder,
