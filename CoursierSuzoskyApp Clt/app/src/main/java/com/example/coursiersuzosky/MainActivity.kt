@@ -1,4 +1,4 @@
-package com.example.coursiersuzosky
+package com.suzosky.coursierclient
 
 import android.os.Bundle
 import android.util.Log
@@ -11,12 +11,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import com.example.coursiersuzosky.ui.*
-import com.example.coursiersuzosky.ui.theme.CoursierSuzoskyTheme
-import com.example.coursiersuzosky.ui.theme.Dark
-import com.example.coursiersuzosky.ui.theme.Gold
-import com.example.coursiersuzosky.net.SessionManager
-import com.example.coursiersuzosky.net.ApiClient
+import com.suzosky.coursierclient.ui.*
+import com.suzosky.coursierclient.ui.theme.CoursierSuzoskyTheme
+import com.suzosky.coursierclient.ui.theme.Dark
+import com.suzosky.coursierclient.ui.theme.Gold
+import com.suzosky.coursierclient.net.SessionManager
+import com.suzosky.coursierclient.net.ApiClient
 import kotlinx.coroutines.launch
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout

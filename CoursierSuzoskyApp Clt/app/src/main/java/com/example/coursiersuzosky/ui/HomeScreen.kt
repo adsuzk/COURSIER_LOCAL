@@ -1,4 +1,4 @@
-package com.example.coursiersuzosky.ui
+package com.suzosky.coursierclient.ui
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
@@ -23,7 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.coursiersuzosky.ui.theme.*
+import com.suzosky.coursierclient.ui.theme.*
 import kotlinx.coroutines.delay
 
 @Composable
