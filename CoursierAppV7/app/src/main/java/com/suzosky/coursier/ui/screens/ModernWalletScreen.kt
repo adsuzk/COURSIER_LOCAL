@@ -115,18 +115,37 @@ fun ModernWalletScreen(
                         if (error != null) {
                             android.util.Log.e("ModernWalletScreen", "❌ Erreur chargement historique: $error")
                         } else if (data != null) {
-                            val orders = data["orders"] as? List<Map<String, Any>> ?: emptyList()
-                            android.util.Log.d("ModernWalletScreen", "✅ ${orders.size} commandes chargées")
-                            allCommandes = orders.map { order ->
+                            val commandes = data["commandes"] as? List<Map<String, Any>> ?: emptyList()
+                            android.util.Log.d("ModernWalletScreen", "✅ ${commandes.size} commandes chargées")
+                            allCommandes = commandes.map { cmd ->
+                                val id = (cmd["id"] as? String)?.toIntOrNull() ?: (cmd["id"] as? Number)?.toInt() ?: 0
+                                val clientNom = cmd["clientNom"] as? String ?: cmd["client_nom"] as? String ?: ""
+                                val prix = (cmd["prix"] as? Number)?.toDouble()
+                                    ?: (cmd["prix_livraison"] as? Number)?.toDouble() ?: 0.0
+                                val datePart = cmd["dateCommande"] as? String ?: cmd["date_creation"] as? String ?: ""
+                                val timePart = cmd["heureCommande"] as? String ?: ""
+                                val date = if (datePart.isNotEmpty() && timePart.isNotEmpty()) "$datePart $timePart" else datePart.ifEmpty { timePart }
+                                val statut = cmd["statut"] as? String ?: ""
+                                val adrDep = cmd["adresseEnlevement"] as? String
+                                    ?: cmd["adresse_enlevement"] as? String
+                                    ?: cmd["adresse_depart"] as? String
+                                    ?: ""
+                                val adrArr = cmd["adresseLivraison"] as? String
+                                    ?: cmd["adresse_livraison"] as? String
+                                    ?: cmd["adresse_arrivee"] as? String
+                                    ?: ""
+                                val distance = (cmd["distanceKm"] as? Number)?.toDouble()
+                                    ?: (cmd["distance"] as? Number)?.toDouble() ?: 0.0
+
                                 WalletHistoryItem(
-                                    id = (order["id"] as? Number)?.toInt() ?: 0,
-                                    clientNom = order["client_nom"] as? String ?: "",
-                                    montant = (order["prix_livraison"] as? Number)?.toDouble() ?: 0.0,
-                                    date = order["date_creation"] as? String ?: "",
-                                    statut = order["statut"] as? String ?: "",
-                                    adresseDepart = order["adresse_enlevement"] as? String ?: "",
-                                    adresseArrivee = order["adresse_livraison"] as? String ?: "",
-                                    distance = (order["distance"] as? Number)?.toDouble() ?: 0.0
+                                    id = id,
+                                    clientNom = clientNom,
+                                    montant = prix,
+                                    date = date,
+                                    statut = statut,
+                                    adresseDepart = adrDep,
+                                    adresseArrivee = adrArr,
+                                    distance = distance
                                 )
                             }
                         }
