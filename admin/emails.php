@@ -10,8 +10,8 @@ if (!function_exists('getPDO')) {
 }
 
 // Inclure les classes email
-require_once __DIR__ . '/../email_system/EmailManager.php';
-require_once __DIR__ . '/../email_system/admin_panel.php';
+require_once __DIR__ . '/../EMAIL_SYSTEM/EmailManager.php';
+require_once __DIR__ . '/../EMAIL_SYSTEM/admin_panel.php';
 
 // Configuration email (à adapter selon votre config)
 $emailConfig = [
