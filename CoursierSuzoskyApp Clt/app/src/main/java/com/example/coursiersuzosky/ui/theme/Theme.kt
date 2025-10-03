@@ -1,4 +1,4 @@
-package com.example.coursiersuzosky.ui.theme
+package com.suzosky.coursierclient.ui.theme
 
 import android.app.Activity
 import android.os.Build
