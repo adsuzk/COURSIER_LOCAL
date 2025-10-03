@@ -103,8 +103,8 @@ class TelemetrySDK private constructor(
                 put("device_model", Build.MODEL)
                 put("device_brand", Build.BRAND)
                 put("android_version", Build.VERSION.RELEASE)
-                put("app_version_code", BuildConfig.VERSION_CODE)
-                put("app_version_name", BuildConfig.VERSION_NAME)
+                put("app_version_code", com.suzosky.coursier.BuildConfig.VERSION_CODE)
+                put("app_version_name", com.suzosky.coursier.BuildConfig.VERSION_NAME)
             }
             
             makeApiCall("register_device", deviceInfo)
@@ -149,7 +149,7 @@ class TelemetrySDK private constructor(
             try {
                 val crashInfo = JSONObject().apply {
                     put("device_id", deviceId)
-                    put("app_version_code", BuildConfig.VERSION_CODE)
+                    put("app_version_code", com.suzosky.coursier.BuildConfig.VERSION_CODE)
                     put("android_version", Build.VERSION.RELEASE)
                     put("device_model", Build.MODEL)
                     put("crash_type", "EXCEPTION")
@@ -304,8 +304,8 @@ class TelemetrySDK private constructor(
                 .post(requestBody)
                 .addHeader("X-API-Key", apiKey)
                 .addHeader("X-Device-ID", deviceId)
-                .addHeader("X-App-Version", BuildConfig.VERSION_NAME)
-                .addHeader("User-Agent", "SuzoskyCourierApp/${BuildConfig.VERSION_NAME}")
+                .addHeader("X-App-Version", com.suzosky.coursier.BuildConfig.VERSION_NAME)
+                .addHeader("User-Agent", "SuzoskyCourierApp/${com.suzosky.coursier.BuildConfig.VERSION_NAME}")
                 .build()
             
             httpClient.newCall(request).enqueue(object : Callback {
