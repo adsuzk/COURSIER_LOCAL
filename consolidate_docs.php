@@ -45,6 +45,12 @@ function scan_md_files($directory, $exclude_dirs = []) {
         '/(^|\\|\/)BACKUP/i',
         '/(^|\\|\/)OLD/i'
     ];
+    // Fichiers spécifiques à exclure pour éviter l'auto-inclusion et les boucles
+    $explicit_excludes = [
+        str_replace(ROOT_DIR . DIRECTORY_SEPARATOR, '', FINAL_DOC),
+        'DOCUMENTATION_FINALE/CONSOLIDATED_DOCS_LATEST.md',
+        'DOCUMENTATION_FINALE/consolidation.log'
+    ];
     
     $iterator = new RecursiveIteratorIterator(
         new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS),
@@ -62,6 +68,10 @@ function scan_md_files($directory, $exclude_dirs = []) {
                     $skip = true;
                     break;
                 }
+            }
+            // Exclure explicitement certains fichiers
+            if (!$skip && in_array($relative_path, $explicit_excludes, true)) {
+                $skip = true;
             }
             // Exclure par motif de nom (obsolète)
             if (!$skip) {
@@ -186,9 +196,8 @@ function consolidate_documentation() {
     
     $consolidated_content .= "*Cette documentation est générée automatiquement. Pour des modifications, éditez les fichiers sources individuels.*\n";
     
-    // Écrire le fichier consolidé unique et une archive horodatée
+    // Écrire le fichier consolidé unique
     $okFinal = file_put_contents(FINAL_DOC, $consolidated_content) !== false;
-    $okArchive = file_put_contents(CONSOLIDATED_DOC, $consolidated_content) !== false;
     if ($okFinal) {
         log_message("✅ Documentation complète écrite: " . basename(FINAL_DOC));
         log_message("📏 Taille: " . number_format(strlen($consolidated_content) / 1024, 2) . " KB");
