@@ -7,9 +7,16 @@ $uploadDirs = [
     'admin/uploads/',
     'admin/uploads/coursier/',
     'admin/uploads/client/',
+    // Anciens chemins historisés
     'Applications APK/Coursiers APK/release/',
     'Applications/Appli Coursiers/release/',
-    'Applications/Appli Clients/release/'
+    'Applications/Appli Clients/release/',
+    // Nouveaux chemins normalisés
+    'applications/coursier/release/',
+    'applications/clients/release/',
+    // Support d'un dépôt sans sous-dossier release
+    'applications/coursier/',
+    'applications/clients/'
 ];
 
 // Supporter latest=1 (utiliser le pointeur latest_apk.json)
