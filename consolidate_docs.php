@@ -46,8 +46,9 @@ function scan_md_files($directory, $exclude_dirs = []) {
         '/(^|\\|\/)OLD/i'
     ];
     // Fichiers spécifiques à exclure pour éviter l'auto-inclusion et les boucles
+    // Always compare with normalized forward slashes for reliability across OS
     $explicit_excludes = [
-        str_replace(ROOT_DIR . DIRECTORY_SEPARATOR, '', FINAL_DOC),
+        str_replace('\\', '/', str_replace(ROOT_DIR . DIRECTORY_SEPARATOR, '', FINAL_DOC)),
         'DOCUMENTATION_FINALE/CONSOLIDATED_DOCS_LATEST.md',
         'DOCUMENTATION_FINALE/consolidation.log'
     ];
@@ -69,9 +70,20 @@ function scan_md_files($directory, $exclude_dirs = []) {
                     break;
                 }
             }
-            // Exclure explicitement certains fichiers
-            if (!$skip && in_array($relative_path, $explicit_excludes, true)) {
+            // Normalize path for explicit exclusion checks
+            $relative_normalized = str_replace('\\', '/', $relative_path);
+            // Exclure explicitement certains fichiers (FINAL_DOC, alias, logs)
+            if (!$skip && in_array($relative_normalized, $explicit_excludes, true)) {
                 $skip = true;
+            }
+            // Exclusion robuste via realpath si possible
+            if (!$skip) {
+                $fileReal = @realpath($file->getPathname());
+                $finalReal = @realpath(FINAL_DOC);
+                $latestReal = @realpath(DOCS_DIR . '/CONSOLIDATED_DOCS_LATEST.md');
+                if (($finalReal && $fileReal === $finalReal) || ($latestReal && $fileReal === $latestReal)) {
+                    $skip = true;
+                }
             }
             // Exclure par motif de nom (obsolète)
             if (!$skip) {
