@@ -1109,20 +1109,24 @@ object ApiService {
             },
             onResponseMain = { response ->
                 val bodyStr = response.body?.string()
-                android.util.Log.d("ApiService", "respondToOrder response: $bodyStr")
-                
-                if (!response.isSuccessful || bodyStr == null) {
-                    callback(false, "Erreur serveur HTTP ${response.code}")
-                } else {
-                    try {
-                        val json = JSONObject(bodyStr)
+                android.util.Log.d("ApiService", "respondToOrder response: $bodyStr (code=${response.code})")
+
+                fun extractMessage(jsonText: String?): Pair<Boolean, String?> {
+                    if (jsonText == null) return Pair(false, null)
+                    return try {
+                        val json = JSONObject(jsonText)
                         val success = json.optBoolean("success", false)
-                        val message = json.optString("message", "")
-                        callback(success, message)
-                    } catch (e: Exception) {
-                        android.util.Log.e("ApiService", "Erreur parsing JSON: ${e.message}")
-                        callback(false, "Réponse invalide: $bodyStr")
-                    }
+                        val message = json.optString("message", json.optString("error", ""))
+                        Pair(success, message.takeIf { it.isNotBlank() })
+                    } catch (_: Exception) { Pair(false, null) }
+                }
+
+                if (!response.isSuccessful) {
+                    val (_, parsedMsg) = extractMessage(bodyStr)
+                    callback(false, parsedMsg ?: "Erreur serveur HTTP ${response.code}")
+                } else {
+                    val (success, parsedMsg) = extractMessage(bodyStr)
+                    callback(success, parsedMsg)
                 }
             },
             onFailureMain = { error ->
