@@ -14,6 +14,19 @@ $Root = 'C:\xampp\htdocs\COURSIER_LOCAL'
 $Dest = Join-Path $Root 'DOCUMENTATION_FINALE'
 $Log  = Join-Path $Dest 'sync_docs.log'
 
+# Verrou mono-instance pour éviter les doublons (si déjà lancé)
+$mutex = $null
+try {
+    $createdNew = $false
+    $mutex = New-Object System.Threading.Mutex($true, 'SuzoskySyncMdDocumentationFinale', [ref]$createdNew)
+    if (-not $createdNew) {
+        Write-Host 'Synchronisation déjà en cours, arrêt.' -ForegroundColor Yellow
+        exit 0
+    }
+} catch {
+    # Si mutex indisponible, on continue quand même mais c'est rare
+}
+
 function Write-Log {
     param([string]$msg)
     $ts = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss')
@@ -116,4 +129,8 @@ try {
     if ($renamed) { Unregister-Event -SourceIdentifier $renamed.Name -ErrorAction SilentlyContinue }
     $fsw.EnableRaisingEvents = $false
     $fsw.Dispose()
+    if ($mutex) {
+        try { $mutex.ReleaseMutex() } catch {}
+        $mutex.Dispose()
+    }
 }
