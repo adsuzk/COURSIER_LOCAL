@@ -1,4 +1,4 @@
-package com.example.coursiersuzosky.ui.theme
+package com.suzosky.coursierclient.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

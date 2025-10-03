@@ -1,4 +1,4 @@
-package com.example.coursiersuzosky.net
+package com.suzosky.coursierclient.net
 
 import android.content.Context
 import okhttp3.HttpUrl
