@@ -340,22 +340,26 @@ try {
 
                     if ($amountBase > 0 && $orderNumber) {
                         // Récupérer taux dynamiques
-                        $commissionRate = 15.0;
-                        $feeRate = 5.0;
+                        $commissionRate = 15.0; // Commission Suzosky
+                        $feeRate = 5.0;        // Frais plateforme
+                        $adsRate = 0.0;        // Frais publicitaires
                         try {
                             $stpar = $pdo->query("SELECT parametre, valeur FROM parametres_tarification");
                             foreach ($stpar->fetchAll(PDO::FETCH_ASSOC) as $pr) {
                                 if ($pr['parametre'] === 'commission_suzosky') { $commissionRate = max(0.0, min(50.0, (float)$pr['valeur'])); }
                                 if ($pr['parametre'] === 'frais_plateforme') { $feeRate = max(0.0, min(50.0, (float)$pr['valeur'])); }
+                                if ($pr['parametre'] === 'frais_publicitaires') { $adsRate = max(0.0, min(50.0, (float)$pr['valeur'])); }
                             }
                         } catch (Throwable $e) { /* défauts */ }
                         // Calculs dynamiques
                         $commission = round($amountBase * ($commissionRate/100.0), 2);
                         $platformFee = round($amountBase * ($feeRate/100.0), 2);
+                        $adsFee = round($amountBase * ($adsRate/100.0), 2);
 
                         // Références stables pour idempotence
                         $refCommission = 'DELIV_' . $orderNumber;
                         $refFee = 'DELIV_' . $orderNumber . '_FEE';
+                        $refAds = 'DELIV_' . $orderNumber . '_ADS';
 
                         // Enregistrer un snapshot des paramètres actifs (première fois seulement)
                         try {
@@ -364,6 +368,7 @@ try {
                                 order_number VARCHAR(100) NOT NULL UNIQUE,
                                 commission_rate DECIMAL(5,2) NULL,
                                 fee_rate DECIMAL(5,2) NULL,
+                                ads_rate DECIMAL(5,2) NULL,
                                 prix_kilometre DECIMAL(10,2) NULL,
                                 frais_base DECIMAL(10,2) NULL,
                                 supp_km_rate DECIMAL(10,2) NULL,
@@ -387,8 +392,8 @@ try {
                             $checkSnap = $pdo->prepare("SELECT COUNT(*) FROM financial_context_by_order WHERE order_number = ?");
                             $checkSnap->execute([$orderNumber]);
                             if ((int)$checkSnap->fetchColumn() === 0) {
-                                $insSnap = $pdo->prepare("INSERT INTO financial_context_by_order (order_number, commission_rate, fee_rate, prix_kilometre, frais_base, supp_km_rate, supp_km_free_allowance) VALUES (?,?,?,?,?,?,?)");
-                                $insSnap->execute([$orderNumber, $commissionRate, $feeRate, $prixKm, $fraisBase, $suppRate, $suppFree]);
+                                $insSnap = $pdo->prepare("INSERT INTO financial_context_by_order (order_number, commission_rate, fee_rate, ads_rate, prix_kilometre, frais_base, supp_km_rate, supp_km_free_allowance) VALUES (?,?,?,?,?,?,?,?)");
+                                $insSnap->execute([$orderNumber, $commissionRate, $feeRate, $adsRate, $prixKm, $fraisBase, $suppRate, $suppFree]);
                             }
                         } catch (Throwable $e) { /* snapshot best-effort */ }
 
@@ -417,6 +422,20 @@ try {
                                 // Transaction
                                 $pdo->prepare("INSERT INTO transactions_financieres (type, montant, compte_type, compte_id, reference, description, statut) VALUES ('debit', ?, 'coursier', ?, ?, ?, 'reussi')")
                                     ->execute([$platformFee, $coursierId, $refFee, 'Frais plateforme - Commande ' . $orderNumber]);
+                            }
+                        } catch (Throwable $e) {}
+
+                        // Frais publicitaires (debit) si référence inexistante
+                        try {
+                            $chk3 = $pdo->prepare("SELECT COUNT(*) FROM transactions_financieres WHERE reference = ?");
+                            $chk3->execute([$refAds]);
+                            if ((int)$chk3->fetchColumn() === 0 && $adsFee > 0) {
+                                // MAJ solde
+                                $pdo->prepare("UPDATE comptes_coursiers SET solde = solde - ? WHERE coursier_id = ?")
+                                    ->execute([$adsFee, $coursierId]);
+                                // Transaction
+                                $pdo->prepare("INSERT INTO transactions_financieres (type, montant, compte_type, compte_id, reference, description, statut) VALUES ('debit', ?, 'coursier', ?, ?, ?, 'reussi')")
+                                    ->execute([$adsFee, $coursierId, $refAds, 'Frais publicitaires - Commande ' . $orderNumber]);
                             }
                         } catch (Throwable $e) {}
                     }
