@@ -1495,9 +1495,9 @@ object ApiService {
                         val routes = directions?.optJSONArray("routes")
                         val route0 = routes?.optJSONObject(0)
                         val poly = route0?.optJSONObject("overview_polyline")
-                        val points = poly?.optString("points", null)
+                        val points = poly?.optString("points")
                         if (!points.isNullOrBlank()) {
-                            callback(decodePolyline(points), null)
+                            callback(decodePolyline(points!!), null)
                         } else {
                             callback(emptyList<LatLng>(), null)
                         }
