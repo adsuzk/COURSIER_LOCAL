@@ -209,6 +209,17 @@ if (Test-Path $configFile) {
     Write-Host "Configuration LWS appliquee dans config.php" -ForegroundColor Green
 }
 
+# Supprimer tout fichier d'override local qui pourrait forcer 127.0.0.1 en prod
+$envOverride = Join-Path $targetPath "env_override.php"
+if (Test-Path $envOverride) {
+    try {
+        Remove-Item -Path $envOverride -Force
+        Write-Host "env_override.php supprime pour eviter l'utilisation de la DB locale en production" -ForegroundColor Yellow
+    } catch {
+        Write-Host "ATTENTION: impossible de supprimer env_override.php : $($_.Exception.Message)" -ForegroundColor Red
+    }
+}
+
 # Suppression de la page LWS par défaut pour éviter l'écrasement de index.php
 $placeholderFile = Join-Path $targetPath "default_index.html"
 if (Test-Path $placeholderFile) {
