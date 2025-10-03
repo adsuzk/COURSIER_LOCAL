@@ -13,7 +13,7 @@ import android.os.Looper
 import android.provider.Settings
 import androidx.core.content.edit
 import com.google.android.gms.maps.model.LatLng
-import com.suzosky.coursier.BuildConfig
+// Note: Use fully qualified BuildConfig to avoid IDE false positives in VS Code
 import org.json.JSONArray
 import org.json.JSONObject
 import kotlinx.serialization.decodeFromString
@@ -33,13 +33,13 @@ object ApiService {
     private const val EMULATOR_LOCAL_BASE = "http://10.0.2.2$LOCAL_SEGMENT"
     private const val DEFAULT_PROD_BASE = "https://coursier.conciergerie-privee-suzosky.com$LOCAL_SEGMENT"
 
-    private fun isDebug(): Boolean = BuildConfig.DEBUG
-    private fun useProd(): Boolean = try { BuildConfig.USE_PROD_SERVER } catch (_: Throwable) { true }
-    private fun forceLocalOnly(): Boolean = try { BuildConfig.FORCE_LOCAL_ONLY } catch (_: Throwable) { false }
+    private fun isDebug(): Boolean = com.suzosky.coursier.BuildConfig.DEBUG
+    private fun useProd(): Boolean = try { com.suzosky.coursier.BuildConfig.USE_PROD_SERVER } catch (_: Throwable) { true }
+    private fun forceLocalOnly(): Boolean = try { com.suzosky.coursier.BuildConfig.FORCE_LOCAL_ONLY } catch (_: Throwable) { false }
 
     private fun deviceLocalBase(): String? {
         // Prefer developer-provided LAN IP (e.g., http://192.168.1.20/COURSIER_LOCAL) for physical devices
-        val host = try { BuildConfig.DEBUG_LOCAL_HOST } catch (_: Throwable) { "" }
+    val host = try { com.suzosky.coursier.BuildConfig.DEBUG_LOCAL_HOST } catch (_: Throwable) { "" }
         return host.takeIf { it.isNotBlank() }?.let { h ->
             val base = if (h.startsWith("http")) h else "http://$h"
             normalizeLocalBase(base)
@@ -64,7 +64,7 @@ object ApiService {
 
     // Resolve primary/secondary bases and execute with automatic fallback (local <-> prod)
     private fun prodBase(): String {
-        val configured = try { BuildConfig.PROD_BASE } catch (_: Throwable) { null }
+    val configured = try { com.suzosky.coursier.BuildConfig.PROD_BASE } catch (_: Throwable) { null }
         return (configured?.takeIf { it.isNotBlank() } ?: DEFAULT_PROD_BASE).trimEnd('/')
     }
 
@@ -137,7 +137,7 @@ object ApiService {
         val (primary, secondary) = basePair()
         try {
             android.util.Log.d("ApiService", "=== NETWORK DEBUG ===")
-            android.util.Log.d("ApiService", "DEBUG_LOCAL_HOST = '${BuildConfig.DEBUG_LOCAL_HOST}'")
+            android.util.Log.d("ApiService", "DEBUG_LOCAL_HOST = '${com.suzosky.coursier.BuildConfig.DEBUG_LOCAL_HOST}'")
             android.util.Log.d("ApiService", "isDebug() = ${isDebug()}")
             android.util.Log.d("ApiService", "useProd() = ${useProd()}")
             android.util.Log.d("ApiService", "isEmulator() = ${isEmulator()}")
