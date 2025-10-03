@@ -240,5 +240,5 @@ try {
 }
 
 // JavaScript et CSS supplémentaires pour l'intégration
-echo '<script src="../email_system/admin_script.js"></script>';
+echo '<script src="../EMAIL_SYSTEM/admin_script.js"></script>';
 ?>
