@@ -56,7 +56,7 @@ function Copy-WithRetry {
 }
 
 # Filtre: ignorer chemin destination et tout ce qui n'est pas .md
-function Should-Handle {
+function Test-ShouldHandle {
     param([string]$path)
     if (-not $path) { return $false }
     $lower = $path.ToLowerInvariant()
@@ -67,9 +67,9 @@ function Should-Handle {
 }
 
 # Traitement central
-function Handle-Path {
+function Invoke-HandlePath {
     param([string]$path,[string]$reason='event')
-    if (-not (Should-Handle $path)) { return }
+    if (-not (Test-ShouldHandle $path)) { return }
     $dst = Get-DestinationPath -sourcePath $path
     $ok = Copy-WithRetry -src $path -dst $dst
     if ($ok) { Write-Log "SYNC [$reason] $path -> $dst" } else { Write-Log "ERREUR COPY [$reason] $path" }
@@ -78,7 +78,7 @@ function Handle-Path {
 # Scan initial (sans oublier un seul)
 Write-Log 'Scan initial en cours...'
 Get-ChildItem -LiteralPath $Root -Recurse -File -Filter *.md | Where-Object { $_.FullName -notlike "$Dest*" } | ForEach-Object {
-    Handle-Path -path $_.FullName -reason 'initial'
+    Invoke-HandlePath -path $_.FullName -reason 'initial'
 }
 Write-Log 'Scan initial terminé.'
 
@@ -91,15 +91,15 @@ $fsw.NotifyFilter = [IO.NotifyFilters]'FileName, LastWrite, CreationTime'
 
 $created = Register-ObjectEvent -InputObject $fsw -EventName Created -Action {
     $p = $Event.SourceEventArgs.FullPath
-    Handle-Path -path $p -reason 'created'
+    Invoke-HandlePath -path $p -reason 'created'
 }
 $changed = Register-ObjectEvent -InputObject $fsw -EventName Changed -Action {
     $p = $Event.SourceEventArgs.FullPath
-    Handle-Path -path $p -reason 'changed'
+    Invoke-HandlePath -path $p -reason 'changed'
 }
 $renamed = Register-ObjectEvent -InputObject $fsw -EventName Renamed -Action {
     $p = $Event.SourceEventArgs.FullPath
-    Handle-Path -path $p -reason 'renamed'
+    Invoke-HandlePath -path $p -reason 'renamed'
 }
 $fsw.EnableRaisingEvents = $true
 
