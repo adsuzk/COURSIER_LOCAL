@@ -474,8 +474,9 @@ fun CoursierScreenNew(
                                 // Accepter la commande via API
                                 ApiService.respondToOrder(order.id, coursierId.toString(), "accept") { ok, message ->
                                     if (!ok) {
+                                        val msg = message ?: "Erreur lors de l'acceptation"
                                         timelineBanner = TimelineBanner(
-                                            message = message ?: "Erreur lors de l'acceptation",
+                                            message = msg,
                                             severity = BannerSeverity.ERROR,
                                             actionLabel = "Réessayer",
                                             onAction = {
@@ -483,7 +484,8 @@ fun CoursierScreenNew(
                                                 // Retry accept
                                                 ApiService.respondToOrder(order.id, coursierId.toString(), "accept") { ok2, message2 ->
                                                     if (!ok2) {
-                                                        timelineBanner = TimelineBanner(message2 ?: "Erreur d'acceptation", BannerSeverity.ERROR, "Réessayer") {
+                                                        val msg2 = message2 ?: "Erreur d'acceptation"
+                                                        timelineBanner = TimelineBanner(msg2, BannerSeverity.ERROR, if (msg2.contains("2 A00", ignoreCase = true) || msg2.contains("Solde", ignoreCase = true)) "Recharger" else "Réessayer") {
                                                             bannerVersion++; /* re-click */
                                                         }
                                                     } else {
@@ -496,7 +498,7 @@ fun CoursierScreenNew(
                                                 }
                                             }
                                         )
-                                        Toast.makeText(context, message ?: "Erreur d'acceptation", Toast.LENGTH_LONG).show()
+                                        Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
                                         return@respondToOrder
                                     }
                                     
