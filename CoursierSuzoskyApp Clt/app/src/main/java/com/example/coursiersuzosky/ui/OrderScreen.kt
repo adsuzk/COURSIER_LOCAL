@@ -40,11 +40,13 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.focus.FocusDirection
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -127,6 +129,50 @@ private fun formatCiPhoneDigits(digits: String, enforcePrefix: Boolean = true): 
 }
 
 private fun formatCiPhone(input: String, enforcePrefix: Boolean = true): String =
+            OutlinedTextField(
+                value = receiverField,
+                onValueChange = onReceiverFieldChange,
+                label = { Text("Téléphone destinataire") },
+                leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null, tint = Gold) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus(force = true)
+                        keyboard?.hide()
+                    }
+                ),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Gold,
+                    focusedLabelColor = Gold,
+                    focusedLeadingIconColor = Gold,
+                    focusedTextColor = Color.White,
+                    unfocusedBorderColor = Gold.copy(alpha = 0.5f),
+                    unfocusedLabelColor = Color.White.copy(alpha = 0.7f),
+                    unfocusedTextColor = Color.White,
+                    unfocusedLeadingIconColor = Gold.copy(alpha = 0.7f),
+                    cursorColor = Gold
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .bringIntoViewRequester(bringIntoViewRequester)
+                    .onFocusEvent {
+                        if (it.isFocused) {
+                            scope.launch { bringIntoViewRequester.bringIntoView() }
+                        }
+                        if (!it.hasFocus) {
+                            keyboard?.hide()
+                        }
+                    },
+                isError = receiverPhoneError != null,
+                supportingText = {
+                    if (receiverPhoneError != null) {
+                        Text(receiverPhoneError, color = MaterialTheme.colorScheme.error)
+                    }
+                }
+            )
+
+            Spacer(Modifier.height(16.dp))
+
     formatCiPhoneDigits(extractCiPhoneDigits(input), enforcePrefix)
 
 
@@ -145,8 +191,13 @@ fun OrderScreen(showMessage: (String) -> Unit) {
     }
     var departureLatLng by rememberSaveable(stateSaver = latLngSaver) { mutableStateOf<LatLng?>(null) }
     var destinationLatLng by rememberSaveable(stateSaver = latLngSaver) { mutableStateOf<LatLng?>(null) }
-    // Sender phone is locked to account; managed via ClientStore observer below
-    var senderPhone by rememberSaveable { mutableStateOf("") }
+    // Sender phone state (defaults to CI format)
+    var senderDigits by rememberSaveable { mutableStateOf("") }
+    var senderPhone by rememberSaveable { mutableStateOf(CI_PHONE_PREFIX) }
+    var senderTf by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue(CI_PHONE_PREFIX, selection = TextRange(CI_PHONE_PREFIX.length)))
+    }
+    var senderEditing by remember { mutableStateOf(false) }
     var receiverDigits by rememberSaveable { mutableStateOf("") }
     var receiverPhone by rememberSaveable { mutableStateOf(CI_PHONE_PREFIX) }
     var receiverTf by rememberSaveable(stateSaver = TextFieldValue.Saver) {
@@ -182,17 +233,27 @@ fun OrderScreen(showMessage: (String) -> Unit) {
     }
 
     val context = LocalContext.current
+    fun updateSenderFromStore(raw: String) {
+        val digits = extractCiPhoneDigits(raw)
+        val display = formatCiPhoneDigits(digits)
+        senderPhone = display
+        if (!senderEditing) {
+            senderDigits = digits
+            senderTf = TextFieldValue(display, selection = TextRange(display.length))
+        }
+    }
+
     // Lock sender phone to account phone and keep it synced with any profile change
     LaunchedEffect(Unit) {
         try {
             // Initial read
             com.suzosky.coursierclient.net.ClientStore.getClientPhone(context)?.let { p ->
-                senderPhone = formatCiPhone(p, enforcePrefix = true)
+                updateSenderFromStore(p)
             }
             // Observe future updates
             com.suzosky.coursierclient.net.ClientStore.observeClientPhone(context).collect { newPhone ->
                 if (!newPhone.isNullOrBlank()) {
-                    senderPhone = formatCiPhone(newPhone, enforcePrefix = true)
+                    updateSenderFromStore(newPhone)
                 }
             }
         } catch (_: Exception) { }
@@ -373,6 +434,24 @@ fun OrderScreen(showMessage: (String) -> Unit) {
         if (departure.isNotBlank() && !estimating) estimate()
     }
 
+    val handleSenderPhoneTfChange: (TextFieldValue) -> Unit = { tf ->
+        val digits = extractCiPhoneDigits(tf.text)
+        senderDigits = digits
+        val display = formatCiPhoneDigits(digits)
+        senderPhone = display
+        senderTf = TextFieldValue(display, selection = TextRange(display.length))
+        senderPhoneError = null
+    }
+
+    val handleSenderFocusChange: (Boolean) -> Unit = { focused ->
+        senderEditing = focused
+        if (!focused) {
+            val display = formatCiPhoneDigits(senderDigits)
+            senderPhone = display
+            senderTf = TextFieldValue(display, selection = TextRange(display.length))
+        }
+    }
+
     val handleReceiverPhoneChange: (String) -> Unit = { new ->
         val digits = extractCiPhoneDigits(new)
         receiverDigits = digits
@@ -419,7 +498,7 @@ fun OrderScreen(showMessage: (String) -> Unit) {
         receiverPhoneError == null &&
         departure.isNotBlank() &&
         destination.isNotBlank() &&
-        senderPhone.isNotBlank() &&
+        senderDigits.length == 10 &&
         receiverDigits.length == 10
 
     val onPaymentMethodChange: (String) -> Unit = { newMethod ->
@@ -568,12 +647,13 @@ fun OrderScreen(showMessage: (String) -> Unit) {
             Spacer(Modifier.height(16.dp))
 
             ContactsSection(
-                senderPhone = senderPhone,
+                senderField = senderTf,
                 senderPhoneError = senderPhoneError,
                 receiverField = receiverTf,
                 receiverPhoneError = receiverPhoneError,
                 description = description,
-                onReceiverPhoneChange = handleReceiverPhoneChange,
+                onSenderFieldChange = handleSenderPhoneTfChange,
+                onSenderFocusChange = handleSenderFocusChange,
                 onReceiverFieldChange = handleReceiverPhoneTfChange,
                 onDescriptionChange = handleDescriptionChange,
                 bringIntoViewRequester = bringIntoViewRequester,
@@ -898,12 +978,13 @@ private fun ItinerarySection(
 
 @Composable
 private fun ContactsSection(
-    senderPhone: String,
+    senderField: TextFieldValue,
     senderPhoneError: String?,
     receiverField: TextFieldValue,
     receiverPhoneError: String?,
     description: String,
-    onReceiverPhoneChange: (String) -> Unit,
+    onSenderFieldChange: (TextFieldValue) -> Unit,
+    onSenderFocusChange: (Boolean) -> Unit,
     onReceiverFieldChange: (TextFieldValue) -> Unit,
     onDescriptionChange: (String) -> Unit,
     bringIntoViewRequester: BringIntoViewRequester,
@@ -938,79 +1019,51 @@ private fun ContactsSection(
             }
 
             OutlinedTextField(
-                value = senderPhone,
-                onValueChange = { },
-                label = { Text("Téléphone expéditeur (compte)") },
+                value = senderField,
+                onValueChange = onSenderFieldChange,
+                label = { Text("Téléphone expéditeur") },
                 leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null, tint = Gold) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
-                readOnly = true,
-                enabled = false,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
+                keyboardActions = KeyboardActions(
+                    onNext = {
+                        focusManager.moveFocus(FocusDirection.Down)
+                    }
+                ),
                 colors = OutlinedTextFieldDefaults.colors(
-                    disabledBorderColor = Gold.copy(alpha = 0.3f),
-                    disabledLabelColor = Gold.copy(alpha = 0.6f),
-                    disabledTextColor = Color.White,
-                    disabledLeadingIconColor = Gold.copy(alpha = 0.6f)
+                    focusedBorderColor = Gold,
+                    focusedLabelColor = Gold,
+                    focusedTextColor = Color.White,
+                    unfocusedBorderColor = Gold.copy(alpha = 0.5f),
+                    unfocusedLabelColor = Color.White.copy(alpha = 0.7f),
+                    unfocusedTextColor = Color.White,
+                    focusedLeadingIconColor = Gold,
+                    unfocusedLeadingIconColor = Gold.copy(alpha = 0.7f),
+                    cursorColor = Gold,
+                    errorBorderColor = MaterialTheme.colorScheme.error,
+                    errorLeadingIconColor = MaterialTheme.colorScheme.error,
+                    errorLabelColor = MaterialTheme.colorScheme.error
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .bringIntoViewRequester(bringIntoViewRequester)
                     .onFocusEvent {
                         if (it.isFocused) {
+                            onSenderFocusChange(true)
                             scope.launch { bringIntoViewRequester.bringIntoView() }
+                        }
+                        if (!it.hasFocus) {
+                            onSenderFocusChange(false)
+                            keyboard?.hide()
                         }
                     },
                 isError = senderPhoneError != null,
                 supportingText = {
                     when {
                         senderPhoneError != null -> Text(senderPhoneError, color = MaterialTheme.colorScheme.error)
-                        else -> Text("Modifiez votre numéro depuis Mon Profil pour le synchroniser", color = Color.White.copy(alpha = 0.6f))
+                        else -> Text("Numéro de votre compte. Ajustez-le au besoin avant d'enregistrer.", color = Color.White.copy(alpha = 0.6f))
                     }
                 }
             )
-
-            Spacer(Modifier.height(16.dp))
-
-            OutlinedTextField(
-                value = receiverField,
-                onValueChange = {
-                    onReceiverFieldChange(it)
-                },
-                label = { Text("Téléphone destinataire") },
-                leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null, tint = Gold) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
-                keyboardActions = androidx.compose.foundation.text.KeyboardActions(
-                    onDone = {
-                        focusManager.clearFocus(force = true)
-                        keyboard?.hide()
-                    }
-                ),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Gold,
-                    focusedLabelColor = Gold,
-                    focusedLeadingIconColor = Gold,
-                    focusedTextColor = Color.White,
-                    unfocusedBorderColor = Gold.copy(alpha = 0.5f),
-                    unfocusedLabelColor = Color.White.copy(alpha = 0.7f),
-                    unfocusedTextColor = Color.White,
-                    unfocusedLeadingIconColor = Gold.copy(alpha = 0.7f),
-                    cursorColor = Gold
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .bringIntoViewRequester(bringIntoViewRequester)
-                    .onFocusEvent {
-                        if (it.isFocused) {
-                            scope.launch { bringIntoViewRequester.bringIntoView() }
-                        }
-                    },
-                isError = receiverPhoneError != null,
-                supportingText = {
-                    if (receiverPhoneError != null) {
-                        Text(receiverPhoneError, color = MaterialTheme.colorScheme.error)
-                    }
-                }
-            )
-
             Spacer(Modifier.height(16.dp))
 
             OutlinedTextField(
