@@ -16,38 +16,48 @@ import kotlinx.coroutines.flow.callbackFlow
  *   orders/{orderId}/status      -> { state: String, courierId: String?, ts: Long }
  */
 object RealtimeManager {
-    private val db: FirebaseDatabase by lazy {
+    private fun dbOrNull(): FirebaseDatabase? = try {
         FirebaseDatabase.getInstance().apply {
-            setPersistenceEnabled(false)
+            try { setPersistenceEnabled(false) } catch (_: Exception) {}
         }
+    } catch (_: Exception) {
+        null
     }
 
-    private fun ref(path: String): DatabaseReference = db.getReference(path)
+    private fun ref(path: String): DatabaseReference = FirebaseDatabase.getInstance().getReference(path)
 
     data class LocationUpdate(val lat: Double, val lng: Double, val ts: Long)
     data class OrderStatus(val state: String, val courierId: String?, val ts: Long)
 
     // Write APIs
     fun updateCourierLocation(courierId: String, lat: Double, lng: Double, ts: Long = System.currentTimeMillis()) {
+        val db = dbOrNull() ?: return
         val data = mapOf(
             "lat" to lat,
             "lng" to lng,
             "ts" to ts
         )
-        ref("couriers/$courierId/location").setValue(data)
+        db.getReference("couriers/$courierId/location").setValue(data)
     }
 
     fun updateOrderStatus(orderId: String, state: String, courierId: String? = null, ts: Long = System.currentTimeMillis()) {
+        val db = dbOrNull() ?: return
         val data = mapOf(
             "state" to state,
             "courierId" to courierId,
             "ts" to ts
         )
-        ref("orders/$orderId/status").setValue(data)
+        db.getReference("orders/$orderId/status").setValue(data)
     }
 
     // Read/Subscribe APIs
     fun observeCourierLocation(courierId: String): Flow<LocationUpdate?> = callbackFlow {
+        val db = dbOrNull()
+        if (db == null) {
+            trySend(null)
+            awaitClose {}
+            return@callbackFlow
+        }
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val lat = snapshot.child("lat").getValue(Double::class.java)
@@ -65,12 +75,18 @@ object RealtimeManager {
                 trySend(null).isSuccess
             }
         }
-        val r = ref("couriers/$courierId/location")
+        val r = db.getReference("couriers/$courierId/location")
         r.addValueEventListener(listener)
         awaitClose { r.removeEventListener(listener) }
     }
 
     fun observeOrderStatus(orderId: String): Flow<OrderStatus?> = callbackFlow {
+        val db = dbOrNull()
+        if (db == null) {
+            trySend(null)
+            awaitClose {}
+            return@callbackFlow
+        }
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val state = snapshot.child("state").getValue(String::class.java)
@@ -87,7 +103,7 @@ object RealtimeManager {
                 trySend(null).isSuccess
             }
         }
-        val r = ref("orders/$orderId/status")
+        val r = db.getReference("orders/$orderId/status")
         r.addValueEventListener(listener)
         awaitClose { r.removeEventListener(listener) }
     }
