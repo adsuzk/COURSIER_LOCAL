@@ -503,18 +503,6 @@ fun OrderScreen(showMessage: (String) -> Unit) {
     val focusManager = LocalFocusManager.current
     val keyboard = LocalSoftwareKeyboardController.current
     val receiverFocusRequester = remember { FocusRequester() }
-    // Hide keyboard only on user drag scroll (not programmatic bringIntoView)
-    val hideOnUserScroll = remember {
-        object : NestedScrollConnection {
-            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                if (source == NestedScrollSource.Drag && available.y != 0f) {
-                    focusManager.clearFocus(force = true)
-                    keyboard?.hide()
-                }
-                return Offset.Zero
-            }
-        }
-    }
     
     // NOUVEAU DESIGN PREMIUM AVEC GRADIENT DARK/GOLD
     Box(
@@ -529,7 +517,6 @@ fun OrderScreen(showMessage: (String) -> Unit) {
         Column(
             Modifier
                 .fillMaxSize()
-                .nestedScroll(hideOnUserScroll)
                 .verticalScroll(scrollState)
                 .padding(24.dp)
                 .imePadding()
@@ -592,8 +579,7 @@ fun OrderScreen(showMessage: (String) -> Unit) {
                 onDescriptionChange = handleDescriptionChange,
                 bringIntoViewRequester = bringIntoViewRequester,
                 scope = scope,
-                receiverFocusRequester = receiverFocusRequester,
-                shouldAutoFocusReceiver = receiverDigits.isEmpty()
+                receiverFocusRequester = receiverFocusRequester
             )
 
             Spacer(Modifier.height(16.dp))
@@ -923,8 +909,7 @@ private fun ContactsSection(
     onDescriptionChange: (String) -> Unit,
     bringIntoViewRequester: BringIntoViewRequester,
     scope: CoroutineScope,
-    receiverFocusRequester: FocusRequester,
-    shouldAutoFocusReceiver: Boolean
+    receiverFocusRequester: FocusRequester
 ) {
     val focusManager = LocalFocusManager.current
     val keyboard = LocalSoftwareKeyboardController.current
@@ -1044,17 +1029,6 @@ private fun ContactsSection(
                     }
                 }
             )
-
-            // Autofocus du téléphone destinataire si vide (fiabilise l'ouverture IME sur certains OEM)
-            LaunchedEffect(shouldAutoFocusReceiver) {
-                if (shouldAutoFocusReceiver) {
-                    try {
-                        delay(150)
-                        receiverFocusRequester.requestFocus()
-                        keyboard?.show()
-                    } catch (_: Exception) { }
-                }
-            }
 
             Spacer(Modifier.height(16.dp))
 

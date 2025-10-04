@@ -1,12 +1,12 @@
 ﻿DERNIER BACKUP DE LA BASE DE DONNEES
 =====================================
-Date: 04/10/2025 10:27:56
+Date: 04/10/2025 10:40:15
 
 Fichiers crees:
-- Structure seule: schema_20251004_102208.sql
-- Backup complet: auto_backups/coursier_local_full_20251004_102208.sql
-- Liste tables: tables_list_20251004_102208.txt
-- Structure detaillee: structure_detaillee_20251004_102208.txt
+- Structure seule: schema_20251004_103428.sql
+- Backup complet: auto_backups/coursier_local_full_20251004_103428.sql
+- Liste tables: tables_list_20251004_103428.txt
+- Structure detaillee: structure_detaillee_20251004_103428.txt
 
 Pour restaurer:
-mysql -u root coursier_local < "_sql\auto_backups/coursier_local_full_20251004_102208.sql"
+mysql -u root coursier_local < "_sql\auto_backups/coursier_local_full_20251004_103428.sql"
