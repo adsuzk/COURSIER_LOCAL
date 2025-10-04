@@ -1011,12 +1011,10 @@ private fun ContactsSection(
                 modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(receiverFocusRequester)
-                    .bringIntoViewRequester(bringIntoViewRequester)
                     .onFocusEvent {
                         if (it.isFocused) {
                             android.util.Log.d("OrderScreen","receiver focus -> show keyboard")
                             keyboard?.show()
-                            scope.launch { bringIntoViewRequester.bringIntoView() }
                         } else {
                             android.util.Log.d("OrderScreen","receiver focus lost (no forced hide)")
                         }
