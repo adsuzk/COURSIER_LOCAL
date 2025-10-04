@@ -920,15 +920,7 @@ private fun ContactsSection(
 ) {
     val focusManager = LocalFocusManager.current
     val keyboard = LocalSoftwareKeyboardController.current
-    var shouldBringDescriptionIntoView by remember { mutableStateOf(false) }
-
-    LaunchedEffect(shouldBringDescriptionIntoView) {
-        if (shouldBringDescriptionIntoView) {
-            delay(120)
-            bringIntoViewRequester.bringIntoView()
-            shouldBringDescriptionIntoView = false
-        }
-    }
+    
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
@@ -1063,7 +1055,9 @@ private fun ContactsSection(
                     .fillMaxWidth()
                     .bringIntoViewRequester(bringIntoViewRequester)
                     .onFocusEvent {
-                        if (it.isFocused) shouldBringDescriptionIntoView = true
+                        if (it.isFocused) {
+                            scope.launch { bringIntoViewRequester.bringIntoView() }
+                        }
                     }
             )
         }
