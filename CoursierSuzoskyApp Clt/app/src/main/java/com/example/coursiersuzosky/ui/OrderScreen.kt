@@ -952,9 +952,10 @@ private fun ContactsSection(
                 onValueChange = {},
                 label = { Text("Téléphone expéditeur") },
                 leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null, tint = Gold) },
-                // Verrouillage complet: non modifiable et non focusable (désactivé mais stylé)
+                // Verrouillage complet sans désactiver le champ: focus possible, pas d'édition
+                // (permet la sélection/copie et évite la confusion côté IME)
                 readOnly = true,
-                enabled = false,
+                enabled = true,
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default,
                 colors = OutlinedTextFieldDefaults.colors(
@@ -967,19 +968,21 @@ private fun ContactsSection(
                     focusedLeadingIconColor = Gold,
                     unfocusedLeadingIconColor = Gold.copy(alpha = 0.7f),
                     cursorColor = Color.Transparent,
-                    // Disabled state styling so le champ reste lisible malgré le verrouillage
-                    disabledBorderColor = Gold.copy(alpha = 0.35f),
-                    disabledLabelColor = Color.White.copy(alpha = 0.7f),
-                    disabledTextColor = Color.White,
-                    disabledLeadingIconColor = Gold.copy(alpha = 0.6f),
                     errorBorderColor = MaterialTheme.colorScheme.error,
                     errorLeadingIconColor = MaterialTheme.colorScheme.error,
                     errorLabelColor = MaterialTheme.colorScheme.error,
                     errorSupportingTextColor = MaterialTheme.colorScheme.error
                 ),
+                trailingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = Gold) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .onFocusEvent { /* Désactivé: pas de focus */ },
+                    .onFocusEvent {
+                        if (it.isFocused) {
+                            // Assure qu'aucun clavier ne s'affiche malgré le focus (champ verrouillé)
+                            keyboard?.hide()
+                            // Ne pas déplacer automatiquement le focus, l'utilisateur peut copier le numéro
+                        }
+                    },
                 isError = senderPhoneError != null,
                 supportingText = {
                     when {
