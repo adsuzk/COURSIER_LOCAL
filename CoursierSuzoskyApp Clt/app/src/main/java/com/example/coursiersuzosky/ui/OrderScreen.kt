@@ -976,11 +976,13 @@ private fun ContactsSection(
                 trailingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = Gold) },
                 modifier = Modifier
                     .fillMaxWidth()
+                    // Ne prend pas le focus pour éviter toute interaction avec l'IME
                     .onFocusEvent {
+                        // Si un OEM donne malgré tout le focus, on le rend tout de suite
                         if (it.isFocused) {
-                            // Assure qu'aucun clavier ne s'affiche malgré le focus (champ verrouillé)
+                            android.util.Log.d("OrderScreen","senderPhone focus unexpectedly acquired -> clearing focus")
+                            focusManager.clearFocus(force = true)
                             keyboard?.hide()
-                            // Ne pas déplacer automatiquement le focus, l'utilisateur peut copier le numéro
                         }
                     },
                 isError = senderPhoneError != null,
@@ -1028,11 +1030,11 @@ private fun ContactsSection(
                     .bringIntoViewRequester(bringIntoViewRequester)
                     .onFocusEvent {
                         if (it.isFocused) {
-                            // Améliore les cas où le clavier virtuel ne s'affiche pas en debug ADB
+                            android.util.Log.d("OrderScreen","receiver focus -> show keyboard")
                             keyboard?.show()
                             scope.launch { bringIntoViewRequester.bringIntoView() }
-                        }
-                        if (!it.hasFocus) {
+                        } else {
+                            android.util.Log.d("OrderScreen","receiver focus lost -> hide keyboard")
                             keyboard?.hide()
                         }
                     },

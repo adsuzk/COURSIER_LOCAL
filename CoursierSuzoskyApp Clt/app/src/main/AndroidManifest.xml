@@ -28,7 +28,8 @@
         <activity
             android:name="com.suzosky.coursierclient.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.CoursierSuzosky">
+            android:theme="@style/Theme.CoursierSuzosky"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
