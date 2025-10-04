@@ -10,4 +10,5 @@ object ApiConfig {
     const val APP_UPDATES = "app_updates.php" // endpoint de vérification mise à jour
     const val INITIATE_PAYMENT_ONLY = "initiate_payment_only.php"
     const val CREATE_ORDER_AFTER_PAYMENT = "create_order_after_payment.php"
+    const val COURIER_AVAILABILITY = "api/get_coursier_availability.php"
 }

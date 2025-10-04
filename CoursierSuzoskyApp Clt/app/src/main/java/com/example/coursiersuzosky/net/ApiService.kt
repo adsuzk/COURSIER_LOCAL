@@ -22,6 +22,32 @@ object ApiService {
         return if (t.isNullOrEmpty() || t.equals("null", ignoreCase = true)) null else t
     }
 
+    data class CourierAvailability(
+        val success: Boolean,
+        val available: Boolean,
+        val message: String?,
+        val active_count: Int?,
+        val fresh_count: Int?,
+        val lock_delay_seconds: Int?
+    )
+
+    suspend fun getCourierAvailability(): CourierAvailability = withContext(Dispatchers.IO) {
+        val url = ApiClient.buildUrl(ApiConfig.COURIER_AVAILABILITY)
+        val req = ApiClient.requestBuilder(url).get().build()
+        ApiClient.http.newCall(req).execute().use { resp ->
+            val body = resp.body?.string().orEmpty()
+            val json = JSONObject(body)
+            CourierAvailability(
+                success = json.optBoolean("success", false),
+                available = json.optBoolean("available", false),
+                message = json.optString("message").takeIf { json.has("message") },
+                active_count = json.optInt("active_count").let { if (json.has("active_count")) it else null },
+                fresh_count = json.optInt("fresh_count").let { if (json.has("fresh_count")) it else null },
+                lock_delay_seconds = json.optInt("lock_delay_seconds").let { if (json.has("lock_delay_seconds")) it else null }
+            )
+        }
+    }
+
     data class AgentInfo(
         val id: Int,
         val matricule: String,

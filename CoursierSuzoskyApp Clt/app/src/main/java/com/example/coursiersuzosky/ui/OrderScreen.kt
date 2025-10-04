@@ -29,6 +29,7 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.material3.LinearProgressIndicator
 import com.suzosky.coursierclient.net.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Job
@@ -95,6 +96,22 @@ fun OrderScreen(showMessage: (String) -> Unit) {
     var showPaymentModal by remember { mutableStateOf(false) }
     var paymentUrl by remember { mutableStateOf<String?>(null) }
     var pendingOnlineOrder by remember { mutableStateOf(false) }
+    var couriersAvailable by remember { mutableStateOf(true) }
+    var availabilityMessage by remember { mutableStateOf<String?>(null) }
+
+    // Poll courier availability periodically (e.g., every 15s) and on screen start
+    LaunchedEffect(Unit) {
+        while (true) {
+            try {
+                val av = ApiService.getCourierAvailability()
+                couriersAvailable = av.available
+                availabilityMessage = av.message
+            } catch (_: Exception) {
+                // keep last known state
+            }
+            delay(15000)
+        }
+    }
 
     val context = LocalContext.current
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
@@ -194,7 +211,14 @@ fun OrderScreen(showMessage: (String) -> Unit) {
                     val ll = geocodeAddress(destination)
                     if (ll != null) destinationLatLng = ll
                 }
-                val r = ApiService.estimatePrice(departure, destination)
+                val r = ApiService.estimatePrice(
+                    departure = departure,
+                    destination = destination,
+                    depLat = departureLatLng?.latitude,
+                    depLng = departureLatLng?.longitude,
+                    dstLat = destinationLatLng?.latitude,
+                    dstLng = destinationLatLng?.longitude
+                )
                 if (r.success && r.calculations != null) {
                     val calc = r.calculations[priority] ?: r.calculations.values.first()
                     totalPrice = calc.totalPrice
@@ -336,7 +360,10 @@ fun OrderScreen(showMessage: (String) -> Unit) {
         // Priority selector
         PrioritySelector(
             selectedPriority = priority,
-            onPriorityChanged = { priority = it },
+            onPriorityChanged = {
+                priority = it
+                if (departure.isNotBlank() && destination.isNotBlank() && !estimating) estimate()
+            },
             modifier = Modifier.fillMaxWidth()
         )
         
@@ -421,7 +448,7 @@ fun OrderScreen(showMessage: (String) -> Unit) {
                 }
             },
             modifier = Modifier.fillMaxWidth(),
-            enabled = !estimating && !submitting && departureError == null && destinationError == null && senderPhoneError == null && receiverPhoneError == null &&
+        enabled = couriersAvailable && !estimating && !submitting && departureError == null && destinationError == null && senderPhoneError == null && receiverPhoneError == null &&
                     departure.isNotBlank() && destination.isNotBlank() && senderPhone.isNotBlank() && receiverPhone.isNotBlank()
         ) {
             if (submitting) {
@@ -432,6 +459,16 @@ fun OrderScreen(showMessage: (String) -> Unit) {
                 Text("Passer la commande")
             }
         }
+        if (!couriersAvailable) {
+            Spacer(Modifier.height(12.dp))
+            Surface(color = MaterialTheme.colorScheme.errorContainer, tonalElevation = 1.dp, shape = MaterialTheme.shapes.medium) {
+                Column(Modifier.fillMaxWidth().padding(12.dp)) {
+                    Text(availabilityMessage ?: "Aucun coursier actif pour le moment", color = MaterialTheme.colorScheme.onErrorContainer)
+                    Text("Le formulaire est temporairement désactivé", color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.8f), style = MaterialTheme.typography.bodySmall)
+                }
+            }
+        }
+
         Spacer(Modifier.height(24.dp))
 
         // Mini-carte pour visualiser les adresses
@@ -700,29 +737,38 @@ private fun PaymentWebViewModal(url: String, onClose: (Boolean) -> Unit) {
         confirmButton = {},
         title = { Text("Paiement sécurisé") },
         text = {
-            AndroidView(
-                modifier = Modifier.height(480.dp),
-                factory = { ctx ->
-                    WebView(ctx).apply {
-                        settings.javaScriptEnabled = true
-                        webViewClient = object : WebViewClient() {
-                            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-                                val u = request?.url?.toString().orEmpty()
-                                if (u.contains("cinetpay_callback.php") || u.contains("payment_success=1") || u.contains("status=success")) {
-                                    onClose(true)
-                                    return true
-                                }
-                                if (u.contains("payment_cancelled=1") || u.contains("status=failed") || u.contains("status=canceled")) {
-                                    onClose(false)
-                                    return true
-                                }
-                                return false
-                            }
-                        }
-                        loadUrl(url)
-                    }
+            Column(Modifier.fillMaxWidth()) {
+                var loading by remember { mutableStateOf(true) }
+                if (loading) {
+                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                 }
-            )
+                AndroidView(
+                    modifier = Modifier.height(480.dp),
+                    factory = { ctx ->
+                        WebView(ctx).apply {
+                            settings.javaScriptEnabled = true
+                            webViewClient = object : WebViewClient() {
+                                override fun onPageFinished(view: WebView?, url: String?) {
+                                    loading = false
+                                }
+                                override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                                    val u = request?.url?.toString().orEmpty()
+                                    if (u.contains("cinetpay_callback.php") || u.contains("payment_success=1") || u.contains("status=success")) {
+                                        onClose(true)
+                                        return true
+                                    }
+                                    if (u.contains("payment_cancelled=1") || u.contains("status=failed") || u.contains("status=canceled")) {
+                                        onClose(false)
+                                        return true
+                                    }
+                                    return false
+                                }
+                            }
+                            loadUrl(url)
+                        }
+                    }
+                )
+            }
         }
     )
 }
