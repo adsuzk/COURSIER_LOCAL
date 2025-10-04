@@ -221,14 +221,40 @@ if (Test-Path $envOverride) {
 }
 
 # Suppression de la page LWS par défaut pour éviter l'écrasement de index.php
-$placeholderFile = Join-Path $targetPath "default_index.html"
-if (Test-Path $placeholderFile) {
-    try {
-        Remove-Item -Path $placeholderFile -Force
-        Write-Host "Fichier placeholder default_index.html supprime (priorite a index.php)." -ForegroundColor Yellow
-    } catch {
-        Write-Host "Impossible de supprimer default_index.html : $($_.Exception.Message)" -ForegroundColor Red
+foreach ($fname in @("default_index.html","index.html","default.html","home.html","placeholder.html")) {
+    $placeholderFile = Join-Path $targetPath $fname
+    if (Test-Path $placeholderFile) {
+        try {
+            Remove-Item -Path $placeholderFile -Force
+            Write-Host "Fichier placeholder $fname supprime (priorite a index.php)." -ForegroundColor Yellow
+        } catch {
+            Write-Host "Impossible de supprimer $fname : $($_.Exception.Message)" -ForegroundColor Red
+        }
     }
+}
+
+# S'assurer que .htaccess cible force bien DirectoryIndex index.php
+$htaccessPath = Join-Path $targetPath ".htaccess"
+try {
+    if (Test-Path $htaccessPath) {
+        $ht = Get-Content -Path $htaccessPath -Raw
+        if ($ht -notmatch "(?im)^\s*DirectoryIndex\s+index\.php\b") {
+            Add-Content -Path $htaccessPath -Value "`r`n# Enforce index.php as default (ajoute par sync)\r\nDirectoryIndex index.php\r\n"
+            Write-Host ".htaccess mis a jour: DirectoryIndex index.php ajoute" -ForegroundColor Yellow
+        } else {
+            Write-Host ".htaccess deja OK (DirectoryIndex index.php present)" -ForegroundColor Green
+        }
+    } else {
+        $minimal = @(
+            "# .htaccess genere par sync pour prioriser index.php",
+            "DirectoryIndex index.php",
+            "RewriteEngine On"
+        ) -join "`r`n"
+        Set-Content -Path $htaccessPath -Value $minimal -Encoding UTF8
+        Write-Host ".htaccess minimal cree avec DirectoryIndex index.php" -ForegroundColor Yellow
+    }
+} catch {
+    Write-Host "ATTENTION: Impossible d'assurer DirectoryIndex dans .htaccess : $($_.Exception.Message)" -ForegroundColor Red
 }
 
 # Forcer l'environnement production pour l'execution CLI sur LWS
