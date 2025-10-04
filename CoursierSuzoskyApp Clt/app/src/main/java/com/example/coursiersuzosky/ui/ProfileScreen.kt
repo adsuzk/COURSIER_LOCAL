@@ -27,6 +27,7 @@ fun ProfileScreen(
     onOpenInfo: () -> Unit = {},
     onOpenSavedAddresses: () -> Unit = {},
     onOpenHistory: () -> Unit = {},
+    onOpenCgu: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var showLogoutDialog by remember { mutableStateOf(false) }
@@ -139,7 +140,7 @@ fun ProfileScreen(
                 icon = Icons.Filled.Description,
                 title = "Conditions d'utilisation",
                 subtitle = "CGU et politique de confidentialité",
-                onClick = { /* TODO */ }
+                onClick = onOpenCgu
             )
             
             ProfileMenuItem(

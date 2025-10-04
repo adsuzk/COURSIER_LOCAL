@@ -46,6 +46,7 @@ sealed class Screen(val route: String, val title: String, val icon: androidx.com
     object ProfileInfo : Screen("profile_info", "Informations personnelles", Icons.Filled.Person)
     object SavedAddresses : Screen("saved_addresses", "Adresses", Icons.Filled.LocationOn)
     object OrderHistory : Screen("order_history", "Historique", Icons.Filled.History)
+    object Cgu : Screen("cgu", "CGU", Icons.Filled.Gavel)
     
     // Order screen accessible via navigation action
     object Order : Screen("order", "Commander", Icons.Filled.ShoppingCart)
@@ -267,12 +268,14 @@ fun MainNavigation(
                         onLogout = onLogout,
                         onOpenInfo = { navController.navigate(Screen.ProfileInfo.route) },
                         onOpenSavedAddresses = { navController.navigate(Screen.SavedAddresses.route) },
-                        onOpenHistory = { navController.navigate(Screen.OrderHistory.route) }
+                        onOpenHistory = { navController.navigate(Screen.OrderHistory.route) },
+                        onOpenCgu = { navController.navigate(Screen.Cgu.route) }
                     )
                 }
                 composable(Screen.ProfileInfo.route) { ProfileInfoScreen() }
                 composable(Screen.SavedAddresses.route) { SavedAddressesScreen() }
                 composable(Screen.OrderHistory.route) { OrderHistoryScreen() }
+                composable(Screen.Cgu.route) { CguScreen() }
             }
             
             if (showDiagnostics) {
