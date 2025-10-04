@@ -27,7 +27,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.suzosky.coursierclient.ApiService
+import com.suzosky.coursierclient.net.ApiService
+import com.suzosky.coursierclient.net.ApiConfig
 import com.suzosky.coursierclient.BuildConfig
 import com.suzosky.coursierclient.ui.theme.*
 import kotlinx.coroutines.launch
@@ -410,7 +411,7 @@ fun LoginScreen(
                             }
                             Spacer(Modifier.height(8.dp))
                             Text(
-                                text = "Backend: ${ApiService.BASE_URL}",
+                                text = "Backend: " + ApiConfig.BASE_URL,
                                 fontSize = 11.sp,
                                 color = Color.White.copy(alpha = 0.5f),
                                 textAlign = TextAlign.Center,
