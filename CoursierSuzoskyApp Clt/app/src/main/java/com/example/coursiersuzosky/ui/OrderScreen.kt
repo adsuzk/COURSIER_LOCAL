@@ -502,6 +502,13 @@ fun OrderScreen(showMessage: (String) -> Unit) {
     val scrollState = rememberScrollState()
     val focusManager = LocalFocusManager.current
     val keyboard = LocalSoftwareKeyboardController.current
+
+    LaunchedEffect(scrollState.isScrollInProgress) {
+        if (scrollState.isScrollInProgress) {
+            keyboard?.hide()
+            focusManager.clearFocus(force = false)
+        }
+    }
     val receiverFocusRequester = remember { FocusRequester() }
     
     // NOUVEAU DESIGN PREMIUM AVEC GRADIENT DARK/GOLD
