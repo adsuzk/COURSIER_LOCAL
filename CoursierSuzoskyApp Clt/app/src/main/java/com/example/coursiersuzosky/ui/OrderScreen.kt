@@ -1398,17 +1398,20 @@ private fun MapSection(
                     LaunchedEffect(departureLatLng, destinationLatLng, mapLoaded) {
                         if (!mapLoaded) return@LaunchedEffect
                         try {
-                            when {
-                                departureLatLng != null && destinationLatLng != null -> {
-                                    val bounds = LatLngBounds.builder().include(departureLatLng).include(destinationLatLng).build()
-                                    cameraPositionState.animate(CameraUpdateFactory.newLatLngBounds(bounds, 100))
+                            // Ensure this runs on main
+                            withContext(Dispatchers.Main) {
+                                when {
+                                    departureLatLng != null && destinationLatLng != null -> {
+                                        val bounds = LatLngBounds.builder().include(departureLatLng).include(destinationLatLng).build()
+                                        cameraPositionState.animate(CameraUpdateFactory.newLatLngBounds(bounds, 100))
+                                    }
+                                    departureLatLng != null ->
+                                        cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(departureLatLng, 12f))
+                                    destinationLatLng != null ->
+                                        cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(destinationLatLng, 12f))
+                                    else ->
+                                        cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(abidjanCenter, 12f))
                                 }
-                                departureLatLng != null ->
-                                    cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(departureLatLng, 12f))
-                                destinationLatLng != null ->
-                                    cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(destinationLatLng, 12f))
-                                else ->
-                                    cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(abidjanCenter, 12f))
                             }
                         } catch (e: Exception) {
                             mapError = e.message ?: "Erreur de caméra"
@@ -1452,6 +1455,7 @@ private fun MapSection(
                     }
 
                     GoogleMap(
+                        modifier = Modifier.fillMaxSize(),
                         cameraPositionState = cameraPositionState,
                         onMapClick = { ll ->
                             pendingClick = ll
@@ -1549,6 +1553,22 @@ private fun MapSection(
                                 style = MaterialTheme.typography.labelSmall,
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                             )
+                        }
+                        if (mapError != null) {
+                            Surface(
+                                color = MaterialTheme.colorScheme.error.copy(alpha = 0.15f),
+                                shape = MaterialTheme.shapes.small,
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                                    .padding(6.dp)
+                            ) {
+                                Text(
+                                    text = mapError ?: "",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                )
+                            }
                         }
                     }
                 }
