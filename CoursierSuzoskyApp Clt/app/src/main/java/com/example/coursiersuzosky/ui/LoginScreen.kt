@@ -19,7 +19,6 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -28,8 +27,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import android.content.Intent
-import android.net.Uri
 import com.suzosky.coursierclient.net.ApiService
 import com.suzosky.coursierclient.net.ApiConfig
 import com.suzosky.coursierclient.BuildConfig
@@ -39,6 +36,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun LoginScreen(
     onLoggedIn: () -> Unit,
+    onNavigateToRegister: () -> Unit,
+    onNavigateToForgotPassword: () -> Unit,
     showMessage: (String) -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -320,21 +319,49 @@ fun LoginScreen(
             Spacer(Modifier.height(12.dp))
 
             // Lien Mot de passe oublié ?
-            val context = LocalContext.current
             AnimatedVisibility(
                 visible = visible,
                 enter = fadeIn(animationSpec = tween(900, delayMillis = 1100))
             ) {
-                TextButton(onClick = {
-                    val resetUrl = ApiConfig.BASE_URL.trimEnd('/') + "/sections_index/forgot_password.php"
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(resetUrl))
-                    context.startActivity(intent)
-                }) {
+                TextButton(onClick = onNavigateToForgotPassword) {
                     Text(
                         text = "Mot de passe oublié ?",
                         color = Gold,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(24.dp))
+            
+            // Bouton Créer un compte
+            AnimatedVisibility(
+                visible = visible,
+                enter = fadeIn(animationSpec = tween(900, delayMillis = 1200))
+            ) {
+                OutlinedButton(
+                    onClick = onNavigateToRegister,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    border = BorderStroke(2.dp, Gold),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = Gold
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.PersonAdd,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = "Créer un compte",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 0.5.sp
                     )
                 }
             }

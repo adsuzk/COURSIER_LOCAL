@@ -15,4 +15,6 @@ object ApiConfig {
     const val GET_CLIENT = "get_client.php"
     const val GET_CLIENT_ORDERS = "get_client_orders.php"
     const val SAVED_ADDRESSES = "saved_addresses.php"
+    const val REGISTER = "api/register.php"
+    const val FORGOT_PASSWORD = "api/forgot_password.php"
 }

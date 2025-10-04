@@ -211,6 +211,71 @@ object ApiService {
         else -> e.message?.takeIf { it.isNotBlank() } ?: "Erreur inconnue"
     }
 
+    suspend fun register(
+        nom: String,
+        prenoms: String,
+        telephone: String,
+        email: String,
+        password: String
+    ): LoginResponse = withContext(Dispatchers.IO) {
+        val url = ApiClient.buildUrl(ApiConfig.REGISTER)
+        val json = JSONObject().apply {
+            put("nom", nom)
+            put("prenoms", prenoms)
+            put("telephone", telephone)
+            put("email", email)
+            put("password", password)
+        }
+        val body = json.toString().toRequestBody(JSON)
+        val req = ApiClient.requestBuilder(url).post(body).build()
+        ApiClient.http.newCall(req).execute().use { resp ->
+            if (!resp.isSuccessful) throw IOException("HTTP ${resp.code} ${resp.message}")
+            val bodyStr = resp.body?.string().orEmpty()
+            val jsonResp = JSONObject(bodyStr)
+            val success = jsonResp.optBoolean("success")
+            val clientObj = jsonResp.optJSONObject("client")
+            val client = clientObj?.let { c ->
+                ClientInfo(
+                    id = c.optInt("id"),
+                    nom = c.optString("nom"),
+                    prenoms = c.optString("prenoms"),
+                    email = c.optString("email").takeIf { c.has("email") },
+                    telephone = c.optString("telephone").takeIf { c.has("telephone") }
+                )
+            }
+            LoginResponse(
+                success = success,
+                message = normalizeText(jsonResp.optString("message").takeIf { jsonResp.has("message") }),
+                error = normalizeText(jsonResp.optString("error").takeIf { jsonResp.has("error") }),
+                client = client
+            )
+        }
+    }
+
+    suspend fun forgotPassword(contact: String): LoginResponse = withContext(Dispatchers.IO) {
+        val url = ApiClient.buildUrl(ApiConfig.FORGOT_PASSWORD)
+        val json = JSONObject().apply {
+            if (contact.contains("@")) {
+                put("email", contact)
+            } else {
+                put("telephone", contact)
+            }
+        }
+        val body = json.toString().toRequestBody(JSON)
+        val req = ApiClient.requestBuilder(url).post(body).build()
+        ApiClient.http.newCall(req).execute().use { resp ->
+            if (!resp.isSuccessful) throw IOException("HTTP ${resp.code} ${resp.message}")
+            val bodyStr = resp.body?.string().orEmpty()
+            val jsonResp = JSONObject(bodyStr)
+            LoginResponse(
+                success = jsonResp.optBoolean("success"),
+                message = normalizeText(jsonResp.optString("message").takeIf { jsonResp.has("message") }),
+                error = normalizeText(jsonResp.optString("error").takeIf { jsonResp.has("error") }),
+                client = null
+            )
+        }
+    }
+
     suspend fun login(emailOrPhone: String, password: String): LoginResponse = withContext(Dispatchers.IO) {
         val url = ApiClient.buildUrl(ApiConfig.AUTH)
         val json = JSONObject().apply {

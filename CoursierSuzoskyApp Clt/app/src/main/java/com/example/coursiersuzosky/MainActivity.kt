@@ -103,19 +103,37 @@ class MainActivity : ComponentActivity() {
                 }
                 
                 if (!isLoggedIn) {
-                    // Écran de connexion
+                    // Écran de connexion avec navigation
+                    var authScreen by remember { mutableStateOf("login") }
+                    
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),
                         snackbarHost = { SnackbarHost(snackbarHostState) }
                     ) { innerPadding ->
                         Box(Modifier.padding(innerPadding)) {
-                            LoginScreen(
-                                onLoggedIn = {
-                                    scope.launch { session.setLoggedIn(true) }
-                                    isLoggedIn = true
-                                },
-                                showMessage = showMessage
-                            )
+                            when (authScreen) {
+                                "login" -> LoginScreen(
+                                    onLoggedIn = {
+                                        scope.launch { session.setLoggedIn(true) }
+                                        isLoggedIn = true
+                                    },
+                                    onNavigateToRegister = { authScreen = "register" },
+                                    onNavigateToForgotPassword = { authScreen = "forgot" },
+                                    showMessage = showMessage
+                                )
+                                "register" -> RegisterScreen(
+                                    onBackToLogin = { authScreen = "login" },
+                                    onRegistered = {
+                                        scope.launch { session.setLoggedIn(true) }
+                                        isLoggedIn = true
+                                    },
+                                    showMessage = showMessage
+                                )
+                                "forgot" -> ForgotPasswordScreen(
+                                    onBackToLogin = { authScreen = "login" },
+                                    showMessage = showMessage
+                                )
+                            }
                         }
                     }
                 } else {
