@@ -445,6 +445,13 @@ fun OrderScreen(showMessage: (String) -> Unit) {
                 } else {
                     // Google Maps
                         val cameraPositionState = rememberCameraPositionState()
+                        // Abidjan defaults and bounds
+                        val abidjanCenter = LatLng(5.3476, -4.0076)
+                        val abidjanBounds = LatLngBounds(
+                            LatLng(5.2, -4.2),   // Southwest
+                            LatLng(5.5, -3.8)    // Northeast
+                        )
+
                         LaunchedEffect(departureLatLng, destinationLatLng) {
                             val dep = departureLatLng
                             val dest = destinationLatLng
@@ -455,6 +462,9 @@ fun OrderScreen(showMessage: (String) -> Unit) {
                                 cameraPositionState.move(CameraUpdateFactory.newLatLngZoom(dep, 12f))
                             } else if (dest != null) {
                                 cameraPositionState.move(CameraUpdateFactory.newLatLngZoom(dest, 12f))
+                            } else {
+                                // Default view centered on Abidjan
+                                cameraPositionState.move(CameraUpdateFactory.newLatLngZoom(abidjanCenter, 12f))
                             }
                         }
                 
@@ -506,6 +516,14 @@ fun OrderScreen(showMessage: (String) -> Unit) {
                         } catch (_: Exception) {}
                     }
                 ) {
+                    // Restrict camera to Abidjan bounds and sensible zoom range
+                    MapEffect(Unit) { map ->
+                        try {
+                            map.setLatLngBoundsForCameraTarget(abidjanBounds)
+                            map.setMinZoomPreference(9.5f)
+                            map.setMaxZoomPreference(20f)
+                        } catch (_: Exception) {}
+                    }
                     // Attach a drag listener via MapEffect (maps-compose 4.4.1 n'a pas onDragEnd sur Marker)
                     MapEffect(key1 = departureLatLng, key2 = destinationLatLng) { map ->
                         map.setOnMarkerDragListener(object : GoogleMap.OnMarkerDragListener {

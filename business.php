@@ -17,8 +17,8 @@ header('X-Frame-Options: DENY');
 header('X-XSS-Protection: 1; mode=block');
 
 // Configuration Google Maps API
-define('GOOGLE_MAPS_API_KEY', 'AIzaSyBjUgj9KM0SNj847a_bIsf6chWp9L8Hr1A');
-define('GOOGLE_PLACES_API_KEY', 'AIzaSyAGKC21fGmY-k6i0dcY8MpBExa5IqqBXbE');
+define('GOOGLE_MAPS_API_KEY', 'AIzaSyChGsSDgCY9ELhBtMuEqDtAWsQYxUggMHs');
+define('GOOGLE_PLACES_API_KEY', 'AIzaSyChGsSDgCY9ELhBtMuEqDtAWsQYxUggMHs');
 
 // CONFIGURATION UNIFIÉE - SUPPRESSION DES DOUBLONS DB
 

@@ -367,5 +367,6 @@ function getCinetPayConfig(string $context = 'coursier'): array {
  * Utilise la clé "API COMPLETE ADDRESS GOOGLE" qui inclut Maps + Places + Geometry
  */
 if (!defined('GOOGLE_MAPS_API_KEY')) {
-    define('GOOGLE_MAPS_API_KEY', getenv('GOOGLE_MAPS_API_KEY') ?: 'AIzaSyBjUgj9KM0SNj847a_bIsf6chWp9L8Hr1A');
+    // Unified key for Maps + Places provided by user
+    define('GOOGLE_MAPS_API_KEY', getenv('GOOGLE_MAPS_API_KEY') ?: 'AIzaSyChGsSDgCY9ELhBtMuEqDtAWsQYxUggMHs');
 }
