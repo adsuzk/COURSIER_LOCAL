@@ -2,18 +2,6 @@
 @file:OptIn(com.google.maps.android.compose.MapsComposeExperimentalApi::class)
 package com.suzosky.coursierclient.ui
 
-// Phone helpers (top-level)
-private fun normalizeDigits(s: String): String = s.filter { it.isDigit() }
-private fun formatCiPhone(input: String, enforcePrefix: Boolean = true): String {
-    val digits = normalizeDigits(input)
-    val raw = if (digits.startsWith("225")) digits.drop(3) else digits
-    val trimmed = raw.take(10)
-    val pairs = trimmed.chunked(2)
-    val grouped = pairs.joinToString(" ") { it.padEnd(2, ' ') }.trim()
-    return if (enforcePrefix || digits.startsWith("225") || input.startsWith("+225")) "+225 " + grouped else grouped
-}
-
-
 import androidx.core.net.toUri
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.*
@@ -85,6 +73,17 @@ import android.graphics.RectF
 import android.graphics.Typeface
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
  
+// Phone helpers (top-level)
+private fun normalizeDigits(s: String): String = s.filter { it.isDigit() }
+private fun formatCiPhone(input: String, enforcePrefix: Boolean = true): String {
+    val digits = normalizeDigits(input)
+    val raw = if (digits.startsWith("225")) digits.drop(3) else digits
+    val trimmed = raw.take(10)
+    val pairs = trimmed.chunked(2)
+    val grouped = pairs.joinToString(" ") { it.padEnd(2, ' ') }.trim()
+    return if (enforcePrefix || digits.startsWith("225") || input.startsWith("+225")) "+225 " + grouped else grouped
+}
+
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -200,7 +199,6 @@ fun OrderScreen(showMessage: (String) -> Unit) {
 
     // CI format: +225 followed by exactly 10 digits (separators allowed)
     fun phoneValid(p: String): Boolean = p.matches(Regex("^\\+225( \\d{2}){5}$"))
-        fun phoneValid(p: String): Boolean = p.matches(Regex("^\\+225[\\s\\-()]*([0-9][\\s\\-()]*){10}$"))
 
     fun validateInputs(forSubmit: Boolean = false): Boolean {
         var ok = true
