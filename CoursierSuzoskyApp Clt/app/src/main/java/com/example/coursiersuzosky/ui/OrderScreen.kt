@@ -266,6 +266,18 @@ fun OrderScreen(showMessage: (String) -> Unit) {
         }
     }
 
+    // Auto-estimation: re-calc automatically when addresses or coordinates or priority change
+    LaunchedEffect(departure, destination, departureLatLng, destinationLatLng, priority) {
+        val d = departure.trim()
+        val a = destination.trim()
+        if (d.isNotEmpty() && a.isNotEmpty()) {
+            // Debounce to avoid spamming API while user types/selects
+            estimateJob?.cancel()
+            delay(350)
+            if (!estimating) estimate()
+        }
+    }
+
     val scrollState = rememberScrollState()
     Column(
         Modifier
@@ -303,7 +315,10 @@ fun OrderScreen(showMessage: (String) -> Unit) {
                 .fillMaxWidth()
                 .bringIntoViewRequester(bringIntoViewRequester)
             ,
-            onCoordinates = { ll -> departureLatLng = ll }
+            onCoordinates = { ll ->
+                departureLatLng = ll
+                scheduleEstimateDebounced()
+            }
             ,
             showError = { msg -> showMessage(msg) }
         ) { sel ->
@@ -321,7 +336,10 @@ fun OrderScreen(showMessage: (String) -> Unit) {
                 .fillMaxWidth()
                 .bringIntoViewRequester(bringIntoViewRequester)
             ,
-            onCoordinates = { ll -> destinationLatLng = ll }
+            onCoordinates = { ll ->
+                destinationLatLng = ll
+                scheduleEstimateDebounced()
+            }
             ,
             showError = { msg -> showMessage(msg) }
         ) { sel ->
@@ -404,13 +422,14 @@ fun OrderScreen(showMessage: (String) -> Unit) {
         
         Spacer(Modifier.height(12.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
+            // Manual recalculation remains available but is no longer required
             Button(onClick = { estimate() }, enabled = !estimating) {
                 if (estimating) {
                     CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(18.dp))
                     Spacer(Modifier.width(8.dp))
-                    Text("Estimation…")
+                    Text("Calcul…")
                 } else {
-                    Text("Estimer le prix")
+                    Text("Recalculer le prix")
                 }
             }
             Spacer(Modifier.width(12.dp))
