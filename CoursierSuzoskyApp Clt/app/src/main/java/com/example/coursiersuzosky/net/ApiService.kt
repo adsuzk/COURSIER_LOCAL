@@ -431,14 +431,19 @@ object ApiService {
             val bodyStr = resp.body?.string().orEmpty()
             val jsonResp = JSONObject(bodyStr)
             val success = jsonResp.optBoolean("success")
-            val dataObj = jsonResp.optJSONObject("data")
+            // Accept both { data: {...} } and legacy { commande: {...}, commande_id: 123 }
+            val dataObj = jsonResp.optJSONObject("data") ?: jsonResp.optJSONObject("commande")
+            val orderIdTopLevel = jsonResp.optLong("commande_id").let { if (jsonResp.has("commande_id")) it else null }
             val data = dataObj?.let { d ->
                 OrderData(
-                    order_id = d.optLong("order_id"),
-                    order_number = d.optString("order_number"),
+                    order_id = d.optLong("order_id").let { if (d.has("order_id")) it else orderIdTopLevel },
+                    order_number = (d.optString("order_number").takeIf { d.has("order_number") }
+                        ?: d.optString("orderNumber").takeIf { d.has("orderNumber") }),
                     code_commande = d.optString("code_commande").takeIf { d.has("code_commande") },
-                    price = d.optDouble("price"),
-                    payment_method = d.optString("payment_method"),
+                    // Legacy server uses prix_estime
+                    price = (if (d.has("price")) d.optDouble("price") else d.optDouble("prix_estime", Double.NaN)).let { if (it.isNaN()) null else it },
+                    payment_method = (d.optString("payment_method").takeIf { d.has("payment_method") }
+                        ?: d.optString("mode_paiement").takeIf { d.has("mode_paiement") }),
                     payment_url = d.optString("payment_url").takeIf { d.has("payment_url") },
                     transaction_id = d.optString("transaction_id").takeIf { d.has("transaction_id") }
                 )

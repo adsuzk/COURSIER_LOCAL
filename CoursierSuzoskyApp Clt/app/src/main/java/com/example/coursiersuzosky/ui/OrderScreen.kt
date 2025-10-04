@@ -435,7 +435,9 @@ fun OrderScreen(showMessage: (String) -> Unit) {
         departure.isNotBlank() &&
         destination.isNotBlank() &&
         senderDigits.length == 10 &&
-        receiverDigits.length == 10
+        receiverDigits.length == 10 &&
+        // Backend requires a non-empty estimated price (prix_estime); 0 is considered empty in PHP
+        (totalPrice != null && (totalPrice ?: 0) > 0)
 
     val onPaymentMethodChange: (String) -> Unit = { newMethod ->
         // Only update selection; do NOT trigger any payment here.
@@ -446,6 +448,13 @@ fun OrderScreen(showMessage: (String) -> Unit) {
 
     val onSubmitOrder: () -> Unit = {
         scope.launch {
+            // Require a valid estimate for ALL payment methods (server rejects prix_estime=0)
+            if (totalPrice == null || (totalPrice ?: 0) <= 0) {
+                showMessage("Veuillez d'abord estimer le prix avant de commander")
+                // Try to trigger an estimate if possible
+                if (!estimating) estimate()
+                return@launch
+            }
             if (!validateInputs(forSubmit = true)) {
                 return@launch
             }
