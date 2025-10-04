@@ -96,7 +96,7 @@ fun ProfileScreen(
             ProfileMenuItem(
                 icon = Icons.Filled.AccountBalanceWallet,
                 title = "Mon Portefeuille",
-                subtitle = "Solde: 15,000 FCFA",
+                subtitle = "Solde: 0 Fr",
                 onClick = { /* TODO */ },
                 trailing = {
                     Text(
