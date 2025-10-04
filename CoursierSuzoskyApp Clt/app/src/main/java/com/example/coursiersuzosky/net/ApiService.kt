@@ -361,6 +361,7 @@ object ApiService {
         val client_name: String? = null,
         val client_phone: String? = null,
         val client_email: String? = null,
+        val transaction_id: String? = null,
     )
 
     data class CreateAfterPaymentResponse(
@@ -389,6 +390,7 @@ object ApiService {
                 reqData.client_name?.let { add("client_name", it) }
                 reqData.client_phone?.let { add("client_phone", it) }
                 reqData.client_email?.let { add("client_email", it) }
+                reqData.transaction_id?.let { add("transaction_id", it) }
             }
             .build()
         val req = ApiClient.requestBuilder(url).post(fb).build()

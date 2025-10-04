@@ -29,6 +29,7 @@ try {
     $clientEmail = $_SESSION['client_email'] ?? $_POST['client_email'] ?? '';
     
     // Données de la course
+    $transactionId = $_POST['transaction_id'] ?? '';
     $departure = $_POST['departure'] ?? '';
     $destination = $_POST['destination'] ?? '';
     $latitudeRetrait = floatval($_POST['latitude_retrait'] ?? 0);
@@ -46,6 +47,34 @@ try {
     if (empty($departure) || empty($destination)) {
         throw new Exception("Adresses de départ et destination requises");
     }
+    if (empty($transactionId)) {
+        throw new Exception("Identifiant de transaction manquant");
+    }
+
+    // Vérifier le statut de paiement auprès de CinetPay avant toute insertion
+    require_once __DIR__ . '/../cinetpay/config.php';
+    $clientCfg = getClientCinetPayConfig();
+    $checkPayload = [
+        'apikey' => $clientCfg['apikey'],
+        'site_id' => $clientCfg['site_id'],
+        'transaction_id' => $transactionId,
+    ];
+    $ch = curl_init(($clientCfg['check_endpoint'] ?? 'https://api-checkout.cinetpay.com/v2/payment/check'));
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($checkPayload));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    $resp = curl_exec($ch);
+    $http = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $err = curl_error($ch);
+    curl_close($ch);
+    if ($err) { throw new Exception('Erreur vérification CinetPay: ' . $err); }
+    $cp = json_decode($resp, true) ?: [];
+    $cpStatus = $cp['data']['status'] ?? ($cp['status'] ?? '');
+    if (!in_array($cpStatus, ['ACCEPTED','COMPLETED','SUCCEEDED','SUCCESS'], true)) {
+        throw new Exception('Paiement non confirmé: statut=' . $cpStatus);
+    }
     
     error_log("[ORDER_AFTER_PAYMENT] Client: $clientNom ($clientTelephone), De: $departure, À: $destination");
     
@@ -57,6 +86,52 @@ try {
     
     // Insérer la commande
     $stmt = $pdo->prepare("
+        INSERT INTO commandes (
+            client_id,
+            client_nom,
+            client_telephone,
+            client_email,
+            adresse_depart,
+            adresse_destination,
+            latitude_retrait,
+            longitude_retrait,
+            latitude_livraison,
+            longitude_livraison,
+            distance_km,
+            prix_livraison,
+            telephone_destinataire,
+            nom_destinataire,
+            notes_speciales,
+            mode_paiement,
+            statut_paiement,
+            numero_commande,
+            statut,
+            date_creation,
+            transaction_id
+        ) VALUES (
+            :client_id,
+            :client_nom,
+            :client_telephone,
+            :client_email,
+            :adresse_depart,
+            :adresse_destination,
+            :latitude_retrait,
+            :longitude_retrait,
+            :latitude_livraison,
+            :longitude_livraison,
+            :distance_km,
+            :prix_livraison,
+            :telephone_destinataire,
+            :nom_destinataire,
+            :notes_speciales,
+            :mode_paiement,
+            :statut_paiement,
+            :numero_commande,
+            :statut,
+            NOW(),
+            :transaction_id
+        )
+    ");
         INSERT INTO commandes (
             client_id,
             client_nom,
@@ -121,7 +196,8 @@ try {
         ':mode_paiement' => $modePaiement,
         ':statut_paiement' => 'paye', // Paiement confirmé
         ':numero_commande' => $numeroCommande,
-        ':statut' => 'nouvelle' // Commande en attente d'assignation
+        ':statut' => 'nouvelle', // Commande en attente d'assignation
+        ':transaction_id' => $transactionId
     ]);
     
     if (!$result) {

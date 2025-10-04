@@ -170,6 +170,7 @@ fun OrderScreen(showMessage: (String) -> Unit) {
     var showPaymentModal by rememberSaveable { mutableStateOf(false) }
     var paymentUrl by rememberSaveable { mutableStateOf<String?>(null) }
     var pendingOnlineOrder by rememberSaveable { mutableStateOf(false) }
+    var lastPaymentTransactionId by rememberSaveable { mutableStateOf<String?>(null) }
     var couriersAvailable by rememberSaveable { mutableStateOf(true) }
     var availabilityMessage by rememberSaveable { mutableStateOf<String?>(null) }
 
@@ -467,6 +468,7 @@ fun OrderScreen(showMessage: (String) -> Unit) {
                     val init = ApiService.initiatePaymentOnly(orderNumber, amount, null, senderPhone, null)
                     if (init.success && !init.payment_url.isNullOrBlank()) {
                         paymentUrl = init.payment_url
+                        lastPaymentTransactionId = init.transaction_id ?: orderNumber
                         pendingOnlineOrder = true
                         showPaymentModal = true
                     } else {
@@ -661,7 +663,8 @@ fun OrderScreen(showMessage: (String) -> Unit) {
                                 notes_speciales = description.ifBlank { null },
                                 client_name = null,
                                 client_phone = senderPhone,
-                                client_email = null
+                                client_email = null,
+                                transaction_id = lastPaymentTransactionId
                             )
                         )
                         if (resp.success) {
@@ -673,10 +676,14 @@ fun OrderScreen(showMessage: (String) -> Unit) {
                         showMessage(ApiService.friendlyError(e))
                     } finally {
                         pendingOnlineOrder = false
+                        lastPaymentTransactionId = null
+                        paymentUrl = null
                     }
                 }
             } else {
                 pendingOnlineOrder = false
+                lastPaymentTransactionId = null
+                paymentUrl = null
             }
         })
     }
@@ -684,31 +691,91 @@ fun OrderScreen(showMessage: (String) -> Unit) {
 
 @Composable
 private fun PaymentWebViewModal(url: String, onClose: (Boolean) -> Unit) {
-    AlertDialog(
+    // Full-screen dialog for best mobile usability (no cramped form)
+    androidx.compose.ui.window.Dialog(
         onDismissRequest = { onClose(false) },
-        confirmButton = {},
-        title = { Text("Paiement sécurisé") },
-        text = {
-            Column(Modifier.fillMaxWidth()) {
-                var loading by remember { mutableStateOf(true) }
-                if (loading) {
-                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+        properties = androidx.compose.ui.window.DialogProperties(
+            usePlatformDefaultWidth = false, // full width
+            dismissOnBackPress = true,
+            dismissOnClickOutside = false
+        )
+    ) {
+        var loading by remember { mutableStateOf(true) }
+        var canGoBack by remember { mutableStateOf(false) }
+        var web: WebView? by remember { mutableStateOf(null) }
+        // Container with system bars and IME padding so the keyboard doesn't cover fields
+        Surface(color = Dark.copy(alpha = 0.98f)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .statusBarsPadding()
+                    .navigationBarsPadding()
+                    .imePadding()
+            ) {
+                // Top bar
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .padding(horizontal = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    TextButton(onClick = {
+                        val w = web
+                        when {
+                            w?.canGoBack() == true -> w.goBack()
+                            else -> onClose(false)
+                        }
+                    }) {
+                        Text(if (canGoBack) "Retour" else "Fermer", color = Gold)
+                    }
+                    Spacer(Modifier.weight(1f))
+                    Text(
+                        text = "Paiement sécurisé",
+                        color = Gold,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(Modifier.weight(1f))
                 }
+
+                if (loading) {
+                    LinearProgressIndicator(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 2.dp),
+                        color = Gold
+                    )
+                }
+
+                // Web content
                 AndroidView(
-                    modifier = Modifier.height(480.dp),
+                    modifier = Modifier
+                        .fillMaxSize(),
                     factory = { ctx ->
                         WebView(ctx).apply {
+                            web = this
                             settings.javaScriptEnabled = true
                             settings.domStorageEnabled = true
                             settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
                             settings.javaScriptCanOpenWindowsAutomatically = true
                             settings.setSupportMultipleWindows(true)
-                            // Allow cookies and 3rd-party cookies for payment providers (e.g., 3DS)
+                            // Improve usability on small screens
+                            settings.useWideViewPort = true
+                            settings.loadWithOverviewMode = true
+                            settings.setSupportZoom(true)
+                            settings.builtInZoomControls = true
+                            settings.displayZoomControls = false
+                            isVerticalScrollBarEnabled = true
+                            overScrollMode = WebView.OVER_SCROLL_IF_CONTENT_SCROLLS
+
+                            // Allow cookies incl. 3rd-party (3DS, provider flows)
                             CookieManager.getInstance().setAcceptCookie(true)
                             CookieManager.getInstance().setAcceptThirdPartyCookies(this, true)
+
                             webViewClient = object : WebViewClient() {
                                 override fun onPageFinished(view: WebView?, url: String?) {
                                     loading = false
+                                    canGoBack = view?.canGoBack() == true
                                 }
                                 override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
                                     val u = request?.url?.toString().orEmpty()
@@ -730,7 +797,7 @@ private fun PaymentWebViewModal(url: String, onClose: (Boolean) -> Unit) {
                                     isUserGesture: Boolean,
                                     resultMsg: android.os.Message?
                                 ): Boolean {
-                                    // Try to open target window URL in the same WebView
+                                    // Open target in same WebView (3DS popups, etc.)
                                     val result = view?.hitTestResult
                                     val data = result?.extra
                                     if (!data.isNullOrBlank()) {
@@ -747,11 +814,14 @@ private fun PaymentWebViewModal(url: String, onClose: (Boolean) -> Unit) {
                             }
                             loadUrl(url)
                         }
+                    },
+                    update = { v ->
+                        canGoBack = v.canGoBack()
                     }
                 )
             }
         }
-    )
+    }
 }
 
 @Composable
