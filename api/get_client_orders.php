@@ -25,7 +25,7 @@ if ($phone === '') {
 try {
     $pdo = getPDO();
     $stmt = $pdo->prepare(
-        "SELECT numero_commande, adresse_depart, adresse_arrivee, prix_estime, date_creation FROM commandes WHERE telephone_expediteur = ? ORDER BY date_creation DESC"
+        "SELECT numero_commande, adresse_depart, adresse_arrivee, prix_estime, date_creation, statut FROM commandes WHERE telephone_expediteur = ? ORDER BY date_creation DESC"
     );
     $stmt->execute([$phone]);
     $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);

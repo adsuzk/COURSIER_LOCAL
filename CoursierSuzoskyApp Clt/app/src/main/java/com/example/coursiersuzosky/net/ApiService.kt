@@ -70,7 +70,14 @@ object ApiService {
         }
     }
 
-    data class OrderHistoryItem(val numero_commande: String, val adresse_depart: String, val adresse_arrivee: String, val prix_estime: Int, val date_creation: String)
+    data class OrderHistoryItem(
+        val numero_commande: String, 
+        val adresse_depart: String, 
+        val adresse_arrivee: String, 
+        val prix_estime: Int, 
+        val date_creation: String,
+        val statut: String
+    )
     suspend fun getClientOrders(phone: String): List<OrderHistoryItem> = withContext(Dispatchers.IO) {
         val url = ApiClient.buildUrl(ApiConfig.GET_CLIENT_ORDERS)
         val payload = JSONObject().apply { put("phone", phone) }
@@ -89,7 +96,8 @@ object ApiService {
                             adresse_depart = o.optString("adresse_depart"),
                             adresse_arrivee = o.optString("adresse_arrivee"),
                             prix_estime = o.optInt("prix_estime"),
-                            date_creation = o.optString("date_creation")
+                            date_creation = o.optString("date_creation"),
+                            statut = o.optString("statut", "en_attente")
                         )
                     )
                 }

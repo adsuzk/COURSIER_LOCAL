@@ -338,7 +338,7 @@ private fun OrderCard(order: ApiService.OrderHistoryItem) {
                         label = "Date",
                         value = formatDate(order.date_creation)
                     )
-                </Column>
+                }
             }
         }
     }
