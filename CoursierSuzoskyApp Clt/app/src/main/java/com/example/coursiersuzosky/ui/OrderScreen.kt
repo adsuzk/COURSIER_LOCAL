@@ -432,6 +432,7 @@ fun OrderScreen(showMessage: (String) -> Unit) {
     }
 
     val handleDepartureFromMap: (LatLng, String?) -> Unit = { pos, resolved ->
+    android.util.Log.d("OrderScreen", "Departure from map -> pos=$pos resolved=$resolved")
         departureLatLng = pos
         departureError = null
         departure = resolved ?: "${pos.latitude}, ${pos.longitude}"
@@ -439,6 +440,7 @@ fun OrderScreen(showMessage: (String) -> Unit) {
     }
 
     val handleDestinationFromMap: (LatLng, String?) -> Unit = { pos, resolved ->
+    android.util.Log.d("OrderScreen", "Destination from map -> pos=$pos resolved=$resolved")
         destinationLatLng = pos
         destinationError = null
         destination = resolved ?: "${pos.latitude}, ${pos.longitude}"
@@ -1390,42 +1392,83 @@ private fun MapSection(
                         position = CameraPosition.fromLatLngZoom(LatLng(5.3476, -4.0076), 12f)
                     }
                     val abidjanCenter = LatLng(5.3476, -4.0076)
+                    val defaultZoom = 12f
+
+                    suspend fun animateCameraSafely(
+                        label: String,
+                        primary: com.google.android.gms.maps.CameraUpdate?,
+                        fallback: com.google.android.gms.maps.CameraUpdate? = null
+                    ) {
+                        if (primary == null && fallback == null) return
+                        val runFallback = {
+                            fallback?.let {
+                                android.util.Log.d("OrderScreen", "Camera fallback -> $label")
+                                cameraPositionState.move(it)
+                            }
+                        }
+                        try {
+                            if (primary != null) {
+                                android.util.Log.d("OrderScreen", "Camera animate -> $label")
+                                cameraPositionState.animate(primary)
+                                return
+                            }
+                        } catch (iae: IllegalArgumentException) {
+                            android.util.Log.w("OrderScreen", "Camera update invalid -> $label", iae)
+                        } catch (ise: IllegalStateException) {
+                            android.util.Log.w("OrderScreen", "Camera update illegal state -> $label", ise)
+                        } catch (rre: com.google.android.gms.maps.model.RuntimeRemoteException) {
+                            android.util.Log.w("OrderScreen", "Camera update remote exception -> $label", rre)
+                        } catch (e: Exception) {
+                            android.util.Log.w("OrderScreen", "Camera update error -> $label", e)
+                        }
+                        runFallback()
+                    }
 
                     LaunchedEffect(departureLatLng, destinationLatLng, mapLoaded) {
                         if (!mapLoaded) return@LaunchedEffect
-                        try {
-                            // Ensure this runs on main
-                            withContext(Dispatchers.Main) {
-                                when {
-                                    departureLatLng != null && destinationLatLng != null -> {
-                                        try {
-                                            val bounds = LatLngBounds.builder()
-                                                .include(departureLatLng)
-                                                .include(destinationLatLng)
-                                                .build()
-                                            android.util.Log.d("OrderScreen", "Animating to A/B bounds: ${'$'}bounds")
-                                            cameraPositionState.animate(CameraUpdateFactory.newLatLngBounds(bounds, 100))
-                                        } catch (iae: IllegalArgumentException) {
-                                            // Fallback: center on midpoint if bounds fit fails (e.g., due to constraints or tiny area)
-                                            val mid = LatLng(
-                                                (departureLatLng.latitude + destinationLatLng.latitude) / 2.0,
-                                                (departureLatLng.longitude + destinationLatLng.longitude) / 2.0
-                                            )
-                                            android.util.Log.w("OrderScreen", "Bounds animation failed, fallback to midpoint: ${'$'}mid", iae)
-                                            cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(mid, 12f))
-                                        }
-                                    }
-                                    departureLatLng != null ->
-                                        cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(departureLatLng, 12f))
-                                    destinationLatLng != null ->
-                                        cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(destinationLatLng, 12f))
-                                    else ->
-                                        cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(abidjanCenter, 12f))
+                        mapError = null
+                        android.util.Log.d(
+                            "OrderScreen",
+                            "Camera trigger. departure=$departureLatLng destination=$destinationLatLng"
+                        )
+                        when {
+                            departureLatLng != null && destinationLatLng != null -> {
+                                val mid = LatLng(
+                                    (departureLatLng.latitude + destinationLatLng.latitude) / 2.0,
+                                    (departureLatLng.longitude + destinationLatLng.longitude) / 2.0
+                                )
+                                val fallbackUpdate = CameraUpdateFactory.newLatLngZoom(mid, defaultZoom)
+                                val boundsUpdate = try {
+                                    val bounds = LatLngBounds.builder()
+                                        .include(departureLatLng)
+                                        .include(destinationLatLng)
+                                        .build()
+                                    android.util.Log.d("OrderScreen", "Attempt bounds fit -> $bounds")
+                                    CameraUpdateFactory.newLatLngBounds(bounds, 100)
+                                } catch (iae: IllegalArgumentException) {
+                                    android.util.Log.w("OrderScreen", "Bounds build failed -> midpoint fallback", iae)
+                                    null
                                 }
+                                animateCameraSafely("A+B", boundsUpdate, fallbackUpdate)
                             }
-                        } catch (e: Exception) {
-                            android.util.Log.e("OrderScreen", "Camera animation error", e)
-                            mapError = e.message ?: "Erreur de caméra"
+                            departureLatLng != null -> {
+                                animateCameraSafely(
+                                    "A only",
+                                    CameraUpdateFactory.newLatLngZoom(departureLatLng, defaultZoom)
+                                )
+                            }
+                            destinationLatLng != null -> {
+                                animateCameraSafely(
+                                    "B only",
+                                    CameraUpdateFactory.newLatLngZoom(destinationLatLng, defaultZoom)
+                                )
+                            }
+                            else -> {
+                                animateCameraSafely(
+                                    "default center",
+                                    CameraUpdateFactory.newLatLngZoom(abidjanCenter, defaultZoom)
+                                )
+                            }
                         }
                     }
 
@@ -1469,7 +1512,7 @@ private fun MapSection(
                         modifier = Modifier.fillMaxSize(),
                         cameraPositionState = cameraPositionState,
                         onMapClick = { ll ->
-                            android.util.Log.d("OrderScreen", "Map click at: ${'$'}ll")
+                            android.util.Log.d("OrderScreen", "Map click at: $ll")
                             pendingClick = ll
                             showMapChoice = true
                         },
@@ -1784,6 +1827,10 @@ private fun AutocompleteTextField(
                                         append(s.primary)
                                         if (!s.secondary.isNullOrBlank()) append(", ").append(s.secondary)
                                     }
+                                    android.util.Log.d(
+                                        "OrderScreen",
+                                        "Suggestion picked for $label -> primary=${s.primary} secondary=${s.secondary} placeId=${s.placeId} lat=${s.lat} lon=${s.lon}"
+                                    )
                                     if (!s.placeId.isNullOrBlank()) {
                                         val placeRequest = FetchPlaceRequest.newInstance(
                                             s.placeId,
@@ -1791,13 +1838,21 @@ private fun AutocompleteTextField(
                                         )
                                         places.fetchPlace(placeRequest)
                                             .addOnSuccessListener { result ->
+                                                android.util.Log.d(
+                                                    "OrderScreen",
+                                                    "FetchPlace success for $label -> latLng=${result.place.latLng} address=${result.place.address}"
+                                                )
                                                 onCoordinates(result.place.latLng)
                                                 onSelected(result.place.address ?: selectedText)
                                                 expanded = false
                                                 focusManager.clearFocus(force = true)
                                                 keyboard?.hide()
                                             }
-                                            .addOnFailureListener {
+                                            .addOnFailureListener { err ->
+                                                android.util.Log.w(
+                                                    "OrderScreen",
+                                                    "FetchPlace failed for $label (${s.placeId}): $err"
+                                                )
                                                 onSelected(selectedText)
                                                 expanded = false
                                                 focusManager.clearFocus(force = true)
@@ -1806,6 +1861,10 @@ private fun AutocompleteTextField(
                                     } else {
                                         // Nominatim fallback with lat/lon included
                                         if (s.lat != null && s.lon != null) {
+                                            android.util.Log.d(
+                                                "OrderScreen",
+                                                "Nominatim coordinates for $label -> lat=${s.lat} lon=${s.lon}"
+                                            )
                                             onCoordinates(LatLng(s.lat, s.lon))
                                         }
                                         onSelected(selectedText)
