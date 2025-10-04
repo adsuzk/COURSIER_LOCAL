@@ -48,6 +48,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.CoroutineScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.animation.fadeIn
@@ -304,6 +305,153 @@ fun OrderScreen(showMessage: (String) -> Unit) {
         }
     }
 
+    val handleDepartureChange: (String) -> Unit = { text ->
+        departure = text
+        departureError = null
+        totalPrice = null
+        distanceTxt = null
+        durationTxt = null
+        departureLatLng = null
+        scheduleEstimateDebounced()
+    }
+
+    val handleDestinationChange: (String) -> Unit = { text ->
+        destination = text
+        destinationError = null
+        totalPrice = null
+        distanceTxt = null
+        durationTxt = null
+        destinationLatLng = null
+        scheduleEstimateDebounced()
+    }
+
+    val handleDepartureSelected: (String) -> Unit = { selected ->
+        departure = selected
+        if (destination.isNotBlank() && !estimating) estimate()
+    }
+
+    val handleDestinationSelected: (String) -> Unit = { selected ->
+        destination = selected
+        if (departure.isNotBlank() && !estimating) estimate()
+    }
+
+    val handleReceiverPhoneChange: (String) -> Unit = { new ->
+        val hasPrefix = new.trim().startsWith("+225")
+        receiverPhone = formatCiPhone(new, enforcePrefix = true)
+        receiverPhoneError = null
+        @Suppress("UNUSED_VARIABLE")
+        val unused = hasPrefix
+    }
+
+    val handleDescriptionChange: (String) -> Unit = { value ->
+        description = value
+    }
+
+    val handleDepartureFromMap: (LatLng, String?) -> Unit = { pos, resolved ->
+        departureLatLng = pos
+        departureError = null
+        departure = resolved ?: "${pos.latitude}, ${pos.longitude}"
+        if (destination.isNotBlank() && !estimating) estimate()
+    }
+
+    val handleDestinationFromMap: (LatLng, String?) -> Unit = { pos, resolved ->
+        destinationLatLng = pos
+        destinationError = null
+        destination = resolved ?: "${pos.latitude}, ${pos.longitude}"
+        if (departure.isNotBlank() && !estimating) estimate()
+    }
+
+    val submitEnabled = couriersAvailable &&
+        !estimating &&
+        !submitting &&
+        departureError == null &&
+        destinationError == null &&
+        senderPhoneError == null &&
+        receiverPhoneError == null &&
+        departure.isNotBlank() &&
+        destination.isNotBlank() &&
+        senderPhone.isNotBlank() &&
+        receiverPhone.isNotBlank()
+
+    val onPaymentMethodChange: (String) -> Unit = { newMethod ->
+        paymentMethod = newMethod
+        if (newMethod != "cash" && (totalPrice ?: 0) > 0 && !submitting) {
+            scope.launch {
+                submitting = true
+                try {
+                    val orderNumber = "SZK" + System.currentTimeMillis()
+                    val init = ApiService.initiatePaymentOnly(orderNumber, (totalPrice ?: 0), null, senderPhone, null)
+                    if (init.success && !init.payment_url.isNullOrBlank()) {
+                        paymentUrl = init.payment_url
+                        pendingOnlineOrder = true
+                        showPaymentModal = true
+                    } else {
+                        showMessage(init.message ?: "Paiement indisponible")
+                    }
+                } catch (e: Exception) {
+                    showMessage(ApiService.friendlyError(e))
+                } finally {
+                    submitting = false
+                }
+            }
+        }
+    }
+
+    val onSubmitOrder: () -> Unit = {
+        scope.launch {
+            if (!validateInputs(forSubmit = true)) {
+                return@launch
+            }
+            submitting = true
+            try {
+                if (paymentMethod != "cash") {
+                    val amount = (totalPrice ?: 0)
+                    val orderNumber = "SZK" + System.currentTimeMillis()
+                    val init = ApiService.initiatePaymentOnly(orderNumber, amount, null, senderPhone, null)
+                    if (init.success && !init.payment_url.isNullOrBlank()) {
+                        paymentUrl = init.payment_url
+                        pendingOnlineOrder = true
+                        showPaymentModal = true
+                    } else {
+                        showMessage(init.message ?: "Paiement indisponible")
+                    }
+                } else {
+                    val req = OrderRequest(
+                        departure = departure,
+                        destination = destination,
+                        senderPhone = senderPhone,
+                        receiverPhone = receiverPhone,
+                        packageDescription = description.ifBlank { null },
+                        priority = priority,
+                        paymentMethod = paymentMethod,
+                        price = (totalPrice ?: 0).toDouble(),
+                        distance = distanceTxt,
+                        duration = durationTxt,
+                        departure_lat = departureLatLng?.latitude,
+                        departure_lng = departureLatLng?.longitude,
+                        arrival_lat = destinationLatLng?.latitude,
+                        arrival_lng = destinationLatLng?.longitude
+                    )
+                    val resp = ApiService.submitOrder(req)
+                    if (resp.success) {
+                        val oid = resp.data?.order_number ?: resp.data?.code_commande ?: "-"
+                        showMessage("Commande créée: ${oid}")
+                    } else {
+                        showMessage(resp.message ?: "Échec de la commande")
+                    }
+                }
+            } catch (e: Exception) {
+                showMessage(ApiService.friendlyError(e))
+            } finally {
+                submitting = false
+            }
+        }
+    }
+
+    val onDownloadUpdateClick: (() -> Unit)? = updateInfo?.download_url?.takeIf { it.isNotBlank() }?.let { url ->
+        { val intent = CustomTabsIntent.Builder().build(); intent.launchUrl(context, url.toUri()) }
+    }
+
     val scrollState = rememberScrollState()
     
     // NOUVEAU DESIGN PREMIUM AVEC GRADIENT DARK/GOLD
@@ -323,772 +471,100 @@ fun OrderScreen(showMessage: (String) -> Unit) {
                 .padding(24.dp)
                 .imePadding()
         ) {
-            // HEADER PREMIUM
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(56.dp)
-                        .clip(CircleShape)
-                        .background(Gold.copy(alpha = 0.15f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.LocalShipping,
-                        contentDescription = null,
-                        tint = Gold,
-                        modifier = Modifier.size(32.dp)
-                    )
-                }
-                Spacer(Modifier.width(16.dp))
-                Column {
-                    Text(
-                        text = "Nouvelle commande",
-                        fontSize = 26.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Gold
-                    )
-                    Text(
-                        text = "Livraison rapide et sécurisée",
-                        fontSize = 14.sp,
-                        color = Color.White.copy(alpha = 0.6f)
-                    )
-                }
-            }
-            
+            OrderScreenHeader()
+
             Spacer(Modifier.height(24.dp))
-            
-            // BANNIÈRE DE MISE À JOUR (si disponible)
-            AnimatedVisibility(visible = showUpdate, enter = expandVertically(), exit = shrinkVertically()) {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = Info.copy(alpha = 0.15f)
-                    ),
-                    shape = RoundedCornerShape(16.dp),
-                    border = BorderStroke(1.dp, Info.copy(alpha = 0.3f))
-                ) {
-                    Column(Modifier.padding(16.dp)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                imageVector = Icons.Filled.Notifications,
-                                contentDescription = null,
-                                tint = Info
-                            )
-                            Spacer(Modifier.width(8.dp))
-                            Text(
-                                "Mise à jour disponible",
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                        }
-                        val vName = updateInfo?.latest_version_name ?: ""
-                        if (vName.isNotBlank()) {
-                            Spacer(Modifier.height(4.dp))
-                            Text("Version: $vName", color = Color.White.copy(alpha = 0.8f), fontSize = 14.sp)
-                        }
-                    val dl = updateInfo?.download_url
-                    if (!dl.isNullOrBlank()) {
-                        Spacer(Modifier.height(8.dp))
-                        TextButton(
-                            onClick = { 
-                                val intent = CustomTabsIntent.Builder().build()
-                                intent.launchUrl(context, dl.toUri())
-                            },
-                            colors = ButtonDefaults.textButtonColors(contentColor = Gold)
-                        ) {
-                            Text("Télécharger maintenant")
-                        }
-                    }
-                }
-            }
-                Spacer(Modifier.height(16.dp))
-            }
-            
-            // SECTION 1: ITINÉRAIRE
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.White.copy(alpha = 0.05f)
-                ),
-                shape = RoundedCornerShape(20.dp),
-                border = BorderStroke(1.dp, Gold.copy(alpha = 0.15f))
-            ) {
-                Column(Modifier.padding(20.dp)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Filled.Place,
-                            contentDescription = null,
-                            tint = Gold,
-                            modifier = Modifier.size(24.dp)
-                        )
-                        Spacer(Modifier.width(12.dp))
-                        Text(
-                            text = "Itinéraire",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Gold
-                        )
-                    }
-                    
-                    Spacer(Modifier.height(20.dp))
-                    
-                    AutocompleteTextField(
-            label = "Adresse de départ",
-            value = departure,
-            onValueChange = { departure = it; departureError = null; totalPrice = null; distanceTxt = null; durationTxt = null; departureLatLng = null; scheduleEstimateDebounced() },
-            isError = departureError != null,
-            supportingError = departureError,
-            modifier = Modifier
-                .fillMaxWidth()
-                .bringIntoViewRequester(bringIntoViewRequester)
-            ,
-            onCoordinates = { ll ->
-                departureLatLng = ll
-                scheduleEstimateDebounced()
-            }
-            ,
-            showError = { msg -> showMessage(msg) }
-            ) { sel ->
-                departure = sel
-                if (destination.isNotBlank() && !estimating) estimate()
-            }
-            
-            Spacer(Modifier.height(16.dp))
-            
-            AutocompleteTextField(
-                label = "Adresse d'arrivée",
-                value = destination,
-                onValueChange = { destination = it; destinationError = null; totalPrice = null; distanceTxt = null; durationTxt = null; destinationLatLng = null; scheduleEstimateDebounced() },
-                isError = destinationError != null,
-                supportingError = destinationError,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .bringIntoViewRequester(bringIntoViewRequester)
-                ,
-                onCoordinates = { ll ->
-                    destinationLatLng = ll
-                scheduleEstimateDebounced()
-            }
-            ,
-            showError = { msg -> showMessage(msg) }
-        ) { sel ->
-            destination = sel
-            if (departure.isNotBlank() && !estimating) estimate()
-        }
-                    }
-                }
-                
-                Spacer(Modifier.height(16.dp))
-                
-                // Contacts section
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.05f)),
-                    border = BorderStroke(1.dp, Gold.copy(alpha = 0.15f))
-                ) {
-                    Column(modifier = Modifier.padding(20.dp)) {
-                        // Section header
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(bottom = 16.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Phone,
-                                contentDescription = null,
-                                tint = Gold,
-                                modifier = Modifier.size(24.dp)
-                            )
-                            Spacer(Modifier.width(12.dp))
-                            Text(
-                                text = "Contacts",
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Gold
-                            )
-                        }
-        
-        OutlinedTextField(
-            value = senderPhone,
-            onValueChange = { /* locked - no manual edit */ },
-            label = { Text("Téléphone expéditeur (compte)") },
-            leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null, tint = Gold) },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-            readOnly = true,
-            enabled = false,
-            colors = OutlinedTextFieldDefaults.colors(
-                disabledBorderColor = Gold.copy(alpha = 0.3f),
-                disabledLabelColor = Gold.copy(alpha = 0.6f),
-                disabledTextColor = Color.White.copy(alpha = 0.6f),
-                disabledLeadingIconColor = Gold.copy(alpha = 0.6f)
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .bringIntoViewRequester(bringIntoViewRequester)
-                .onFocusEvent { if (it.isFocused) {
-                    scope.launch { bringIntoViewRequester.bringIntoView() }
-                } },
-            isError = senderPhoneError != null,
-            supportingText = {
-                when {
-                    senderPhoneError != null -> Text(senderPhoneError!!, color = MaterialTheme.colorScheme.error)
-                    else -> Text("Modifiez votre numéro depuis Mon Profil pour le synchroniser", color = Color.White.copy(alpha = 0.6f))
-                }
-            }
-        )
-        Spacer(Modifier.height(16.dp))
-        OutlinedTextField(
-            value = receiverPhone,
-            onValueChange = { new ->
-                // Always keep +225 and format progressively
-                val hasPrefix = new.trim().startsWith("+225")
-                receiverPhone = formatCiPhone(new, enforcePrefix = true)
-                receiverPhoneError = null
-            },
-            label = { Text("Téléphone destinataire") },
-            leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null, tint = Gold) },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Gold,
-                focusedLabelColor = Gold,
-                focusedLeadingIconColor = Gold,
-                unfocusedBorderColor = Gold.copy(alpha = 0.5f),
-                unfocusedLabelColor = Color.White.copy(alpha = 0.7f),
-                cursorColor = Gold
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .bringIntoViewRequester(bringIntoViewRequester)
-                .onFocusEvent { if (it.isFocused) {
-                    scope.launch { bringIntoViewRequester.bringIntoView() }
-                } },
-            isError = receiverPhoneError != null,
-            supportingText = { if (receiverPhoneError != null) Text(receiverPhoneError!!, color = MaterialTheme.colorScheme.error) }
-        )
-        Spacer(Modifier.height(16.dp))
-        OutlinedTextField(
-            value = description,
-            onValueChange = { description = it },
-            label = { Text("Description (optionnelle)") },
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Gold,
-                focusedLabelColor = Gold,
-                unfocusedBorderColor = Gold.copy(alpha = 0.5f),
-                unfocusedLabelColor = Color.White.copy(alpha = 0.7f),
-                cursorColor = Gold
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .bringIntoViewRequester(bringIntoViewRequester)
-                .onFocusEvent { if (it.isFocused) {
-                    scope.launch { bringIntoViewRequester.bringIntoView() }
-                } }
-        )
-                    }
-                }
-        
-        Spacer(Modifier.height(16.dp))
-        
-        // Priority selector
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.05f)),
-            border = BorderStroke(1.dp, Gold.copy(alpha = 0.15f))
-        ) {
-            Column(modifier = Modifier.padding(20.dp)) {
-                // Section header
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Star,
-                        contentDescription = null,
-                        tint = Gold,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(Modifier.width(12.dp))
-                    Text(
-                        text = "Priorité",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Gold
-                    )
-                }
-                
-        PrioritySelector(
-            selectedPriority = priority,
-            onPriorityChanged = {
-                priority = it
-                if (departure.isNotBlank() && destination.isNotBlank() && !estimating) estimate()
-            },
-            modifier = Modifier.fillMaxWidth()
-        )
-            }
-        }
-        
-        Spacer(Modifier.height(16.dp))
 
-        // Price and distance
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = Gold.copy(alpha = 0.1f)),
-            border = BorderStroke(1.dp, Gold.copy(alpha = 0.3f))
-        ) {
-            Column(modifier = Modifier.padding(20.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            if (estimating) {
-                CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(18.dp), color = Gold)
-                Spacer(Modifier.width(8.dp))
-            }
-            AnimatedContent(targetState = totalPrice, label = "priceAnim", transitionSpec = { fadeIn(tween(200)) togetherWith fadeOut(tween(200)) }) { price ->
-                val txt = if (price != null) "Prix estimé: ${price} FCFA" else "Prix en calcul…"
-                Text(txt, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Gold)
-            }
-        }
-        if (distanceTxt != null || durationTxt != null) {
-            Spacer(Modifier.height(12.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.Place, contentDescription = null, tint = Gold.copy(alpha = 0.7f), modifier = Modifier.size(16.dp))
-                Spacer(Modifier.width(4.dp))
-                Text("Distance: ${distanceTxt ?: "-"}", color = Color.White.copy(alpha = 0.8f))
-                Spacer(Modifier.width(16.dp))
-                Icon(Icons.Default.Info, contentDescription = null, tint = Gold.copy(alpha = 0.7f), modifier = Modifier.size(16.dp))
-                Spacer(Modifier.width(4.dp))
-                Text("Durée: ${durationTxt ?: "-"}", color = Color.White.copy(alpha = 0.8f))
-            }
-        }
-            }
-        }
-        Spacer(Modifier.height(16.dp))
-
-        // Payment method selector
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.05f)),
-            border = BorderStroke(1.dp, Gold.copy(alpha = 0.15f))
-        ) {
-            Column(modifier = Modifier.padding(20.dp)) {
-                // Section header
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ShoppingCart,
-                        contentDescription = null,
-                        tint = Gold,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(Modifier.width(12.dp))
-                    Text(
-                        text = "Paiement",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Gold
-                    )
-                }
-                
-        PaymentMethodSelector(
-            selectedMethod = paymentMethod,
-            onMethodChanged = { newMethod ->
-                paymentMethod = newMethod
-                if (newMethod != "cash" && (totalPrice ?: 0) > 0 && !submitting) {
-                    scope.launch {
-                        submitting = true
-                        try {
-                            val orderNumber = "SZK" + System.currentTimeMillis()
-                            val init = ApiService.initiatePaymentOnly(orderNumber, (totalPrice ?: 0), null, senderPhone, null)
-                            if (init.success && !init.payment_url.isNullOrBlank()) {
-                                paymentUrl = init.payment_url
-                                pendingOnlineOrder = true
-                                showPaymentModal = true
-                            } else {
-                                showMessage(init.message ?: "Paiement indisponible")
-                            }
-                        } catch (e: Exception) {
-                            showMessage(ApiService.friendlyError(e))
-                        } finally {
-                            submitting = false
-                        }
-                    }
-                }
-            },
-            modifier = Modifier.fillMaxWidth()
-        )
-            }
-        }
-        Spacer(Modifier.height(24.dp))
-        
-        // Submit button
-        Button(
-            onClick = {
-                if (!validateInputs(forSubmit = true)) return@Button
-                scope.launch {
-                    submitting = true
-                    try {
-                        if (paymentMethod != "cash") {
-                            // Online payment first: get URL then show WebView
-                            val amount = (totalPrice ?: 0)
-                            val orderNumber = "SZK" + System.currentTimeMillis()
-                            val init = ApiService.initiatePaymentOnly(orderNumber, amount, null, senderPhone, null)
-                            if (init.success && !init.payment_url.isNullOrBlank()) {
-                                paymentUrl = init.payment_url
-                                pendingOnlineOrder = true
-                                showPaymentModal = true
-                            } else {
-                                showMessage(init.message ?: "Paiement indisponible")
-                            }
-                        } else {
-                            val req = OrderRequest(
-                                departure = departure,
-                                destination = destination,
-                                senderPhone = senderPhone,
-                                receiverPhone = receiverPhone,
-                                packageDescription = description.ifBlank { null },
-                                priority = priority,
-                                paymentMethod = paymentMethod,
-                                price = (totalPrice ?: 0).toDouble(),
-                                distance = distanceTxt,
-                                duration = durationTxt,
-                                departure_lat = departureLatLng?.latitude,
-                                departure_lng = departureLatLng?.longitude,
-                                arrival_lat = destinationLatLng?.latitude,
-                                arrival_lng = destinationLatLng?.longitude
-                            )
-                            val resp = ApiService.submitOrder(req)
-                            if (resp.success) {
-                                val oid = resp.data?.order_number ?: resp.data?.code_commande ?: "-"
-                                showMessage("Commande créée: ${oid}")
-                            } else {
-                                showMessage(resp.message ?: "Échec de la commande")
-                            }
-                        }
-                    } catch (e: Exception) {
-                        showMessage(ApiService.friendlyError(e))
-                    } finally {
-                        submitting = false
-                    }
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(60.dp),
-            enabled = couriersAvailable && !estimating && !submitting && departureError == null && destinationError == null && senderPhoneError == null && receiverPhoneError == null &&
-                    departure.isNotBlank() && destination.isNotBlank() && senderPhone.isNotBlank() && receiverPhone.isNotBlank(),
-            shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Gold,
-                contentColor = Dark,
-                disabledContainerColor = Gold.copy(alpha = 0.3f),
-                disabledContentColor = Dark.copy(alpha = 0.5f)
-            ),
-            elevation = ButtonDefaults.buttonElevation(
-                defaultElevation = 8.dp,
-                pressedElevation = 12.dp,
-                disabledElevation = 0.dp
+            UpdateBanner(
+                showUpdate = showUpdate,
+                updateInfo = updateInfo,
+                onDownloadClick = onDownloadUpdateClick
             )
-        ) {
-            if (submitting) {
-                CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(22.dp), color = Dark)
-                Spacer(Modifier.width(12.dp))
-                Text("Envoi…", fontSize = 16.sp, fontWeight = FontWeight.Bold)
-            } else {
-                Icon(Icons.Default.CheckCircle, contentDescription = null, modifier = Modifier.size(24.dp))
-                Spacer(Modifier.width(12.dp))
-                Text("Passer la commande", fontSize = 16.sp, fontWeight = FontWeight.Bold)
-            }
-        }
-        if (!couriersAvailable) {
+
             Spacer(Modifier.height(16.dp))
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = AccentRed.copy(alpha = 0.2f)),
-                border = BorderStroke(1.dp, AccentRed.copy(alpha = 0.5f)),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Column(Modifier.fillMaxWidth().padding(16.dp)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.Info, contentDescription = null, tint = AccentRed, modifier = Modifier.size(24.dp))
-                        Spacer(Modifier.width(8.dp))
-                    Text(availabilityMessage ?: "Aucun coursier actif pour le moment", color = Color.White, fontWeight = FontWeight.Bold)
-                    }
-                    Spacer(Modifier.height(4.dp))
-                    Text("Le formulaire est temporairement désactivé", color = Color.White.copy(alpha = 0.8f), fontSize = 14.sp)
+
+            ItinerarySection(
+                departure = departure,
+                destination = destination,
+                departureError = departureError,
+                destinationError = destinationError,
+                onDepartureChange = handleDepartureChange,
+                onDestinationChange = handleDestinationChange,
+                onDepartureSelected = handleDepartureSelected,
+                onDestinationSelected = handleDestinationSelected,
+                onDepartureCoordinates = { ll ->
+                    departureLatLng = ll
+                    scheduleEstimateDebounced()
+                },
+                onDestinationCoordinates = { ll ->
+                    destinationLatLng = ll
+                    scheduleEstimateDebounced()
+                },
+                bringIntoViewRequester = bringIntoViewRequester,
+                showMessage = showMessage
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            ContactsSection(
+                senderPhone = senderPhone,
+                senderPhoneError = senderPhoneError,
+                receiverPhone = receiverPhone,
+                receiverPhoneError = receiverPhoneError,
+                description = description,
+                onReceiverPhoneChange = handleReceiverPhoneChange,
+                onDescriptionChange = handleDescriptionChange,
+                bringIntoViewRequester = bringIntoViewRequester,
+                scope = scope
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            PrioritySection(
+                priority = priority,
+                onPriorityChange = {
+                    priority = it
+                    if (departure.isNotBlank() && destination.isNotBlank() && !estimating) estimate()
                 }
-            }
-        }
+            )
 
-        Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(16.dp))
 
-        // Mini-carte pour visualiser les adresses
-        var mapError by remember { mutableStateOf<String?>(null) }
-        var mapLoaded by remember { mutableStateOf(false) }
-        
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.05f)),
-            border = BorderStroke(1.dp, Gold.copy(alpha = 0.15f))
-        ) {
-            Column {
-                // Map header
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(20.dp).padding(bottom = 0.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Place,
-                        contentDescription = null,
-                        tint = Gold,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(Modifier.width(12.dp))
-                    Text(
-                        text = "Aperçu carte",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Gold
-                    )
-                    Spacer(Modifier.weight(1f))
-                    if (mapLoaded) {
-                        Surface(
-                            color = Success.copy(alpha = 0.2f),
-                            shape = CircleShape
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(8.dp)
-                                        .clip(CircleShape)
-                                        .background(Success)
-                                )
-                                Spacer(Modifier.width(6.dp))
-                                Text("Prête", fontSize = 12.sp, color = Success, fontWeight = FontWeight.Bold)
-                            }
-                        }
-                    }
-                }
-                
-                Spacer(Modifier.height(16.dp))
-                
-            Box(Modifier.height(220.dp).fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 20.dp).clip(RoundedCornerShape(16.dp))) {
-                if (mapError != null) {
-                    // Fallback si Google Maps échoue
-                    Column(
-                        modifier = Modifier.fillMaxSize().padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            "Carte non disponible",
-                            style = MaterialTheme.typography.titleMedium,
-                            textAlign = TextAlign.Center
-                        )
-                        Text(
-                            "Erreur: $mapError",
-                            style = MaterialTheme.typography.bodySmall,
-                            textAlign = TextAlign.Center,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                        Spacer(Modifier.height(8.dp))
-                        if (departureLatLng != null && destinationLatLng != null) {
-                            Text("Points A/B définis", style = MaterialTheme.typography.bodySmall)
-                        }
-                    }
-                } else {
-                    // Google Maps
-                        // Set an initial camera without using CameraUpdateFactory to avoid initialization crashes
-                        val cameraPositionState = rememberCameraPositionState {
-                            // Center on Abidjan by default
-                            position = CameraPosition.fromLatLngZoom(LatLng(5.3476, -4.0076), 12f)
-                        }
-                        // Abidjan defaults and bounds
-                        val abidjanCenter = LatLng(5.3476, -4.0076)
-                        val abidjanBounds = LatLngBounds(
-                            LatLng(5.2, -4.2),   // Southwest
-                            LatLng(5.5, -3.8)    // Northeast
-                        )
+            PriceSection(
+                estimating = estimating,
+                totalPrice = totalPrice,
+                distanceText = distanceTxt,
+                durationText = durationTxt
+            )
 
-                        // Only perform camera moves using CameraUpdateFactory after the map is fully loaded
-                        LaunchedEffect(departureLatLng, destinationLatLng, mapLoaded) {
-                            if (!mapLoaded) return@LaunchedEffect
-                            val dep = departureLatLng
-                            val dest = destinationLatLng
-                            try {
-                                if (dep != null && dest != null) {
-                                    val bounds = LatLngBounds.builder().include(dep).include(dest).build()
-                                    cameraPositionState.move(CameraUpdateFactory.newLatLngBounds(bounds, 100))
-                                } else if (dep != null) {
-                                    cameraPositionState.move(CameraUpdateFactory.newLatLngZoom(dep, 12f))
-                                } else if (dest != null) {
-                                    cameraPositionState.move(CameraUpdateFactory.newLatLngZoom(dest, 12f))
-                                } else {
-                                    // Default view centered on Abidjan
-                                    cameraPositionState.move(CameraUpdateFactory.newLatLngZoom(abidjanCenter, 12f))
-                                }
-                            } catch (e: Exception) {
-                                mapError = e.message ?: "Erreur de caméra"
-                            }
-                        }
-                
-                var showMapChoice by remember { mutableStateOf(false) }
-                var pendingClick by remember { mutableStateOf<LatLng?>(null) }
+            Spacer(Modifier.height(16.dp))
 
-                if (showMapChoice && pendingClick != null) {
-                    AlertDialog(
-                        onDismissRequest = { showMapChoice = false; pendingClick = null },
-                        title = { Text("Placer un marqueur") },
-                        text = { Text("Voulez-vous placer le marqueur A (Départ) ?\nAppuyez sur Annuler pour placer B (Arrivée)") },
-                        confirmButton = {
-                            TextButton(onClick = {
-                                val pos = pendingClick!!
-                                showMapChoice = false; pendingClick = null
-                                departureLatLng = pos
-                                scope.launch {
-                                    val addr = reverseGeocode(pos)
-                                    departure = addr ?: "${pos.latitude}, ${pos.longitude}"
-                                    departureError = null
-                                    if (destination.isNotBlank() && !estimating) estimate()
-                                }
-                            }) { Text("Placer A") }
-                        },
-                        dismissButton = {
-                            TextButton(onClick = {
-                                val pos = pendingClick!!
-                                showMapChoice = false; pendingClick = null
-                                destinationLatLng = pos
-                                scope.launch {
-                                    val addr = reverseGeocode(pos)
-                                    destination = addr ?: "${pos.latitude}, ${pos.longitude}"
-                                    destinationError = null
-                                    if (departure.isNotBlank() && !estimating) estimate()
-                                }
-                            }) { Text("Placer B") }
-                        }
-                    )
-                }
+            PaymentSection(
+                paymentMethod = paymentMethod,
+                onPaymentMethodChange = onPaymentMethodChange
+            )
 
-                GoogleMap(
-                    cameraPositionState = cameraPositionState,
-                    onMapClick = { ll -> pendingClick = ll; showMapChoice = true },
-                    onMapLoaded = {
-                        mapLoaded = true
-                        showMessage("Carte prête")
-                        try {
-                            android.util.Log.d("OrderScreen", "GoogleMap onMapLoaded fired")
-                        } catch (_: Exception) {}
-                    }
-                ) {
-                    // Restrict camera to Abidjan bounds and sensible zoom range
-                    MapEffect(Unit) { map ->
-                        try {
-                            map.setLatLngBoundsForCameraTarget(abidjanBounds)
-                            map.setMinZoomPreference(9.5f)
-                            map.setMaxZoomPreference(20f)
-                        } catch (_: Exception) {}
-                    }
-                    // Attach a drag listener via MapEffect (maps-compose 4.4.1 n'a pas onDragEnd sur Marker)
-                    MapEffect(key1 = departureLatLng, key2 = destinationLatLng) { map ->
-                        map.setOnMarkerDragListener(object : GoogleMap.OnMarkerDragListener {
-                            override fun onMarkerDragStart(marker: com.google.android.gms.maps.model.Marker) {}
-                            override fun onMarkerDrag(marker: com.google.android.gms.maps.model.Marker) {}
-                            override fun onMarkerDragEnd(marker: com.google.android.gms.maps.model.Marker) {
-                                val pos = marker.position
-                                val title = marker.title ?: ""
-                                if (title.contains("Départ")) {
-                                    departureLatLng = pos
-                                    scope.launch {
-                                        val addr = reverseGeocode(pos)
-                                        departure = addr ?: "${pos.latitude}, ${pos.longitude}"
-                                        departureError = null
-                                        if (destination.isNotBlank() && !estimating) estimate()
-                                    }
-                                } else if (title.contains("Arrivée")) {
-                                    destinationLatLng = pos
-                                    scope.launch {
-                                        val addr = reverseGeocode(pos)
-                                        destination = addr ?: "${pos.latitude}, ${pos.longitude}"
-                                        destinationError = null
-                                        if (departure.isNotBlank() && !estimating) estimate()
-                                    }
-                                }
-                            }
-                        })
-                    }
+            Spacer(Modifier.height(24.dp))
 
-                    // Crée une icône personnalisée (A/B)
-                    fun markerIcon(label: String, color: Int): com.google.android.gms.maps.model.BitmapDescriptor {
-                        val width = 100
-                        val height = 130
-                        val bmp = createBitmap(width, height, android.graphics.Bitmap.Config.ARGB_8888)
-                        val canvas = Canvas(bmp)
-                        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-                        // Pointeur style goutte
-                        paint.color = color
-                        val body = RectF(5f, 5f, (width-5).toFloat(), (height-20).toFloat())
-                        canvas.drawRoundRect(body, 40f, 40f, paint)
-                        // Pointe
-                        val triPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { this.color = color }
-                        val path = android.graphics.Path().apply {
-                            moveTo((width/2).toFloat(), (height-10).toFloat())
-                            lineTo((width/2 - 15).toFloat(), (height-35).toFloat())
-                            lineTo((width/2 + 15).toFloat(), (height-35).toFloat())
-                            close()
-                        }
-                        canvas.drawPath(path, triPaint)
-                        // Cercle blanc au centre
-                        paint.color = 0xFFFFFFFF.toInt()
-                        canvas.drawCircle((width/2).toFloat(), (height/2 - 10).toFloat(), 28f, paint)
-                        // Lettre
-                        paint.color = 0xFF000000.toInt()
-                        paint.textSize = 42f
-                        paint.typeface = Typeface.create(Typeface.DEFAULT_BOLD, Typeface.BOLD)
-                        val textWidth = paint.measureText(label)
-                        canvas.drawText(label, (width/2 - textWidth/2), (height/2 + 5).toFloat(), paint)
-                        return BitmapDescriptorFactory.fromBitmap(bmp)
-                    }
+            SubmitSection(
+                submitting = submitting,
+                enabled = submitEnabled,
+                couriersAvailable = couriersAvailable,
+                availabilityMessage = availabilityMessage,
+                onSubmit = onSubmitOrder
+            )
 
-                    departureLatLng?.let { dll ->
-                        Marker(
-                            state = MarkerState(dll),
-                            title = "Départ (A)",
-                            draggable = true,
-                            icon = markerIcon("A", 0xFF00FF00.toInt())
-                        )
-                    }
-                    destinationLatLng?.let { dll ->
-                        Marker(
-                            state = MarkerState(dll),
-                            title = "Arrivée (B)",
-                            draggable = true,
-                            icon = markerIcon("B", 0xFFFF0000.toInt())
-                        )
-                    }
-                }
-                // Small debug overlay to visualize map loaded state
-                Box(Modifier.fillMaxSize()) {
-                    Surface(color = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f), shape = MaterialTheme.shapes.small, tonalElevation = 1.dp, modifier = Modifier
-                        .align(Alignment.TopStart)
-                        .padding(6.dp)) {
-                        Text(
-                            text = "Map loaded: " + (if (mapLoaded) "yes" else "no"),
-                            style = MaterialTheme.typography.labelSmall,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                        )
-                    }
-                }
-                }
-            }
+            Spacer(Modifier.height(16.dp))
+
+            MapSection(
+                departureLatLng = departureLatLng,
+                destinationLatLng = destinationLatLng,
+                onDepartureUpdate = handleDepartureFromMap,
+                onDestinationUpdate = handleDestinationFromMap,
+                reverseGeocode = { ll -> reverseGeocode(ll) },
+                scope = scope,
+                showMessage = showMessage
+            )
         }
     }
 
@@ -1176,6 +652,746 @@ private fun PaymentWebViewModal(url: String, onClose: (Boolean) -> Unit) {
             }
         }
     )
+}
+
+@Composable
+private fun OrderScreenHeader() {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .size(56.dp)
+                .clip(CircleShape)
+                .background(Gold.copy(alpha = 0.15f)),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Filled.LocalShipping,
+                contentDescription = null,
+                tint = Gold,
+                modifier = Modifier.size(32.dp)
+            )
+        }
+        Spacer(Modifier.width(16.dp))
+        Column {
+            Text(
+                text = "Nouvelle commande",
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Bold,
+                color = Gold
+            )
+            Text(
+                text = "Livraison rapide et sécurisée",
+                fontSize = 14.sp,
+                color = Color.White.copy(alpha = 0.6f)
+            )
+        }
+    }
+}
+
+@Composable
+private fun UpdateBanner(
+    showUpdate: Boolean,
+    updateInfo: UpdateInfo?,
+    onDownloadClick: (() -> Unit)?
+) {
+    AnimatedVisibility(visible = showUpdate, enter = expandVertically(), exit = shrinkVertically()) {
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = Info.copy(alpha = 0.15f)
+            ),
+            shape = RoundedCornerShape(16.dp),
+            border = BorderStroke(1.dp, Info.copy(alpha = 0.3f))
+        ) {
+            Column(Modifier.padding(16.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Filled.Notifications,
+                        contentDescription = null,
+                        tint = Info
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        "Mise à jour disponible",
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
+                val versionName = updateInfo?.latest_version_name.orEmpty()
+                if (versionName.isNotBlank()) {
+                    Spacer(Modifier.height(4.dp))
+                    Text("Version: $versionName", color = Color.White.copy(alpha = 0.8f), fontSize = 14.sp)
+                }
+                val downloadUrl = updateInfo?.download_url
+                if (!downloadUrl.isNullOrBlank() && onDownloadClick != null) {
+                    Spacer(Modifier.height(8.dp))
+                    TextButton(
+                        onClick = onDownloadClick,
+                        colors = ButtonDefaults.textButtonColors(contentColor = Gold)
+                    ) {
+                        Text("Télécharger maintenant")
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ItinerarySection(
+    departure: String,
+    destination: String,
+    departureError: String?,
+    destinationError: String?,
+    onDepartureChange: (String) -> Unit,
+    onDestinationChange: (String) -> Unit,
+    onDepartureSelected: (String) -> Unit,
+    onDestinationSelected: (String) -> Unit,
+    onDepartureCoordinates: (LatLng?) -> Unit,
+    onDestinationCoordinates: (LatLng?) -> Unit,
+    bringIntoViewRequester: BringIntoViewRequester,
+    showMessage: (String) -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White.copy(alpha = 0.05f)
+        ),
+        shape = RoundedCornerShape(20.dp),
+        border = BorderStroke(1.dp, Gold.copy(alpha = 0.15f))
+    ) {
+        Column(Modifier.padding(20.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Filled.Place,
+                    contentDescription = null,
+                    tint = Gold,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(Modifier.width(12.dp))
+                Text(
+                    text = "Itinéraire",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Gold
+                )
+            }
+
+            Spacer(Modifier.height(20.dp))
+
+            AutocompleteTextField(
+                label = "Adresse de départ",
+                value = departure,
+                onValueChange = onDepartureChange,
+                isError = departureError != null,
+                supportingError = departureError,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .bringIntoViewRequester(bringIntoViewRequester),
+                onCoordinates = onDepartureCoordinates,
+                showError = showMessage,
+                onSelected = onDepartureSelected
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            AutocompleteTextField(
+                label = "Adresse d'arrivée",
+                value = destination,
+                onValueChange = onDestinationChange,
+                isError = destinationError != null,
+                supportingError = destinationError,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .bringIntoViewRequester(bringIntoViewRequester),
+                onCoordinates = onDestinationCoordinates,
+                showError = showMessage,
+                onSelected = onDestinationSelected
+            )
+        }
+    }
+}
+
+@Composable
+private fun ContactsSection(
+    senderPhone: String,
+    senderPhoneError: String?,
+    receiverPhone: String,
+    receiverPhoneError: String?,
+    description: String,
+    onReceiverPhoneChange: (String) -> Unit,
+    onDescriptionChange: (String) -> Unit,
+    bringIntoViewRequester: BringIntoViewRequester,
+    scope: CoroutineScope
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.05f)),
+        border = BorderStroke(1.dp, Gold.copy(alpha = 0.15f))
+    ) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(bottom = 16.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Phone,
+                    contentDescription = null,
+                    tint = Gold,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(Modifier.width(12.dp))
+                Text(
+                    text = "Contacts",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Gold
+                )
+            }
+
+            OutlinedTextField(
+                value = senderPhone,
+                onValueChange = { },
+                label = { Text("Téléphone expéditeur (compte)") },
+                leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null, tint = Gold) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                readOnly = true,
+                enabled = false,
+                colors = OutlinedTextFieldDefaults.colors(
+                    disabledBorderColor = Gold.copy(alpha = 0.3f),
+                    disabledLabelColor = Gold.copy(alpha = 0.6f),
+                    disabledTextColor = Color.White.copy(alpha = 0.6f),
+                    disabledLeadingIconColor = Gold.copy(alpha = 0.6f)
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .bringIntoViewRequester(bringIntoViewRequester)
+                    .onFocusEvent {
+                        if (it.isFocused) {
+                            scope.launch { bringIntoViewRequester.bringIntoView() }
+                        }
+                    },
+                isError = senderPhoneError != null,
+                supportingText = {
+                    when {
+                        senderPhoneError != null -> Text(senderPhoneError, color = MaterialTheme.colorScheme.error)
+                        else -> Text("Modifiez votre numéro depuis Mon Profil pour le synchroniser", color = Color.White.copy(alpha = 0.6f))
+                    }
+                }
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = receiverPhone,
+                onValueChange = onReceiverPhoneChange,
+                label = { Text("Téléphone destinataire") },
+                leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null, tint = Gold) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Gold,
+                    focusedLabelColor = Gold,
+                    focusedLeadingIconColor = Gold,
+                    unfocusedBorderColor = Gold.copy(alpha = 0.5f),
+                    unfocusedLabelColor = Color.White.copy(alpha = 0.7f),
+                    cursorColor = Gold
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .bringIntoViewRequester(bringIntoViewRequester)
+                    .onFocusEvent {
+                        if (it.isFocused) {
+                            scope.launch { bringIntoViewRequester.bringIntoView() }
+                        }
+                    },
+                isError = receiverPhoneError != null,
+                supportingText = {
+                    if (receiverPhoneError != null) {
+                        Text(receiverPhoneError, color = MaterialTheme.colorScheme.error)
+                    }
+                }
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = description,
+                onValueChange = onDescriptionChange,
+                label = { Text("Description (optionnelle)") },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Gold,
+                    focusedLabelColor = Gold,
+                    unfocusedBorderColor = Gold.copy(alpha = 0.5f),
+                    unfocusedLabelColor = Color.White.copy(alpha = 0.7f),
+                    cursorColor = Gold
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .bringIntoViewRequester(bringIntoViewRequester)
+                    .onFocusEvent {
+                        if (it.isFocused) {
+                            scope.launch { bringIntoViewRequester.bringIntoView() }
+                        }
+                    }
+            )
+        }
+    }
+}
+
+@Composable
+private fun PrioritySection(
+    priority: String,
+    onPriorityChange: (String) -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.05f)),
+        border = BorderStroke(1.dp, Gold.copy(alpha = 0.15f))
+    ) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(bottom = 16.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Star,
+                    contentDescription = null,
+                    tint = Gold,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(Modifier.width(12.dp))
+                Text(
+                    text = "Priorité",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Gold
+                )
+            }
+
+            PrioritySelector(
+                selectedPriority = priority,
+                onPriorityChanged = onPriorityChange,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
+
+@Composable
+private fun PriceSection(
+    estimating: Boolean,
+    totalPrice: Int?,
+    distanceText: String?,
+    durationText: String?
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Gold.copy(alpha = 0.1f)),
+        border = BorderStroke(1.dp, Gold.copy(alpha = 0.3f))
+    ) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (estimating) {
+                    CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(18.dp), color = Gold)
+                    Spacer(Modifier.width(8.dp))
+                }
+                AnimatedContent(targetState = totalPrice, label = "priceAnim", transitionSpec = { fadeIn(tween(200)) togetherWith fadeOut(tween(200)) }) { price ->
+                    val txt = if (price != null) "Prix estimé: ${price} FCFA" else "Prix en calcul…"
+                    Text(txt, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Gold)
+                }
+            }
+            if (distanceText != null || durationText != null) {
+                Spacer(Modifier.height(12.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Place, contentDescription = null, tint = Gold.copy(alpha = 0.7f), modifier = Modifier.size(16.dp))
+                    Spacer(Modifier.width(4.dp))
+                    Text("Distance: ${distanceText ?: "-"}", color = Color.White.copy(alpha = 0.8f))
+                    Spacer(Modifier.width(16.dp))
+                    Icon(Icons.Default.Info, contentDescription = null, tint = Gold.copy(alpha = 0.7f), modifier = Modifier.size(16.dp))
+                    Spacer(Modifier.width(4.dp))
+                    Text("Durée: ${durationText ?: "-"}", color = Color.White.copy(alpha = 0.8f))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PaymentSection(
+    paymentMethod: String,
+    onPaymentMethodChange: (String) -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.05f)),
+        border = BorderStroke(1.dp, Gold.copy(alpha = 0.15f))
+    ) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(bottom = 16.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ShoppingCart,
+                    contentDescription = null,
+                    tint = Gold,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(Modifier.width(12.dp))
+                Text(
+                    text = "Paiement",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Gold
+                )
+            }
+
+            PaymentMethodSelector(
+                selectedMethod = paymentMethod,
+                onMethodChanged = onPaymentMethodChange,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
+
+@Composable
+private fun SubmitSection(
+    submitting: Boolean,
+    enabled: Boolean,
+    couriersAvailable: Boolean,
+    availabilityMessage: String?,
+    onSubmit: () -> Unit
+) {
+    Button(
+        onClick = onSubmit,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(60.dp),
+        enabled = enabled,
+        shape = RoundedCornerShape(16.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Gold,
+            contentColor = Dark,
+            disabledContainerColor = Gold.copy(alpha = 0.3f),
+            disabledContentColor = Dark.copy(alpha = 0.5f)
+        ),
+        elevation = ButtonDefaults.buttonElevation(
+            defaultElevation = 8.dp,
+            pressedElevation = 12.dp,
+            disabledElevation = 0.dp
+        )
+    ) {
+        if (submitting) {
+            CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(22.dp), color = Dark)
+            Spacer(Modifier.width(12.dp))
+            Text("Envoi…", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+        } else {
+            Icon(Icons.Default.CheckCircle, contentDescription = null, modifier = Modifier.size(24.dp))
+            Spacer(Modifier.width(12.dp))
+            Text("Passer la commande", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+        }
+    }
+
+    if (!couriersAvailable) {
+        Spacer(Modifier.height(16.dp))
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = AccentRed.copy(alpha = 0.2f)),
+            border = BorderStroke(1.dp, AccentRed.copy(alpha = 0.5f)),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Info, contentDescription = null, tint = AccentRed, modifier = Modifier.size(24.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text(availabilityMessage ?: "Aucun coursier actif pour le moment", color = Color.White, fontWeight = FontWeight.Bold)
+                }
+                Spacer(Modifier.height(4.dp))
+                Text("Le formulaire est temporairement désactivé", color = Color.White.copy(alpha = 0.8f), fontSize = 14.sp)
+            }
+        }
+    }
+}
+
+@OptIn(com.google.maps.android.compose.MapsComposeExperimentalApi::class)
+@Composable
+private fun MapSection(
+    departureLatLng: LatLng?,
+    destinationLatLng: LatLng?,
+    onDepartureUpdate: (LatLng, String?) -> Unit,
+    onDestinationUpdate: (LatLng, String?) -> Unit,
+    reverseGeocode: suspend (LatLng) -> String?,
+    scope: CoroutineScope,
+    showMessage: (String) -> Unit
+) {
+    var mapError by remember { mutableStateOf<String?>(null) }
+    var mapLoaded by remember { mutableStateOf(false) }
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.05f)),
+        border = BorderStroke(1.dp, Gold.copy(alpha = 0.15f))
+    ) {
+        Column {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .padding(20.dp)
+                    .padding(bottom = 0.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Place,
+                    contentDescription = null,
+                    tint = Gold,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(Modifier.width(12.dp))
+                Text(
+                    text = "Aperçu carte",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Gold
+                )
+                Spacer(Modifier.weight(1f))
+                if (mapLoaded) {
+                    Surface(
+                        color = Success.copy(alpha = 0.2f),
+                        shape = CircleShape
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(8.dp)
+                                    .clip(CircleShape)
+                                    .background(Success)
+                            )
+                            Spacer(Modifier.width(6.dp))
+                            Text("Prête", fontSize = 12.sp, color = Success, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            Box(
+                Modifier
+                    .height(220.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+                    .padding(bottom = 20.dp)
+                    .clip(RoundedCornerShape(16.dp))
+            ) {
+                if (mapError != null) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            "Carte non disponible",
+                            style = MaterialTheme.typography.titleMedium,
+                            textAlign = TextAlign.Center
+                        )
+                        Text(
+                            "Erreur: ${mapError}",
+                            style = MaterialTheme.typography.bodySmall,
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        if (departureLatLng != null && destinationLatLng != null) {
+                            Text("Points A/B définis", style = MaterialTheme.typography.bodySmall)
+                        }
+                    }
+                } else {
+                    val cameraPositionState = rememberCameraPositionState {
+                        position = CameraPosition.fromLatLngZoom(LatLng(5.3476, -4.0076), 12f)
+                    }
+                    val abidjanCenter = LatLng(5.3476, -4.0076)
+                    val abidjanBounds = LatLngBounds(
+                        LatLng(5.2, -4.2),
+                        LatLng(5.5, -3.8)
+                    )
+
+                    LaunchedEffect(departureLatLng, destinationLatLng, mapLoaded) {
+                        if (!mapLoaded) return@LaunchedEffect
+                        try {
+                            when {
+                                departureLatLng != null && destinationLatLng != null -> {
+                                    val bounds = LatLngBounds.builder().include(departureLatLng).include(destinationLatLng).build()
+                                    cameraPositionState.move(CameraUpdateFactory.newLatLngBounds(bounds, 100))
+                                }
+                                departureLatLng != null ->
+                                    cameraPositionState.move(CameraUpdateFactory.newLatLngZoom(departureLatLng, 12f))
+                                destinationLatLng != null ->
+                                    cameraPositionState.move(CameraUpdateFactory.newLatLngZoom(destinationLatLng, 12f))
+                                else ->
+                                    cameraPositionState.move(CameraUpdateFactory.newLatLngZoom(abidjanCenter, 12f))
+                            }
+                        } catch (e: Exception) {
+                            mapError = e.message ?: "Erreur de caméra"
+                        }
+                    }
+
+                    var showMapChoice by remember { mutableStateOf(false) }
+                    var pendingClick by remember { mutableStateOf<LatLng?>(null) }
+
+                    if (showMapChoice && pendingClick != null) {
+                        AlertDialog(
+                            onDismissRequest = {
+                                showMapChoice = false
+                                pendingClick = null
+                            },
+                            title = { Text("Placer un marqueur") },
+                            text = { Text("Voulez-vous placer le marqueur A (Départ) ?\nAppuyez sur Annuler pour placer B (Arrivée)") },
+                            confirmButton = {
+                                TextButton(onClick = {
+                                    val pos = pendingClick!!
+                                    showMapChoice = false
+                                    pendingClick = null
+                                    scope.launch {
+                                        val addr = reverseGeocode(pos)
+                                        onDepartureUpdate(pos, addr)
+                                    }
+                                }) { Text("Placer A") }
+                            },
+                            dismissButton = {
+                                TextButton(onClick = {
+                                    val pos = pendingClick!!
+                                    showMapChoice = false
+                                    pendingClick = null
+                                    scope.launch {
+                                        val addr = reverseGeocode(pos)
+                                        onDestinationUpdate(pos, addr)
+                                    }
+                                }) { Text("Placer B") }
+                            }
+                        )
+                    }
+
+                    GoogleMap(
+                        cameraPositionState = cameraPositionState,
+                        onMapClick = { ll ->
+                            pendingClick = ll
+                            showMapChoice = true
+                        },
+                        onMapLoaded = {
+                            mapLoaded = true
+                            showMessage("Carte prête")
+                            try {
+                                android.util.Log.d("OrderScreen", "GoogleMap onMapLoaded fired")
+                            } catch (_: Exception) {}
+                        }
+                    ) {
+                        MapEffect(Unit) { map ->
+                            try {
+                                map.setLatLngBoundsForCameraTarget(abidjanBounds)
+                                map.setMinZoomPreference(9.5f)
+                                map.setMaxZoomPreference(20f)
+                            } catch (_: Exception) {}
+                        }
+                        MapEffect(key1 = departureLatLng, key2 = destinationLatLng) { map ->
+                            map.setOnMarkerDragListener(object : GoogleMap.OnMarkerDragListener {
+                                override fun onMarkerDragStart(marker: com.google.android.gms.maps.model.Marker) {}
+                                override fun onMarkerDrag(marker: com.google.android.gms.maps.model.Marker) {}
+                                override fun onMarkerDragEnd(marker: com.google.android.gms.maps.model.Marker) {
+                                    val pos = marker.position
+                                    scope.launch {
+                                        val addr = reverseGeocode(pos)
+                                        if (marker.title.orEmpty().contains("Départ")) {
+                                            onDepartureUpdate(pos, addr)
+                                        } else if (marker.title.orEmpty().contains("Arrivée")) {
+                                            onDestinationUpdate(pos, addr)
+                                        }
+                                    }
+                                }
+                            })
+                        }
+
+                        fun markerIcon(label: String, color: Int): com.google.android.gms.maps.model.BitmapDescriptor {
+                            val width = 100
+                            val height = 130
+                            val bmp = createBitmap(width, height, android.graphics.Bitmap.Config.ARGB_8888)
+                            val canvas = Canvas(bmp)
+                            val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+                            paint.color = color
+                            val body = RectF(5f, 5f, (width - 5).toFloat(), (height - 20).toFloat())
+                            canvas.drawRoundRect(body, 40f, 40f, paint)
+                            val triPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { this.color = color }
+                            val path = android.graphics.Path().apply {
+                                moveTo((width / 2).toFloat(), (height - 10).toFloat())
+                                lineTo((width / 2 - 15).toFloat(), (height - 35).toFloat())
+                                lineTo((width / 2 + 15).toFloat(), (height - 35).toFloat())
+                                close()
+                            }
+                            canvas.drawPath(path, triPaint)
+                            paint.color = 0xFFFFFFFF.toInt()
+                            canvas.drawCircle((width / 2).toFloat(), (height / 2 - 10).toFloat(), 28f, paint)
+                            paint.color = 0xFF000000.toInt()
+                            paint.textSize = 42f
+                            paint.typeface = Typeface.create(Typeface.DEFAULT_BOLD, Typeface.BOLD)
+                            val textWidth = paint.measureText(label)
+                            canvas.drawText(label, (width / 2 - textWidth / 2), (height / 2 + 5).toFloat(), paint)
+                            return BitmapDescriptorFactory.fromBitmap(bmp)
+                        }
+
+                        departureLatLng?.let { dll ->
+                            Marker(
+                                state = MarkerState(dll),
+                                title = "Départ (A)",
+                                draggable = true,
+                                icon = markerIcon("A", 0xFF00FF00.toInt())
+                            )
+                        }
+                        destinationLatLng?.let { dll ->
+                            Marker(
+                                state = MarkerState(dll),
+                                title = "Arrivée (B)",
+                                draggable = true,
+                                icon = markerIcon("B", 0xFFFF0000.toInt())
+                            )
+                        }
+                    }
+
+                    Box(Modifier.fillMaxSize()) {
+                        Surface(
+                            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
+                            shape = MaterialTheme.shapes.small,
+                            tonalElevation = 1.dp,
+                            modifier = Modifier
+                                .align(Alignment.TopStart)
+                                .padding(6.dp)
+                        ) {
+                            Text(
+                                text = "Map loaded: " + if (mapLoaded) "yes" else "no",
+                                style = MaterialTheme.typography.labelSmall,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable
