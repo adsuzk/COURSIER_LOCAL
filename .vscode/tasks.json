@@ -23,6 +23,36 @@
 				"-r",
 				"$pdo=new PDO('mysql:host=127.0.0.1;dbname=coursier_local;charset=utf8mb4','root','');$pdo->setAttribute(PDO::ATTR_ERRMODE,2);$st=$pdo->query(\"SELECT id,adresse_arrivee,latitude_arrivee,longitude_arrivee,latitude_livraison,longitude_livraison FROM commandes WHERE id=131\");$r=$st->fetch(PDO::FETCH_ASSOC);echo json_encode($r);"
 			]
+		},
+		{
+			"label": "assembleDebug-client",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"cd /d \"c:\\xampp\\htdocs\\COURSIER_LOCAL\\CoursierSuzoskyApp Clt\" && gradlew.bat assembleDebug -x test -x lint"
+			],
+			"isBackground": false,
+			"problemMatcher": [
+				"$gradle"
+			],
+			"group": "build"
+		},
+		{
+			"label": "assembleDebug-client-no-lint",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"cd /d \"c:\\xampp\\htdocs\\COURSIER_LOCAL\\CoursierSuzoskyApp Clt\" && gradlew.bat :app:assembleDebug -x :app:lintAnalyzeDebug -x :app:lintAnalyzeDebugAndroidTest -x :app:lintAnalyzeDebugUnitTest -x lint"
+			],
+			"isBackground": false,
+			"problemMatcher": [
+				"$gradle"
+			],
+			"group": "build"
 		}
 	]
 }
