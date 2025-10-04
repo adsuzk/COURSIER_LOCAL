@@ -191,6 +191,8 @@ object ApiService {
             reqData.duration?.let { put("duration", it) }
             reqData.departure_lat?.let { put("departure_lat", it) }
             reqData.departure_lng?.let { put("departure_lng", it) }
+            reqData.arrival_lat?.let { put("arrival_lat", it) }
+            reqData.arrival_lng?.let { put("arrival_lng", it) }
         }
         val body: RequestBody = json.toString().toRequestBody(JSON)
         val req: Request = ApiClient.requestBuilder(url).post(body).build()

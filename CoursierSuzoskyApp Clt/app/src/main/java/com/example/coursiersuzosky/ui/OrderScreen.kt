@@ -56,6 +56,7 @@ import com.google.maps.android.compose.MapEffect
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.CameraPosition
 import okhttp3.Request
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import android.location.Geocoder
@@ -378,7 +379,11 @@ fun OrderScreen(showMessage: (String) -> Unit) {
                             paymentMethod = paymentMethod,
                             price = (totalPrice ?: 0).toDouble(),
                             distance = distanceTxt,
-                            duration = durationTxt
+                            duration = durationTxt,
+                            departure_lat = departureLatLng?.latitude,
+                            departure_lng = departureLatLng?.longitude,
+                            arrival_lat = destinationLatLng?.latitude,
+                            arrival_lng = destinationLatLng?.longitude
                         )
                         val resp = ApiService.submitOrder(req)
                         if (resp.success) {
@@ -444,7 +449,11 @@ fun OrderScreen(showMessage: (String) -> Unit) {
                     }
                 } else {
                     // Google Maps
-                        val cameraPositionState = rememberCameraPositionState()
+                        // Set an initial camera without using CameraUpdateFactory to avoid initialization crashes
+                        val cameraPositionState = rememberCameraPositionState {
+                            // Center on Abidjan by default
+                            position = CameraPosition.fromLatLngZoom(LatLng(5.3476, -4.0076), 12f)
+                        }
                         // Abidjan defaults and bounds
                         val abidjanCenter = LatLng(5.3476, -4.0076)
                         val abidjanBounds = LatLngBounds(
@@ -452,19 +461,25 @@ fun OrderScreen(showMessage: (String) -> Unit) {
                             LatLng(5.5, -3.8)    // Northeast
                         )
 
-                        LaunchedEffect(departureLatLng, destinationLatLng) {
+                        // Only perform camera moves using CameraUpdateFactory after the map is fully loaded
+                        LaunchedEffect(departureLatLng, destinationLatLng, mapLoaded) {
+                            if (!mapLoaded) return@LaunchedEffect
                             val dep = departureLatLng
                             val dest = destinationLatLng
-                            if (dep != null && dest != null) {
-                                val bounds = LatLngBounds.builder().include(dep).include(dest).build()
-                                cameraPositionState.move(CameraUpdateFactory.newLatLngBounds(bounds, 100))
-                            } else if (dep != null) {
-                                cameraPositionState.move(CameraUpdateFactory.newLatLngZoom(dep, 12f))
-                            } else if (dest != null) {
-                                cameraPositionState.move(CameraUpdateFactory.newLatLngZoom(dest, 12f))
-                            } else {
-                                // Default view centered on Abidjan
-                                cameraPositionState.move(CameraUpdateFactory.newLatLngZoom(abidjanCenter, 12f))
+                            try {
+                                if (dep != null && dest != null) {
+                                    val bounds = LatLngBounds.builder().include(dep).include(dest).build()
+                                    cameraPositionState.move(CameraUpdateFactory.newLatLngBounds(bounds, 100))
+                                } else if (dep != null) {
+                                    cameraPositionState.move(CameraUpdateFactory.newLatLngZoom(dep, 12f))
+                                } else if (dest != null) {
+                                    cameraPositionState.move(CameraUpdateFactory.newLatLngZoom(dest, 12f))
+                                } else {
+                                    // Default view centered on Abidjan
+                                    cameraPositionState.move(CameraUpdateFactory.newLatLngZoom(abidjanCenter, 12f))
+                                }
+                            } catch (e: Exception) {
+                                mapError = e.message ?: "Erreur de caméra"
                             }
                         }
                 

@@ -12,7 +12,9 @@ data class OrderRequest(
     val distance: String? = null,
     val duration: String? = null,
     val departure_lat: Double? = null,
-    val departure_lng: Double? = null
+    val departure_lng: Double? = null,
+    val arrival_lat: Double? = null,
+    val arrival_lng: Double? = null
 )
 
 data class SubmitOrderResponse(
