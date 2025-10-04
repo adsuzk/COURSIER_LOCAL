@@ -18,6 +18,8 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -89,26 +91,34 @@ private fun formatCiPhone(input: String, enforcePrefix: Boolean = true): String 
 @Composable
 fun OrderScreen(showMessage: (String) -> Unit) {
     val scope = rememberCoroutineScope()
-    var departure by remember { mutableStateOf("") }
-    var destination by remember { mutableStateOf("") }
-    var departureLatLng by remember { mutableStateOf<LatLng?>(null) }
-    var destinationLatLng by remember { mutableStateOf<LatLng?>(null) }
-    var senderPhone by remember { mutableStateOf("") }
-    var receiverPhone by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var priority by remember { mutableStateOf("normale") } // normale, urgente, express
-    var paymentMethod by remember { mutableStateOf("cash") } // cash, orange_money, mtn_money, moov_money, wave, card
+    var departure by rememberSaveable { mutableStateOf("") }
+    var destination by rememberSaveable { mutableStateOf("") }
+    // Saver for LatLng across process death/rotation
+    val latLngSaver = remember {
+        listSaver<LatLng?, Double>(
+            save = { ll -> if (ll == null) emptyList() else listOf(ll.latitude, ll.longitude) },
+            restore = { lst -> if (lst.size == 2) LatLng(lst[0], lst[1]) else null }
+        )
+    }
+    var departureLatLng by rememberSaveable(stateSaver = latLngSaver) { mutableStateOf<LatLng?>(null) }
+    var destinationLatLng by rememberSaveable(stateSaver = latLngSaver) { mutableStateOf<LatLng?>(null) }
+    // Sender phone is locked to account; managed via ClientStore observer below
+    var senderPhone by rememberSaveable { mutableStateOf("") }
+    var receiverPhone by rememberSaveable { mutableStateOf("") }
+    var description by rememberSaveable { mutableStateOf("") }
+    var priority by rememberSaveable { mutableStateOf("normale") } // normale, urgente, express
+    var paymentMethod by rememberSaveable { mutableStateOf("cash") } // cash, orange_money, mtn_money, moov_money, wave, card
 
-    var estimating by remember { mutableStateOf(false) }
-    var submitting by remember { mutableStateOf(false) }
-    var totalPrice by remember { mutableStateOf<Int?>(null) }
-    var distanceTxt by remember { mutableStateOf<String?>(null) }
-    var durationTxt by remember { mutableStateOf<String?>(null) }
-    var showPaymentModal by remember { mutableStateOf(false) }
-    var paymentUrl by remember { mutableStateOf<String?>(null) }
-    var pendingOnlineOrder by remember { mutableStateOf(false) }
-    var couriersAvailable by remember { mutableStateOf(true) }
-    var availabilityMessage by remember { mutableStateOf<String?>(null) }
+    var estimating by rememberSaveable { mutableStateOf(false) }
+    var submitting by rememberSaveable { mutableStateOf(false) }
+    var totalPrice by rememberSaveable { mutableStateOf<Int?>(null) }
+    var distanceTxt by rememberSaveable { mutableStateOf<String?>(null) }
+    var durationTxt by rememberSaveable { mutableStateOf<String?>(null) }
+    var showPaymentModal by rememberSaveable { mutableStateOf(false) }
+    var paymentUrl by rememberSaveable { mutableStateOf<String?>(null) }
+    var pendingOnlineOrder by rememberSaveable { mutableStateOf(false) }
+    var couriersAvailable by rememberSaveable { mutableStateOf(true) }
+    var availabilityMessage by rememberSaveable { mutableStateOf<String?>(null) }
 
     // Poll courier availability periodically (e.g., every 15s) and on screen start
     LaunchedEffect(Unit) {
@@ -125,12 +135,20 @@ fun OrderScreen(showMessage: (String) -> Unit) {
     }
 
     val context = LocalContext.current
-    // Prefill sender phone from persisted client data
+    // Lock sender phone to account phone and keep it synced with any profile change
     LaunchedEffect(Unit) {
         try {
-            val p = com.suzosky.coursierclient.net.ClientStore.getClientPhone(context)
-            if (!p.isNullOrBlank()) senderPhone = formatCiPhone(p, enforcePrefix = true)
-        } catch (_: Exception) {}
+            // Initial read
+            com.suzosky.coursierclient.net.ClientStore.getClientPhone(context)?.let { p ->
+                senderPhone = formatCiPhone(p, enforcePrefix = true)
+            }
+            // Observe future updates
+            com.suzosky.coursierclient.net.ClientStore.observeClientPhone(context).collect { newPhone ->
+                if (!newPhone.isNullOrBlank()) {
+                    senderPhone = formatCiPhone(newPhone, enforcePrefix = true)
+                }
+            }
+        } catch (_: Exception) { }
     }
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
 
@@ -194,7 +212,7 @@ fun OrderScreen(showMessage: (String) -> Unit) {
     // Errors
     var departureError by remember { mutableStateOf<String?>(null) }
     var destinationError by remember { mutableStateOf<String?>(null) }
-    var senderPhoneError by remember { mutableStateOf<String?>(null) }
+    var senderPhoneError by rememberSaveable { mutableStateOf<String?>(null) }
     var receiverPhoneError by remember { mutableStateOf<String?>(null) }
 
     // CI format: +225 followed by exactly 10 digits (separators allowed)
@@ -205,7 +223,7 @@ fun OrderScreen(showMessage: (String) -> Unit) {
         if (departure.isBlank()) { departureError = "Adresse de départ requise"; ok = false } else departureError = null
         if (destination.isBlank()) { destinationError = "Adresse d'arrivée requise"; ok = false } else destinationError = null
         if (forSubmit) {
-            if (!phoneValid(senderPhone)) { senderPhoneError = "Format CI requis: +225 suivi de 10 chiffres"; ok = false } else senderPhoneError = null
+            if (!phoneValid(senderPhone)) { senderPhoneError = "Téléphone du compte invalide (+225 et 10 chiffres)"; ok = false } else senderPhoneError = null
             if (!phoneValid(receiverPhone)) { receiverPhoneError = "Format CI requis: +225 suivi de 10 chiffres"; ok = false } else receiverPhoneError = null
             if (paymentMethod != "cash" && (totalPrice == null || (totalPrice ?: 0) <= 0)) {
                 showMessage("Veuillez d'abord estimer le prix pour un paiement en ligne")
@@ -349,13 +367,12 @@ fun OrderScreen(showMessage: (String) -> Unit) {
         Spacer(Modifier.height(8.dp))
         OutlinedTextField(
             value = senderPhone,
-            onValueChange = { new ->
-                senderPhone = formatCiPhone(new, enforcePrefix = true)
-                senderPhoneError = null
-            },
-            label = { Text("Téléphone expéditeur") },
+            onValueChange = { /* locked - no manual edit */ },
+            label = { Text("Téléphone expéditeur (compte)") },
             leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+            readOnly = true,
+            enabled = false,
             modifier = Modifier
                 .fillMaxWidth()
                 .bringIntoViewRequester(bringIntoViewRequester)
@@ -363,7 +380,12 @@ fun OrderScreen(showMessage: (String) -> Unit) {
                     scope.launch { bringIntoViewRequester.bringIntoView() }
                 } },
             isError = senderPhoneError != null,
-            supportingText = { if (senderPhoneError != null) Text(senderPhoneError!!, color = MaterialTheme.colorScheme.error) }
+            supportingText = {
+                when {
+                    senderPhoneError != null -> Text(senderPhoneError!!, color = MaterialTheme.colorScheme.error)
+                    else -> Text("Modifiez votre numéro depuis Mon Profil pour le synchroniser", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            }
         )
         Spacer(Modifier.height(8.dp))
         OutlinedTextField(
@@ -411,16 +433,9 @@ fun OrderScreen(showMessage: (String) -> Unit) {
             modifier = Modifier.fillMaxWidth()
         )
         
-        Spacer(Modifier.height(24.dp))
-        
-        // Payment method selector
-        PaymentMethodSelector(
-            selectedMethod = paymentMethod,
-            onMethodChanged = { paymentMethod = it },
-            modifier = Modifier.fillMaxWidth()
-        )
-        
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(16.dp))
+
+        // Price and distance BEFORE payment methods
         Row(verticalAlignment = Alignment.CenterVertically) {
             // Manual recalculation remains available but is no longer required
             Button(onClick = { estimate() }, enabled = !estimating) {
@@ -441,6 +456,14 @@ fun OrderScreen(showMessage: (String) -> Unit) {
             Spacer(Modifier.height(8.dp))
             Text("Distance: ${distanceTxt ?: "-"} | Durée: ${durationTxt ?: "-"}")
         }
+        Spacer(Modifier.height(16.dp))
+
+        // Payment method selector (now after price/distance)
+        PaymentMethodSelector(
+            selectedMethod = paymentMethod,
+            onMethodChanged = { paymentMethod = it },
+            modifier = Modifier.fillMaxWidth()
+        )
         Spacer(Modifier.height(16.dp))
         Button(
             onClick = {
