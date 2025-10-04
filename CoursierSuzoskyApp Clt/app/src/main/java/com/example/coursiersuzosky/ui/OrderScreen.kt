@@ -952,7 +952,9 @@ private fun ContactsSection(
                 onValueChange = {},
                 label = { Text("Téléphone expéditeur") },
                 leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null, tint = Gold) },
+                // Verrouillage complet: non modifiable et non focusable (désactivé mais stylé)
                 readOnly = true,
+                enabled = false,
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default,
                 colors = OutlinedTextFieldDefaults.colors(
@@ -965,6 +967,11 @@ private fun ContactsSection(
                     focusedLeadingIconColor = Gold,
                     unfocusedLeadingIconColor = Gold.copy(alpha = 0.7f),
                     cursorColor = Color.Transparent,
+                    // Disabled state styling so le champ reste lisible malgré le verrouillage
+                    disabledBorderColor = Gold.copy(alpha = 0.35f),
+                    disabledLabelColor = Color.White.copy(alpha = 0.7f),
+                    disabledTextColor = Color.White,
+                    disabledLeadingIconColor = Gold.copy(alpha = 0.6f),
                     errorBorderColor = MaterialTheme.colorScheme.error,
                     errorLeadingIconColor = MaterialTheme.colorScheme.error,
                     errorLabelColor = MaterialTheme.colorScheme.error,
@@ -972,12 +979,7 @@ private fun ContactsSection(
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .onFocusEvent {
-                        if (it.isFocused) {
-                            keyboard?.hide()
-                            focusManager.moveFocus(FocusDirection.Down)
-                        }
-                    },
+                    .onFocusEvent { /* Désactivé: pas de focus */ },
                 isError = senderPhoneError != null,
                 supportingText = {
                     when {
@@ -996,7 +998,8 @@ private fun ContactsSection(
                 onValueChange = onReceiverFieldChange,
                 label = { Text("Téléphone destinataire") },
                 leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null, tint = Gold) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone, imeAction = ImeAction.Done),
+                // Forcer un clavier numérique fiable (évite les soucis d'affichage en mode ADB)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(
                     onDone = {
                         focusManager.clearFocus(force = true)
@@ -1022,12 +1025,15 @@ private fun ContactsSection(
                     .bringIntoViewRequester(bringIntoViewRequester)
                     .onFocusEvent {
                         if (it.isFocused) {
+                            // Améliore les cas où le clavier virtuel ne s'affiche pas en debug ADB
+                            keyboard?.show()
                             scope.launch { bringIntoViewRequester.bringIntoView() }
                         }
                         if (!it.hasFocus) {
                             keyboard?.hide()
                         }
                     },
+                singleLine = true,
                 isError = receiverPhoneError != null,
                 supportingText = {
                     if (receiverPhoneError != null) {
