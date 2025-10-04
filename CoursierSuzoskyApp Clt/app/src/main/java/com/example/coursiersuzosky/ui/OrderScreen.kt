@@ -60,6 +60,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.material3.AlertDialog
 import androidx.core.graphics.createBitmap
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.zIndex
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
@@ -1466,13 +1469,14 @@ private fun AutocompleteTextField(
     val places = remember { Places.createClient(context) }
     val token = remember { AutocompleteSessionToken.newInstance() }
     var expanded by remember { mutableStateOf(false) }
-    data class Suggestion(val text: String, val placeId: String)
+    data class Suggestion(val primary: String, val secondary: String?, val placeId: String?)
     var suggestions by remember { mutableStateOf(listOf<Suggestion>()) }
     var loading by remember { mutableStateOf(false) }
     var errorMsg by remember { mutableStateOf<String?>(null) }
     var job by remember { mutableStateOf<Job?>(null) }
     val scope = rememberCoroutineScope()
     val fieldBringIntoView = remember { BringIntoViewRequester() }
+    val cache = remember { mutableStateMapOf<String, List<Suggestion>>() }
 
     Column(Modifier.fillMaxWidth()) {
         OutlinedTextField(
@@ -1509,17 +1513,28 @@ private fun AutocompleteTextField(
                                 try {
                                     val list = withContext(Dispatchers.IO) {
                                         val url = "https://nominatim.openstreetmap.org/search".toHttpUrl()
-                                            .newBuilder()
+                                            OutlinedTextField(
                                             .addQueryParameter("format", "json")
                                             .addQueryParameter("limit", "5")
                                             .addQueryParameter("countrycodes", "ci")
                                             .addQueryParameter("q", text)
-                                            .build()
-                                        val req = Request.Builder().url(url)
+                                                    val key = text.trim().lowercase()
+                                                    if (text.length < 3) {
+                                                        suggestions = emptyList(); expanded = false; errorMsg = null; loading = false; return@OutlinedTextField
                                             .header("User-Agent", "CoursierSuzosky/1.0")
                                             .get()
-                                            .build()
-                                        ApiClient.http.newCall(req).execute().use { resp ->
+                                                        loading = true
+                                                        errorMsg = null
+                                                        // Tiny debounce for better responsiveness
+                                                        delay(180)
+                                                        // Serve from cache if we have it
+                                                        cache[key]?.let {
+                                                            suggestions = it
+                                                            expanded = it.isNotEmpty()
+                                                            loading = false
+                                                            if (expanded) scope.launch { fieldBringIntoView.bringIntoView() }
+                                                            return@launch
+                                                        }
                                             val body = resp.body?.string().orEmpty()
                                             val arr = org.json.JSONArray(body)
                                             val l = mutableListOf<Suggestion>()
@@ -1528,11 +1543,14 @@ private fun AutocompleteTextField(
                                                 l.add(Suggestion(obj.optString("display_name"), ""))
                                             }
                                             l
-                                        }
-                                    }
-                                    suggestions = list
-                                    expanded = list.isNotEmpty()
+                                                                val list = response.autocompletePredictions.map { p ->
+                                                                    val prim = p.getPrimaryText(null).toString()
+                                                                    val sec = p.getSecondaryText(null)?.toString()
+                                                                    Suggestion(prim, if (sec.isNullOrBlank()) null else sec, p.placeId)
+                                                                }.take(6)
+                                                                suggestions = list
                                     if (expanded) {
+                                                                cache[key] = list
                                         scope.launch { fieldBringIntoView.bringIntoView() }
                                     }
                                 } catch (e: Exception) {
@@ -1545,7 +1563,7 @@ private fun AutocompleteTextField(
                                 }
                             }
                         }
-                        .addOnCompleteListener {
+                                                                                .addQueryParameter("limit", "6")
                             loading = false
                         }
                 }
@@ -1556,16 +1574,21 @@ private fun AutocompleteTextField(
             supportingText = {
                 when {
                     supportingError != null -> Text(supportingError, color = MaterialTheme.colorScheme.error)
-                    loading -> Text("Recherche…")
+                                                                                val l = mutableListOf<Suggestion>()
                     errorMsg != null -> Text(errorMsg!!, color = MaterialTheme.colorScheme.error)
                 }
-            },
+                                                                                    val dn = obj.optString("display_name")
+                                                                                    val parts = dn.split(", ")
+                                                                                    val prim = parts.firstOrNull().orEmpty()
+                                                                                    val sec = parts.drop(1).joinToString(", ").ifBlank { null }
+                                                                                    l.add(Suggestion(prim, sec, null))
             colors = OutlinedTextFieldDefaults.colors(
                 focusedTextColor = Color.White,
                 unfocusedTextColor = Color.White,
                 focusedBorderColor = Gold,
-                unfocusedBorderColor = Gold.copy(alpha = 0.5f),
+                                                                        suggestions = list
                 focusedLabelColor = Gold,
+                                                                        cache[key] = list
                 unfocusedLabelColor = Color.White.copy(alpha = 0.7f),
                 focusedLeadingIconColor = Gold,
                 unfocusedLeadingIconColor = Gold.copy(alpha = 0.7f),
@@ -1590,7 +1613,7 @@ private fun AutocompleteTextField(
                         val placeRequest = FetchPlaceRequest.newInstance(
                             s.placeId,
                             listOf(Place.Field.LAT_LNG, Place.Field.ADDRESS, Place.Field.NAME)
-                        )
+                                                        loading -> Text("Recherche…")
                         places.fetchPlace(placeRequest)
                             .addOnSuccessListener { result ->
                                 onCoordinates(result.place.latLng)
@@ -1609,6 +1632,11 @@ private fun AutocompleteTextField(
                             try {
                                 val coords = withContext(Dispatchers.IO) {
                                     val url = "https://nominatim.openstreetmap.org/search".toHttpUrl()
+                                                trailingIcon = {
+                                                    if (loading) {
+                                                        CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp, color = Gold)
+                                                    }
+                                                },
                                         .newBuilder()
                                         .addQueryParameter("format", "json")
                                         .addQueryParameter("limit", "1")
@@ -1616,30 +1644,56 @@ private fun AutocompleteTextField(
                                         .addQueryParameter("q", s.text)
                                         .build()
                                     val req = Request.Builder().url(url)
-                                        .header("User-Agent", "CoursierSuzosky/1.0")
-                                        .get()
-                                        .build()
-                                    ApiClient.http.newCall(req).execute().use { resp ->
-                                        val body = resp.body?.string().orEmpty()
-                                        val arr = org.json.JSONArray(body)
-                                        if (arr.length() > 0) {
-                                            val obj = arr.getJSONObject(0)
-                                            val lat = obj.optDouble("lat")
-                                            val lon = obj.optDouble("lon")
-                                            LatLng(lat, lon)
-                                        } else null
-                                    }
-                                }
-                                onCoordinates(coords)
-                                onSelected(s.text)
-                            } catch (e: Exception) {
-                                onCoordinates(null)
-                                onSelected(s.text)
-                            }
-                        }
-                    }
-                    expanded = false
-                })
+                                            AnimatedVisibility(visible = expanded) {
+                                                Surface(
+                                                    tonalElevation = 6.dp,
+                                                    shape = RoundedCornerShape(12.dp),
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .zIndex(1f)
+                                                ) {
+                                                    LazyColumn(
+                                                        modifier = Modifier
+                                                            .fillMaxWidth()
+                                                    ) {
+                                                        items(suggestions) { s ->
+                                                            ListItem(
+                                                                headlineContent = { Text(s.primary, color = Color.White) },
+                                                                supportingContent = { if (!s.secondary.isNullOrBlank()) Text(s.secondary!!, color = Color.White.copy(alpha = 0.7f)) },
+                                                                leadingContent = { Icon(Icons.Default.Place, contentDescription = null, tint = Gold) },
+                                                                modifier = Modifier
+                                                                    .clickable {
+                                                                        val selectedText = buildString {
+                                                                            append(s.primary)
+                                                                            if (!s.secondary.isNullOrBlank()) append(", ").append(s.secondary)
+                                                                        }
+                                                                        if (!s.placeId.isNullOrBlank()) {
+                                                                            val placeRequest = FetchPlaceRequest.newInstance(
+                                                                                s.placeId,
+                                                                                listOf(Place.Field.LAT_LNG, Place.Field.ADDRESS, Place.Field.NAME)
+                                                                            )
+                                                                            places.fetchPlace(placeRequest)
+                                                                                .addOnSuccessListener { result ->
+                                                                                    onCoordinates(result.place.latLng)
+                                                                                    onSelected(result.place.address ?: selectedText)
+                                                                                    expanded = false
+                                                                                }
+                                                                                .addOnFailureListener {
+                                                                                    onSelected(selectedText)
+                                                                                    expanded = false
+                                                                                }
+                                                                        } else {
+                                                                            onSelected(selectedText)
+                                                                            expanded = false
+                                                                        }
+                                                                    }
+                                                                    .padding(horizontal = 8.dp)
+                                                            )
+                                                            Divider(color = Color.White.copy(alpha = 0.08f))
+                                                        }
+                                                    }
+                                                }
+                                            }
             }
         }
     }
