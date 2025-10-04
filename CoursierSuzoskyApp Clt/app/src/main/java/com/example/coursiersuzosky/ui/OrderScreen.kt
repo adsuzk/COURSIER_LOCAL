@@ -1390,10 +1390,6 @@ private fun MapSection(
                         position = CameraPosition.fromLatLngZoom(LatLng(5.3476, -4.0076), 12f)
                     }
                     val abidjanCenter = LatLng(5.3476, -4.0076)
-                    val abidjanBounds = LatLngBounds(
-                        LatLng(5.2, -4.2),
-                        LatLng(5.5, -3.8)
-                    )
 
                     LaunchedEffect(departureLatLng, destinationLatLng, mapLoaded) {
                         if (!mapLoaded) return@LaunchedEffect
@@ -1402,8 +1398,22 @@ private fun MapSection(
                             withContext(Dispatchers.Main) {
                                 when {
                                     departureLatLng != null && destinationLatLng != null -> {
-                                        val bounds = LatLngBounds.builder().include(departureLatLng).include(destinationLatLng).build()
-                                        cameraPositionState.animate(CameraUpdateFactory.newLatLngBounds(bounds, 100))
+                                        try {
+                                            val bounds = LatLngBounds.builder()
+                                                .include(departureLatLng)
+                                                .include(destinationLatLng)
+                                                .build()
+                                            android.util.Log.d("OrderScreen", "Animating to A/B bounds: ${'$'}bounds")
+                                            cameraPositionState.animate(CameraUpdateFactory.newLatLngBounds(bounds, 100))
+                                        } catch (iae: IllegalArgumentException) {
+                                            // Fallback: center on midpoint if bounds fit fails (e.g., due to constraints or tiny area)
+                                            val mid = LatLng(
+                                                (departureLatLng.latitude + destinationLatLng.latitude) / 2.0,
+                                                (departureLatLng.longitude + destinationLatLng.longitude) / 2.0
+                                            )
+                                            android.util.Log.w("OrderScreen", "Bounds animation failed, fallback to midpoint: ${'$'}mid", iae)
+                                            cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(mid, 12f))
+                                        }
                                     }
                                     departureLatLng != null ->
                                         cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(departureLatLng, 12f))
@@ -1414,6 +1424,7 @@ private fun MapSection(
                                 }
                             }
                         } catch (e: Exception) {
+                            android.util.Log.e("OrderScreen", "Camera animation error", e)
                             mapError = e.message ?: "Erreur de caméra"
                         }
                     }
@@ -1458,6 +1469,7 @@ private fun MapSection(
                         modifier = Modifier.fillMaxSize(),
                         cameraPositionState = cameraPositionState,
                         onMapClick = { ll ->
+                            android.util.Log.d("OrderScreen", "Map click at: ${'$'}ll")
                             pendingClick = ll
                             showMapChoice = true
                         },
@@ -1471,8 +1483,8 @@ private fun MapSection(
                     ) {
                         MapEffect(Unit) { map ->
                             try {
-                                map.setLatLngBoundsForCameraTarget(abidjanBounds)
-                                map.setMinZoomPreference(9.5f)
+                                // Keep safe zoom preferences without constraining camera target bounds
+                                map.setMinZoomPreference(5.0f)
                                 map.setMaxZoomPreference(20f)
                             } catch (_: Exception) {}
                         }
