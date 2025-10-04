@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.suzosky.coursierclient.ui.*
 import com.suzosky.coursierclient.ui.theme.CoursierSuzoskyTheme
 import com.suzosky.coursierclient.ui.theme.Dark
@@ -55,6 +56,9 @@ sealed class Screen(val route: String, val title: String, val icon: androidx.com
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Install splash screen AVANT super.onCreate()
+        installSplashScreen()
+        
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         

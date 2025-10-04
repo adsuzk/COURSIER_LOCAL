@@ -117,6 +117,8 @@ dependencies {
     // Firebase Realtime Database (BOM manages versions)
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
     implementation("com.google.firebase:firebase-database-ktx")
+    // Splash Screen API
+    implementation("androidx.core:core-splashscreen:1.0.1")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
