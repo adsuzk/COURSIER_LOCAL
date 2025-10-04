@@ -645,32 +645,43 @@ fun OrderScreen(showMessage: (String) -> Unit) {
         PaymentWebViewModal(url = paymentUrl!!, onClose = { success ->
             showPaymentModal = false
             if (success && pendingOnlineOrder) {
-                // Create order after payment
+                // Create order after payment with short polling (handles slight gateway delays)
                 scope.launch {
                     try {
-                        val resp = ApiService.createOrderAfterPayment(
-                            ApiService.CreateAfterPaymentRequest(
-                                departure = departure,
-                                destination = destination,
-                                latitude_retrait = departureLatLng?.latitude,
-                                longitude_retrait = departureLatLng?.longitude,
-                                latitude_livraison = destinationLatLng?.latitude,
-                                longitude_livraison = destinationLatLng?.longitude,
-                                distance_km = null,
-                                prix_livraison = (totalPrice ?: 0),
-                                telephone_destinataire = receiverPhone,
-                                nom_destinataire = null,
-                                notes_speciales = description.ifBlank { null },
-                                client_name = null,
-                                client_phone = senderPhone,
-                                client_email = null,
-                                transaction_id = lastPaymentTransactionId
-                            )
+                        val reqData = ApiService.CreateAfterPaymentRequest(
+                            departure = departure,
+                            destination = destination,
+                            latitude_retrait = departureLatLng?.latitude,
+                            longitude_retrait = departureLatLng?.longitude,
+                            latitude_livraison = destinationLatLng?.latitude,
+                            longitude_livraison = destinationLatLng?.longitude,
+                            distance_km = null,
+                            prix_livraison = (totalPrice ?: 0),
+                            telephone_destinataire = receiverPhone,
+                            nom_destinataire = null,
+                            notes_speciales = description.ifBlank { null },
+                            client_name = null,
+                            client_phone = senderPhone,
+                            client_email = null,
+                            transaction_id = lastPaymentTransactionId
                         )
-                        if (resp.success) {
-                            showMessage("Commande crée: ${'$'}{resp.order_number ?: resp.order_id}")
-                        } else {
-                            showMessage(resp.message ?: "Erreur post-paiement")
+                        var attempt = 0
+                        var lastResp: ApiService.CreateAfterPaymentResponse? = null
+                        while (attempt < 3) {
+                            val resp = ApiService.createOrderAfterPayment(reqData)
+                            lastResp = resp
+                            if (resp.success) {
+                                val label = resp.order_number ?: resp.order_id?.toString() ?: "-"
+                                showMessage("Paiement confirmé, commande créée: ${'$'}label")
+                                break
+                            }
+                            attempt++
+                            delay(1500)
+                        }
+                        if (lastResp == null || lastResp.success != true) {
+                            // Graceful fallback if still not confirmed
+                            showMessage(lastResp?.message
+                                ?: "Paiement confirmé. Création en cours, vérifiez l'historique dans une minute.")
                         }
                     } catch (e: Exception) {
                         showMessage(ApiService.friendlyError(e))

@@ -85,97 +85,173 @@ try {
     $numeroCommande = 'SZK' . time() . rand(100, 999);
     
     // Insérer la commande
-    $stmt = $pdo->prepare("
-        INSERT INTO commandes (
-            client_id,
-            client_nom,
-            client_telephone,
-            client_email,
-            adresse_depart,
-            adresse_destination,
-            latitude_retrait,
-            longitude_retrait,
-            latitude_livraison,
-            longitude_livraison,
-            distance_km,
-            prix_livraison,
-            telephone_destinataire,
-            nom_destinataire,
-            notes_speciales,
-            mode_paiement,
-            statut_paiement,
-            numero_commande,
-            statut,
-            date_creation,
-            transaction_id
-        ) VALUES (
-            :client_id,
-            :client_nom,
-            :client_telephone,
-            :client_email,
-            :adresse_depart,
-            :adresse_destination,
-            :latitude_retrait,
-            :longitude_retrait,
-            :latitude_livraison,
-            :longitude_livraison,
-            :distance_km,
-            :prix_livraison,
-            :telephone_destinataire,
-            :nom_destinataire,
-            :notes_speciales,
-            :mode_paiement,
-            :statut_paiement,
-            :numero_commande,
-            :statut,
-            NOW(),
-            :transaction_id
-        )
-    ");
-        INSERT INTO commandes (
-            client_id,
-            client_nom,
-            client_telephone,
-            client_email,
-            adresse_depart,
-            adresse_destination,
-            latitude_retrait,
-            longitude_retrait,
-            latitude_livraison,
-            longitude_livraison,
-            distance_km,
-            prix_livraison,
-            telephone_destinataire,
-            nom_destinataire,
-            notes_speciales,
-            mode_paiement,
-            statut_paiement,
-            numero_commande,
-            statut,
-            date_creation
-        ) VALUES (
-            :client_id,
-            :client_nom,
-            :client_telephone,
-            :client_email,
-            :adresse_depart,
-            :adresse_destination,
-            :latitude_retrait,
-            :longitude_retrait,
-            :latitude_livraison,
-            :longitude_livraison,
-            :distance_km,
-            :prix_livraison,
-            :telephone_destinataire,
-            :nom_destinataire,
-            :notes_speciales,
-            :mode_paiement,
-            :statut_paiement,
-            :numero_commande,
-            :statut,
-            NOW()
-        )
-    ");
+        error_log("[ORDER_AFTER_PAYMENT] Client: $clientNom ($clientTelephone), De: $departure, À: $destination");
+
+        // Connexion BDD
+        $pdo = getDB();
+
+        // Idempotence: si une commande existe déjà pour ce transaction_id, la retourner
+        try {
+            $check = $pdo->prepare("SELECT id, numero_commande FROM commandes WHERE transaction_id = ? LIMIT 1");
+            $check->execute([$transactionId]);
+            if ($row = $check->fetch(PDO::FETCH_ASSOC)) {
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Commande déjà enregistrée',
+                    'order_id' => $row['id'],
+                    'order_number' => $row['numero_commande'],
+                    'redirect_url' => '/index.php?order_success=' . $row['numero_commande']
+                ]);
+                exit;
+            }
+        } catch (Throwable $e) {
+            // continuer en best-effort
+        }
+
+        // Générer le numéro de commande
+        $numeroCommande = 'SZK' . time() . rand(100, 999);
+
+        // Insérer la commande (essai avec transaction_id, fallback sans si colonne absente)
+        $result = false;
+        try {
+            $stmt = $pdo->prepare("
+            INSERT INTO commandes (
+                client_id,
+                client_nom,
+                client_telephone,
+                client_email,
+                adresse_depart,
+                adresse_destination,
+                latitude_retrait,
+                longitude_retrait,
+                latitude_livraison,
+                longitude_livraison,
+                distance_km,
+                prix_livraison,
+                telephone_destinataire,
+                nom_destinataire,
+                notes_speciales,
+                mode_paiement,
+                statut_paiement,
+                numero_commande,
+                statut,
+                date_creation,
+                transaction_id
+            ) VALUES (
+                :client_id,
+                :client_nom,
+                :client_telephone,
+                :client_email,
+                :adresse_depart,
+                :adresse_destination,
+                :latitude_retrait,
+                :longitude_retrait,
+                :latitude_livraison,
+                :longitude_livraison,
+                :distance_km,
+                :prix_livraison,
+                :telephone_destinataire,
+                :nom_destinataire,
+                :notes_speciales,
+                :mode_paiement,
+                :statut_paiement,
+                :numero_commande,
+                :statut,
+                NOW(),
+                :transaction_id
+            )
+        ");
+            $result = $stmt->execute([
+                ':client_id' => $clientId,
+                ':client_nom' => $clientNom,
+                ':client_telephone' => $clientTelephone,
+                ':client_email' => $clientEmail,
+                ':adresse_depart' => $departure,
+                ':adresse_destination' => $destination,
+                ':latitude_retrait' => $latitudeRetrait,
+                ':longitude_retrait' => $longitudeRetrait,
+                ':latitude_livraison' => $latitudeLivraison,
+                ':longitude_livraison' => $longitudeLivraison,
+                ':distance_km' => $distance,
+                ':prix_livraison' => $prixLivraison,
+                ':telephone_destinataire' => $telephoneDestinataire,
+                ':nom_destinataire' => $nomDestinataire,
+                ':notes_speciales' => $notesSpeciales,
+                ':mode_paiement' => $modePaiement,
+                ':statut_paiement' => 'paye',
+                ':numero_commande' => $numeroCommande,
+                ':statut' => 'nouvelle',
+                ':transaction_id' => $transactionId
+            ]);
+        } catch (Throwable $e) {
+            // Fallback sans transaction_id si la colonne n'existe pas
+            $stmt = $pdo->prepare("
+            INSERT INTO commandes (
+                client_id,
+                client_nom,
+                client_telephone,
+                client_email,
+                adresse_depart,
+                adresse_destination,
+                latitude_retrait,
+                longitude_retrait,
+                latitude_livraison,
+                longitude_livraison,
+                distance_km,
+                prix_livraison,
+                telephone_destinataire,
+                nom_destinataire,
+                notes_speciales,
+                mode_paiement,
+                statut_paiement,
+                numero_commande,
+                statut,
+                date_creation
+            ) VALUES (
+                :client_id,
+                :client_nom,
+                :client_telephone,
+                :client_email,
+                :adresse_depart,
+                :adresse_destination,
+                :latitude_retrait,
+                :longitude_retrait,
+                :latitude_livraison,
+                :longitude_livraison,
+                :distance_km,
+                :prix_livraison,
+                :telephone_destinataire,
+                :nom_destinataire,
+                :notes_speciales,
+                :mode_paiement,
+                :statut_paiement,
+                :numero_commande,
+                :statut,
+                NOW()
+            )
+        ");
+            $result = $stmt->execute([
+                ':client_id' => $clientId,
+                ':client_nom' => $clientNom,
+                ':client_telephone' => $clientTelephone,
+                ':client_email' => $clientEmail,
+                ':adresse_depart' => $departure,
+                ':adresse_destination' => $destination,
+                ':latitude_retrait' => $latitudeRetrait,
+                ':longitude_retrait' => $longitudeRetrait,
+                ':latitude_livraison' => $latitudeLivraison,
+                ':longitude_livraison' => $longitudeLivraison,
+                ':distance_km' => $distance,
+                ':prix_livraison' => $prixLivraison,
+                ':telephone_destinataire' => $telephoneDestinataire,
+                ':nom_destinataire' => $nomDestinataire,
+                ':notes_speciales' => $notesSpeciales,
+                ':mode_paiement' => $modePaiement,
+                ':statut_paiement' => 'paye',
+                ':numero_commande' => $numeroCommande,
+                ':statut' => 'nouvelle'
+            ]);
+        }
     
     $result = $stmt->execute([
         ':client_id' => $clientId,
