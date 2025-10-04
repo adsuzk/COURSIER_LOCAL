@@ -503,7 +503,6 @@ fun OrderScreen(showMessage: (String) -> Unit) {
     val focusManager = LocalFocusManager.current
     val keyboard = LocalSoftwareKeyboardController.current
     val receiverFocusRequester = remember { FocusRequester() }
-    val receiverFocusRequester = remember { androidx.compose.ui.focus.FocusRequester() }
     // Hide keyboard only on user drag scroll (not programmatic bringIntoView)
     val hideOnUserScroll = remember {
         object : NestedScrollConnection {
@@ -923,7 +922,9 @@ private fun ContactsSection(
     onReceiverFieldChange: (TextFieldValue) -> Unit,
     onDescriptionChange: (String) -> Unit,
     bringIntoViewRequester: BringIntoViewRequester,
-    scope: CoroutineScope
+    scope: CoroutineScope,
+    receiverFocusRequester: FocusRequester,
+    shouldAutoFocusReceiver: Boolean
 ) {
     val focusManager = LocalFocusManager.current
     val keyboard = LocalSoftwareKeyboardController.current
@@ -982,7 +983,6 @@ private fun ContactsSection(
                 trailingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = Gold) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .focusProperties { canFocus = false }
                     // Ne prend pas le focus pour éviter toute interaction avec l'IME
                     .onFocusEvent {
                         // Si un OEM donne malgré tout le focus, on le rend tout de suite
@@ -1056,8 +1056,8 @@ private fun ContactsSection(
             )
 
             // Autofocus du téléphone destinataire si vide (fiabilise l'ouverture IME sur certains OEM)
-            LaunchedEffect(receiverDigits) {
-                if (receiverDigits.isEmpty()) {
+            LaunchedEffect(shouldAutoFocusReceiver) {
+                if (shouldAutoFocusReceiver) {
                     try {
                         delay(150)
                         receiverFocusRequester.requestFocus()
