@@ -18,14 +18,25 @@ try {
         throw new Exception("Méthode non autorisée");
     }
     
-    // Récupérer les données
-    $orderNumber = $_POST['order_number'] ?? 'SZK' . time();
-    $amount = intval($_POST['amount'] ?? 1500);
+    // Récupérer les données (support JSON et x-www-form-urlencoded)
+    $raw = file_get_contents('php://input');
+    $json = [];
+    if (!empty($raw)) {
+        $tmp = json_decode($raw, true);
+        if (json_last_error() === JSON_ERROR_NONE && is_array($tmp)) {
+            $json = $tmp;
+        }
+    }
+    // Fusion douce: JSON prioritaire, sinon POST
+    $orderNumber = $json['order_number'] ?? ($_POST['order_number'] ?? ('SZK' . time()));
+    $amountVal = $json['amount'] ?? ($_POST['amount'] ?? 1500);
+    $amount = intval($amountVal);
+    if ($amount <= 0) { $amount = 1500; }
     
     // Générer les informations client
-    $clientName = $_POST['client_name'] ?? 'Client Suzosky';
-    $clientPhone = $_POST['client_phone'] ?? '';
-    $clientEmail = $_POST['client_email'] ?? 'client@suzosky.com';
+    $clientName = $json['client_name'] ?? ($_POST['client_name'] ?? 'Client Suzosky');
+    $clientPhone = $json['client_phone'] ?? ($_POST['client_phone'] ?? '');
+    $clientEmail = $json['client_email'] ?? ($_POST['client_email'] ?? 'client@suzosky.com');
     
     error_log("[PAYMENT_ONLY] Génération URL paiement - Commande: $orderNumber, Montant: $amount FCFA");
     
