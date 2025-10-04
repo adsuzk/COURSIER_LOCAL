@@ -47,6 +47,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -500,6 +502,8 @@ fun OrderScreen(showMessage: (String) -> Unit) {
     val scrollState = rememberScrollState()
     val focusManager = LocalFocusManager.current
     val keyboard = LocalSoftwareKeyboardController.current
+    val receiverFocusRequester = remember { FocusRequester() }
+    val receiverFocusRequester = remember { androidx.compose.ui.focus.FocusRequester() }
     // Hide keyboard only on user drag scroll (not programmatic bringIntoView)
     val hideOnUserScroll = remember {
         object : NestedScrollConnection {
@@ -588,7 +592,9 @@ fun OrderScreen(showMessage: (String) -> Unit) {
                 onReceiverFieldChange = handleReceiverPhoneTfChange,
                 onDescriptionChange = handleDescriptionChange,
                 bringIntoViewRequester = bringIntoViewRequester,
-                scope = scope
+                scope = scope,
+                receiverFocusRequester = receiverFocusRequester,
+                shouldAutoFocusReceiver = receiverDigits.isEmpty()
             )
 
             Spacer(Modifier.height(16.dp))
@@ -976,6 +982,7 @@ private fun ContactsSection(
                 trailingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = Gold) },
                 modifier = Modifier
                     .fillMaxWidth()
+                    .focusProperties { canFocus = false }
                     // Ne prend pas le focus pour éviter toute interaction avec l'IME
                     .onFocusEvent {
                         // Si un OEM donne malgré tout le focus, on le rend tout de suite
@@ -1027,6 +1034,7 @@ private fun ContactsSection(
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
+                    .focusRequester(receiverFocusRequester)
                     .bringIntoViewRequester(bringIntoViewRequester)
                     .onFocusEvent {
                         if (it.isFocused) {
@@ -1046,6 +1054,17 @@ private fun ContactsSection(
                     }
                 }
             )
+
+            // Autofocus du téléphone destinataire si vide (fiabilise l'ouverture IME sur certains OEM)
+            LaunchedEffect(receiverDigits) {
+                if (receiverDigits.isEmpty()) {
+                    try {
+                        delay(150)
+                        receiverFocusRequester.requestFocus()
+                        keyboard?.show()
+                    } catch (_: Exception) { }
+                }
+            }
 
             Spacer(Modifier.height(16.dp))
 
