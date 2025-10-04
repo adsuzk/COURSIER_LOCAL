@@ -5,6 +5,15 @@ package com.suzosky.coursierclient.ui
 import androidx.core.net.toUri
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -33,15 +42,14 @@ import android.webkit.WebViewClient
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.material3.LinearProgressIndicator
 import com.suzosky.coursierclient.net.*
+import com.suzosky.coursierclient.ui.theme.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Place
-import androidx.compose.material.icons.filled.Phone
-import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.*
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
@@ -297,33 +305,137 @@ fun OrderScreen(showMessage: (String) -> Unit) {
     }
 
     val scrollState = rememberScrollState()
-    Column(
-        Modifier
+    
+    // NOUVEAU DESIGN PREMIUM AVEC GRADIENT DARK/GOLD
+    Box(
+        modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(scrollState)
-            .imePadding()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(Dark, SecondaryBlue, Dark)
+                )
+            )
     ) {
-        AnimatedVisibility(visible = showUpdate, enter = expandVertically(), exit = shrinkVertically()) {
-            Surface(color = MaterialTheme.colorScheme.secondaryContainer, tonalElevation = 2.dp, modifier = Modifier.fillMaxWidth()) {
-                Column(Modifier.padding(12.dp)) {
-                    Text("Mise à jour disponible", style = MaterialTheme.typography.titleMedium)
-                    val vName = updateInfo?.latest_version_name ?: ""
-                    Text("Version: ${vName}")
+        Column(
+            Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .padding(24.dp)
+                .imePadding()
+        ) {
+            // HEADER PREMIUM
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(56.dp)
+                        .clip(CircleShape)
+                        .background(Gold.copy(alpha = 0.15f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.LocalShipping,
+                        contentDescription = null,
+                        tint = Gold,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+                Spacer(Modifier.width(16.dp))
+                Column {
+                    Text(
+                        text = "Nouvelle commande",
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Gold
+                    )
+                    Text(
+                        text = "Livraison rapide et sécurisée",
+                        fontSize = 14.sp,
+                        color = Color.White.copy(alpha = 0.6f)
+                    )
+                }
+            }
+            
+            Spacer(Modifier.height(24.dp))
+            
+            // BANNIÈRE DE MISE À JOUR (si disponible)
+            AnimatedVisibility(visible = showUpdate, enter = expandVertically(), exit = shrinkVertically()) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Info.copy(alpha = 0.15f)
+                    ),
+                    shape = RoundedCornerShape(16.dp),
+                    border = BorderStroke(1.dp, Info.copy(alpha = 0.3f))
+                ) {
+                    Column(Modifier.padding(16.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Filled.Notifications,
+                                contentDescription = null,
+                                tint = Info
+                            )
+                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                "Mise à jour disponible",
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                        }
+                        val vName = updateInfo?.latest_version_name ?: ""
+                        if (vName.isNotBlank()) {
+                            Spacer(Modifier.height(4.dp))
+                            Text("Version: $vName", color = Color.White.copy(alpha = 0.8f), fontSize = 14.sp)
+                        }
                     val dl = updateInfo?.download_url
                     if (!dl.isNullOrBlank()) {
-                        Spacer(Modifier.height(4.dp))
-                        TextButton(onClick = { val intent = CustomTabsIntent.Builder().build(); intent.launchUrl(context, dl.toUri()) }) {
-                            Text("Télécharger la nouvelle version")
+                        Spacer(Modifier.height(8.dp))
+                        TextButton(
+                            onClick = { 
+                                val intent = CustomTabsIntent.Builder().build()
+                                intent.launchUrl(context, dl.toUri())
+                            },
+                            colors = ButtonDefaults.textButtonColors(contentColor = Gold)
+                        ) {
+                            Text("Télécharger maintenant")
                         }
                     }
                 }
             }
-        }
-        Spacer(Modifier.height(8.dp))
-        Text("Nouvelle commande", style = MaterialTheme.typography.headlineSmall)
-        Spacer(Modifier.height(12.dp))
-        AutocompleteTextField(
+                Spacer(Modifier.height(16.dp))
+            }
+            
+            // SECTION 1: ITINÉRAIRE
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White.copy(alpha = 0.05f)
+                ),
+                shape = RoundedCornerShape(20.dp),
+                border = BorderStroke(1.dp, Gold.copy(alpha = 0.15f))
+            ) {
+                Column(Modifier.padding(20.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Filled.Place,
+                            contentDescription = null,
+                            tint = Gold,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(Modifier.width(12.dp))
+                        Text(
+                            text = "Itinéraire",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Gold
+                        )
+                    }
+                    
+                    Spacer(Modifier.height(20.dp))
+                    
+                    AutocompleteTextField(
             label = "Adresse de départ",
             value = departure,
             onValueChange = { departure = it; departureError = null; totalPrice = null; distanceTxt = null; durationTxt = null; departureLatLng = null; scheduleEstimateDebounced() },
@@ -339,23 +451,25 @@ fun OrderScreen(showMessage: (String) -> Unit) {
             }
             ,
             showError = { msg -> showMessage(msg) }
-        ) { sel ->
-            departure = sel
-            if (destination.isNotBlank() && !estimating) estimate()
-        }
-        Spacer(Modifier.height(8.dp))
-        AutocompleteTextField(
-            label = "Adresse d'arrivée",
-            value = destination,
-            onValueChange = { destination = it; destinationError = null; totalPrice = null; distanceTxt = null; durationTxt = null; destinationLatLng = null; scheduleEstimateDebounced() },
-            isError = destinationError != null,
-            supportingError = destinationError,
-            modifier = Modifier
-                .fillMaxWidth()
-                .bringIntoViewRequester(bringIntoViewRequester)
-            ,
-            onCoordinates = { ll ->
-                destinationLatLng = ll
+            ) { sel ->
+                departure = sel
+                if (destination.isNotBlank() && !estimating) estimate()
+            }
+            
+            Spacer(Modifier.height(16.dp))
+            
+            AutocompleteTextField(
+                label = "Adresse d'arrivée",
+                value = destination,
+                onValueChange = { destination = it; destinationError = null; totalPrice = null; distanceTxt = null; durationTxt = null; destinationLatLng = null; scheduleEstimateDebounced() },
+                isError = destinationError != null,
+                supportingError = destinationError,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .bringIntoViewRequester(bringIntoViewRequester)
+                ,
+                onCoordinates = { ll ->
+                    destinationLatLng = ll
                 scheduleEstimateDebounced()
             }
             ,
@@ -364,15 +478,53 @@ fun OrderScreen(showMessage: (String) -> Unit) {
             destination = sel
             if (departure.isNotBlank() && !estimating) estimate()
         }
-        Spacer(Modifier.height(8.dp))
+                    }
+                }
+                
+                Spacer(Modifier.height(16.dp))
+                
+                // Contacts section
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.05f)),
+                    border = BorderStroke(1.dp, Gold.copy(alpha = 0.15f))
+                ) {
+                    Column(modifier = Modifier.padding(20.dp)) {
+                        // Section header
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Phone,
+                                contentDescription = null,
+                                tint = Gold,
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Spacer(Modifier.width(12.dp))
+                            Text(
+                                text = "Contacts",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Gold
+                            )
+                        }
+        
         OutlinedTextField(
             value = senderPhone,
             onValueChange = { /* locked - no manual edit */ },
             label = { Text("Téléphone expéditeur (compte)") },
-            leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null) },
+            leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null, tint = Gold) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
             readOnly = true,
             enabled = false,
+            colors = OutlinedTextFieldDefaults.colors(
+                disabledBorderColor = Gold.copy(alpha = 0.3f),
+                disabledLabelColor = Gold.copy(alpha = 0.6f),
+                disabledTextColor = Color.White.copy(alpha = 0.6f),
+                disabledLeadingIconColor = Gold.copy(alpha = 0.6f)
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .bringIntoViewRequester(bringIntoViewRequester)
@@ -383,11 +535,11 @@ fun OrderScreen(showMessage: (String) -> Unit) {
             supportingText = {
                 when {
                     senderPhoneError != null -> Text(senderPhoneError!!, color = MaterialTheme.colorScheme.error)
-                    else -> Text("Modifiez votre numéro depuis Mon Profil pour le synchroniser", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    else -> Text("Modifiez votre numéro depuis Mon Profil pour le synchroniser", color = Color.White.copy(alpha = 0.6f))
                 }
             }
         )
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(16.dp))
         OutlinedTextField(
             value = receiverPhone,
             onValueChange = { new ->
@@ -397,8 +549,16 @@ fun OrderScreen(showMessage: (String) -> Unit) {
                 receiverPhoneError = null
             },
             label = { Text("Téléphone destinataire") },
-            leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null) },
+            leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null, tint = Gold) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Gold,
+                focusedLabelColor = Gold,
+                focusedLeadingIconColor = Gold,
+                unfocusedBorderColor = Gold.copy(alpha = 0.5f),
+                unfocusedLabelColor = Color.White.copy(alpha = 0.7f),
+                cursorColor = Gold
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .bringIntoViewRequester(bringIntoViewRequester)
@@ -408,11 +568,18 @@ fun OrderScreen(showMessage: (String) -> Unit) {
             isError = receiverPhoneError != null,
             supportingText = { if (receiverPhoneError != null) Text(receiverPhoneError!!, color = MaterialTheme.colorScheme.error) }
         )
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(16.dp))
         OutlinedTextField(
             value = description,
             onValueChange = { description = it },
             label = { Text("Description (optionnelle)") },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Gold,
+                focusedLabelColor = Gold,
+                unfocusedBorderColor = Gold.copy(alpha = 0.5f),
+                unfocusedLabelColor = Color.White.copy(alpha = 0.7f),
+                cursorColor = Gold
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .bringIntoViewRequester(bringIntoViewRequester)
@@ -420,10 +587,39 @@ fun OrderScreen(showMessage: (String) -> Unit) {
                     scope.launch { bringIntoViewRequester.bringIntoView() }
                 } }
         )
+                    }
+                }
         
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(16.dp))
         
         // Priority selector
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.05f)),
+            border = BorderStroke(1.dp, Gold.copy(alpha = 0.15f))
+        ) {
+            Column(modifier = Modifier.padding(20.dp)) {
+                // Section header
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = null,
+                        tint = Gold,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(Modifier.width(12.dp))
+                    Text(
+                        text = "Priorité",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Gold
+                    )
+                }
+                
         PrioritySelector(
             selectedPriority = priority,
             onPriorityChanged = {
@@ -432,27 +628,73 @@ fun OrderScreen(showMessage: (String) -> Unit) {
             },
             modifier = Modifier.fillMaxWidth()
         )
+            }
+        }
         
         Spacer(Modifier.height(16.dp))
 
-        // Price and distance BEFORE payment methods
+        // Price and distance
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(containerColor = Gold.copy(alpha = 0.1f)),
+            border = BorderStroke(1.dp, Gold.copy(alpha = 0.3f))
+        ) {
+            Column(modifier = Modifier.padding(20.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             if (estimating) {
-                CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(18.dp))
+                CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(18.dp), color = Gold)
                 Spacer(Modifier.width(8.dp))
             }
             AnimatedContent(targetState = totalPrice, label = "priceAnim", transitionSpec = { fadeIn(tween(200)) togetherWith fadeOut(tween(200)) }) { price ->
                 val txt = if (price != null) "Prix estimé: ${price} FCFA" else "Prix en calcul…"
-                Text(txt)
+                Text(txt, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Gold)
             }
         }
         if (distanceTxt != null || durationTxt != null) {
-            Spacer(Modifier.height(8.dp))
-            Text("Distance: ${distanceTxt ?: "-"} | Durée: ${durationTxt ?: "-"}")
+            Spacer(Modifier.height(12.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Default.Place, contentDescription = null, tint = Gold.copy(alpha = 0.7f), modifier = Modifier.size(16.dp))
+                Spacer(Modifier.width(4.dp))
+                Text("Distance: ${distanceTxt ?: "-"}", color = Color.White.copy(alpha = 0.8f))
+                Spacer(Modifier.width(16.dp))
+                Icon(Icons.Default.Info, contentDescription = null, tint = Gold.copy(alpha = 0.7f), modifier = Modifier.size(16.dp))
+                Spacer(Modifier.width(4.dp))
+                Text("Durée: ${durationTxt ?: "-"}", color = Color.White.copy(alpha = 0.8f))
+            }
+        }
+            }
         }
         Spacer(Modifier.height(16.dp))
 
-        // Payment method selector (now after price/distance)
+        // Payment method selector
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.05f)),
+            border = BorderStroke(1.dp, Gold.copy(alpha = 0.15f))
+        ) {
+            Column(modifier = Modifier.padding(20.dp)) {
+                // Section header
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ShoppingCart,
+                        contentDescription = null,
+                        tint = Gold,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(Modifier.width(12.dp))
+                    Text(
+                        text = "Paiement",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Gold
+                    )
+                }
+                
         PaymentMethodSelector(
             selectedMethod = paymentMethod,
             onMethodChanged = { newMethod ->
@@ -480,7 +722,11 @@ fun OrderScreen(showMessage: (String) -> Unit) {
             },
             modifier = Modifier.fillMaxWidth()
         )
-        Spacer(Modifier.height(16.dp))
+            }
+        }
+        Spacer(Modifier.height(24.dp))
+        
+        // Submit button
         Button(
             onClick = {
                 if (!validateInputs(forSubmit = true)) return@Button
@@ -531,36 +777,111 @@ fun OrderScreen(showMessage: (String) -> Unit) {
                     }
                 }
             },
-            modifier = Modifier.fillMaxWidth(),
-        enabled = couriersAvailable && !estimating && !submitting && departureError == null && destinationError == null && senderPhoneError == null && receiverPhoneError == null &&
-                    departure.isNotBlank() && destination.isNotBlank() && senderPhone.isNotBlank() && receiverPhone.isNotBlank()
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(60.dp),
+            enabled = couriersAvailable && !estimating && !submitting && departureError == null && destinationError == null && senderPhoneError == null && receiverPhoneError == null &&
+                    departure.isNotBlank() && destination.isNotBlank() && senderPhone.isNotBlank() && receiverPhone.isNotBlank(),
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Gold,
+                contentColor = Dark,
+                disabledContainerColor = Gold.copy(alpha = 0.3f),
+                disabledContentColor = Dark.copy(alpha = 0.5f)
+            ),
+            elevation = ButtonDefaults.buttonElevation(
+                defaultElevation = 8.dp,
+                pressedElevation = 12.dp,
+                disabledElevation = 0.dp
+            )
         ) {
             if (submitting) {
-                CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(18.dp))
-                Spacer(Modifier.width(8.dp))
-                Text("Envoi…")
+                CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(22.dp), color = Dark)
+                Spacer(Modifier.width(12.dp))
+                Text("Envoi…", fontSize = 16.sp, fontWeight = FontWeight.Bold)
             } else {
-                Text("Passer la commande")
+                Icon(Icons.Default.CheckCircle, contentDescription = null, modifier = Modifier.size(24.dp))
+                Spacer(Modifier.width(12.dp))
+                Text("Passer la commande", fontSize = 16.sp, fontWeight = FontWeight.Bold)
             }
         }
         if (!couriersAvailable) {
-            Spacer(Modifier.height(12.dp))
-            Surface(color = MaterialTheme.colorScheme.errorContainer, tonalElevation = 1.dp, shape = MaterialTheme.shapes.medium) {
-                Column(Modifier.fillMaxWidth().padding(12.dp)) {
-                    Text(availabilityMessage ?: "Aucun coursier actif pour le moment", color = MaterialTheme.colorScheme.onErrorContainer)
-                    Text("Le formulaire est temporairement désactivé", color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.8f), style = MaterialTheme.typography.bodySmall)
+            Spacer(Modifier.height(16.dp))
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = AccentRed.copy(alpha = 0.2f)),
+                border = BorderStroke(1.dp, AccentRed.copy(alpha = 0.5f)),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(Modifier.fillMaxWidth().padding(16.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.Info, contentDescription = null, tint = AccentRed, modifier = Modifier.size(24.dp))
+                        Spacer(Modifier.width(8.dp))
+                    Text(availabilityMessage ?: "Aucun coursier actif pour le moment", color = Color.White, fontWeight = FontWeight.Bold)
+                    }
+                    Spacer(Modifier.height(4.dp))
+                    Text("Le formulaire est temporairement désactivé", color = Color.White.copy(alpha = 0.8f), fontSize = 14.sp)
                 }
             }
         }
 
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(16.dp))
 
         // Mini-carte pour visualiser les adresses
-    var mapError by remember { mutableStateOf<String?>(null) }
-    var mapLoaded by remember { mutableStateOf(false) }
+        var mapError by remember { mutableStateOf<String?>(null) }
+        var mapLoaded by remember { mutableStateOf(false) }
         
-        Surface(tonalElevation = 1.dp, shape = MaterialTheme.shapes.medium) {
-            Box(Modifier.height(220.dp).fillMaxWidth()) {
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.05f)),
+            border = BorderStroke(1.dp, Gold.copy(alpha = 0.15f))
+        ) {
+            Column {
+                // Map header
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(20.dp).padding(bottom = 0.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Place,
+                        contentDescription = null,
+                        tint = Gold,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(Modifier.width(12.dp))
+                    Text(
+                        text = "Aperçu carte",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Gold
+                    )
+                    Spacer(Modifier.weight(1f))
+                    if (mapLoaded) {
+                        Surface(
+                            color = Success.copy(alpha = 0.2f),
+                            shape = CircleShape
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(8.dp)
+                                        .clip(CircleShape)
+                                        .background(Success)
+                                )
+                                Spacer(Modifier.width(6.dp))
+                                Text("Prête", fontSize = 12.sp, color = Success, fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
+                }
+                
+                Spacer(Modifier.height(16.dp))
+                
+            Box(Modifier.height(220.dp).fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 20.dp).clip(RoundedCornerShape(16.dp))) {
                 if (mapError != null) {
                     // Fallback si Google Maps échoue
                     Column(
