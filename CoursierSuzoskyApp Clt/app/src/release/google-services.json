@@ -1,0 +1,24 @@
+{
+	"project_info": {
+		"project_number": "55677959036",
+		"project_id": "coursier-suzosky",
+		"storage_bucket": "coursier-suzosky.firebasestorage.app"
+	},
+	"client": [
+		{
+			"client_info": {
+				"mobilesdk_app_id": "1:55677959036:android:4b8de44f8bf4b3587582f9",
+				"android_client_info": {
+					"package_name": "com.suzosky.coursierclient"
+				}
+			},
+			"oauth_client": [],
+			"api_key": [
+				{ "current_key": "AIzaSyByrPECc8QzPdJrL8FB4pHUDJFtEKrO-60" },
+				{ "current_key": "AIzaSyAWcWWwpRx9myEaROuKrOPeL5wfbfQxCmk" }
+			],
+			"services": { "appinvite_service": { "other_platform_oauth_client": [] } }
+		}
+	],
+	"configuration_version": "1"
+}
