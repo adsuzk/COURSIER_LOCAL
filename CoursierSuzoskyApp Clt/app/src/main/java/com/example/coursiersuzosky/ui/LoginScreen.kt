@@ -376,8 +376,7 @@ fun LoginScreen(onLoggedIn: () -> Unit, showMessage: (String) -> Unit) {
                         .height(60.dp)
                         .clip(RoundedCornerShape(16.dp))
                         .background(
-                            if (loading) Color.Gray.copy(alpha = 0.3f)
-                            else Brush.horizontalGradient(
+                            Brush.horizontalGradient(
                                 colors = listOf(Gold, GoldLight)
                             )
                         )
@@ -420,7 +419,8 @@ fun LoginScreen(onLoggedIn: () -> Unit, showMessage: (String) -> Unit) {
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Transparent,
                             disabledContainerColor = Color.Transparent
-                        )
+                        ),
+                        contentPadding = PaddingValues(0.dp)
                     ) {
                         if (loading) {
                             Row(
@@ -434,7 +434,7 @@ fun LoginScreen(onLoggedIn: () -> Unit, showMessage: (String) -> Unit) {
                                 )
                                 Spacer(Modifier.width(12.dp))
                                 Text(
-                                    text = "Connexion en cours...",
+                                    text = "Connexion...",
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Dark
