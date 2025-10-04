@@ -183,7 +183,7 @@ switch ($section) {
     case 'agents': include __DIR__ . '/agents.php'; break;
     case 'chat': include __DIR__ . '/chat.php'; break;
     case 'clients': include __DIR__ . '/clients.php'; break;
-    case 'emails': include __DIR__ . '/emails.php'; break;
+    case 'emails': include __DIR__ . '/emails_v2.php'; break;
     case 'recrutement': include __DIR__ . '/recrutement.php'; break;
     case 'commandes': include __DIR__ . '/commandes.php'; break;
     case 'applications': include __DIR__ . '/applications.php'; break;
