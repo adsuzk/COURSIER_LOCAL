@@ -1612,7 +1612,7 @@ private fun AutocompleteTextField(
         )
 
         Box(modifier = Modifier.fillMaxWidth()) {
-        AnimatedVisibility(visible = expanded, modifier = Modifier.fillMaxWidth()) {
+        if (expanded) {
             Surface(
                 tonalElevation = 6.dp,
                 shape = RoundedCornerShape(12.dp),
