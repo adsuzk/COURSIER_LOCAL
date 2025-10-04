@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.focusable
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -983,6 +984,7 @@ private fun ContactsSection(
                 trailingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = Gold) },
                 modifier = Modifier
                     .fillMaxWidth()
+                    .focusable(false)
                     // Ne prend pas le focus pour éviter toute interaction avec l'IME
                     .onFocusEvent {
                         // Si un OEM donne malgré tout le focus, on le rend tout de suite
@@ -1042,8 +1044,7 @@ private fun ContactsSection(
                             keyboard?.show()
                             scope.launch { bringIntoViewRequester.bringIntoView() }
                         } else {
-                            android.util.Log.d("OrderScreen","receiver focus lost -> hide keyboard")
-                            keyboard?.hide()
+                            android.util.Log.d("OrderScreen","receiver focus lost (no forced hide)")
                         }
                     },
                 singleLine = true,
