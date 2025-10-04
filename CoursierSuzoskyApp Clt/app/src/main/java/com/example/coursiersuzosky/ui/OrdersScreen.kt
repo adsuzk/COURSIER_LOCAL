@@ -23,6 +23,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.suzosky.coursierclient.ui.theme.*
+import com.suzosky.coursierclient.net.RealtimeManager
+import kotlinx.coroutines.flow.collectLatest
 
 data class Order(
     val id: String,
@@ -202,6 +204,22 @@ private fun HistoryOrdersContent(orders: List<Order>) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ActiveOrderCard(order: Order) {
+    // Live status from Firebase
+    var statusText by remember(order.id) { mutableStateOf("En cours") }
+    var statusColor by remember(order.id) { mutableStateOf(AccentBlue) }
+    var observedCourierId by remember(order.id) { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(order.id) {
+        RealtimeManager.observeOrderStatus(order.id).collectLatest { os ->
+            if (os != null) {
+                val (txt, color) = mapStatusToUi(os.state)
+                statusText = txt
+                statusColor = color
+                observedCourierId = os.courierId
+            }
+        }
+    }
+
     Card(
         onClick = { /* Navigate to order details */ },
         modifier = Modifier.fillMaxWidth(),
@@ -238,9 +256,9 @@ private fun ActiveOrderCard(order: Order) {
                 )
                 
                 StatusChip(
-                    text = "En cours",
+                    text = statusText,
                     icon = Icons.Filled.LocalShipping,
-                    color = AccentBlue
+                    color = statusColor
                 )
             }
             
@@ -502,5 +520,18 @@ private fun EmptyState(
                 color = Color.White.copy(alpha = 0.5f)
             )
         }
+    }
+}
+
+// Map backend status string -> UI label + color
+private fun mapStatusToUi(state: String): Pair<String, Color> {
+    return when (state.lowercase()) {
+        "created", "pending", "awaiting_assignment" -> "En attente" to Color(0xFFF59E0B) // amber
+        "assigned", "accepted" -> "Assignée" to AccentBlue
+        "picking_up" -> "Récupération" to AccentBlue
+        "delivering", "in_transit" -> "En livraison" to AccentBlue
+        "delivered", "completed" -> "Livrée" to Color(0xFF10B981) // green
+        "cancelled", "canceled" -> "Annulée" to AccentRed
+        else -> "En cours" to AccentBlue
     }
 }
