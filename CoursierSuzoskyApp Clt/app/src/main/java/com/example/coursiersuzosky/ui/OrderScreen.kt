@@ -49,7 +49,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.focusable
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -955,56 +954,46 @@ private fun ContactsSection(
                 )
             }
 
-            OutlinedTextField(
-                value = senderPhone,
-                onValueChange = {},
-                label = { Text("Téléphone expéditeur") },
-                leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null, tint = Gold) },
-                // Verrouillage complet sans désactiver le champ: focus possible, pas d'édition
-                // (permet la sélection/copie et évite la confusion côté IME)
-                readOnly = true,
-                enabled = true,
-                singleLine = true,
-                keyboardOptions = KeyboardOptions.Default,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Gold,
-                    focusedLabelColor = Gold,
-                    focusedTextColor = Color.White,
-                    unfocusedBorderColor = Gold.copy(alpha = 0.5f),
-                    unfocusedLabelColor = Color.White.copy(alpha = 0.7f),
-                    unfocusedTextColor = Color.White,
-                    focusedLeadingIconColor = Gold,
-                    unfocusedLeadingIconColor = Gold.copy(alpha = 0.7f),
-                    cursorColor = Color.Transparent,
-                    errorBorderColor = MaterialTheme.colorScheme.error,
-                    errorLeadingIconColor = MaterialTheme.colorScheme.error,
-                    errorLabelColor = MaterialTheme.colorScheme.error,
-                    errorSupportingTextColor = MaterialTheme.colorScheme.error
-                ),
-                trailingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = Gold) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusable(false)
-                    // Ne prend pas le focus pour éviter toute interaction avec l'IME
-                    .onFocusEvent {
-                        // Si un OEM donne malgré tout le focus, on le rend tout de suite
-                        if (it.isFocused) {
-                            android.util.Log.d("OrderScreen","senderPhone focus unexpectedly acquired -> clearing focus")
-                            focusManager.clearFocus(force = true)
-                            keyboard?.hide()
-                        }
-                    },
-                isError = senderPhoneError != null,
-                supportingText = {
-                    when {
-                        senderPhoneError != null -> Text(senderPhoneError, color = MaterialTheme.colorScheme.error)
-                        else -> Text(
-                            "Numéro lié à votre compte (+225). Contactez le support pour le modifier.",
-                            color = Color.White.copy(alpha = 0.6f)
+            // Champ expéditeur verrouillé (affichage non focusable)
+            Column(Modifier.fillMaxWidth()) {
+                Text(
+                    text = "Téléphone expéditeur",
+                    color = Color.White.copy(alpha = 0.7f),
+                    fontSize = 12.sp
+                )
+                Spacer(Modifier.height(8.dp))
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = Color.White.copy(alpha = 0.05f),
+                    shape = RoundedCornerShape(12.dp),
+                    border = BorderStroke(1.dp, Gold.copy(alpha = 0.5f))
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(Icons.Default.Phone, contentDescription = null, tint = Gold)
+                        Spacer(Modifier.width(12.dp))
+                        Text(
+                            text = senderPhone,
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            modifier = Modifier.weight(1f)
                         )
+                        Spacer(Modifier.width(12.dp))
+                        Icon(Icons.Default.Lock, contentDescription = null, tint = Gold)
                     }
                 }
-            )
+                Spacer(Modifier.height(6.dp))
+                when {
+                    senderPhoneError != null -> Text(senderPhoneError, color = MaterialTheme.colorScheme.error)
+                    else -> Text(
+                        "Numéro lié à votre compte (+225). Contactez le support pour le modifier.",
+                        color = Color.White.copy(alpha = 0.6f),
+                        fontSize = 12.sp
+                    )
+                }
+            }
             Spacer(Modifier.height(16.dp))
 
             OutlinedTextField(
