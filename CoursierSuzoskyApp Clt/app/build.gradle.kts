@@ -34,6 +34,9 @@ android {
             // Use local LAN IP for physical device or 10.0.2.2 for emulator
             // Server base path is COURSIER_LOCAL/api on XAMPP
             buildConfigField("String", "BASE_URL", "\"http://${localLanIp}/COURSIER_LOCAL/api/\"")
+            // Match Firebase debug client package: com.suzosky.coursierclient.debug
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
         }
     }
     compileOptions {
