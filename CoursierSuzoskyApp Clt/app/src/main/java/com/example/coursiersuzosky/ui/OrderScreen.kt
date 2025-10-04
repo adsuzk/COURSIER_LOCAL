@@ -129,50 +129,6 @@ private fun formatCiPhoneDigits(digits: String, enforcePrefix: Boolean = true): 
 }
 
 private fun formatCiPhone(input: String, enforcePrefix: Boolean = true): String =
-            OutlinedTextField(
-                value = receiverField,
-                onValueChange = onReceiverFieldChange,
-                label = { Text("Téléphone destinataire") },
-                leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null, tint = Gold) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        focusManager.clearFocus(force = true)
-                        keyboard?.hide()
-                    }
-                ),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Gold,
-                    focusedLabelColor = Gold,
-                    focusedLeadingIconColor = Gold,
-                    focusedTextColor = Color.White,
-                    unfocusedBorderColor = Gold.copy(alpha = 0.5f),
-                    unfocusedLabelColor = Color.White.copy(alpha = 0.7f),
-                    unfocusedTextColor = Color.White,
-                    unfocusedLeadingIconColor = Gold.copy(alpha = 0.7f),
-                    cursorColor = Gold
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .bringIntoViewRequester(bringIntoViewRequester)
-                    .onFocusEvent {
-                        if (it.isFocused) {
-                            scope.launch { bringIntoViewRequester.bringIntoView() }
-                        }
-                        if (!it.hasFocus) {
-                            keyboard?.hide()
-                        }
-                    },
-                isError = receiverPhoneError != null,
-                supportingText = {
-                    if (receiverPhoneError != null) {
-                        Text(receiverPhoneError, color = MaterialTheme.colorScheme.error)
-                    }
-                }
-            )
-
-            Spacer(Modifier.height(16.dp))
-
     formatCiPhoneDigits(extractCiPhoneDigits(input), enforcePrefix)
 
 
@@ -1064,6 +1020,53 @@ private fun ContactsSection(
                     }
                 }
             )
+            Spacer(Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = receiverField,
+                onValueChange = onReceiverFieldChange,
+                label = { Text("Téléphone destinataire") },
+                leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null, tint = Gold) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus(force = true)
+                        keyboard?.hide()
+                    }
+                ),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Gold,
+                    focusedLabelColor = Gold,
+                    focusedTextColor = Color.White,
+                    unfocusedBorderColor = Gold.copy(alpha = 0.5f),
+                    unfocusedLabelColor = Color.White.copy(alpha = 0.7f),
+                    unfocusedTextColor = Color.White,
+                    focusedLeadingIconColor = Gold,
+                    unfocusedLeadingIconColor = Gold.copy(alpha = 0.7f),
+                    cursorColor = Gold,
+                    errorBorderColor = MaterialTheme.colorScheme.error,
+                    errorLeadingIconColor = MaterialTheme.colorScheme.error,
+                    errorLabelColor = MaterialTheme.colorScheme.error
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .bringIntoViewRequester(bringIntoViewRequester)
+                    .onFocusEvent {
+                        if (it.isFocused) {
+                            scope.launch { bringIntoViewRequester.bringIntoView() }
+                        }
+                        if (!it.hasFocus) {
+                            keyboard?.hide()
+                        }
+                    },
+                isError = receiverPhoneError != null,
+                supportingText = {
+                    if (receiverPhoneError != null) {
+                        Text(receiverPhoneError, color = MaterialTheme.colorScheme.error)
+                    }
+                }
+            )
+
             Spacer(Modifier.height(16.dp))
 
             OutlinedTextField(
