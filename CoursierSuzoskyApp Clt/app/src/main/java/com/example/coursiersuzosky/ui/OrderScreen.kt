@@ -33,6 +33,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -413,27 +415,10 @@ fun OrderScreen(showMessage: (String) -> Unit) {
         receiverDigits.length == 10
 
     val onPaymentMethodChange: (String) -> Unit = { newMethod ->
+        // Only update selection; do NOT trigger any payment here.
         paymentMethod = newMethod
-        if (newMethod != "cash" && (totalPrice ?: 0) > 0 && !submitting) {
-            scope.launch {
-                submitting = true
-                try {
-                    val orderNumber = "SZK" + System.currentTimeMillis()
-                    val init = ApiService.initiatePaymentOnly(orderNumber, (totalPrice ?: 0), null, senderPhone, null)
-                    if (init.success && !init.payment_url.isNullOrBlank()) {
-                        paymentUrl = init.payment_url
-                        pendingOnlineOrder = true
-                        showPaymentModal = true
-                    } else {
-                        showMessage(init.message ?: "Paiement indisponible")
-                    }
-                } catch (e: Exception) {
-                    showMessage(ApiService.friendlyError(e))
-                } finally {
-                    submitting = false
-                }
-            }
-        }
+        pendingOnlineOrder = false
+        showPaymentModal = false
     }
 
     val onSubmitOrder: () -> Unit = {
@@ -444,6 +429,7 @@ fun OrderScreen(showMessage: (String) -> Unit) {
             submitting = true
             try {
                 if (paymentMethod != "cash") {
+                    // Use the latest estimated price for payment
                     val amount = (totalPrice ?: 0)
                     val orderNumber = "SZK" + System.currentTimeMillis()
                     val init = ApiService.initiatePaymentOnly(orderNumber, amount, null, senderPhone, null)
@@ -492,6 +478,15 @@ fun OrderScreen(showMessage: (String) -> Unit) {
     }
 
     val scrollState = rememberScrollState()
+    val focusManager = LocalFocusManager.current
+    val keyboard = LocalSoftwareKeyboardController.current
+    // Hide keyboard when user starts scrolling the form
+    LaunchedEffect(scrollState.isScrollInProgress) {
+        if (scrollState.isScrollInProgress) {
+            focusManager.clearFocus(force = true)
+            keyboard?.hide()
+        }
+    }
     
     // NOUVEAU DESIGN PREMIUM AVEC GRADIENT DARK/GOLD
     Box(
@@ -1488,6 +1483,8 @@ private fun AutocompleteTextField(
     val scope = rememberCoroutineScope()
     val fieldBringIntoView = remember { BringIntoViewRequester() }
     val cache = remember { mutableStateMapOf<String, List<Suggestion>>() }
+    val focusManager = LocalFocusManager.current
+    val keyboard = LocalSoftwareKeyboardController.current
 
     Column(Modifier.fillMaxWidth()) {
         OutlinedTextField(
@@ -1589,7 +1586,7 @@ private fun AutocompleteTextField(
                 focusedTextColor = Color.White,
                 unfocusedTextColor = Color.White,
                 focusedBorderColor = Gold,
-                unfocusedBorderColor = Gold.copy(alpha = 0.5f),
+                unfocusedBorderColor = Gold.copy(alpha = 0.35f),
                 focusedLabelColor = Gold,
                 unfocusedLabelColor = Color.White.copy(alpha = 0.7f),
                 focusedLeadingIconColor = Gold,
@@ -1614,6 +1611,7 @@ private fun AutocompleteTextField(
         Box(modifier = Modifier.fillMaxWidth()) {
         if (expanded) {
             Surface(
+                color = Color(0xFF121212),
                 tonalElevation = 6.dp,
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier
@@ -1644,24 +1642,30 @@ private fun AutocompleteTextField(
                                                 onCoordinates(result.place.latLng)
                                                 onSelected(result.place.address ?: selectedText)
                                                 expanded = false
+                                                focusManager.clearFocus(force = true)
+                                                keyboard?.hide()
                                             }
                                             .addOnFailureListener {
                                                 onSelected(selectedText)
                                                 expanded = false
+                                                focusManager.clearFocus(force = true)
+                                                keyboard?.hide()
                                             }
                                     } else {
                                         onSelected(selectedText)
                                         expanded = false
+                                        focusManager.clearFocus(force = true)
+                                        keyboard?.hide()
                                     }
                                 }
                                 .padding(horizontal = 12.dp, vertical = 10.dp)
                         ) {
-                            Text(s.primary, color = Color.White)
+                            Text(s.primary, color = Color.White, fontSize = 14.sp)
                             if (!s.secondary.isNullOrBlank()) {
-                                Text(s.secondary!!, color = Color.White.copy(alpha = 0.7f), fontSize = 12.sp)
+                                Text(s.secondary!!, color = Color.White.copy(alpha = 0.85f), fontSize = 12.sp)
                             }
                         }
-                        Divider(color = Color.White.copy(alpha = 0.08f))
+                        Divider(color = Color.White.copy(alpha = 0.06f))
                     }
                 }
             }
