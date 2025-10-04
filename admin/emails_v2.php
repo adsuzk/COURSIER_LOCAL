@@ -251,39 +251,38 @@ $chartData = $pdo->query("
         }
         
         :root {
-            /* Gold Theme Suzosky */
+            /* Palette principale alignée sur le dashboard */
             --primary-gold: #D4A853;
-            --gold-light: #F4E4C1;
-            --gold-dark: #B8954A;
-            --primary-dark: #1A1A1A;
-            --secondary-dark: #2D2D2D;
+            --primary-dark: #1A1A2E;
+            --secondary-dark: #16213E;
+            --accent-blue: #0F3460;
+            --accent-red: #E94560;
+            --accent-green: #27AE60;
+            --accent-warning: #FFC107;
             
-            /* Glassmorphism */
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(212, 168, 83, 0.2);
+            /* Effets glass élégants */
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.2);
             --glass-blur: blur(20px);
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
             
-            /* Gradients */
-            --gradient-gold: linear-gradient(135deg, #D4A853 0%, #F4E4C1 100%);
-            --gradient-dark: linear-gradient(135deg, #1A1A1A 0%, #2D2D2D 100%);
+            /* Dégradés harmonisés */
+            --gradient-gold: linear-gradient(135deg, #D4A853 0%, #F4E4B8 50%, #D4A853 100%);
+            --gradient-dark: linear-gradient(135deg, #1A1A2E 0%, #16213E 100%);
             
-            /* Shadows */
-            --shadow-gold: 0 8px 24px rgba(212, 168, 83, 0.3);
-            --shadow-dark: 0 4px 16px rgba(0, 0, 0, 0.5);
-            
-            /* Status Colors */
-            --success: #10B981;
-            --error: #EF4444;
-            --warning: #F59E0B;
+            /* Statuts */
+            --success: var(--accent-green);
+            --error: var(--accent-red);
+            --warning: var(--accent-warning);
             --info: #3B82F6;
         }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--primary-dark);
-            color: #E5E5E5;
+            background: var(--gradient-dark);
+            color: #E8ECF4;
             line-height: 1.6;
+            min-height: 100vh;
         }
         
         /* ═══════════════════════════════════════════════════════════════ */
@@ -291,9 +290,13 @@ $chartData = $pdo->query("
         /* ═══════════════════════════════════════════════════════════════ */
         .email-header {
             text-align: center;
-            padding: 40px 20px;
-            background: var(--gradient-dark);
-            border-bottom: 2px solid var(--primary-gold);
+            padding: 40px 24px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            margin: 30px auto;
+            max-width: 1200px;
+            box-shadow: var(--glass-shadow);
             position: relative;
             overflow: hidden;
         }
@@ -304,28 +307,33 @@ $chartData = $pdo->query("
             top: 0;
             left: 0;
             right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 50% 50%, rgba(212, 168, 83, 0.1) 0%, transparent 70%);
+            height: 4px;
+            background: var(--gradient-gold);
+        }
+        
+        .email-header::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 20% -10%, rgba(212, 168, 83, 0.2) 0%, transparent 55%),
+                        radial-gradient(circle at 80% 120%, rgba(15, 52, 96, 0.25) 0%, transparent 60%);
             pointer-events: none;
         }
         
         .email-header h1 {
-            font-size: 3rem;
-            color: var(--primary-gold);
-            text-shadow: 0 0 30px rgba(212, 168, 83, 0.5);
-            margin-bottom: 10px;
+            font-size: 2.8rem;
+            background: var(--gradient-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
             position: relative;
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-        
-        @keyframes glow {
-            from { text-shadow: 0 0 20px rgba(212, 168, 83, 0.3); }
-            to { text-shadow: 0 0 40px rgba(212, 168, 83, 0.6); }
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
         }
         
         .email-header p {
-            font-size: 1.2rem;
-            color: #CCCCCC;
+            font-size: 1.1rem;
+            color: rgba(232, 236, 244, 0.75);
             position: relative;
         }
         
@@ -335,32 +343,40 @@ $chartData = $pdo->query("
         .email-tabs {
             display: flex;
             justify-content: center;
-            gap: 10px;
-            padding: 20px;
+            gap: 12px;
+            padding: 22px;
+            margin: 0 auto 20px;
             background: var(--glass-bg);
             backdrop-filter: var(--glass-blur);
-            border-bottom: 1px solid var(--glass-border);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
             flex-wrap: wrap;
             position: sticky;
-            top: 0;
+            top: 20px;
             z-index: 100;
+            max-width: 1200px;
+            box-shadow: var(--glass-shadow);
         }
         
         .email-tab {
             padding: 12px 24px;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 8px;
+            background: rgba(23, 35, 62, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
             text-decoration: none;
-            color: #CCCCCC;
+            color: rgba(232, 236, 244, 0.75);
             font-weight: 500;
+            letter-spacing: 0.2px;
             transition: all 0.3s ease;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .email-tab:hover {
-            background: rgba(212, 168, 83, 0.1);
-            border-color: var(--primary-gold);
+            background: rgba(34, 52, 94, 0.85);
+            border-color: rgba(212, 168, 83, 0.6);
             transform: translateY(-2px);
         }
         
@@ -368,7 +384,7 @@ $chartData = $pdo->query("
             background: var(--gradient-gold);
             color: var(--primary-dark);
             border-color: var(--primary-gold);
-            box-shadow: var(--shadow-gold);
+            box-shadow: 0 12px 24px rgba(212, 168, 83, 0.25);
             font-weight: 600;
         }
         
@@ -376,9 +392,9 @@ $chartData = $pdo->query("
         /* CONTAINER PRINCIPAL */
         /* ═══════════════════════════════════════════════════════════════ */
         .email-container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 30px 20px;
+            padding: 30px 20px 60px;
         }
         
         /* ═══════════════════════════════════════════════════════════════ */
