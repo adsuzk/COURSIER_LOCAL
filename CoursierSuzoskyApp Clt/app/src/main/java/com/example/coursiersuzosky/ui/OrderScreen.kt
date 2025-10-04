@@ -35,6 +35,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.unit.dp
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
@@ -97,12 +99,6 @@ private fun extractCiPhoneDigits(input: String): String {
     if (sanitized.startsWith("225")) {
         sanitized = sanitized.drop(3)
     }
-    while (sanitized.startsWith("225") && sanitized.length > 10) {
-        sanitized = sanitized.drop(3)
-    }
-    if (sanitized.length > 10) {
-        sanitized = sanitized.takeLast(10)
-    }
     return sanitized.take(10)
 }
 
@@ -139,6 +135,9 @@ fun OrderScreen(showMessage: (String) -> Unit) {
     var senderPhone by rememberSaveable { mutableStateOf("") }
     var receiverDigits by rememberSaveable { mutableStateOf("") }
     var receiverPhone by rememberSaveable { mutableStateOf(CI_PHONE_PREFIX) }
+    var receiverTf by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue(CI_PHONE_PREFIX, selection = TextRange(CI_PHONE_PREFIX.length)))
+    }
     var description by rememberSaveable { mutableStateOf("") }
     var priority by rememberSaveable { mutableStateOf("normale") } // normale, urgente, express
     var paymentMethod by rememberSaveable { mutableStateOf("cash") } // cash, orange_money, mtn_money, moov_money, wave, card
@@ -258,7 +257,7 @@ fun OrderScreen(showMessage: (String) -> Unit) {
         if (destination.isBlank()) { destinationError = "Adresse d'arrivée requise"; ok = false } else destinationError = null
         if (forSubmit) {
             if (!phoneValid(senderPhone)) { senderPhoneError = "Téléphone du compte invalide (+225 et 10 chiffres)"; ok = false } else senderPhoneError = null
-            if (!phoneValid(receiverPhone)) { receiverPhoneError = "Format CI requis: +225 suivi de 10 chiffres"; ok = false } else receiverPhoneError = null
+            if (receiverDigits.length != 10) { receiverPhoneError = "Format CI requis: +225 suivi de 10 chiffres"; ok = false } else receiverPhoneError = null
             if (paymentMethod != "cash" && (totalPrice == null || (totalPrice ?: 0) <= 0)) {
                 showMessage("Veuillez d'abord estimer le prix pour un paiement en ligne")
                 ok = false
@@ -363,7 +362,19 @@ fun OrderScreen(showMessage: (String) -> Unit) {
     val handleReceiverPhoneChange: (String) -> Unit = { new ->
         val digits = extractCiPhoneDigits(new)
         receiverDigits = digits
-        receiverPhone = formatCiPhoneDigits(digits)
+        val display = formatCiPhoneDigits(digits)
+        receiverPhone = display
+        receiverTf = TextFieldValue(display, selection = TextRange(display.length))
+        receiverPhoneError = null
+    }
+
+    val handleReceiverPhoneTfChange: (TextFieldValue) -> Unit = { tf ->
+        val digits = extractCiPhoneDigits(tf.text)
+        receiverDigits = digits
+        val display = formatCiPhoneDigits(digits)
+        receiverPhone = display
+        // Keep cursor at end, but never before prefix
+        receiverTf = TextFieldValue(display, selection = TextRange(display.length))
         receiverPhoneError = null
     }
 
@@ -444,7 +455,7 @@ fun OrderScreen(showMessage: (String) -> Unit) {
                         departure = departure,
                         destination = destination,
                         senderPhone = senderPhone,
-                        receiverPhone = receiverPhone,
+                        receiverPhone = CI_PHONE_PREFIX.trim() + receiverDigits.chunked(2).joinToString(" ", prefix = " "),
                         packageDescription = description.ifBlank { null },
                         priority = priority,
                         paymentMethod = paymentMethod,
@@ -533,10 +544,11 @@ fun OrderScreen(showMessage: (String) -> Unit) {
             ContactsSection(
                 senderPhone = senderPhone,
                 senderPhoneError = senderPhoneError,
-                receiverPhone = receiverPhone,
+                receiverField = receiverTf,
                 receiverPhoneError = receiverPhoneError,
                 description = description,
                 onReceiverPhoneChange = handleReceiverPhoneChange,
+                onReceiverFieldChange = handleReceiverPhoneTfChange,
                 onDescriptionChange = handleDescriptionChange,
                 bringIntoViewRequester = bringIntoViewRequester,
                 scope = scope
@@ -843,10 +855,11 @@ private fun ItinerarySection(
 private fun ContactsSection(
     senderPhone: String,
     senderPhoneError: String?,
-    receiverPhone: String,
+    receiverField: TextFieldValue,
     receiverPhoneError: String?,
     description: String,
     onReceiverPhoneChange: (String) -> Unit,
+    onReceiverFieldChange: (TextFieldValue) -> Unit,
     onDescriptionChange: (String) -> Unit,
     bringIntoViewRequester: BringIntoViewRequester,
     scope: CoroutineScope
@@ -911,8 +924,8 @@ private fun ContactsSection(
             Spacer(Modifier.height(16.dp))
 
             OutlinedTextField(
-                value = receiverPhone,
-                onValueChange = onReceiverPhoneChange,
+                value = receiverField,
+                onValueChange = onReceiverFieldChange,
                 label = { Text("Téléphone destinataire") },
                 leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null, tint = Gold) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
