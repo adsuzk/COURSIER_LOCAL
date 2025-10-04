@@ -2,6 +2,18 @@
 @file:OptIn(com.google.maps.android.compose.MapsComposeExperimentalApi::class)
 package com.suzosky.coursierclient.ui
 
+// Phone helpers (top-level)
+private fun normalizeDigits(s: String): String = s.filter { it.isDigit() }
+private fun formatCiPhone(input: String, enforcePrefix: Boolean = true): String {
+    val digits = normalizeDigits(input)
+    val raw = if (digits.startsWith("225")) digits.drop(3) else digits
+    val trimmed = raw.take(10)
+    val pairs = trimmed.chunked(2)
+    val grouped = pairs.joinToString(" ") { it.padEnd(2, ' ') }.trim()
+    return if (enforcePrefix || digits.startsWith("225") || input.startsWith("+225")) "+225 " + grouped else grouped
+}
+
+
 import androidx.core.net.toUri
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.*
@@ -114,6 +126,13 @@ fun OrderScreen(showMessage: (String) -> Unit) {
     }
 
     val context = LocalContext.current
+    // Prefill sender phone from persisted client data
+    LaunchedEffect(Unit) {
+        try {
+            val p = com.suzosky.coursierclient.net.ClientStore.getClientPhone(context)
+            if (!p.isNullOrBlank()) senderPhone = formatCiPhone(p, enforcePrefix = true)
+        } catch (_: Exception) {}
+    }
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
 
     suspend fun reverseGeocode(ll: LatLng): String? = withContext(Dispatchers.IO) {
@@ -180,7 +199,8 @@ fun OrderScreen(showMessage: (String) -> Unit) {
     var receiverPhoneError by remember { mutableStateOf<String?>(null) }
 
     // CI format: +225 followed by exactly 10 digits (separators allowed)
-    fun phoneValid(p: String): Boolean = p.matches(Regex("^\\+225[\\s\\-()]*([0-9][\\s\\-()]*){10}$"))
+    fun phoneValid(p: String): Boolean = p.matches(Regex("^\\+225( \\d{2}){5}$"))
+        fun phoneValid(p: String): Boolean = p.matches(Regex("^\\+225[\\s\\-()]*([0-9][\\s\\-()]*){10}$"))
 
     fun validateInputs(forSubmit: Boolean = false): Boolean {
         var ok = true
@@ -313,7 +333,10 @@ fun OrderScreen(showMessage: (String) -> Unit) {
         Spacer(Modifier.height(8.dp))
         OutlinedTextField(
             value = senderPhone,
-            onValueChange = { senderPhone = it; senderPhoneError = null },
+            onValueChange = { new ->
+                senderPhone = formatCiPhone(new, enforcePrefix = true)
+                senderPhoneError = null
+            },
             label = { Text("Téléphone expéditeur") },
             leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
@@ -329,7 +352,12 @@ fun OrderScreen(showMessage: (String) -> Unit) {
         Spacer(Modifier.height(8.dp))
         OutlinedTextField(
             value = receiverPhone,
-            onValueChange = { receiverPhone = it; receiverPhoneError = null },
+            onValueChange = { new ->
+                // Always keep +225 and format progressively
+                val hasPrefix = new.trim().startsWith("+225")
+                receiverPhone = formatCiPhone(new, enforcePrefix = true)
+                receiverPhoneError = null
+            },
             label = { Text("Téléphone destinataire") },
             leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),

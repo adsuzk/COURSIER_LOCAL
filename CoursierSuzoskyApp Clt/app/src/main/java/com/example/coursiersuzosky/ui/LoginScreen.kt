@@ -15,6 +15,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import com.suzosky.coursierclient.net.ApiService
+import com.suzosky.coursierclient.net.ClientStore
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -28,6 +30,7 @@ import com.suzosky.coursierclient.BuildConfig
 @Composable
 fun LoginScreen(onLoggedIn: () -> Unit, showMessage: (String) -> Unit) {
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     // Pré-remplir automatiquement en Debug pour accélérer les tests
     var login by remember { mutableStateOf(if (BuildConfig.DEBUG) "test@test.com" else "") } // email/téléphone client OU matricule/téléphone agent
     var password by remember { mutableStateOf(if (BuildConfig.DEBUG) "abcde" else "") }
@@ -153,6 +156,7 @@ fun LoginScreen(onLoggedIn: () -> Unit, showMessage: (String) -> Unit) {
                         } else {
                             val resp = ApiService.login(login, password)
                             if (resp.success) {
+                                resp.client?.telephone?.let { ClientStore.saveClientPhone(context, it) }
                                 showMessage(resp.message ?: "Connexion réussie")
                                 onLoggedIn()
                             } else {
