@@ -16,6 +16,10 @@ if (!function_exists('getPDO')) {
 // Connexion à la base de données
 try {
     $pdo = getPDO();
+    
+    // Auto-initialisation des tables au premier chargement
+    require_once __DIR__ . '/init_email_tables.php';
+    
 } catch (Exception $e) {
     die('<div class="error-fatal">❌ Erreur de connexion base de données</div>');
 }
