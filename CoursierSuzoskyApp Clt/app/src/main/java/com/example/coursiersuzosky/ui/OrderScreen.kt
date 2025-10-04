@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
@@ -920,6 +921,30 @@ private fun ContactsSection(
 ) {
     val focusManager = LocalFocusManager.current
     val keyboard = LocalSoftwareKeyboardController.current
+    val density = LocalDensity.current
+    val imeVisible = WindowInsets.ime.getBottom(density) > 0
+
+    // Per-field bring-into-view requesters to avoid interference between fields
+    val receiverBringRequester = remember { BringIntoViewRequester() }
+    val descriptionBringRequester = remember { BringIntoViewRequester() }
+    var receiverPendingScroll by remember { mutableStateOf(false) }
+    var descriptionPendingScroll by remember { mutableStateOf(false) }
+
+    // When IME is visible and a field just gained focus, bring that field into view once
+    LaunchedEffect(receiverPendingScroll, imeVisible) {
+        if (receiverPendingScroll && imeVisible) {
+            delay(60)
+            receiverBringRequester.bringIntoView()
+            receiverPendingScroll = false
+        }
+    }
+    LaunchedEffect(descriptionPendingScroll, imeVisible) {
+        if (descriptionPendingScroll && imeVisible) {
+            delay(60)
+            descriptionBringRequester.bringIntoView()
+            descriptionPendingScroll = false
+        }
+    }
     
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -1018,11 +1043,13 @@ private fun ContactsSection(
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
+                    .bringIntoViewRequester(receiverBringRequester)
                     .focusRequester(receiverFocusRequester)
                     .onFocusEvent {
                         if (it.isFocused) {
                             android.util.Log.d("OrderScreen","receiver focus -> show keyboard")
                             keyboard?.show()
+                            receiverPendingScroll = true
                         } else {
                             android.util.Log.d("OrderScreen","receiver focus lost (no forced hide)")
                         }
@@ -1053,11 +1080,9 @@ private fun ContactsSection(
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .bringIntoViewRequester(bringIntoViewRequester)
+                    .bringIntoViewRequester(descriptionBringRequester)
                     .onFocusEvent {
-                        if (it.isFocused) {
-                            scope.launch { bringIntoViewRequester.bringIntoView() }
-                        }
+                        if (it.isFocused) descriptionPendingScroll = true
                     }
             )
         }
