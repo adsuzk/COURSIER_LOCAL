@@ -85,15 +85,39 @@ import android.graphics.Typeface
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
  
 // Phone helpers (top-level)
+private const val CI_PHONE_PREFIX = "+225 "
 private fun normalizeDigits(s: String): String = s.filter { it.isDigit() }
-private fun formatCiPhone(input: String, enforcePrefix: Boolean = true): String {
+
+private fun extractCiPhoneDigits(input: String): String {
     val digits = normalizeDigits(input)
-    val raw = if (digits.startsWith("225")) digits.drop(3) else digits
-    val trimmed = raw.take(10)
-    val pairs = trimmed.chunked(2)
-    val grouped = pairs.joinToString(" ") { it.padEnd(2, ' ') }.trim()
-    return if (enforcePrefix || digits.startsWith("225") || input.startsWith("+225")) "+225 " + grouped else grouped
+    var sanitized = digits
+    if (sanitized.startsWith("00225")) {
+        sanitized = sanitized.drop(5)
+    }
+    if (sanitized.startsWith("225")) {
+        sanitized = sanitized.drop(3)
+    }
+    while (sanitized.startsWith("225") && sanitized.length > 10) {
+        sanitized = sanitized.drop(3)
+    }
+    if (sanitized.length > 10) {
+        sanitized = sanitized.takeLast(10)
+    }
+    return sanitized.take(10)
 }
+
+private fun formatCiPhoneDigits(digits: String, enforcePrefix: Boolean = true): String {
+    val trimmed = digits.take(10)
+    val grouped = trimmed.chunked(2).joinToString(" ")
+    return when {
+        grouped.isNotEmpty() -> CI_PHONE_PREFIX + grouped
+        enforcePrefix -> CI_PHONE_PREFIX
+        else -> grouped
+    }
+}
+
+private fun formatCiPhone(input: String, enforcePrefix: Boolean = true): String =
+    formatCiPhoneDigits(extractCiPhoneDigits(input), enforcePrefix)
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -113,7 +137,8 @@ fun OrderScreen(showMessage: (String) -> Unit) {
     var destinationLatLng by rememberSaveable(stateSaver = latLngSaver) { mutableStateOf<LatLng?>(null) }
     // Sender phone is locked to account; managed via ClientStore observer below
     var senderPhone by rememberSaveable { mutableStateOf("") }
-    var receiverPhone by rememberSaveable { mutableStateOf("") }
+    var receiverDigits by rememberSaveable { mutableStateOf("") }
+    var receiverPhone by rememberSaveable { mutableStateOf(CI_PHONE_PREFIX) }
     var description by rememberSaveable { mutableStateOf("") }
     var priority by rememberSaveable { mutableStateOf("normale") } // normale, urgente, express
     var paymentMethod by rememberSaveable { mutableStateOf("cash") } // cash, orange_money, mtn_money, moov_money, wave, card
@@ -225,7 +250,7 @@ fun OrderScreen(showMessage: (String) -> Unit) {
     var receiverPhoneError by remember { mutableStateOf<String?>(null) }
 
     // CI format: +225 followed by exactly 10 digits (separators allowed)
-    fun phoneValid(p: String): Boolean = p.matches(Regex("^\\+225( \\d{2}){5}$"))
+    fun phoneValid(p: String): Boolean = extractCiPhoneDigits(p).length == 10
 
     fun validateInputs(forSubmit: Boolean = false): Boolean {
         var ok = true
@@ -336,11 +361,10 @@ fun OrderScreen(showMessage: (String) -> Unit) {
     }
 
     val handleReceiverPhoneChange: (String) -> Unit = { new ->
-        val hasPrefix = new.trim().startsWith("+225")
-        receiverPhone = formatCiPhone(new, enforcePrefix = true)
+        val digits = extractCiPhoneDigits(new)
+        receiverDigits = digits
+        receiverPhone = formatCiPhoneDigits(digits)
         receiverPhoneError = null
-        @Suppress("UNUSED_VARIABLE")
-        val unused = hasPrefix
     }
 
     val handleDescriptionChange: (String) -> Unit = { value ->
@@ -371,7 +395,7 @@ fun OrderScreen(showMessage: (String) -> Unit) {
         departure.isNotBlank() &&
         destination.isNotBlank() &&
         senderPhone.isNotBlank() &&
-        receiverPhone.isNotBlank()
+        receiverDigits.length == 10
 
     val onPaymentMethodChange: (String) -> Unit = { newMethod ->
         paymentMethod = newMethod
@@ -864,7 +888,7 @@ private fun ContactsSection(
                 colors = OutlinedTextFieldDefaults.colors(
                     disabledBorderColor = Gold.copy(alpha = 0.3f),
                     disabledLabelColor = Gold.copy(alpha = 0.6f),
-                    disabledTextColor = Color.White.copy(alpha = 0.6f),
+                    disabledTextColor = Color.White,
                     disabledLeadingIconColor = Gold.copy(alpha = 0.6f)
                 ),
                 modifier = Modifier
@@ -896,8 +920,11 @@ private fun ContactsSection(
                     focusedBorderColor = Gold,
                     focusedLabelColor = Gold,
                     focusedLeadingIconColor = Gold,
+                    focusedTextColor = Color.White,
                     unfocusedBorderColor = Gold.copy(alpha = 0.5f),
                     unfocusedLabelColor = Color.White.copy(alpha = 0.7f),
+                    unfocusedTextColor = Color.White,
+                    unfocusedLeadingIconColor = Gold.copy(alpha = 0.7f),
                     cursorColor = Gold
                 ),
                 modifier = Modifier
@@ -925,8 +952,10 @@ private fun ContactsSection(
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Gold,
                     focusedLabelColor = Gold,
+                    focusedTextColor = Color.White,
                     unfocusedBorderColor = Gold.copy(alpha = 0.5f),
                     unfocusedLabelColor = Color.White.copy(alpha = 0.7f),
+                    unfocusedTextColor = Color.White,
                     cursorColor = Gold
                 ),
                 modifier = Modifier
@@ -1518,6 +1547,21 @@ private fun AutocompleteTextField(
                     errorMsg != null -> Text(errorMsg!!, color = MaterialTheme.colorScheme.error)
                 }
             },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                focusedBorderColor = Gold,
+                unfocusedBorderColor = Gold.copy(alpha = 0.5f),
+                focusedLabelColor = Gold,
+                unfocusedLabelColor = Color.White.copy(alpha = 0.7f),
+                focusedLeadingIconColor = Gold,
+                unfocusedLeadingIconColor = Gold.copy(alpha = 0.7f),
+                cursorColor = Gold,
+                errorBorderColor = MaterialTheme.colorScheme.error,
+                errorLeadingIconColor = MaterialTheme.colorScheme.error,
+                errorLabelColor = MaterialTheme.colorScheme.error,
+                disabledTextColor = Color.White.copy(alpha = 0.6f)
+            ),
             modifier = modifier
                 .fillMaxWidth()
                 .bringIntoViewRequester(fieldBringIntoView)
