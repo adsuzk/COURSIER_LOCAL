@@ -137,12 +137,27 @@ object ApiService {
         }
     }
 
-    suspend fun estimatePrice(departure: String, destination: String): DistanceApiResponse = withContext(Dispatchers.IO) {
+    suspend fun estimatePrice(
+        departure: String,
+        destination: String,
+        depLat: Double? = null,
+        depLng: Double? = null,
+        dstLat: Double? = null,
+        dstLng: Double? = null
+    ): DistanceApiResponse = withContext(Dispatchers.IO) {
         val base = ApiClient.buildUrl(ApiConfig.DISTANCE_TEST)
-        val url = base.newBuilder()
-            .addQueryParameter("origin", departure)
-            .addQueryParameter("destination", destination)
-            .build()
+        val b = base.newBuilder()
+        if (departure.isNotBlank() && destination.isNotBlank()) {
+            b.addQueryParameter("origin", departure)
+            b.addQueryParameter("destination", destination)
+        }
+        if (depLat != null && depLng != null && dstLat != null && dstLng != null) {
+            b.addQueryParameter("origin_lat", depLat.toString())
+            b.addQueryParameter("origin_lng", depLng.toString())
+            b.addQueryParameter("destination_lat", dstLat.toString())
+            b.addQueryParameter("destination_lng", dstLng.toString())
+        }
+        val url = b.build()
         val req = ApiClient.requestBuilder(url).get().build()
         ApiClient.http.newCall(req).execute().use { resp ->
             if (!resp.isSuccessful) throw IOException("HTTP ${'$'}{resp.code} ${'$'}{resp.message}")
@@ -175,6 +190,97 @@ object ApiService {
             DistanceApiResponse(success, distance, duration, if (calcs.isEmpty()) null else calcs)
         }
     }
+
+    data class PaymentInitResponse(
+        val success: Boolean,
+        val message: String?,
+        val payment_url: String?,
+        val transaction_id: String?
+    )
+
+    suspend fun initiatePaymentOnly(orderNumber: String, amount: Int, clientName: String?, clientPhone: String?, clientEmail: String?): PaymentInitResponse = withContext(Dispatchers.IO) {
+        val url = ApiClient.buildUrl(ApiConfig.INITIATE_PAYMENT_ONLY)
+        val payload = JSONObject().apply {
+            put("order_number", orderNumber)
+            put("amount", amount)
+            clientName?.let { put("client_name", it) }
+            clientPhone?.let { put("client_phone", it) }
+            clientEmail?.let { put("client_email", it) }
+        }
+        val req = ApiClient.requestBuilder(url)
+            .post(payload.toString().toRequestBody(JSON))
+            .build()
+        ApiClient.http.newCall(req).execute().use { resp ->
+            val body = resp.body?.string().orEmpty()
+            val json = JSONObject(body)
+            PaymentInitResponse(
+                success = json.optBoolean("success"),
+                message = json.optString("message").takeIf { json.has("message") },
+                payment_url = json.optString("payment_url").takeIf { json.has("payment_url") },
+                transaction_id = json.optString("transaction_id").takeIf { json.has("transaction_id") }
+            )
+        }
+    }
+
+    data class CreateAfterPaymentRequest(
+        val departure: String,
+        val destination: String,
+        val latitude_retrait: Double?,
+        val longitude_retrait: Double?,
+        val latitude_livraison: Double?,
+        val longitude_livraison: Double?,
+        val distance_km: Double?,
+        val prix_livraison: Int,
+        val telephone_destinataire: String?,
+        val nom_destinataire: String?,
+        val notes_speciales: String?,
+        val client_name: String? = null,
+        val client_phone: String? = null,
+        val client_email: String? = null,
+    )
+
+    data class CreateAfterPaymentResponse(
+        val success: Boolean,
+        val message: String?,
+        val order_id: Long?,
+        val order_number: String?,
+        val redirect_url: String?
+    )
+
+    suspend fun createOrderAfterPayment(reqData: CreateAfterPaymentRequest): CreateAfterPaymentResponse = withContext(Dispatchers.IO) {
+        val url = ApiClient.buildUrl(ApiConfig.CREATE_ORDER_AFTER_PAYMENT)
+        val fb = FormBody.Builder()
+            .add("departure", reqData.departure)
+            .add("destination", reqData.destination)
+            .apply {
+                reqData.latitude_retrait?.let { add("latitude_retrait", it.toString()) }
+                reqData.longitude_retrait?.let { add("longitude_retrait", it.toString()) }
+                reqData.latitude_livraison?.let { add("latitude_livraison", it.toString()) }
+                reqData.longitude_livraison?.let { add("longitude_livraison", it.toString()) }
+                reqData.distance_km?.let { add("distance", it.toString()) }
+                add("prix_livraison", reqData.prix_livraison.toString())
+                reqData.telephone_destinataire?.let { add("telephone_destinataire", it) }
+                reqData.nom_destinataire?.let { add("nom_destinataire", it) }
+                reqData.notes_speciales?.let { add("notes_speciales", it) }
+                reqData.client_name?.let { add("client_name", it) }
+                reqData.client_phone?.let { add("client_phone", it) }
+                reqData.client_email?.let { add("client_email", it) }
+            }
+            .build()
+        val req = ApiClient.requestBuilder(url).post(fb).build()
+        ApiClient.http.newCall(req).execute().use { resp ->
+            val body = resp.body?.string().orEmpty()
+            val json = JSONObject(body)
+            CreateAfterPaymentResponse(
+                success = json.optBoolean("success"),
+                message = json.optString("message").takeIf { json.has("message") },
+                order_id = json.optLong("order_id").let { if (json.has("order_id")) it else null },
+                order_number = json.optString("order_number").takeIf { json.has("order_number") },
+                redirect_url = json.optString("redirect_url").takeIf { json.has("redirect_url") }
+            )
+        }
+    }
+
 
     suspend fun submitOrder(reqData: OrderRequest): SubmitOrderResponse = withContext(Dispatchers.IO) {
         val url = ApiClient.buildUrl(ApiConfig.SUBMIT_ORDER)

@@ -6,6 +6,8 @@ object ApiConfig {
     const val AUTH = "auth.php"
     const val AGENT_AUTH = "agent_auth.php"
     const val SUBMIT_ORDER = "submit_order.php"
-    const val DISTANCE_TEST = "../Test/test_distance_api.php" // pour estimation prix rapide
+    const val DISTANCE_TEST = "estimate_price.php" // estimation alignée admin finances
     const val APP_UPDATES = "app_updates.php" // endpoint de vérification mise à jour
+    const val INITIATE_PAYMENT_ONLY = "initiate_payment_only.php"
+    const val CREATE_ORDER_AFTER_PAYMENT = "create_order_after_payment.php"
 }

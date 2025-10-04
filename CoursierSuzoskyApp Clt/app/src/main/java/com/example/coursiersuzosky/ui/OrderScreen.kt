@@ -25,6 +25,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import androidx.compose.ui.viewinterop.AndroidView
 import com.suzosky.coursierclient.net.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Job
@@ -88,6 +92,9 @@ fun OrderScreen(showMessage: (String) -> Unit) {
     var totalPrice by remember { mutableStateOf<Int?>(null) }
     var distanceTxt by remember { mutableStateOf<String?>(null) }
     var durationTxt by remember { mutableStateOf<String?>(null) }
+    var showPaymentModal by remember { mutableStateOf(false) }
+    var paymentUrl by remember { mutableStateOf<String?>(null) }
+    var pendingOnlineOrder by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
@@ -369,33 +376,42 @@ fun OrderScreen(showMessage: (String) -> Unit) {
                 scope.launch {
                     submitting = true
                     try {
-                        val req = OrderRequest(
-                            departure = departure,
-                            destination = destination,
-                            senderPhone = senderPhone,
-                            receiverPhone = receiverPhone,
-                            packageDescription = description.ifBlank { null },
-                            priority = priority,
-                            paymentMethod = paymentMethod,
-                            price = (totalPrice ?: 0).toDouble(),
-                            distance = distanceTxt,
-                            duration = durationTxt,
-                            departure_lat = departureLatLng?.latitude,
-                            departure_lng = departureLatLng?.longitude,
-                            arrival_lat = destinationLatLng?.latitude,
-                            arrival_lng = destinationLatLng?.longitude
-                        )
-                        val resp = ApiService.submitOrder(req)
-                        if (resp.success) {
-                            val oid = resp.data?.order_number ?: resp.data?.code_commande ?: "-"
-                            showMessage("Commande créée: ${oid}")
-                            val payUrl = resp.data?.payment_url
-                            if (!payUrl.isNullOrBlank()) {
-                                val customTabsIntent = CustomTabsIntent.Builder().build()
-                                customTabsIntent.launchUrl(context, payUrl.toUri())
+                        if (paymentMethod != "cash") {
+                            // Online payment first: get URL then show WebView
+                            val amount = (totalPrice ?: 0)
+                            val orderNumber = "SZK" + System.currentTimeMillis()
+                            val init = ApiService.initiatePaymentOnly(orderNumber, amount, null, senderPhone, null)
+                            if (init.success && !init.payment_url.isNullOrBlank()) {
+                                paymentUrl = init.payment_url
+                                pendingOnlineOrder = true
+                                showPaymentModal = true
+                            } else {
+                                showMessage(init.message ?: "Paiement indisponible")
                             }
                         } else {
-                            showMessage(resp.message ?: "Échec de la commande")
+                            val req = OrderRequest(
+                                departure = departure,
+                                destination = destination,
+                                senderPhone = senderPhone,
+                                receiverPhone = receiverPhone,
+                                packageDescription = description.ifBlank { null },
+                                priority = priority,
+                                paymentMethod = paymentMethod,
+                                price = (totalPrice ?: 0).toDouble(),
+                                distance = distanceTxt,
+                                duration = durationTxt,
+                                departure_lat = departureLatLng?.latitude,
+                                departure_lng = departureLatLng?.longitude,
+                                arrival_lat = destinationLatLng?.latitude,
+                                arrival_lng = destinationLatLng?.longitude
+                            )
+                            val resp = ApiService.submitOrder(req)
+                            if (resp.success) {
+                                val oid = resp.data?.order_number ?: resp.data?.code_commande ?: "-"
+                                showMessage("Commande créée: ${oid}")
+                            } else {
+                                showMessage(resp.message ?: "Échec de la commande")
+                            }
                         }
                     } catch (e: Exception) {
                         showMessage(ApiService.friendlyError(e))
@@ -633,6 +649,82 @@ fun OrderScreen(showMessage: (String) -> Unit) {
             }
         }
     }
+
+    if (showPaymentModal && !paymentUrl.isNullOrBlank()) {
+        PaymentWebViewModal(url = paymentUrl!!, onClose = { success ->
+            showPaymentModal = false
+            if (success && pendingOnlineOrder) {
+                // Create order after payment
+                scope.launch {
+                    try {
+                        val resp = ApiService.createOrderAfterPayment(
+                            ApiService.CreateAfterPaymentRequest(
+                                departure = departure,
+                                destination = destination,
+                                latitude_retrait = departureLatLng?.latitude,
+                                longitude_retrait = departureLatLng?.longitude,
+                                latitude_livraison = destinationLatLng?.latitude,
+                                longitude_livraison = destinationLatLng?.longitude,
+                                distance_km = null,
+                                prix_livraison = (totalPrice ?: 0),
+                                telephone_destinataire = receiverPhone,
+                                nom_destinataire = null,
+                                notes_speciales = description.ifBlank { null },
+                                client_name = null,
+                                client_phone = senderPhone,
+                                client_email = null
+                            )
+                        )
+                        if (resp.success) {
+                            showMessage("Commande crée: ${'$'}{resp.order_number ?: resp.order_id}")
+                        } else {
+                            showMessage(resp.message ?: "Erreur post-paiement")
+                        }
+                    } catch (e: Exception) {
+                        showMessage(ApiService.friendlyError(e))
+                    } finally {
+                        pendingOnlineOrder = false
+                    }
+                }
+            } else {
+                pendingOnlineOrder = false
+            }
+        })
+    }
+}
+
+@Composable
+private fun PaymentWebViewModal(url: String, onClose: (Boolean) -> Unit) {
+    AlertDialog(
+        onDismissRequest = { onClose(false) },
+        confirmButton = {},
+        title = { Text("Paiement sécurisé") },
+        text = {
+            AndroidView(
+                modifier = Modifier.height(480.dp),
+                factory = { ctx ->
+                    WebView(ctx).apply {
+                        settings.javaScriptEnabled = true
+                        webViewClient = object : WebViewClient() {
+                            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                                val u = request?.url?.toString().orEmpty()
+                                if (u.contains("cinetpay_callback.php") || u.contains("payment_success=1") || u.contains("status=success")) {
+                                    onClose(true)
+                                    return true
+                                }
+                                if (u.contains("payment_cancelled=1") || u.contains("status=failed") || u.contains("status=canceled")) {
+                                    onClose(false)
+                                    return true
+                                }
+                                return false
+                            }
+                        }
+                        loadUrl(url)
+                    }
+                }
+            )
+        }
+    )
 }
 
 @Composable
