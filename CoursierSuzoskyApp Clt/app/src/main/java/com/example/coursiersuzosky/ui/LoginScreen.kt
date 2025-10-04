@@ -19,6 +19,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -27,6 +28,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import android.content.Intent
+import android.net.Uri
 import com.suzosky.coursierclient.net.ApiService
 import com.suzosky.coursierclient.net.ApiConfig
 import com.suzosky.coursierclient.BuildConfig
@@ -43,7 +46,6 @@ fun LoginScreen(
     
     var login by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var agentMode by remember { mutableStateOf(false) }
     var loading by remember { mutableStateOf(false) }
     var passwordVisible by remember { mutableStateOf(false) }
     var visible by remember { mutableStateOf(false) }
@@ -60,9 +62,9 @@ fun LoginScreen(
         var hasError = false
         
         if (login.isBlank()) {
-            loginError = if (agentMode) "Matricule requis" else "Email ou téléphone requis"
+            loginError = "Email ou téléphone requis"
             hasError = true
-        } else if (!agentMode) {
+        } else {
             val emailRegex = "[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}".toRegex()
             val phoneRegex = "\\+?225\\d{10}|\\d{10}".toRegex()
             if (!login.matches(emailRegex) && !login.matches(phoneRegex)) {
@@ -71,11 +73,6 @@ fun LoginScreen(
             } else {
                 loginError = null
             }
-        } else if (agentMode && login.length < 3) {
-            loginError = "Matricule invalide"
-            hasError = true
-        } else {
-            loginError = null
         }
         
         if (password.isBlank()) {
@@ -97,22 +94,12 @@ fun LoginScreen(
         scope.launch {
             loading = true
             try {
-                if (agentMode) {
-                    val resp = ApiService.agentLogin(login, password)
-                    if (resp.success) {
-                        showMessage("Connexion réussie")
-                        onLoggedIn()
-                    } else {
-                        showMessage(resp.error ?: resp.message ?: "Identifiants invalides")
-                    }
+                val resp = ApiService.login(login, password)
+                if (resp.success) {
+                    showMessage("Connexion réussie")
+                    onLoggedIn()
                 } else {
-                    val resp = ApiService.login(login, password)
-                    if (resp.success) {
-                        showMessage("Connexion réussie")
-                        onLoggedIn()
-                    } else {
-                        showMessage(resp.error ?: resp.message ?: "Identifiants invalides")
-                    }
+                    showMessage(resp.error ?: resp.message ?: "Identifiants invalides")
                 }
             } catch (e: Exception) {
                 showMessage(ApiService.friendlyError(e))
@@ -196,52 +183,6 @@ fun LoginScreen(
             
             Spacer(Modifier.height(48.dp))
             
-            AnimatedVisibility(
-                visible = visible,
-                enter = fadeIn(animationSpec = tween(1000, delayMillis = 400))
-            ) {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color.White.copy(alpha = 0.1f)
-                    ),
-                    border = BorderStroke(1.dp, Color.White.copy(alpha = 0.2f))
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column {
-                            Text(
-                                text = if (agentMode) "Agent" else "Client",
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                            Text(
-                                text = if (agentMode) "Coursier / Livreur" else "Passer une commande",
-                                fontSize = 12.sp,
-                                color = Color.White.copy(alpha = 0.6f)
-                            )
-                        }
-                        Switch(
-                            checked = agentMode,
-                            onCheckedChange = { agentMode = it },
-                            colors = SwitchDefaults.colors(
-                                checkedThumbColor = Gold,
-                                checkedTrackColor = GoldLight,
-                                uncheckedThumbColor = Color.White.copy(alpha = 0.6f),
-                                uncheckedTrackColor = Color.White.copy(alpha = 0.2f)
-                            )
-                        )
-                    }
-                }
-            }
-            
             Spacer(Modifier.height(32.dp))
             
             AnimatedVisibility(
@@ -251,13 +192,8 @@ fun LoginScreen(
                 OutlinedTextField(
                     value = login,
                     onValueChange = { login = it; loginError = null },
-                    label = { Text(if (agentMode) "Matricule" else "Email ou Téléphone") },
-                    leadingIcon = {
-                        Icon(
-                            if (agentMode) Icons.Default.Badge else Icons.Default.Person,
-                            contentDescription = null
-                        )
-                    },
+                    label = { Text("Email ou Téléphone") },
+                    leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
                     singleLine = true,
                     isError = loginError != null,
                     supportingText = loginError?.let { { Text(it, color = AccentRed) } },
@@ -276,7 +212,7 @@ fun LoginScreen(
                         unfocusedLeadingIconColor = Color.White.copy(alpha = 0.6f)
                     ),
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = if (agentMode) KeyboardType.Text else KeyboardType.Email,
+                        keyboardType = KeyboardType.Email,
                         imeAction = ImeAction.Next
                     ),
                     keyboardActions = KeyboardActions(
@@ -381,7 +317,29 @@ fun LoginScreen(
                 }
             }
             
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(12.dp))
+
+            // Lien Mot de passe oublié ?
+            val context = LocalContext.current
+            AnimatedVisibility(
+                visible = visible,
+                enter = fadeIn(animationSpec = tween(900, delayMillis = 1100))
+            ) {
+                TextButton(onClick = {
+                    val resetUrl = ApiConfig.BASE_URL.trimEnd('/') + "/sections_index/forgot_password.php"
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(resetUrl))
+                    context.startActivity(intent)
+                }) {
+                    Text(
+                        text = "Mot de passe oublié ?",
+                        color = Gold,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(12.dp))
             
             if (BuildConfig.DEBUG) {
                 AnimatedVisibility(
