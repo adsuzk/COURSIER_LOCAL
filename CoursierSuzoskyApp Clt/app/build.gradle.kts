@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("com.google.gms.google-services")
 }
 
 // For physical device testing, you can override LOCAL_LAN_IP in gradle.properties
@@ -71,6 +70,13 @@ kotlin {
 gradle.projectsEvaluated {
     tasks.findByName("assembleDebug")?.dependsOn("lintDebug")
     tasks.findByName("assembleRelease")?.dependsOn("lintRelease")
+}
+
+// Apply Google Services plugin only when google-services.json is present
+if (rootProject.file("app/google-services.json").exists() || project.file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
+} else {
+    logger.lifecycle("[CoursierClient] google-services.json not found; skipping Google Services plugin (Realtime will be inactive).")
 }
 
 dependencies {
