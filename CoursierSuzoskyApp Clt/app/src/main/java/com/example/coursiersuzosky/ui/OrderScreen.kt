@@ -36,6 +36,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.TextRange
@@ -43,6 +44,9 @@ import androidx.compose.ui.unit.dp
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.webkit.WebChromeClient
+import android.webkit.CookieManager
+import android.webkit.WebSettings
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.material3.LinearProgressIndicator
 import com.suzosky.coursierclient.net.*
@@ -540,6 +544,19 @@ fun OrderScreen(showMessage: (String) -> Unit) {
 
             Spacer(Modifier.height(16.dp))
 
+            // Move Map just below itinerary
+            MapSection(
+                departureLatLng = departureLatLng,
+                destinationLatLng = destinationLatLng,
+                onDepartureUpdate = handleDepartureFromMap,
+                onDestinationUpdate = handleDestinationFromMap,
+                reverseGeocode = { ll -> reverseGeocode(ll) },
+                scope = scope,
+                showMessage = showMessage
+            )
+
+            Spacer(Modifier.height(16.dp))
+
             ContactsSection(
                 senderPhone = senderPhone,
                 senderPhoneError = senderPhoneError,
@@ -589,17 +606,7 @@ fun OrderScreen(showMessage: (String) -> Unit) {
                 onSubmit = onSubmitOrder
             )
 
-            Spacer(Modifier.height(16.dp))
-
-            MapSection(
-                departureLatLng = departureLatLng,
-                destinationLatLng = destinationLatLng,
-                onDepartureUpdate = handleDepartureFromMap,
-                onDestinationUpdate = handleDestinationFromMap,
-                reverseGeocode = { ll -> reverseGeocode(ll) },
-                scope = scope,
-                showMessage = showMessage
-            )
+            // Map moved above
         }
     }
 
@@ -663,6 +670,13 @@ private fun PaymentWebViewModal(url: String, onClose: (Boolean) -> Unit) {
                     factory = { ctx ->
                         WebView(ctx).apply {
                             settings.javaScriptEnabled = true
+                            settings.domStorageEnabled = true
+                            settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                            settings.javaScriptCanOpenWindowsAutomatically = true
+                            settings.setSupportMultipleWindows(true)
+                            // Allow cookies and 3rd-party cookies for payment providers (e.g., 3DS)
+                            CookieManager.getInstance().setAcceptCookie(true)
+                            CookieManager.getInstance().setAcceptThirdPartyCookies(this, true)
                             webViewClient = object : WebViewClient() {
                                 override fun onPageFinished(view: WebView?, url: String?) {
                                     loading = false
@@ -678,6 +692,28 @@ private fun PaymentWebViewModal(url: String, onClose: (Boolean) -> Unit) {
                                         return true
                                     }
                                     return false
+                                }
+                            }
+                            webChromeClient = object : WebChromeClient() {
+                                override fun onCreateWindow(
+                                    view: WebView?,
+                                    isDialog: Boolean,
+                                    isUserGesture: Boolean,
+                                    resultMsg: android.os.Message?
+                                ): Boolean {
+                                    // Try to open target window URL in the same WebView
+                                    val result = view?.hitTestResult
+                                    val data = result?.extra
+                                    if (!data.isNullOrBlank()) {
+                                        view.loadUrl(data)
+                                    } else if (resultMsg != null) {
+                                        try {
+                                            val transport = resultMsg.obj as WebView.WebViewTransport
+                                            transport.webView = this@apply
+                                            resultMsg.sendToTarget()
+                                        } catch (_: Exception) {}
+                                    }
+                                    return true
                                 }
                             }
                             loadUrl(url)
@@ -894,7 +930,7 @@ private fun ContactsSection(
                 onValueChange = { },
                 label = { Text("Téléphone expéditeur (compte)") },
                 leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null, tint = Gold) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
                 readOnly = true,
                 enabled = false,
                 colors = OutlinedTextFieldDefaults.colors(
@@ -927,7 +963,7 @@ private fun ContactsSection(
                 onValueChange = onReceiverFieldChange,
                 label = { Text("Téléphone destinataire") },
                 leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null, tint = Gold) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Gold,
                     focusedLabelColor = Gold,
