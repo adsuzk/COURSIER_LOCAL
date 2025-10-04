@@ -35,6 +35,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -484,11 +488,16 @@ fun OrderScreen(showMessage: (String) -> Unit) {
     val scrollState = rememberScrollState()
     val focusManager = LocalFocusManager.current
     val keyboard = LocalSoftwareKeyboardController.current
-    // Hide keyboard when user starts scrolling the form
-    LaunchedEffect(scrollState.isScrollInProgress) {
-        if (scrollState.isScrollInProgress) {
-            focusManager.clearFocus(force = true)
-            keyboard?.hide()
+    // Hide keyboard only on user drag scroll (not programmatic bringIntoView)
+    val hideOnUserScroll = remember {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                if (source == NestedScrollSource.Drag && available.y != 0f) {
+                    focusManager.clearFocus(force = true)
+                    keyboard?.hide()
+                }
+                return Offset.Zero
+            }
         }
     }
     
@@ -505,6 +514,7 @@ fun OrderScreen(showMessage: (String) -> Unit) {
         Column(
             Modifier
                 .fillMaxSize()
+                .nestedScroll(hideOnUserScroll)
                 .verticalScroll(scrollState)
                 .padding(24.dp)
                 .imePadding()
@@ -899,6 +909,8 @@ private fun ContactsSection(
     bringIntoViewRequester: BringIntoViewRequester,
     scope: CoroutineScope
 ) {
+    val focusManager = LocalFocusManager.current
+    val keyboard = LocalSoftwareKeyboardController.current
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
@@ -960,10 +972,18 @@ private fun ContactsSection(
 
             OutlinedTextField(
                 value = receiverField,
-                onValueChange = onReceiverFieldChange,
+                onValueChange = {
+                    onReceiverFieldChange(it)
+                },
                 label = { Text("Téléphone destinataire") },
                 leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null, tint = Gold) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+                keyboardActions = androidx.compose.foundation.text.KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus(force = true)
+                        keyboard?.hide()
+                    }
+                ),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Gold,
                     focusedLabelColor = Gold,
@@ -1325,14 +1345,14 @@ private fun MapSection(
                             when {
                                 departureLatLng != null && destinationLatLng != null -> {
                                     val bounds = LatLngBounds.builder().include(departureLatLng).include(destinationLatLng).build()
-                                    cameraPositionState.move(CameraUpdateFactory.newLatLngBounds(bounds, 100))
+                                    cameraPositionState.animate(CameraUpdateFactory.newLatLngBounds(bounds, 100))
                                 }
                                 departureLatLng != null ->
-                                    cameraPositionState.move(CameraUpdateFactory.newLatLngZoom(departureLatLng, 12f))
+                                    cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(departureLatLng, 12f))
                                 destinationLatLng != null ->
-                                    cameraPositionState.move(CameraUpdateFactory.newLatLngZoom(destinationLatLng, 12f))
+                                    cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(destinationLatLng, 12f))
                                 else ->
-                                    cameraPositionState.move(CameraUpdateFactory.newLatLngZoom(abidjanCenter, 12f))
+                                    cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(abidjanCenter, 12f))
                             }
                         } catch (e: Exception) {
                             mapError = e.message ?: "Erreur de caméra"
@@ -1511,7 +1531,13 @@ private fun AutocompleteTextField(
     val places = remember { Places.createClient(context) }
     val token = remember { AutocompleteSessionToken.newInstance() }
     var expanded by remember { mutableStateOf(false) }
-    data class Suggestion(val primary: String, val secondary: String?, val placeId: String?)
+    data class Suggestion(
+        val primary: String,
+        val secondary: String?,
+        val placeId: String?,
+        val lat: Double? = null,
+        val lon: Double? = null
+    )
     var suggestions by remember { mutableStateOf(emptyList<Suggestion>()) }
     var loading by remember { mutableStateOf(false) }
     var errorMsg by remember { mutableStateOf<String?>(null) }
@@ -1587,7 +1613,9 @@ private fun AutocompleteTextField(
                                                 val parts = dn.split(", ")
                                                 val prim = parts.firstOrNull().orEmpty()
                                                 val sec = parts.drop(1).joinToString(", ").ifBlank { null }
-                                                l.add(Suggestion(prim, sec, null))
+                                                val lat = obj.optString("lat").toDoubleOrNull()
+                                                val lon = obj.optString("lon").toDoubleOrNull()
+                                                l.add(Suggestion(prim, sec, null, lat, lon))
                                             }
                                             l
                                         }
@@ -1688,6 +1716,10 @@ private fun AutocompleteTextField(
                                                 keyboard?.hide()
                                             }
                                     } else {
+                                        // Nominatim fallback with lat/lon included
+                                        if (s.lat != null && s.lon != null) {
+                                            onCoordinates(LatLng(s.lat, s.lon))
+                                        }
                                         onSelected(selectedText)
                                         expanded = false
                                         focusManager.clearFocus(force = true)
