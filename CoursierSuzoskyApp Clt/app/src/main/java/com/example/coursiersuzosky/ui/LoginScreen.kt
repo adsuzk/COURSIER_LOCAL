@@ -97,16 +97,22 @@ fun LoginScreen(
         scope.launch {
             loading = true
             try {
-                val resp = if (agentMode) {
-                    ApiService.agentLogin(login, password)
+                if (agentMode) {
+                    val resp = ApiService.agentLogin(login, password)
+                    if (resp.success) {
+                        showMessage("Connexion réussie")
+                        onLoggedIn()
+                    } else {
+                        showMessage(resp.error ?: resp.message ?: "Identifiants invalides")
+                    }
                 } else {
-                    ApiService.login(login, password)
-                }
-                if (resp.success) {
-                    showMessage("Connexion réussie")
-                    onLoggedIn()
-                } else {
-                    showMessage(resp.error ?: resp.message ?: "Identifiants invalides")
+                    val resp = ApiService.login(login, password)
+                    if (resp.success) {
+                        showMessage("Connexion réussie")
+                        onLoggedIn()
+                    } else {
+                        showMessage(resp.error ?: resp.message ?: "Identifiants invalides")
+                    }
                 }
             } catch (e: Exception) {
                 showMessage(ApiService.friendlyError(e))
