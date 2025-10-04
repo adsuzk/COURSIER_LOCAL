@@ -24,6 +24,9 @@ import com.suzosky.coursierclient.ui.theme.*
 @Composable
 fun ProfileScreen(
     onLogout: () -> Unit,
+    onOpenInfo: () -> Unit = {},
+    onOpenSavedAddresses: () -> Unit = {},
+    onOpenHistory: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var showLogoutDialog by remember { mutableStateOf(false) }
@@ -62,21 +65,21 @@ fun ProfileScreen(
                 icon = Icons.Filled.Person,
                 title = "Informations personnelles",
                 subtitle = "Nom, email, téléphone",
-                onClick = { /* TODO */ }
+                onClick = onOpenInfo
             )
             
             ProfileMenuItem(
                 icon = Icons.Filled.LocationOn,
                 title = "Adresses enregistrées",
                 subtitle = "Gérer vos adresses favorites",
-                onClick = { /* TODO */ }
+                onClick = onOpenSavedAddresses
             )
             
             ProfileMenuItem(
                 icon = Icons.Filled.History,
                 title = "Historique complet",
                 subtitle = "Toutes vos commandes",
-                onClick = { /* TODO */ }
+                onClick = onOpenHistory
             )
             
             Spacer(modifier = Modifier.height(16.dp))

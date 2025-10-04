@@ -11,4 +11,8 @@ object ApiConfig {
     const val INITIATE_PAYMENT_ONLY = "initiate_payment_only.php"
     const val CREATE_ORDER_AFTER_PAYMENT = "create_order_after_payment.php"
     const val COURIER_AVAILABILITY = "api/get_coursier_availability.php"
+    // Client/Profile endpoints
+    const val GET_CLIENT = "get_client.php"
+    const val GET_CLIENT_ORDERS = "get_client_orders.php"
+    const val SAVED_ADDRESSES = "saved_addresses.php"
 }

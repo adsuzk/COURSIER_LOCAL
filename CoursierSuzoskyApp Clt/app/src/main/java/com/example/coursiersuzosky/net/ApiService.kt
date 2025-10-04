@@ -48,6 +48,96 @@ object ApiService {
         }
     }
 
+    // ===== Client & Profile =====
+    data class ClientInfoResp(val success: Boolean, val data: ClientInfo?, val message: String?)
+    suspend fun getClientInfo(phone: String): ClientInfoResp = withContext(Dispatchers.IO) {
+        val url = ApiClient.buildUrl(ApiConfig.GET_CLIENT)
+        val payload = JSONObject().apply { put("phone", phone) }
+        val req = ApiClient.requestBuilder(url).post(payload.toString().toRequestBody(JSON)).build()
+        ApiClient.http.newCall(req).execute().use { resp ->
+            val body = resp.body?.string().orEmpty()
+            val json = JSONObject(body)
+            val data = json.optJSONObject("data")?.let { c ->
+                ClientInfo(
+                    id = 0,
+                    nom = c.optString("nom"),
+                    prenoms = c.optString("prenoms"),
+                    email = c.optString("email"),
+                    telephone = c.optString("telephone")
+                )
+            }
+            ClientInfoResp(json.optBoolean("success"), data, json.optString("message").takeIf { json.has("message") })
+        }
+    }
+
+    data class OrderHistoryItem(val numero_commande: String, val adresse_depart: String, val adresse_arrivee: String, val prix_estime: Int, val date_creation: String)
+    suspend fun getClientOrders(phone: String): List<OrderHistoryItem> = withContext(Dispatchers.IO) {
+        val url = ApiClient.buildUrl(ApiConfig.GET_CLIENT_ORDERS)
+        val payload = JSONObject().apply { put("phone", phone) }
+        val req = ApiClient.requestBuilder(url).post(payload.toString().toRequestBody(JSON)).build()
+        ApiClient.http.newCall(req).execute().use { resp ->
+            val body = resp.body?.string().orEmpty()
+            val json = JSONObject(body)
+            if (!json.optBoolean("success")) return@use emptyList<OrderHistoryItem>()
+            val arr = json.optJSONArray("data") ?: return@use emptyList<OrderHistoryItem>()
+            buildList {
+                for (i in 0 until arr.length()) {
+                    val o = arr.getJSONObject(i)
+                    add(
+                        OrderHistoryItem(
+                            numero_commande = o.optString("numero_commande"),
+                            adresse_depart = o.optString("adresse_depart"),
+                            adresse_arrivee = o.optString("adresse_arrivee"),
+                            prix_estime = o.optInt("prix_estime"),
+                            date_creation = o.optString("date_creation")
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    data class SavedAddress(val id: Long, val label: String, val address: String, val lat: Double?, val lng: Double?)
+    suspend fun listSavedAddresses(phone: String): List<SavedAddress> = withContext(Dispatchers.IO) {
+        val url = ApiClient.buildUrl(ApiConfig.SAVED_ADDRESSES)
+        val payload = JSONObject().apply { put("action", "list"); put("phone", phone) }
+        val req = ApiClient.requestBuilder(url).post(payload.toString().toRequestBody(JSON)).build()
+        ApiClient.http.newCall(req).execute().use { resp ->
+            val body = resp.body?.string().orEmpty()
+            val json = JSONObject(body)
+            if (!json.optBoolean("success")) return@use emptyList<SavedAddress>()
+            val arr = json.optJSONArray("data") ?: return@use emptyList<SavedAddress>()
+            buildList {
+                for (i in 0 until arr.length()) {
+                    val o = arr.getJSONObject(i)
+                    add(
+                        SavedAddress(
+                            id = o.optLong("id"),
+                            label = o.optString("label"),
+                            address = o.optString("address"),
+                            lat = o.optDouble("lat").let { if (o.has("lat")) it else null },
+                            lng = o.optDouble("lng").let { if (o.has("lng")) it else null }
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    suspend fun addSavedAddress(phone: String, label: String, address: String, lat: Double?, lng: Double?): Boolean = withContext(Dispatchers.IO) {
+        val url = ApiClient.buildUrl(ApiConfig.SAVED_ADDRESSES)
+        val payload = JSONObject().apply { put("action", "add"); put("phone", phone); put("label", label); put("address", address); lat?.let { put("lat", it) }; lng?.let { put("lng", it) } }
+        val req = ApiClient.requestBuilder(url).post(payload.toString().toRequestBody(JSON)).build()
+        ApiClient.http.newCall(req).execute().use { resp -> JSONObject(resp.body?.string().orEmpty()).optBoolean("success") }
+    }
+
+    suspend fun deleteSavedAddress(phone: String, id: Long): Boolean = withContext(Dispatchers.IO) {
+        val url = ApiClient.buildUrl(ApiConfig.SAVED_ADDRESSES)
+        val payload = JSONObject().apply { put("action", "delete"); put("phone", phone); put("id", id) }
+        val req = ApiClient.requestBuilder(url).post(payload.toString().toRequestBody(JSON)).build()
+        ApiClient.http.newCall(req).execute().use { resp -> JSONObject(resp.body?.string().orEmpty()).optBoolean("success") }
+    }
+
     data class AgentInfo(
         val id: Int,
         val matricule: String,

@@ -437,19 +437,13 @@ fun OrderScreen(showMessage: (String) -> Unit) {
 
         // Price and distance BEFORE payment methods
         Row(verticalAlignment = Alignment.CenterVertically) {
-            // Manual recalculation remains available but is no longer required
-            Button(onClick = { estimate() }, enabled = !estimating) {
-                if (estimating) {
-                    CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(18.dp))
-                    Spacer(Modifier.width(8.dp))
-                    Text("Calcul…")
-                } else {
-                    Text("Recalculer le prix")
-                }
+            if (estimating) {
+                CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(8.dp))
             }
-            Spacer(Modifier.width(12.dp))
             AnimatedContent(targetState = totalPrice, label = "priceAnim", transitionSpec = { fadeIn(tween(200)) togetherWith fadeOut(tween(200)) }) { price ->
-                if (price != null) Text("Prix estimé: ${price} FCFA")
+                val txt = if (price != null) "Prix estimé: ${price} FCFA" else "Prix en calcul…"
+                Text(txt)
             }
         }
         if (distanceTxt != null || durationTxt != null) {
@@ -461,7 +455,29 @@ fun OrderScreen(showMessage: (String) -> Unit) {
         // Payment method selector (now after price/distance)
         PaymentMethodSelector(
             selectedMethod = paymentMethod,
-            onMethodChanged = { paymentMethod = it },
+            onMethodChanged = { newMethod ->
+                paymentMethod = newMethod
+                if (newMethod != "cash" && (totalPrice ?: 0) > 0 && !submitting) {
+                    scope.launch {
+                        submitting = true
+                        try {
+                            val orderNumber = "SZK" + System.currentTimeMillis()
+                            val init = ApiService.initiatePaymentOnly(orderNumber, (totalPrice ?: 0), null, senderPhone, null)
+                            if (init.success && !init.payment_url.isNullOrBlank()) {
+                                paymentUrl = init.payment_url
+                                pendingOnlineOrder = true
+                                showPaymentModal = true
+                            } else {
+                                showMessage(init.message ?: "Paiement indisponible")
+                            }
+                        } catch (e: Exception) {
+                            showMessage(ApiService.friendlyError(e))
+                        } finally {
+                            submitting = false
+                        }
+                    }
+                }
+            },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(Modifier.height(16.dp))
