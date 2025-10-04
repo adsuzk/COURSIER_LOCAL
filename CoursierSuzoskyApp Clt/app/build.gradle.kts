@@ -75,11 +75,17 @@ gradle.projectsEvaluated {
     tasks.findByName("assembleRelease")?.dependsOn("lintRelease")
 }
 
-// Apply Google Services plugin only when google-services.json is present
-if (rootProject.file("app/google-services.json").exists() || project.file("google-services.json").exists()) {
+// Apply Google Services plugin only when a google-services.json is present (root or variant-specific)
+val hasGsJson =
+    rootProject.file("app/google-services.json").exists() ||
+    project.file("google-services.json").exists() ||
+    project.file("src/debug/google-services.json").exists() ||
+    project.file("src/release/google-services.json").exists()
+
+if (hasGsJson) {
     apply(plugin = "com.google.gms.google-services")
 } else {
-    logger.lifecycle("[CoursierClient] google-services.json not found; skipping Google Services plugin (Realtime will be inactive).")
+    logger.lifecycle("[CoursierClient] google-services.json not found in app/, src/debug/, or src/release/; skipping Google Services plugin (Realtime will be inactive).")
 }
 
 dependencies {
